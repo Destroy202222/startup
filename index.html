@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Faceit 5x5 — Поиск матча</title>
+  <title>Faceit 5x5 — Профиль</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
   <style>
     /* ===== КОРНЕВЫЕ ПЕРЕМЕННЫЕ ===== */
@@ -11,20 +11,19 @@
       --primary: #ff7b00;
       --primary-hover: #ff9a33;
       --primary-glow: rgba(255,123,0,0.25);
-      --bg-main: #1a1a2e;
-      --bg-card: rgba(26,26,46,0.92);
+      --bg-main: #0d0d0d;
+      --bg-card: rgba(20,20,20,0.95);
       --bg-input: rgba(40,40,60,0.8);
       --border-color: rgba(255,255,255,0.08);
-      --text-primary: #f5f0e8;
-      --text-secondary: #c8c0b8;
-      --text-muted: #888080;
+      --text-primary: #ffffff;
+      --text-secondary: #aaaaaa;
+      --text-muted: #666666;
       --shadow-color: rgba(255,123,0,0.15);
       --gradient-start: #ff7b00;
       --gradient-end: #ffb347;
-      --success: #2e7d32;
-      --success-text: #81c784;
-      --danger: #7d2e2e;
-      --danger-text: #ff6b6b;
+      --gold: #ffd700;
+      --silver: #c0c0c0;
+      --bronze: #cd7f32;
     }
     body[data-theme="red"] {
       --primary: #e03131;
@@ -50,7 +49,7 @@
       --gradient-end: #888888;
       --shadow-color: rgba(255,255,255,0.1);
       --bg-main: #0d0d0d;
-      --bg-card: rgba(20,20,20,0.92);
+      --bg-card: rgba(20,20,20,0.95);
       --border-color: rgba(255,255,255,0.06);
       --text-primary: #ffffff;
       --text-secondary: #aaaaaa;
@@ -205,7 +204,7 @@
     }
     .page-content .sub-title { color:var(--text-secondary); font-size:1rem; margin-bottom:2rem; font-weight:500; }
 
-    /* ===== ГЛАВНАЯ СТРАНИЦА (без очереди) ===== */
+    /* ===== ГЛАВНАЯ ===== */
     .hero-center {
       max-width:700px; margin:0 auto; text-align:center;
     }
@@ -316,35 +315,212 @@
 
     .match-actions { text-align:center; margin-top:2rem; }
 
-    /* ===== ПРОФИЛЬ ===== */
+    /* ===== ПРОФИЛЬ (НОВЫЙ ДИЗАЙН) ===== */
     .profile-card {
-      background:var(--bg-card); backdrop-filter:blur(8px);
-      border-radius:24px; padding:2rem;
+      background:var(--bg-card);
+      backdrop-filter:blur(8px);
+      border-radius:24px;
+      padding:2rem;
       border:1px solid var(--border-color);
-      max-width:480px; margin:0 auto;
+      max-width:800px;
+      margin:0 auto;
     }
-    .profile-card .profile-header {
-      display:flex; align-items:center; gap:1.2rem; margin-bottom:1.5rem;
+
+    .profile-header {
+      display:flex;
+      align-items:center;
+      gap:1.5rem;
+      margin-bottom:2rem;
     }
+
     .profile-avatar {
-      width:64px; height:64px; border-radius:50%;
+      width:80px;
+      height:80px;
+      border-radius:50%;
       background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end));
-      display:flex; align-items:center; justify-content:center;
-      font-size:1.8rem; font-weight:900; color:var(--bg-main);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:2.5rem;
+      font-weight:900;
+      color:var(--bg-main);
       flex-shrink:0;
+      box-shadow:0 0 30px var(--primary-glow);
     }
-    .profile-card .profile-info h2 { font-size:1.3rem; }
-    .profile-card .profile-info .sub { color:var(--text-secondary); font-size:.8rem; }
-    .profile-card .stats-grid {
-      display:grid; grid-template-columns:repeat(3,1fr); gap:.6rem;
-      margin-top:1rem;
+
+    .profile-info {
+      flex:1;
     }
-    .profile-card .stat-item {
-      background:var(--bg-input); border-radius:12px; padding:.6rem;
-      text-align:center; border:1px solid var(--border-color);
+
+    .profile-info .username {
+      font-size:2rem;
+      font-weight:900;
+      color:var(--text-primary);
+      line-height:1.2;
     }
-    .profile-card .stat-item .number { font-size:1.2rem; font-weight:800; color:var(--primary); }
-    .profile-card .stat-item .label { color:var(--text-secondary); font-size:.6rem; font-weight:600; text-transform:uppercase; }
+
+    .profile-info .details {
+      display:flex;
+      flex-wrap:wrap;
+      gap:1.5rem;
+      margin-top:.3rem;
+    }
+
+    .profile-info .details span {
+      font-size:.9rem;
+      color:var(--text-secondary);
+      font-weight:500;
+    }
+
+    .profile-info .details span i {
+      color:var(--primary);
+      margin-right:.4rem;
+    }
+
+    .profile-info .sfp-block {
+      margin-top:.5rem;
+      display:flex;
+      align-items:baseline;
+      gap:1.5rem;
+    }
+
+    .profile-info .sfp-number {
+      font-size:2.2rem;
+      font-weight:900;
+      color:var(--text-primary);
+    }
+
+    .profile-info .sfp-label {
+      font-size:1rem;
+      color:var(--text-secondary);
+      font-weight:600;
+      text-transform:uppercase;
+      letter-spacing:1px;
+    }
+
+    .profile-info .rank-block {
+      display:flex;
+      align-items:center;
+      gap:.5rem;
+      background:var(--bg-input);
+      padding:.2rem 1rem;
+      border-radius:40px;
+      border:1px solid var(--gold);
+    }
+
+    .profile-info .rank-block .rank-icon {
+      font-size:1.2rem;
+      color:var(--gold);
+    }
+
+    .profile-info .rank-block .rank-name {
+      font-weight:800;
+      font-size:1rem;
+      color:var(--gold);
+      text-transform:uppercase;
+    }
+
+    .profile-stats {
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:.8rem;
+      margin:1.5rem 0 2rem 0;
+    }
+
+    .stat-item {
+      background:var(--bg-input);
+      border-radius:16px;
+      padding:.8rem .5rem;
+      text-align:center;
+      border:1px solid var(--border-color);
+      transition:.3s;
+    }
+
+    .stat-item:hover {
+      border-color:var(--primary);
+      transform:translateY(-2px);
+    }
+
+    .stat-item .value {
+      font-size:1.8rem;
+      font-weight:900;
+      background:linear-gradient(45deg,var(--gradient-start),var(--gradient-end));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+
+    .stat-item .label {
+      color:var(--text-secondary);
+      font-size:.7rem;
+      font-weight:600;
+      text-transform:uppercase;
+      letter-spacing:.5px;
+      margin-top:.1rem;
+    }
+
+    /* ===== ТАБЛИЦА РАНГОВ ===== */
+    .rank-system {
+      margin-top:2rem;
+      border-top:1px solid var(--border-color);
+      padding-top:1.5rem;
+    }
+
+    .rank-system .title {
+      font-size:1.2rem;
+      font-weight:800;
+      color:var(--text-primary);
+      margin-bottom:1rem;
+      text-align:center;
+    }
+
+    .rank-grid {
+      display:grid;
+      grid-template-columns:repeat(10,1fr);
+      gap:0.3rem;
+    }
+
+    .rank-cell {
+      background:var(--bg-input);
+      border-radius:8px;
+      padding:.4rem .2rem;
+      text-align:center;
+      border:1px solid var(--border-color);
+      transition:.3s;
+      cursor:default;
+    }
+
+    .rank-cell .number {
+      font-size:.7rem;
+      font-weight:700;
+      color:var(--text-muted);
+      display:block;
+    }
+
+    .rank-cell .name {
+      font-size:.6rem;
+      font-weight:700;
+      color:var(--text-secondary);
+      line-height:1.2;
+      text-transform:uppercase;
+      margin:.1rem 0;
+    }
+
+    .rank-cell .range {
+      font-size:.5rem;
+      color:var(--text-muted);
+      font-weight:500;
+      display:block;
+    }
+
+    .rank-cell.active {
+      border-color:var(--gold);
+      background:rgba(255,215,0,0.15);
+      box-shadow:0 0 20px rgba(255,215,0,0.1);
+    }
+
+    .rank-cell.active .name {
+      color:var(--gold);
+    }
 
     /* ===== ПОИСК ИГРОКОВ ===== */
     .search-container {
@@ -448,12 +624,20 @@
       .dropdown-content { right:auto; left:0; width:100%; }
       .btn-connect { width:100%; justify-content:center; }
       .match-grid { grid-template-columns:1fr; }
-      .profile-card .profile-header { flex-direction:column; text-align:center; }
+      .profile-header { flex-direction:column; text-align:center; }
+      .profile-info .details { justify-content:center; }
+      .profile-info .sfp-block { justify-content:center; flex-wrap:wrap; }
+      .profile-stats { grid-template-columns:1fr 1fr; }
+      .rank-grid { grid-template-columns:repeat(5,1fr); }
       .queue-status .count { font-size:3rem; }
       .queue-actions .btn-row { flex-direction:column; width:100%; }
       .btn-queue { width:100%; justify-content:center; }
     }
     @media (max-width:500px) {
+      .profile-stats { grid-template-columns:1fr; }
+      .rank-grid { grid-template-columns:repeat(2,1fr); }
+      .profile-avatar { width:64px; height:64px; font-size:2rem; }
+      .profile-info .username { font-size:1.5rem; }
       .queue-status .count { font-size:2.5rem; }
       .search-box { flex-direction:column; }
     }
@@ -527,7 +711,7 @@
       </div>
     </div>
 
-    <!-- ===== СТРАНИЦА ПОИСКА МАТЧА (ОЧЕРЕДЬ) ===== -->
+    <!-- ===== СТРАНИЦА ПОИСКА МАТЧА ===== -->
     <div class="page-content" id="matchSearchPage">
       <h1 class="page-title"><i class="fas fa-search"></i> Поиск матча</h1>
       <p class="sub-title">Нажмите «Найти матч» несколько раз, чтобы добавить ботов в очередь. Как только будет 10 игроков — матч начнётся автоматически.</p>
@@ -569,24 +753,57 @@
       </div>
     </div>
 
-    <!-- ===== ПРОФИЛЬ ===== -->
+    <!-- ===== ПРОФИЛЬ (НОВЫЙ ДИЗАЙН) ===== -->
     <div class="page-content" id="profilePage">
-      <h1 class="page-title"><i class="fas fa-user"></i> Профиль</h1>
-      <p class="sub-title" id="profileSubtitle">Ваш профиль</p>
+      <h1 class="page-title" style="display:none;">Профиль</h1>
       <div class="profile-card" id="profileCard">
         <div class="profile-header">
           <div class="profile-avatar" id="profileAvatar">?</div>
           <div class="profile-info">
-            <h2 id="profileName">Игрок</h2>
-            <div class="sub">🔫 Standoff ID: <span id="profileStandoffId">—</span></div>
+            <div class="username" id="profileName">cutesy0</div>
+            <div class="details">
+              <span><i class="fas fa-id-card"></i> ID: <span id="profileStandoffId">28567390</span></span>
+              <span><i class="fas fa-calendar-alt"></i> Дата регистрации: <span id="profileRegDate">12.04.2024</span></span>
+            </div>
+            <div class="sfp-block">
+              <span class="sfp-number" id="profileSFP">2457</span>
+              <span class="sfp-label">SFP</span>
+              <div class="rank-block">
+                <span class="rank-icon"><i class="fas fa-star"></i></span>
+                <span class="rank-name" id="profileRank">ЧЕМПИОН</span>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="stats-grid">
-          <div class="stat-item"><div class="number" id="profileMatches">0</div><div class="label">Матчей</div></div>
-          <div class="stat-item"><div class="number" id="profileKills">0</div><div class="label">Убийств</div></div>
-          <div class="stat-item"><div class="number" id="profileDeaths">0</div><div class="label">Смертей</div></div>
+
+        <div class="profile-stats">
+          <div class="stat-item">
+            <div class="value" id="profileKD">1.62</div>
+            <div class="label">К/Д</div>
+          </div>
+          <div class="stat-item">
+            <div class="value" id="profileWinrate">63%</div>
+            <div class="label">Винрейт</div>
+          </div>
+          <div class="stat-item">
+            <div class="value" id="profileMatches">214</div>
+            <div class="label">Матчей</div>
+          </div>
+          <div class="stat-item">
+            <div class="value" id="profileMVP">48</div>
+            <div class="label">MVP</div>
+          </div>
         </div>
-        <div style="margin-top:1rem; text-align:center;">
+
+        <!-- Таблица рангов -->
+        <div class="rank-system">
+          <div class="title">SFP RANK SYSTEM</div>
+          <div class="rank-grid" id="rankGrid">
+            <!-- заполняется JS -->
+          </div>
+        </div>
+
+        <div style="margin-top:1.5rem; text-align:center;">
           <button class="btn-queue" onclick="goBackFromProfile()" style="background:var(--primary);color:var(--bg-main);padding:.6rem 2rem;font-size:.9rem;">
             <i class="fas fa-arrow-left"></i> Назад
           </button>
@@ -640,14 +857,14 @@
   // ГЛОБАЛЬНОЕ СОСТОЯНИЕ
   // ============================================================
   let currentUser = null;
-  let queue = [];              // массив { id, username }
-  let currentMatch = null;     // { terrorists: [...], ct: [...] }
+  let queue = [];
+  let currentMatch = null;
   let viewingUserId = null;
   let previousPage = 'mainPage';
-  let botCounter = 0;          // для генерации имён ботов
+  let botCounter = 0;
 
   // ============================================================
-  // АУТЕНТИФИКАЦИЯ (упрощённая, данные в localStorage)
+  // АУТЕНТИФИКАЦИЯ
   // ============================================================
   function getUsers() {
     try { return JSON.parse(localStorage.getItem('faceit_users')) || []; } catch { return []; }
@@ -691,14 +908,22 @@
     const users = getUsers();
     if (users.find(u => u.username === username)) return showToast('error', 'Ошибка', 'Имя занято');
     if (users.find(u => u.standoffId === standoffId)) return showToast('error', 'Ошибка', 'ID уже используется');
+
+    // Новый пользователь с полями для профиля
     const newUser = {
       id: Date.now().toString(),
       username,
       standoffId,
       password,
+      regDate: new Date().toLocaleDateString('ru-RU'),
+      sfp: 2457,
+      rank: 'ЧЕМПИОН',
+      wins: 0,
+      losses: 0,
       matches: 0,
       kills: 0,
-      deaths: 0
+      deaths: 0,
+      mvp: 0
     };
     users.push(newUser);
     saveUsers(users);
@@ -719,11 +944,11 @@
   }
 
   // ============================================================
-  // ОЧЕРЕДЬ (бота)
+  // ОЧЕРЕДЬ (боты)
   // ============================================================
   function addBotToQueue() {
     if (currentMatch) return showToast('info', 'Идёт матч', 'Дождитесь окончания');
-    if (queue.length >= 10) return showToast('error', 'Очередь полна', 'Нажмите «Найти матч» позже');
+    if (queue.length >= 10) return showToast('error', 'Очередь полна', 'Нажмите позже');
     botCounter++;
     const botName = `Bot${botCounter}`;
     const botId = `bot_${Date.now()}_${botCounter}`;
@@ -735,16 +960,11 @@
     }
   }
 
-  // Выйти из очереди для текущего пользователя (если он там есть)
   function leaveQueueCurrent() {
     const user = getCurrentUser();
     if (!user) return;
     const index = queue.findIndex(p => p.id === user.id);
-    if (index === -1) {
-      // Если текущего пользователя нет в очереди, но кнопка видна — скрываем
-      updateQueueUI();
-      return;
-    }
+    if (index === -1) { updateQueueUI(); return; }
     queue.splice(index, 1);
     showToast('info', 'Вы вышли из очереди', '');
     updateQueueUI();
@@ -760,19 +980,16 @@
     const user = getCurrentUser();
     const inQueue = user && queue.some(p => p.id === user.id);
 
-    // Кнопка "Найти матч" всегда активна (добавляет бота)
     btnFind.innerHTML = '<i class="fas fa-plus"></i> Найти матч';
     btnFind.className = 'btn-queue';
     btnFind.disabled = (count >= 10 || currentMatch !== null);
 
-    // Кнопка "Выйти из очереди" — только если пользователь в очереди
     if (inQueue) {
       btnLeave.style.display = 'inline-flex';
     } else {
       btnLeave.style.display = 'none';
     }
 
-    // Текст статуса
     if (currentMatch) {
       status.textContent = 'Матч уже идёт!';
     } else if (count === 0) {
@@ -786,20 +1003,17 @@
   // МАТЧ
   // ============================================================
   function startMatch() {
-    // Перемешиваем очередь
     const shuffled = [...queue];
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-    // Делим на две команды (поровну)
     const half = Math.floor(shuffled.length / 2);
     const terrorists = shuffled.slice(0, half);
     const ct = shuffled.slice(half);
     currentMatch = { terrorists, ct };
     queue = [];
 
-    // Показываем страницу матча
     showPage('matchPage');
     renderMatch();
     showToast('success', 'Матч начался!', `${terrorists.length + ct.length} игроков в игре`);
@@ -842,9 +1056,8 @@
   function showPage(pageId) {
     document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
-    if (pageId === 'matchSearchPage') {
-      updateQueueUI();
-    }
+    if (pageId === 'matchSearchPage') updateQueueUI();
+    if (pageId === 'profilePage') updateProfileUI();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -857,7 +1070,7 @@
   });
 
   // ============================================================
-  // ПРОФИЛЬ
+  // ПРОФИЛЬ (НОВЫЙ)
   // ============================================================
   function showProfile(userId) {
     if (!userId) {
@@ -869,36 +1082,74 @@
       viewingUserId = userId;
       previousPage = 'searchPlayersPage';
     }
-    loadProfileData(viewingUserId);
     showPage('profilePage');
-    document.getElementById('profileSubtitle').textContent = 
-      (viewingUserId === getCurrentUser()?.id) ? 'Ваш профиль' : 'Профиль игрока';
   }
 
-  function loadProfileData(userId) {
+  function updateProfileUI() {
     const users = getUsers();
+    const userId = viewingUserId || getCurrentUser()?.id;
+    if (!userId) return;
     const user = users.find(u => u.id === userId);
     if (!user) {
       showToast('error', 'Ошибка', 'Пользователь не найден');
       return;
     }
+
+    // Заполняем данные
     document.getElementById('profileName').textContent = user.username;
     document.getElementById('profileStandoffId').textContent = user.standoffId || '—';
+    document.getElementById('profileRegDate').textContent = user.regDate || '—';
+    document.getElementById('profileSFP').textContent = user.sfp || 0;
+    document.getElementById('profileRank').textContent = user.rank || 'НОВОБРАЧЕЦ';
     document.getElementById('profileAvatar').textContent = user.username.charAt(0).toUpperCase();
-    document.getElementById('profileMatches').textContent = user.matches || 0;
-    document.getElementById('profileKills').textContent = user.kills || 0;
-    document.getElementById('profileDeaths').textContent = user.deaths || 0;
-    if (userId === getCurrentUser()?.id) {
-      document.getElementById('settingsName').textContent = user.username;
-      document.getElementById('settingsStandoffId').textContent = user.standoffId || '—';
-    }
+
+    // Статистика
+    const kills = user.kills || 0;
+    const deaths = user.deaths || 0;
+    const kd = deaths > 0 ? (kills / deaths) : (kills > 0 ? kills : 0);
+    document.getElementById('profileKD').textContent = kd.toFixed(2);
+
+    const wins = user.wins || 0;
+    const matches = user.matches || 0;
+    const winrate = matches > 0 ? Math.round((wins / matches) * 100) : 0;
+    document.getElementById('profileWinrate').textContent = winrate + '%';
+    document.getElementById('profileMatches').textContent = matches;
+    document.getElementById('profileMVP').textContent = user.mvp || 0;
+
+    // Обновляем таблицу рангов
+    renderRankSystem(user.sfp || 0);
+  }
+
+  function renderRankSystem(currentSFP) {
+    const ranks = [
+      { name: 'НОВОБРАЧЕЦ', min: 0, max: 999 },
+      { name: 'БОЕЦ', min: 1000, max: 1299 },
+      { name: 'ВЕТЕРАН', min: 1300, max: 1599 },
+      { name: 'ЭЛИТНЫЙ БОЕЦ', min: 1600, max: 1899 },
+      { name: 'МАСТЕР', min: 1900, max: 2199 },
+      { name: 'ЧЕМПИОН', min: 2200, max: 2499 },
+      { name: 'ГРАНДМАСТЕР', min: 2500, max: 2799 },
+      { name: 'ПЛАТИНА I', min: 2800, max: 3199 },
+      { name: 'ПЛАТИНА II', min: 3200, max: 3599 },
+      { name: 'ПЛАТИНА III', min: 3600, max: Infinity }
+    ];
+
+    const grid = document.getElementById('rankGrid');
+    grid.innerHTML = ranks.map((r, i) => {
+      const active = (currentSFP >= r.min && currentSFP <= r.max) ? 'active' : '';
+      const range = r.max === Infinity ? `${r.min}+` : `${r.min} – ${r.max}`;
+      return `
+        <div class="rank-cell ${active}">
+          <span class="number">${i+1}</span>
+          <span class="name">${r.name}</span>
+          <span class="range">${range} SFP</span>
+        </div>
+      `;
+    }).join('');
   }
 
   function goBackFromProfile() {
     showPage(previousPage);
-    if (previousPage === 'searchPlayersPage') {
-      // можно обновить результаты
-    }
   }
 
   // ============================================================
@@ -975,7 +1226,9 @@
       document.getElementById('authPage').style.display = 'none';
       document.getElementById('mainSite').classList.add('visible');
       document.getElementById('header').style.display = 'block';
-      loadProfileData(user.id);
+      // Загружаем данные профиля для текущего пользователя
+      viewingUserId = user.id;
+      updateProfileUI();
       loadSettings();
       updateQueueUI();
       if (currentMatch) {
@@ -1011,12 +1264,40 @@
       }
     });
 
-    // Создаём тестовых пользователей
+    // Создаём тестовых пользователей с новыми полями
     let users = getUsers();
     if (users.length === 0) {
       users = [
-        { id: '1', username: 'Admin', standoffId: '123', password: 'admin123', matches: 0, kills: 0, deaths: 0 },
-        { id: '2', username: 'Player1', standoffId: '456', password: 'player123', matches: 0, kills: 0, deaths: 0 }
+        {
+          id: '1',
+          username: 'cutesy0',
+          standoffId: '28567390',
+          password: 'cutesy123',
+          regDate: '12.04.2024',
+          sfp: 2457,
+          rank: 'ЧЕМПИОН',
+          wins: 135,
+          losses: 79,
+          matches: 214,
+          kills: 1200,
+          deaths: 740,
+          mvp: 48
+        },
+        {
+          id: '2',
+          username: 'Player1',
+          standoffId: '12345678',
+          password: 'player123',
+          regDate: '01.01.2025',
+          sfp: 1500,
+          rank: 'ВЕТЕРАН',
+          wins: 50,
+          losses: 30,
+          matches: 80,
+          kills: 400,
+          deaths: 300,
+          mvp: 12
+        }
       ];
       saveUsers(users);
     }
