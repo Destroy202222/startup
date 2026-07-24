@@ -315,211 +315,196 @@
 
     .match-actions { text-align:center; margin-top:2rem; }
 
-    /* ===== ПРОФИЛЬ (НОВЫЙ ДИЗАЙН) ===== */
+    /* ===== ПРОФИЛЬ (КОМПАКТНЫЙ, КАК НА СКРИНШОТЕ) ===== */
     .profile-card {
-      background:var(--bg-card);
-      backdrop-filter:blur(8px);
-      border-radius:24px;
-      padding:2rem;
-      border:1px solid var(--border-color);
-      max-width:800px;
-      margin:0 auto;
+      background: var(--bg-card);
+      backdrop-filter: blur(8px);
+      border-radius: 20px;
+      padding: 1.2rem 1.5rem;
+      border: 1px solid var(--border-color);
+      max-width: 750px;
+      margin: 0 auto;
     }
 
     .profile-header {
-      display:flex;
-      align-items:center;
-      gap:1.5rem;
-      margin-bottom:2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.8rem;
     }
 
     .profile-avatar {
-      width:80px;
-      height:80px;
-      border-radius:50%;
-      background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end));
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:2.5rem;
-      font-weight:900;
-      color:var(--bg-main);
-      flex-shrink:0;
-      box-shadow:0 0 30px var(--primary-glow);
-    }
-
-    .profile-info {
-      flex:1;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--bg-main);
+      flex-shrink: 0;
+      box-shadow: 0 0 20px var(--primary-glow);
     }
 
     .profile-info .username {
-      font-size:2rem;
-      font-weight:900;
-      color:var(--text-primary);
-      line-height:1.2;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--text-primary);
+      line-height: 1.2;
     }
 
     .profile-info .details {
-      display:flex;
-      flex-wrap:wrap;
-      gap:1.5rem;
-      margin-top:.3rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-top: 0.2rem;
     }
 
     .profile-info .details span {
-      font-size:.9rem;
-      color:var(--text-secondary);
-      font-weight:500;
-    }
-
-    .profile-info .details span i {
-      color:var(--primary);
-      margin-right:.4rem;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      font-weight: 500;
     }
 
     .profile-info .sfp-block {
-      margin-top:.5rem;
-      display:flex;
-      align-items:baseline;
-      gap:1.5rem;
+      margin-top: 0.3rem;
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
     }
 
     .profile-info .sfp-number {
-      font-size:2.2rem;
-      font-weight:900;
-      color:var(--text-primary);
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--text-primary);
     }
 
     .profile-info .sfp-label {
-      font-size:1rem;
-      color:var(--text-secondary);
-      font-weight:600;
-      text-transform:uppercase;
-      letter-spacing:1px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .profile-info .rank-block {
-      display:flex;
-      align-items:center;
-      gap:.5rem;
-      background:var(--bg-input);
-      padding:.2rem 1rem;
-      border-radius:40px;
-      border:1px solid var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: var(--bg-input);
+      padding: 0.1rem 0.8rem;
+      border-radius: 40px;
+      border: 1px solid var(--gold);
     }
 
     .profile-info .rank-block .rank-icon {
-      font-size:1.2rem;
-      color:var(--gold);
+      font-size: 0.9rem;
+      color: var(--gold);
     }
 
     .profile-info .rank-block .rank-name {
-      font-weight:800;
-      font-size:1rem;
-      color:var(--gold);
-      text-transform:uppercase;
+      font-weight: 800;
+      font-size: 0.8rem;
+      color: var(--gold);
+      text-transform: uppercase;
     }
 
     .profile-stats {
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:.8rem;
-      margin:1.5rem 0 2rem 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+      margin: 0.8rem 0 1.2rem 0;
     }
 
     .stat-item {
-      background:var(--bg-input);
-      border-radius:16px;
-      padding:.8rem .5rem;
-      text-align:center;
-      border:1px solid var(--border-color);
-      transition:.3s;
-    }
-
-    .stat-item:hover {
-      border-color:var(--primary);
-      transform:translateY(-2px);
+      background: var(--bg-input);
+      border-radius: 12px;
+      padding: 0.4rem 0.2rem;
+      text-align: center;
+      border: 1px solid var(--border-color);
+      transition: .3s;
     }
 
     .stat-item .value {
-      font-size:1.8rem;
-      font-weight:900;
-      background:linear-gradient(45deg,var(--gradient-start),var(--gradient-end));
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
+      font-size: 1.4rem;
+      font-weight: 900;
+      background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .stat-item .label {
-      color:var(--text-secondary);
-      font-size:.7rem;
-      font-weight:600;
-      text-transform:uppercase;
-      letter-spacing:.5px;
-      margin-top:.1rem;
+      color: var(--text-secondary);
+      font-size: 0.6rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-top: 0.05rem;
     }
 
-    /* ===== ТАБЛИЦА РАНГОВ ===== */
     .rank-system {
-      margin-top:2rem;
-      border-top:1px solid var(--border-color);
-      padding-top:1.5rem;
+      margin-top: 0.8rem;
+      border-top: 1px solid var(--border-color);
+      padding-top: 0.8rem;
     }
 
     .rank-system .title {
-      font-size:1.2rem;
-      font-weight:800;
-      color:var(--text-primary);
-      margin-bottom:1rem;
-      text-align:center;
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 0.6rem;
+      text-align: center;
     }
 
     .rank-grid {
-      display:grid;
-      grid-template-columns:repeat(10,1fr);
-      gap:0.3rem;
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 0.2rem;
     }
 
     .rank-cell {
-      background:var(--bg-input);
-      border-radius:8px;
-      padding:.4rem .2rem;
-      text-align:center;
-      border:1px solid var(--border-color);
-      transition:.3s;
-      cursor:default;
+      background: var(--bg-input);
+      border-radius: 6px;
+      padding: 0.2rem 0.1rem;
+      text-align: center;
+      border: 1px solid var(--border-color);
+      transition: .3s;
+      cursor: default;
     }
 
     .rank-cell .number {
-      font-size:.7rem;
-      font-weight:700;
-      color:var(--text-muted);
-      display:block;
+      font-size: 0.5rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      display: block;
     }
 
     .rank-cell .name {
-      font-size:.6rem;
-      font-weight:700;
-      color:var(--text-secondary);
-      line-height:1.2;
-      text-transform:uppercase;
-      margin:.1rem 0;
+      font-size: 0.5rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      line-height: 1.1;
+      text-transform: uppercase;
+      margin: 0.05rem 0;
     }
 
     .rank-cell .range {
-      font-size:.5rem;
-      color:var(--text-muted);
-      font-weight:500;
-      display:block;
+      font-size: 0.45rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      display: block;
     }
 
     .rank-cell.active {
-      border-color:var(--gold);
-      background:rgba(255,215,0,0.15);
-      box-shadow:0 0 20px rgba(255,215,0,0.1);
+      border-color: var(--gold);
+      background: rgba(255,215,0,0.15);
+      box-shadow: 0 0 15px rgba(255,215,0,0.1);
     }
 
     .rank-cell.active .name {
-      color:var(--gold);
+      color: var(--gold);
     }
 
     /* ===== ПОИСК ИГРОКОВ ===== */
@@ -634,12 +619,13 @@
       .btn-queue { width:100%; justify-content:center; }
     }
     @media (max-width:500px) {
-      .profile-stats { grid-template-columns:1fr; }
+      .profile-stats { grid-template-columns:1fr 1fr; }
       .rank-grid { grid-template-columns:repeat(2,1fr); }
-      .profile-avatar { width:64px; height:64px; font-size:2rem; }
-      .profile-info .username { font-size:1.5rem; }
+      .profile-avatar { width:56px; height:56px; font-size:1.8rem; }
+      .profile-info .username { font-size:1.3rem; }
       .queue-status .count { font-size:2.5rem; }
       .search-box { flex-direction:column; }
+      .profile-card { padding: 1rem; }
     }
   </style>
 </head>
@@ -753,9 +739,8 @@
       </div>
     </div>
 
-    <!-- ===== ПРОФИЛЬ (НОВЫЙ ДИЗАЙН) ===== -->
+    <!-- ===== ПРОФИЛЬ (КОМПАКТНЫЙ) ===== -->
     <div class="page-content" id="profilePage">
-      <h1 class="page-title" style="display:none;">Профиль</h1>
       <div class="profile-card" id="profileCard">
         <div class="profile-header">
           <div class="profile-avatar" id="profileAvatar">?</div>
@@ -803,8 +788,8 @@
           </div>
         </div>
 
-        <div style="margin-top:1.5rem; text-align:center;">
-          <button class="btn-queue" onclick="goBackFromProfile()" style="background:var(--primary);color:var(--bg-main);padding:.6rem 2rem;font-size:.9rem;">
+        <div style="margin-top:1rem; text-align:center;">
+          <button class="btn-queue" onclick="goBackFromProfile()" style="background:var(--primary);color:var(--bg-main);padding:.4rem 1.5rem;font-size:.8rem;">
             <i class="fas fa-arrow-left"></i> Назад
           </button>
         </div>
@@ -909,7 +894,6 @@
     if (users.find(u => u.username === username)) return showToast('error', 'Ошибка', 'Имя занято');
     if (users.find(u => u.standoffId === standoffId)) return showToast('error', 'Ошибка', 'ID уже используется');
 
-    // Новый пользователь с полями для профиля
     const newUser = {
       id: Date.now().toString(),
       username,
@@ -1095,7 +1079,6 @@
       return;
     }
 
-    // Заполняем данные
     document.getElementById('profileName').textContent = user.username;
     document.getElementById('profileStandoffId').textContent = user.standoffId || '—';
     document.getElementById('profileRegDate').textContent = user.regDate || '—';
@@ -1103,7 +1086,6 @@
     document.getElementById('profileRank').textContent = user.rank || 'НОВОБРАЧЕЦ';
     document.getElementById('profileAvatar').textContent = user.username.charAt(0).toUpperCase();
 
-    // Статистика
     const kills = user.kills || 0;
     const deaths = user.deaths || 0;
     const kd = deaths > 0 ? (kills / deaths) : (kills > 0 ? kills : 0);
@@ -1116,7 +1098,6 @@
     document.getElementById('profileMatches').textContent = matches;
     document.getElementById('profileMVP').textContent = user.mvp || 0;
 
-    // Обновляем таблицу рангов
     renderRankSystem(user.sfp || 0);
   }
 
@@ -1226,7 +1207,6 @@
       document.getElementById('authPage').style.display = 'none';
       document.getElementById('mainSite').classList.add('visible');
       document.getElementById('header').style.display = 'block';
-      // Загружаем данные профиля для текущего пользователя
       viewingUserId = user.id;
       updateProfileUI();
       loadSettings();
@@ -1264,7 +1244,6 @@
       }
     });
 
-    // Создаём тестовых пользователей с новыми полями
     let users = getUsers();
     if (users.length === 0) {
       users = [
@@ -1304,7 +1283,6 @@
 
     checkAuth();
 
-    // Авто-обновление очереди
     setInterval(() => {
       if (!currentMatch) {
         updateQueueUI();
