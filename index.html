@@ -147,7 +147,6 @@
       color: #ffd700;
       font-weight: 700;
     }
-
     .btn-start {
       display: inline-flex;
       align-items: center;
@@ -287,7 +286,7 @@
     .player .status { margin-left: auto; font-size: 11px; color: #51cf66; }
     .match-actions { text-align: center; margin-top: 22px; }
 
-    /* ===== ПРОФИЛЬ (ТОЧНАЯ КОПИЯ) ===== */
+    /* ===== ПРОФИЛЬ — ТОЧНАЯ КОПИЯ СКРИНШОТА ===== */
     .profile-card {
       background: rgba(20,20,28,0.8);
       backdrop-filter: blur(8px);
@@ -301,8 +300,7 @@
       display: flex;
       align-items: center;
       gap: 16px;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
+      margin-bottom: 10px;
     }
     .profile-avatar {
       width: 72px;
@@ -340,8 +338,9 @@
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
+      align-items: center;
     }
-    .profile-info .details span { display: inline-flex; align-items: center; gap: 4px; }
+    .profile-info .details .flag { color: #fff; }
     .profile-info .details .game-tag {
       background: rgba(255,123,0,0.12);
       color: #ff7b00;
@@ -350,11 +349,12 @@
       font-weight: 600;
       font-size: 13px;
     }
+    .profile-info .details .id { color: #666; }
+
     .profile-actions {
       display: flex;
       gap: 8px;
       margin: 6px 0 14px;
-      flex-wrap: wrap;
     }
     .profile-actions .btn-share {
       background: rgba(255,255,255,0.06);
@@ -400,11 +400,6 @@
       font-size: 22px;
       font-weight: 900;
       color: #fff;
-    }
-    .elo-header .elo-level {
-      font-size: 16px;
-      font-weight: 700;
-      color: #aaa;
     }
     .elo-progress {
       width: 100%;
@@ -456,7 +451,7 @@
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
-    /* Статистика в профиле */
+    /* Статистика */
     .profile-stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -595,7 +590,7 @@
     .placeholder i { font-size: 40px; color: #ff7b00; display: block; margin-bottom: 10px; }
     .placeholder h2 { font-size: 22px; font-weight: 800; color: #fff; }
 
-    /* ===== НИЖНЯЯ НАВИГАЦИЯ (НОРМАЛЬНЫЙ РАЗМЕР) ===== */
+    /* ===== НИЖНЯЯ НАВИГАЦИЯ ===== */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -765,9 +760,6 @@
       .search-title { font-size: 20px; }
       .search-box .btn-queue { font-size: 13px; padding: 8px 16px; }
       .counter .num { font-size: 18px; }
-      .bottom-nav .item i { font-size: 18px; }
-      .bottom-nav .item span { font-size: 9px; }
-      .bottom-nav .item { min-width: 36px; }
     }
   </style>
 </head>
@@ -816,31 +808,12 @@
       <h1 class="home-title">Faceit 5x5 Arena</h1>
       <p class="home-sub">Соревновательный матчмейкинг для Standoff 2. Играй 5×5, поднимай ELO и участвуй в турнирах.</p>
       <div class="home-stats-grid">
-        <div class="home-stat-card">
-          <div class="number" id="totalMatches">0</div>
-          <div class="label">Проведено игр</div>
-        </div>
-        <div class="home-stat-card">
-          <div class="number" id="activePlayers">0</div>
-          <div class="label">Активные игроки</div>
-        </div>
-        <div class="home-stat-card">
-          <div class="number" style="font-size:26px;">2 000₽</div>
-          <div class="label">Призовой фонд</div>
-          <div class="prize-details">
-            <span>🥇 1 000₽</span>
-            <span>🥈 600₽</span>
-            <span>🥉 400₽</span>
-          </div>
-        </div>
-        <div class="home-stat-card">
-          <div class="number" id="tournamentsCount">0</div>
-          <div class="label">Турниров проведено</div>
-        </div>
+        <div class="home-stat-card"><div class="number" id="totalMatches">0</div><div class="label">Проведено игр</div></div>
+        <div class="home-stat-card"><div class="number" id="activePlayers">0</div><div class="label">Активные игроки</div></div>
+        <div class="home-stat-card"><div class="number" style="font-size:26px;">2 000₽</div><div class="label">Призовой фонд</div><div class="prize-details"><span>🥇 1 000₽</span><span>🥈 600₽</span><span>🥉 400₽</span></div></div>
+        <div class="home-stat-card"><div class="number" id="tournamentsCount">0</div><div class="label">Турниров проведено</div></div>
       </div>
-      <button class="btn-start" onclick="navigate('matches')">
-        <i class="fas fa-play"></i> Найти матч
-      </button>
+      <button class="btn-start" onclick="navigate('matches')"><i class="fas fa-play"></i> Найти матч</button>
     </div>
   </div>
 
@@ -873,25 +846,27 @@
     </div>
   </div>
 
-  <!-- ===== ПРОФИЛЬ (ТОЧНАЯ КОПИЯ) ===== -->
+  <!-- ===== ПРОФИЛЬ — ТОЧНАЯ КОПИЯ ===== -->
   <div class="page" id="pageProfile">
     <div class="profile-card">
-      <!-- Верхняя часть -->
+      <!-- Верхняя часть: аватар, ник, детали -->
       <div class="profile-top">
-        <div class="profile-avatar" id="avatar">?</div>
+        <div class="profile-avatar" id="avatar">D</div>
         <div class="profile-info">
           <div class="username" id="pName">Des <span class="badge">@Des</span></div>
           <div class="details">
-            <span><i class="fas fa-flag"></i> RU · 18 y.o.</span>
+            <span class="flag"><i class="fas fa-flag"></i> RU · 18 y.o.</span>
             <span class="game-tag"><i class="fas fa-gamepad"></i> ИГРА CSGO Recoil 1.3.1</span>
-            <span><i class="fas fa-id-card"></i> ID <span id="pId">4456416677</span></span>
+            <span class="id"><i class="fas fa-id-card"></i> ID <span id="pId">4456416677</span></span>
           </div>
         </div>
       </div>
 
-      <!-- Кнопка поделиться -->
+      <!-- Кнопка Поделиться -->
       <div class="profile-actions">
-        <button class="btn-share" onclick="showToast('info','Поделиться','Ссылка скопирована')"><i class="fas fa-share-alt"></i> Поделиться</button>
+        <button class="btn-share" onclick="showToast('info','Поделиться','Ссылка скопирована')">
+          <i class="fas fa-share-alt"></i> Поделиться
+        </button>
       </div>
 
       <!-- ELO блок -->
@@ -924,6 +899,7 @@
           <div class="profile-stat-item"><div class="value" id="pADR">0</div><div class="label">ADR</div></div>
           <div class="profile-stat-item"><div class="value" id="pGames">0</div><div class="label">ИГР</div></div>
         </div>
+
         <div class="win-loss">
           <span class="wins"><i class="fas fa-trophy"></i> <span id="pWins">0</span> побед</span>
           <span class="losses"><i class="fas fa-skull"></i> <span id="pLosses">0</span> поражений</span>
@@ -952,15 +928,8 @@
         </div>
       </div>
 
-      <!-- Статистика (заглушка) -->
-      <div id="tab-stats" class="tab-content">
-        <div class="placeholder" style="padding:20px 0;"><p>Детальная статистика</p></div>
-      </div>
-      <!-- Сезоны (заглушка) -->
-      <div id="tab-seasons" class="tab-content">
-        <div class="placeholder" style="padding:20px 0;"><p>Информация о сезонах</p></div>
-      </div>
-
+      <div id="tab-stats" class="tab-content"><div class="placeholder" style="padding:20px 0;"><p>Детальная статистика</p></div></div>
+      <div id="tab-seasons" class="tab-content"><div class="placeholder" style="padding:20px 0;"><p>Информация о сезонах</p></div></div>
     </div>
   </div>
 
@@ -970,7 +939,7 @@
   <div class="page" id="pageTop"><div class="placeholder"><i class="fas fa-trophy"></i><h2>Топ игроков</h2><p>Рейтинг лучших игроков.</p></div></div>
   <div class="page" id="pageWallet"><div class="placeholder"><i class="fas fa-wallet"></i><h2>Кошелёк</h2><p>Ваш баланс и история транзакций.</p></div></div>
 
-  <!-- ===== НИЖНЯЯ НАВИГАЦИЯ (НОРМАЛЬНЫЙ РАЗМЕР) ===== -->
+  <!-- ===== НИЖНЯЯ НАВИГАЦИЯ ===== -->
   <nav class="bottom-nav" id="bottomNav">
     <div class="progress-bar" id="scrollProgress"></div>
     <button class="item" data-page="profile" onclick="navigate('profile')"><i class="fas fa-user"></i><span>Профиль</span></button>
@@ -1161,7 +1130,7 @@
     showToast('info', 'Матч завершён', 'Возврат в поиск');
   }
 
-  // ===== ПРОФИЛЬ (ТОЧНАЯ КОПИЯ) =====
+  // ===== ПРОФИЛЬ =====
   function updateProfile() {
     const user = getCurrentUser();
     if (!user) return;
@@ -1197,10 +1166,8 @@
     document.getElementById('pLosses').textContent = losses;
 
     // Отзывы тиммейтов
-    const teammatePercent = user.teammatePercent || 0;
-    document.getElementById('pTeammatePercent').textContent = teammatePercent + '%';
-    const avgMatches = Math.max(matches, 0);
-    document.getElementById('pAvgMatches').textContent = avgMatches;
+    document.getElementById('pTeammatePercent').textContent = (user.teammatePercent || 0) + '%';
+    document.getElementById('pAvgMatches').textContent = Math.max(matches, 0);
     document.getElementById('pAvgKills').textContent = user.avgKills || 0;
     document.getElementById('pAvgDeaths').textContent = user.avgDeaths || 0;
     document.getElementById('pAvgAdr').textContent = user.avgAdr || 0;
@@ -1237,14 +1204,12 @@
     ];
     for (let l of levels) {
       if (elo >= l.min && elo < l.next) {
-        const remain = l.next - elo;
-        return { level: l.level, next: l.next, remain: remain, min: l.min };
+        return { level: l.level, next: l.next, remain: l.next - elo, min: l.min };
       }
     }
     return { level: 10, next: Infinity, remain: 0, min: 2501 };
   }
 
-  // ===== ТАБЫ =====
   function switchTab(tab) {
     document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
     document.querySelector(`.tabs .tab[data-tab="${tab}"]`)?.classList.add('active');
