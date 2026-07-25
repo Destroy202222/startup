@@ -14,7 +14,7 @@
       background: #0b0b0f;
       color: #fff;
       font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-      padding-bottom: 70px;
+      padding-bottom: 80px;
       min-height: 100vh;
       line-height: 1.5;
     }
@@ -286,7 +286,7 @@
     .player .status { margin-left: auto; font-size: 11px; color: #51cf66; }
     .match-actions { text-align: center; margin-top: 22px; }
 
-    /* ===== ПРОФИЛЬ — ТОЧНАЯ КОПИЯ СКРИНШОТА ===== */
+    /* ===== ПРОФИЛЬ — ТОЧНАЯ КОПИЯ ===== */
     .profile-card {
       background: rgba(20,20,28,0.8);
       backdrop-filter: blur(8px);
@@ -590,7 +590,7 @@
     .placeholder i { font-size: 40px; color: #ff7b00; display: block; margin-bottom: 10px; }
     .placeholder h2 { font-size: 22px; font-weight: 800; color: #fff; }
 
-    /* ===== НИЖНЯЯ НАВИГАЦИЯ ===== */
+    /* ===== НИЖНЯЯ НАВИГАЦИЯ (УВЕЛИЧЕННАЯ) ===== */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -602,7 +602,7 @@
       display: flex;
       justify-content: space-around;
       align-items: center;
-      padding: 6px 0 4px;
+      padding: 10px 0 8px;
       z-index: 100;
     }
     .bottom-nav .progress-bar {
@@ -620,30 +620,30 @@
       flex-direction: column;
       align-items: center;
       color: #888;
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 600;
       background: none;
       border: none;
       cursor: pointer;
-      padding: 2px 6px;
-      min-width: 44px;
+      padding: 2px 8px;
+      min-width: 50px;
       position: relative;
       transition: .2s;
     }
     .bottom-nav .item i {
-      font-size: 22px;
-      margin-bottom: 1px;
+      font-size: 26px;
+      margin-bottom: 2px;
       transition: .2s;
     }
     .bottom-nav .item span {
-      font-size: 10px;
+      font-size: 11px;
       line-height: 1.2;
     }
     .bottom-nav .item.active {
       color: #ff7b00;
     }
     .bottom-nav .item.active i {
-      text-shadow: 0 0 12px rgba(255,123,0,0.3);
+      text-shadow: 0 0 16px rgba(255,123,0,0.3);
     }
     .bottom-nav .item.active::after {
       content: '';
@@ -659,7 +659,7 @@
 
     .toast {
       position: fixed;
-      bottom: 80px;
+      bottom: 90px;
       left: 50%;
       transform: translateX(-50%) translateY(70px);
       background: rgba(20,20,28,0.9);
@@ -750,6 +750,9 @@
       .counter { min-width: 100px; padding: 6px 14px; }
       .counter .num { font-size: 22px; }
       .tabs .tab { font-size: 12px; padding: 4px 12px; }
+      .bottom-nav .item i { font-size: 22px; }
+      .bottom-nav .item span { font-size: 10px; }
+      .bottom-nav .item { min-width: 42px; }
     }
     @media (max-width: 480px) {
       .home-title { font-size: 26px; }
@@ -760,6 +763,9 @@
       .search-title { font-size: 20px; }
       .search-box .btn-queue { font-size: 13px; padding: 8px 16px; }
       .counter .num { font-size: 18px; }
+      .bottom-nav .item i { font-size: 20px; }
+      .bottom-nav .item span { font-size: 9px; }
+      .bottom-nav .item { min-width: 36px; }
     }
   </style>
 </head>
@@ -846,10 +852,9 @@
     </div>
   </div>
 
-  <!-- ===== ПРОФИЛЬ — ТОЧНАЯ КОПИЯ ===== -->
+  <!-- ===== ПРОФИЛЬ ===== -->
   <div class="page" id="pageProfile">
     <div class="profile-card">
-      <!-- Верхняя часть: аватар, ник, детали -->
       <div class="profile-top">
         <div class="profile-avatar" id="avatar">D</div>
         <div class="profile-info">
@@ -862,7 +867,6 @@
         </div>
       </div>
 
-      <!-- Кнопка Поделиться -->
       <div class="profile-actions">
         <button class="btn-share" onclick="showToast('info','Поделиться','Ссылка скопирована')">
           <i class="fas fa-share-alt"></i> Поделиться
@@ -891,7 +895,6 @@
         <button class="tab" data-tab="seasons" onclick="switchTab('seasons')">Сезоны</button>
       </div>
 
-      <!-- Обзор -->
       <div id="tab-overview" class="tab-content active">
         <div class="profile-stats-grid">
           <div class="profile-stat-item"><div class="value" id="pWinrate">0%</div><div class="label">WINRATE</div></div>
@@ -905,7 +908,6 @@
           <span class="losses"><i class="fas fa-skull"></i> <span id="pLosses">0</span> поражений</span>
         </div>
 
-        <!-- Отзывы тиммейтов -->
         <div class="teammate-reviews">
           <div class="review-header">
             <span class="title">Отзывы тиммейтов</span>
@@ -919,7 +921,6 @@
           </div>
         </div>
 
-        <!-- История матчей -->
         <div class="match-history">
           <div class="title"><i class="fas fa-history"></i> История матчей</div>
           <div id="matchHistoryList">
@@ -939,7 +940,7 @@
   <div class="page" id="pageTop"><div class="placeholder"><i class="fas fa-trophy"></i><h2>Топ игроков</h2><p>Рейтинг лучших игроков.</p></div></div>
   <div class="page" id="pageWallet"><div class="placeholder"><i class="fas fa-wallet"></i><h2>Кошелёк</h2><p>Ваш баланс и история транзакций.</p></div></div>
 
-  <!-- ===== НИЖНЯЯ НАВИГАЦИЯ ===== -->
+  <!-- ===== НИЖНЯЯ НАВИГАЦИЯ (УВЕЛИЧЕННАЯ) ===== -->
   <nav class="bottom-nav" id="bottomNav">
     <div class="progress-bar" id="scrollProgress"></div>
     <button class="item" data-page="profile" onclick="navigate('profile')"><i class="fas fa-user"></i><span>Профиль</span></button>
@@ -1138,7 +1139,6 @@
     document.getElementById('pId').textContent = user.standoffId || '—';
     document.getElementById('avatar').textContent = user.username.charAt(0).toUpperCase();
 
-    // ELO
     const elo = user.elo || 1000;
     document.getElementById('pElo').textContent = elo;
     const levelData = getLevelInfo(elo);
@@ -1149,7 +1149,6 @@
     const progress = ((elo - levelData.min) / (levelData.next - levelData.min)) * 100;
     document.getElementById('eloProgress').style.width = Math.min(progress, 100) + '%';
 
-    // Статистика
     const kills = user.kills || 0;
     const deaths = user.deaths || 0;
     const matches = user.matches || 0;
@@ -1165,14 +1164,12 @@
     document.getElementById('pWins').textContent = wins;
     document.getElementById('pLosses').textContent = losses;
 
-    // Отзывы тиммейтов
     document.getElementById('pTeammatePercent').textContent = (user.teammatePercent || 0) + '%';
     document.getElementById('pAvgMatches').textContent = Math.max(matches, 0);
     document.getElementById('pAvgKills').textContent = user.avgKills || 0;
     document.getElementById('pAvgDeaths').textContent = user.avgDeaths || 0;
     document.getElementById('pAvgAdr').textContent = user.avgAdr || 0;
 
-    // История матчей
     const history = user.matchHistory || [];
     const container = document.getElementById('matchHistoryList');
     if (history.length === 0) {
