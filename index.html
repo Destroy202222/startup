@@ -250,23 +250,32 @@
       max-width: 700px;
       margin: 0 auto;
     }
-    .search-title {
+
+    /* Прозрачный блок с оранжевой обводкой для заголовка */
+    .search-header-block {
+      background: rgba(255, 123, 0, 0.03);
+      border: 1.5px solid rgba(255, 123, 0, 0.25);
+      border-radius: 20px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      text-align: center;
+      backdrop-filter: blur(4px);
+    }
+    .search-header-block .search-title {
       font-size: 28px;
       font-weight: 900;
-      text-align: center;
       background: linear-gradient(135deg, #ff7b00, #ffb347);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       margin-bottom: 4px;
     }
-    .search-sub {
-      text-align: center;
+    .search-header-block .search-sub {
       color: #999;
       font-size: 14px;
-      max-width: 560px;
-      margin: 0 auto 16px;
       font-weight: 400;
-      line-height: 1.5;
+      line-height: 1.6;
+      max-width: 560px;
+      margin: 0 auto;
     }
 
     .search-main-block {
@@ -319,19 +328,6 @@
     .search-main-block .btn-queue:hover {
       transform: scale(1.03);
       box-shadow: 0 0 50px rgba(255,123,0,0.5);
-    }
-    .search-main-block .btn-queue.leave {
-      background: #ff6b6b;
-      color: #fff;
-      box-shadow: 0 0 20px rgba(255,0,0,0.3);
-    }
-    .search-main-block .btn-queue.leave:hover {
-      background: #ff4444;
-    }
-    .search-main-block .btn-queue:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
     }
     .search-main-block .btn-queue.cancel {
       background: #ff6b6b;
@@ -388,12 +384,6 @@
     }
     .search-main-block.searching .search-progress {
       display: block !important;
-    }
-    .search-main-block.searching .btn-queue.search-btn {
-      display: inline-flex !important;
-    }
-    .search-main-block.searching .btn-queue.cancel-btn {
-      display: inline-flex !important;
     }
 
     .search-progress {
@@ -664,11 +654,11 @@
     .player .status { margin-left: auto; font-size: 9px; color: #51cf66; }
     .match-actions { text-align: center; margin-top: 16px; }
 
-    /* ===== ДРУЗЬЯ (ИСПРАВЛЕНО) ===== */
+    /* ===== ДРУЗЬЯ ===== */
     .friends-page .friends-tabs {
       display: flex;
       gap: 12px;
-      margin: 12px 0 16px;
+      margin: 0 0 16px;
       justify-content: center;
       border-bottom: 1px solid rgba(255,255,255,0.06);
       padding-bottom: 10px;
@@ -826,33 +816,47 @@
 
     /* ===== КОШЕЛЁК ===== */
     .wallet-page .wallet-balance {
-      text-align: center;
-      padding: 20px 0 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 10px 16px;
+      gap: 20px;
+      flex-wrap: wrap;
     }
-    .wallet-page .wallet-balance .amount {
+    .wallet-page .wallet-balance .balance-item {
+      text-align: center;
+      flex: 1;
+      min-width: 100px;
+    }
+    .wallet-page .wallet-balance .balance-item .amount {
       font-size: 48px;
       font-weight: 900;
       color: #ffd700;
       letter-spacing: 1px;
     }
-    .wallet-page .wallet-balance .currency {
+    .wallet-page .wallet-balance .balance-item .currency {
       font-size: 18px;
       font-weight: 600;
       color: #888;
       display: block;
       margin-top: 2px;
     }
-    .wallet-page .wallet-balance .rub-amount {
-      font-size: 32px;
+    .wallet-page .wallet-balance .balance-item .rub-amount {
+      font-size: 48px;
       font-weight: 900;
       color: #fff;
-      margin-top: 8px;
     }
-    .wallet-page .wallet-balance .rub-currency {
-      font-size: 16px;
+    .wallet-page .wallet-balance .balance-item .rub-currency {
+      font-size: 18px;
       font-weight: 600;
       color: #888;
       display: block;
+      margin-top: 2px;
+    }
+    .wallet-page .wallet-balance .divider {
+      width: 1px;
+      height: 60px;
+      background: rgba(255,255,255,0.06);
     }
 
     .wallet-page .wallet-actions {
@@ -1441,7 +1445,8 @@
       .profile-info .details { justify-content: center; }
       .profile-stats { grid-template-columns: 1fr 1fr; }
       .match-grid { grid-template-columns: 1fr; }
-      .search-title { font-size: 24px; }
+      .search-header-block { padding: 16px 18px; }
+      .search-header-block .search-title { font-size: 24px; }
       .search-main-block { padding: 18px 14px; }
       .search-main-block .btn-queue { font-size: 15px; padding: 10px 24px; }
       .search-counter { min-width: 80px; padding: 4px 12px; }
@@ -1455,8 +1460,8 @@
       .top-page .page-title { font-size: 22px; }
       .top-item .elo { font-size: 14px; }
       .top-item .info .name { font-size: 13px; }
-      .wallet-page .wallet-balance .amount { font-size: 36px; }
-      .wallet-page .wallet-balance .rub-amount { font-size: 26px; }
+      .wallet-page .wallet-balance .balance-item .amount { font-size: 36px; }
+      .wallet-page .wallet-balance .balance-item .rub-amount { font-size: 36px; }
       .wallet-page .promo-block { flex-direction: column; align-items: stretch; }
     }
     @media (max-width: 480px) {
@@ -1469,7 +1474,9 @@
       .prize-block .prize-grid { grid-template-columns: 1fr; }
       .profile-stats { grid-template-columns: 1fr 1fr; }
       .profile-info .sfp-number { font-size: 20px; }
-      .search-title { font-size: 20px; }
+      .search-header-block { padding: 12px 14px; }
+      .search-header-block .search-title { font-size: 20px; }
+      .search-header-block .search-sub { font-size: 13px; }
       .search-main-block .btn-queue { font-size: 13px; padding: 8px 16px; }
       .search-counter .num { font-size: 18px; }
       .search-progress .progress-text { font-size: 24px; }
@@ -1485,8 +1492,10 @@
       .top-item .elo { min-width: 50px; font-size: 14px; }
       .top-item .info .name { font-size: 13px; }
       .top-item .info .stats { font-size: 10px; }
-      .wallet-page .wallet-balance .amount { font-size: 28px; }
-      .wallet-page .wallet-balance .rub-amount { font-size: 22px; }
+      .wallet-page .wallet-balance { flex-direction: column; gap: 10px; }
+      .wallet-page .wallet-balance .divider { display: none; }
+      .wallet-page .wallet-balance .balance-item .amount { font-size: 28px; }
+      .wallet-page .wallet-balance .balance-item .rub-amount { font-size: 28px; }
       .wallet-page .wallet-actions .btn-wallet { font-size: 12px; padding: 8px 16px; }
       .wallet-page .promo-block input { font-size: 12px; }
       .friends-list .friend-item { flex-wrap: wrap; gap: 4px; }
@@ -1586,18 +1595,21 @@
   <!-- ===== ПОИСК МАТЧА ===== -->
   <div class="page" id="pageMatches">
     <div class="search-page-wrapper">
-      <div class="search-title">Поиск матча Standoff 2</div>
-      <p class="search-sub">Играй соло или вместе с друзьями. Создай пати, поделись кодом и заходите в матч одной группой.</p>
+      <!-- Прозрачный блок с оранжевой обводкой -->
+      <div class="search-header-block">
+        <div class="search-title">Поиск матча Standoff 2</div>
+        <p class="search-sub">Играй соло или вместе с друзьями. Создай пати, поделись кодом и заходите в матч одной группой.</p>
+      </div>
 
       <div class="search-main-block" id="searchMainBlock">
         <div class="label">
           <i class="fas fa-crosshairs"></i> Статус поиска
         </div>
         <div class="btn-row">
-          <button class="btn-queue search-btn" id="queueBtn" onclick="startSearch()">
+          <button class="btn-queue" id="queueBtn" onclick="startSearch()">
             <i class="fas fa-search"></i> Поиск матча
           </button>
-          <button class="btn-queue cancel-btn" id="cancelBtn" onclick="cancelSearch()" style="display:none;">
+          <button class="btn-queue cancel" id="cancelBtn" onclick="cancelSearch()" style="display:none;">
             <i class="fas fa-times"></i> Отменить поиск
           </button>
         </div>
@@ -1614,7 +1626,6 @@
           </div>
         </div>
 
-        <!-- Прогресс поиска -->
         <div class="search-progress" id="searchProgress">
           <div class="progress-text" id="progressText">0/10</div>
           <div class="progress-timer">⏱️ <span id="searchTimer">00:00</span></div>
@@ -1708,10 +1719,15 @@
   <!-- ===== КОШЕЛЁК ===== -->
   <div class="page wallet-page" id="pageWallet">
     <div class="wallet-balance">
-      <div class="amount">0 ⭐</div>
-      <div class="currency">Telegram Stars</div>
-      <div class="rub-amount">0 ₽</div>
-      <div class="rub-currency">Рубли</div>
+      <div class="balance-item">
+        <div class="amount">0 ⭐</div>
+        <div class="currency">Telegram Stars</div>
+      </div>
+      <div class="divider"></div>
+      <div class="balance-item">
+        <div class="rub-amount">0 ₽</div>
+        <div class="rub-currency">Рубли</div>
+      </div>
     </div>
 
     <div class="wallet-actions">
@@ -2007,7 +2023,7 @@
     });
   }
 
-  // ===== ПОИСК МАТЧА (С ТАЙМЕРОМ И 2 КНОПКАМИ) =====
+  // ===== ПОИСК МАТЧА =====
   function startSearch() {
     if (isSearching) return;
     if (currentMatch) return showToast('info', 'Идёт матч', 'Дождитесь окончания');
@@ -2015,27 +2031,20 @@
     const user = getCurrentUser();
     if (!user) return showToast('error', 'Ошибка', 'Авторизуйтесь');
 
-    // Очищаем очередь при старте
     queue = [];
-
-    // Добавляем пользователя в очередь
     queue.push({ id: user.id, username: user.username });
 
     isSearching = true;
     searchSeconds = 0;
 
-    // Переключаем блок в режим поиска
     const block = document.getElementById('searchMainBlock');
     block.classList.add('searching');
 
-    // Показываем кнопку "Отменить поиск", скрываем "Поиск матча"
     document.getElementById('queueBtn').style.display = 'none';
     document.getElementById('cancelBtn').style.display = 'inline-flex';
 
-    // Обновляем счётчик
     updateProgressText();
 
-    // Запускаем таймер
     if (searchTimerInterval) clearInterval(searchTimerInterval);
     searchTimerInterval = setInterval(() => {
       searchSeconds++;
@@ -2045,8 +2054,6 @@
     }, 1000);
 
     showToast('info', 'Поиск начат', 'Ищем игроков...');
-
-    // Симуляция добавления ботов
     simulateBotSearch();
   }
 
@@ -2054,7 +2061,7 @@
     if (!isSearching) return;
 
     const maxBots = 9;
-    const currentBots = queue.length - 1; // минус пользователь
+    const currentBots = queue.length - 1;
 
     if (currentBots < maxBots && isSearching) {
       setTimeout(() => {
@@ -2073,7 +2080,6 @@
           document.getElementById('cancelBtn').style.display = 'none';
           startMatch();
         } else {
-          // Продолжаем поиск
           simulateBotSearch();
         }
       }, 1500 + Math.random() * 2000);
