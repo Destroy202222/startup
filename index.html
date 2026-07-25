@@ -603,87 +603,57 @@
     .player .status { margin-left: auto; font-size: 9px; color: #51cf66; }
     .match-actions { text-align: center; margin-top: 16px; }
 
-    /* ===== ДРУЗЬЯ ===== */
-    .friends-page .page-title {
-      font-size: 26px;
-      font-weight: 900;
-      margin-bottom: 2px;
-    }
-    .friends-page .page-sub {
-      color: #888;
-      font-size: 13px;
-      margin-bottom: 16px;
-      font-weight: 400;
-    }
-    .friends-search {
+    /* ===== ДРУЗЬЯ (ОБНОВЛЁННЫЕ) ===== */
+    .friends-page .friends-tabs {
       display: flex;
-      gap: 8px;
-      margin-bottom: 16px;
+      gap: 12px;
+      margin: 12px 0 16px;
+      justify-content: center;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding-bottom: 10px;
     }
-    .friends-search input {
-      flex: 1;
-      background: rgba(26, 26, 34, 0.8);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 10px;
-      padding: 10px 14px;
-      color: #fff;
+    .friends-page .friends-tabs .tab {
+      padding: 6px 18px;
+      border-radius: 40px;
       font-size: 14px;
-      transition: .2s;
-    }
-    .friends-search input:focus {
-      outline: none;
-      border-color: #ff7b00;
-      box-shadow: 0 0 20px rgba(255,123,0,0.1);
-    }
-    .friends-search input::placeholder {
-      color: #555;
-    }
-    .friends-search button {
-      background: rgba(255,123,0,0.15);
-      border: 1px solid rgba(255,123,0,0.3);
-      color: #ff7b00;
-      padding: 8px 16px;
-      border-radius: 40px;
-      font-weight: 700;
-      font-size: 13px;
-      cursor: pointer;
-      transition: .2s;
-      white-space: nowrap;
-    }
-    .friends-search button:hover {
-      background: rgba(255,123,0,0.25);
-    }
-
-    .friends-tabs {
-      display: flex;
-      gap: 4px;
-      margin-bottom: 12px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      padding-bottom: 8px;
-    }
-    .friends-tabs .tab {
-      padding: 5px 14px;
-      border-radius: 40px;
-      font-size: 12px;
       font-weight: 600;
       color: #888;
       cursor: pointer;
       transition: .2s;
       background: none;
       border: none;
+      position: relative;
     }
-    .friends-tabs .tab.active {
-      background: rgba(255,123,0,0.15);
+    .friends-page .friends-tabs .tab.active {
       color: #ff7b00;
     }
-    .friends-tabs .tab:hover {
+    .friends-page .friends-tabs .tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -11px;
+      left: 20%;
+      right: 20%;
+      height: 2px;
+      background: #ff7b00;
+      border-radius: 2px;
+    }
+    .friends-page .friends-tabs .tab:hover {
       color: #fff;
+    }
+    .friends-page .friends-tabs .tab .badge {
+      background: rgba(255,123,0,0.15);
+      color: #ff7b00;
+      font-size: 10px;
+      padding: 0 6px;
+      border-radius: 30px;
+      margin-left: 4px;
     }
 
     .friends-counts {
       display: flex;
-      gap: 16px;
-      margin-bottom: 12px;
+      gap: 20px;
+      margin-bottom: 14px;
+      justify-content: center;
       flex-wrap: wrap;
     }
     .friends-counts .count-item {
@@ -782,7 +752,7 @@
 
     .friends-empty {
       text-align: center;
-      padding: 24px 0;
+      padding: 30px 0;
       color: #666;
       font-size: 14px;
     }
@@ -791,6 +761,152 @@
       color: #333;
       display: block;
       margin-bottom: 8px;
+    }
+
+    /* ===== КОШЕЛЁК (ТОЧНАЯ КОПИЯ) ===== */
+    .wallet-page .wallet-balance {
+      text-align: center;
+      padding: 20px 0 16px;
+    }
+    .wallet-page .wallet-balance .amount {
+      font-size: 48px;
+      font-weight: 900;
+      color: #ffd700;
+      letter-spacing: 1px;
+    }
+    .wallet-page .wallet-balance .currency {
+      font-size: 18px;
+      font-weight: 600;
+      color: #888;
+      display: block;
+      margin-top: 2px;
+    }
+    .wallet-page .wallet-balance .rub-amount {
+      font-size: 32px;
+      font-weight: 900;
+      color: #fff;
+      margin-top: 8px;
+    }
+    .wallet-page .wallet-balance .rub-currency {
+      font-size: 16px;
+      font-weight: 600;
+      color: #888;
+      display: block;
+    }
+
+    .wallet-page .wallet-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 16px 0 20px;
+    }
+    .wallet-page .wallet-actions .btn-wallet {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      color: #fff;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: .2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .wallet-page .wallet-actions .btn-wallet:hover {
+      background: rgba(255,123,0,0.1);
+      border-color: rgba(255,123,0,0.2);
+      color: #ff7b00;
+    }
+    .wallet-page .wallet-actions .btn-wallet i {
+      font-size: 16px;
+    }
+    .wallet-page .wallet-actions .btn-wallet.stars i {
+      color: #ffd700;
+    }
+    .wallet-page .wallet-actions .btn-wallet.rub i {
+      color: #51cf66;
+    }
+
+    .wallet-page .promo-block {
+      background: rgba(26,26,34,0.6);
+      border-radius: 14px;
+      padding: 14px 16px;
+      border: 1px solid rgba(255,255,255,0.04);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .wallet-page .promo-block .promo-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+    }
+    .wallet-page .promo-block input {
+      flex: 1;
+      background: rgba(26,26,34,0.6);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      padding: 8px 14px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      min-width: 120px;
+      transition: .2s;
+    }
+    .wallet-page .promo-block input:focus {
+      outline: none;
+      border-color: #ff7b00;
+      box-shadow: 0 0 20px rgba(255,123,0,0.1);
+    }
+    .wallet-page .promo-block input::placeholder {
+      color: #555;
+      font-size: 12px;
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+    .wallet-page .promo-block .btn-apply {
+      background: rgba(255,123,0,0.15);
+      border: 1px solid rgba(255,123,0,0.3);
+      color: #ff7b00;
+      padding: 8px 20px;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: .2s;
+      white-space: nowrap;
+    }
+    .wallet-page .promo-block .btn-apply:hover {
+      background: rgba(255,123,0,0.25);
+      box-shadow: 0 0 20px rgba(255,123,0,0.1);
+    }
+
+    .wallet-page .history-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 12px;
+      letter-spacing: 0.3px;
+    }
+    .wallet-page .history-empty {
+      text-align: center;
+      padding: 24px 0;
+      color: #666;
+      font-size: 14px;
+    }
+    .wallet-page .history-empty i {
+      font-size: 24px;
+      color: #333;
+      display: block;
+      margin-bottom: 6px;
     }
 
     /* ===== ТОП ИГРОКОВ ===== */
@@ -1273,11 +1389,13 @@
       .chart-container { height: 70px; gap: 3px; }
       .chart-bar { width: 8px; }
       .chart-bar-wrap { min-width: 12px; }
-      .friends-tabs { gap: 4px; }
-      .friends-tabs .tab { font-size: 11px; padding: 4px 10px; }
+      .friends-page .friends-tabs .tab { font-size: 12px; padding: 4px 12px; }
       .top-page .page-title { font-size: 22px; }
       .top-item .elo { font-size: 14px; }
       .top-item .info .name { font-size: 13px; }
+      .wallet-page .wallet-balance .amount { font-size: 36px; }
+      .wallet-page .wallet-balance .rub-amount { font-size: 26px; }
+      .wallet-page .promo-block { flex-direction: column; align-items: stretch; }
     }
     @media (max-width: 480px) {
       .hero-title { font-size: 24px; }
@@ -1297,12 +1415,17 @@
       .chart-container { height: 50px; gap: 2px; }
       .chart-bar { width: 6px; }
       .chart-bar-wrap { min-width: 10px; }
-      .friends-page .page-title { font-size: 20px; }
+      .friends-page .friends-tabs .tab { font-size: 11px; padding: 4px 10px; }
+      .friends-page .friends-tabs { gap: 6px; }
       .top-page .page-title { font-size: 20px; }
       .top-item { flex-wrap: wrap; gap: 4px; padding: 6px 10px; }
       .top-item .elo { min-width: 50px; font-size: 14px; }
       .top-item .info .name { font-size: 13px; }
       .top-item .info .stats { font-size: 10px; }
+      .wallet-page .wallet-balance .amount { font-size: 28px; }
+      .wallet-page .wallet-balance .rub-amount { font-size: 22px; }
+      .wallet-page .wallet-actions .btn-wallet { font-size: 12px; padding: 8px 16px; }
+      .wallet-page .promo-block input { font-size: 12px; }
       .friends-list .friend-item { flex-wrap: wrap; gap: 4px; }
     }
   </style>
@@ -1470,20 +1593,18 @@
     </div>
   </div>
 
-  <!-- ===== ДРУЗЬЯ ===== -->
+  <!-- ===== ДРУЗЬЯ (ОБНОВЛЁННЫЕ) ===== -->
   <div class="page friends-page" id="pageFriends">
-    <div class="page-title">Друзья</div>
-    <div class="page-sub">Запросы, входящие и список тиммейтов</div>
-
-    <div class="friends-search">
-      <input type="text" placeholder="Ник или ID игрока" id="friendSearchInput" />
-      <button onclick="searchFriend()"><i class="fas fa-search"></i> Найти</button>
-    </div>
-
     <div class="friends-tabs">
-      <button class="tab active" data-tab="friends" onclick="switchFriendsTab('friends')">Друзья</button>
-      <button class="tab" data-tab="incoming" onclick="switchFriendsTab('incoming')">Входящие</button>
-      <button class="tab" data-tab="outgoing" onclick="switchFriendsTab('outgoing')">Исходящие</button>
+      <button class="tab active" data-tab="friends" onclick="switchFriendsTab('friends')">
+        Друзья <span class="badge" id="friendsBadge">0</span>
+      </button>
+      <button class="tab" data-tab="incoming" onclick="switchFriendsTab('incoming')">
+        Входящие <span class="badge" id="incomingBadge">0</span>
+      </button>
+      <button class="tab" data-tab="outgoing" onclick="switchFriendsTab('outgoing')">
+        Исходящие <span class="badge" id="outgoingBadge">0</span>
+      </button>
     </div>
 
     <div class="friends-counts">
@@ -1509,6 +1630,37 @@
 
     <div class="top-list" id="topList">
       <!-- Заполняется JS -->
+    </div>
+  </div>
+
+  <!-- ===== КОШЕЛЁК (ТОЧНАЯ КОПИЯ) ===== -->
+  <div class="page wallet-page" id="pageWallet">
+    <div class="wallet-balance">
+      <div class="amount">0 ⭐</div>
+      <div class="currency">Telegram Stars</div>
+      <div class="rub-amount">0 ₽</div>
+      <div class="rub-currency">Рубли</div>
+    </div>
+
+    <div class="wallet-actions">
+      <button class="btn-wallet stars" onclick="showToast('info', 'Пополнение', 'Пополнение Stars' )">
+        <i class="fas fa-star"></i> Пополнить Stars
+      </button>
+      <button class="btn-wallet rub" onclick="showToast('info', 'Пополнение', 'Пополнение рублями' )">
+        <i class="fas fa-credit-card"></i> Пополнить рублями
+      </button>
+    </div>
+
+    <div class="promo-block">
+      <span class="promo-label">Промокод</span>
+      <input type="text" placeholder="ПРОМОКОД" id="promoInput" />
+      <button class="btn-apply" onclick="applyPromo()">Применить</button>
+    </div>
+
+    <div class="history-title">ИСТОРИЯ ОПЕРАЦИЙ</div>
+    <div class="history-empty">
+      <i class="fas fa-history"></i>
+      Операций пока нет.
     </div>
   </div>
 
@@ -1561,9 +1713,8 @@
     </div>
   </div>
 
-  <!-- ===== ЗАГЛУШКИ ===== -->
+  <!-- ===== ЗАГЛУШКА ===== -->
   <div class="page" id="pageShop"><div class="placeholder"><i class="fas fa-store"></i><h2>Магазин</h2><p>Здесь будут товары и привилегии.</p></div></div>
-  <div class="page" id="pageWallet"><div class="placeholder"><i class="fas fa-wallet"></i><h2>Кошелёк</h2><p>Ваш баланс и история транзакций.</p></div></div>
 
   <!-- ===== НИЖНЯЯ НАВИГАЦИЯ ===== -->
   <nav class="bottom-nav">
@@ -1791,12 +1942,14 @@
 
   function renderFriendsPage() {
     const data = getFriendsData();
-    const user = getCurrentUser();
     const users = getUsers();
 
     document.getElementById('friendsCount').textContent = data.friends.length;
     document.getElementById('incomingCount').textContent = data.incoming.length;
     document.getElementById('outgoingCount').textContent = data.outgoing.length;
+    document.getElementById('friendsBadge').textContent = data.friends.length;
+    document.getElementById('incomingBadge').textContent = data.incoming.length;
+    document.getElementById('outgoingBadge').textContent = data.outgoing.length;
 
     let list = [];
 
@@ -1855,47 +2008,7 @@
   }
 
   function searchFriend() {
-    const query = document.getElementById('friendSearchInput').value.trim().toLowerCase();
-    if (!query) return renderFriendsPage();
-    const users = getUsers();
-    const results = users.filter(u => u.username.toLowerCase().includes(query) || (u.standoffId || '').includes(query));
-    const container = document.getElementById('friendsListContainer');
-    if (results.length === 0) {
-      container.innerHTML = `<div class="friends-empty"><i class="fas fa-search"></i>Ничего не найдено</div>`;
-      return;
-    }
-    container.innerHTML = results.map(u => {
-      const initial = u.username.charAt(0).toUpperCase();
-      const data = getFriendsData();
-      const isFriend = data.friends.includes(u.id);
-      const isIncoming = data.incoming.includes(u.id);
-      const isOutgoing = data.outgoing.includes(u.id);
-      let actions = '';
-      if (u.id === getCurrentUser()?.id) {
-        actions = `<span style="color:#666;font-size:12px;">Это вы</span>`;
-      } else if (isFriend) {
-        actions = `<button class="btn-action" onclick="removeFriend('${u.id}')">Удалить</button>`;
-      } else if (isIncoming) {
-        actions = `
-          <button class="btn-action accept" onclick="acceptFriend('${u.id}')"><i class="fas fa-check"></i> Принять</button>
-          <button class="btn-action decline" onclick="declineFriend('${u.id}')"><i class="fas fa-times"></i></button>
-        `;
-      } else if (isOutgoing) {
-        actions = `<button class="btn-action decline" onclick="cancelFriendRequest('${u.id}')">Отменить</button>`;
-      } else {
-        actions = `<button class="btn-action" onclick="sendFriendRequest('${u.id}')">Добавить</button>`;
-      }
-      return `
-        <div class="friend-item">
-          <div class="avatar">${initial}</div>
-          <div class="info">
-            <div class="name">${u.username}</div>
-            <div class="sub">ID: ${u.standoffId || '—'}</div>
-          </div>
-          ${actions}
-        </div>
-      `;
-    }).join('');
+    // Убрано поле поиска
   }
 
   // ===== ДЕЙСТВИЯ С ДРУЗЬЯМИ =====
@@ -1977,6 +2090,15 @@
         </div>
       `;
     }).join('');
+  }
+
+  // ===== ПРОМОКОД =====
+  function applyPromo() {
+    const input = document.getElementById('promoInput');
+    const code = input.value.trim().toUpperCase();
+    if (!code) return showToast('error', 'Ошибка', 'Введите промокод');
+    showToast('success', 'Промокод применён!', 'Промокод ' + code + ' активирован');
+    input.value = '';
   }
 
   // ===== ОЧЕРЕДЬ =====
