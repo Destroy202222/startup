@@ -6,14 +6,18 @@
   <title>Faceit 5x5</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
   <style>
+    /* ===== БАЗОВЫЕ СБРОСЫ ===== */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: #0a0a0a;
-      color: #fff;
-      font-family: 'Segoe UI', system-ui, sans-serif;
+      color: #ffffff;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       padding-bottom: 70px;
       min-height: 100vh;
+      line-height: 1.4;
     }
+
+    /* ===== ШАПКА (ЛОГОТИП) ===== */
     .header {
       background: #0a0a0a;
       border-bottom: 2px solid #ff7b00;
@@ -31,6 +35,7 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       display: inline-block;
+      letter-spacing: 0.3px;
     }
     .logo .badge {
       background: #ff7b00;
@@ -41,6 +46,7 @@
       border-radius: 30px;
       -webkit-text-fill-color: #000;
       margin-left: 4px;
+      vertical-align: middle;
     }
     .logo .sub {
       display: block;
@@ -49,27 +55,100 @@
       -webkit-text-fill-color: #666;
       letter-spacing: 2px;
       margin-top: 2px;
+      font-weight: 600;
     }
 
+    /* ===== СТРАНИЦЫ ===== */
     .page {
       display: none;
       max-width: 1000px;
-      margin: 0 auto;
-      padding: 10px 16px 30px;
+      margin: 24px auto 0;
+      padding: 0 16px 30px;
+      animation: fade 0.3s ease;
     }
     .page.active { display: block; }
-
-    /* Главное меню – просто скриншот */
-    .home-screenshot {
-      width: 100%;
-      max-width: 900px;
-      margin: 0 auto;
-      display: block;
-      border-radius: 12px;
-      border: 1px solid #2a2a2a;
+    @keyframes fade {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
     }
 
-    /* Остальные страницы – как раньше */
+    /* ===== ГЛАВНОЕ МЕНЮ (ТОЧНАЯ КОПИЯ ПО ОПИСАНИЮ) ===== */
+    .home-hero {
+      text-align: center;
+      max-width: 750px;
+      margin: 0 auto;
+    }
+
+    /* Оранжевый бейдж " #1 Faceit 5x5 Standoff 2 " */
+    .orange-badge {
+      background: #ff7b00;
+      color: #ffffff;
+      display: inline-block;
+      padding: 6px 24px 5px;
+      border-radius: 60px;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      box-shadow: 0 0 30px rgba(255,123,0,0.3);
+      margin-bottom: 18px;
+    }
+
+    /* Большой заголовок */
+    .main-title {
+      font-size: 44px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #ff7b00, #ffb347);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    /* Описание */
+    .desc {
+      font-size: 17px;
+      color: #b0b0b0;
+      line-height: 1.7;
+      max-width: 600px;
+      margin: 0 auto 32px;
+      font-weight: 400;
+    }
+    .desc strong {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    /* Блоки статистики (два блока) */
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+    .stat-block {
+      background: #141414;
+      border-radius: 20px;
+      padding: 18px 30px;
+      border: 1px solid #2a2a2a;
+      min-width: 140px;
+      text-align: center;
+    }
+    .stat-block .number {
+      font-size: 32px;
+      font-weight: 900;
+      color: #ff7b00;
+    }
+    .stat-block .label {
+      font-size: 14px;
+      color: #888;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    /* ===== ОСТАЛЬНЫЕ СТРАНИЦЫ ===== */
     .search-title {
       font-size: 32px;
       font-weight: 900;
@@ -267,6 +346,16 @@
     .rank-cell.active { border-color: #ffd700; background: rgba(255,215,0,0.08); }
     .rank-cell.active .name { color: #ffd700; }
 
+    /* ===== СТРАНИЦЫ-ЗАГЛУШКИ ===== */
+    .placeholder {
+      text-align: center;
+      padding: 50px 0;
+      color: #888;
+    }
+    .placeholder i { font-size: 40px; color: #ff7b00; display: block; margin-bottom: 10px; }
+    .placeholder h2 { font-size: 22px; font-weight: 800; color: #fff; }
+
+    /* ===== НИЖНЯЯ НАВИГАЦИЯ (КОМПАКТНАЯ) ===== */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -308,10 +397,7 @@
       border-radius: 2px;
     }
 
-    .placeholder { text-align: center; padding: 50px 0; color: #888; }
-    .placeholder i { font-size: 40px; color: #ff7b00; display: block; margin-bottom: 10px; }
-    .placeholder h2 { font-size: 22px; font-weight: 800; color: #fff; }
-
+    /* ===== TOAST ===== */
     .toast {
       position: fixed;
       bottom: 80px;
@@ -334,6 +420,7 @@
     .toast .ttl.info { color: #ff7b00; }
     .toast .txt { color: #aaa; font-size: 14px; }
 
+    /* ===== АВТОРИЗАЦИЯ ===== */
     .auth-page {
       display: flex;
       justify-content: center;
@@ -389,6 +476,8 @@
     .auth-box .link a:hover { text-decoration: underline; }
 
     @media (max-width: 768px) {
+      .main-title { font-size: 32px; }
+      .orange-badge { font-size: 13px; padding: 4px 16px; }
       .search-title { font-size: 26px; }
       .search-box { padding: 22px 16px; }
       .search-box .btn-queue { font-size: 15px; padding: 10px 24px; }
@@ -398,12 +487,18 @@
       .profile-header { flex-direction: column; text-align: center; }
       .profile-stats { grid-template-columns: 1fr 1fr; }
       .rank-grid { grid-template-columns: repeat(5, 1fr); }
+      .stat-block { padding: 14px 20px; min-width: 100px; }
+      .stat-block .number { font-size: 26px; }
     }
     @media (max-width: 480px) {
+      .main-title { font-size: 26px; }
+      .orange-badge { font-size: 11px; padding: 3px 12px; }
       .search-title { font-size: 20px; }
       .search-box .btn-queue { font-size: 13px; padding: 8px 16px; }
       .counter .num { font-size: 18px; }
       .rank-grid { grid-template-columns: repeat(2, 1fr); }
+      .stat-block .number { font-size: 22px; }
+      .stat-block .label { font-size: 11px; }
     }
   </style>
 </head>
@@ -446,9 +541,26 @@
     </div>
   </header>
 
-  <!-- ===== ГЛАВНОЕ МЕНЮ – ПРОСТО СКРИНШОТ ===== -->
+  <!-- ===== ГЛАВНОЕ МЕНЮ (НОВАЯ КОПИЯ) ===== -->
   <div class="page active" id="pageHome">
-    <img src="IMG_0274.webp" alt="Главное меню" class="home-screenshot" />
+    <div class="home-hero">
+      <div class="orange-badge">#1 Faceit 5x5 Standoff 2</div>
+      <div class="main-title">Faceit 5x5 Arena</div>
+      <p class="desc">
+        Быстрый поиск матчей, рейтинговая система и еженедельные турниры для настоящих бойцов.<br/>
+        Собирай команду, поднимайся в рейтинге и становись частью сильного соревновательного комьюнити <strong>Faceit 5x5</strong>.
+      </p>
+      <div class="stats-row">
+        <div class="stat-block">
+          <div class="number" id="usersCount">0</div>
+          <div class="label">Зарегистрировано</div>
+        </div>
+        <div class="stat-block">
+          <div class="number" id="tournamentsCount">0</div>
+          <div class="label">Проведено турниров</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ===== ПОИСК МАТЧА ===== -->
@@ -740,6 +852,14 @@
     }).join('');
   }
 
+  // ===== СТАТИСТИКА ГЛАВНОЙ =====
+  function updateHomeStats() {
+    const users = getUsers();
+    document.getElementById('usersCount').textContent = users.length;
+    // Для турниров можно использовать отдельный счётчик, пока ставим 0
+    document.getElementById('tournamentsCount').textContent = '0';
+  }
+
   // ===== TOAST =====
   function showToast(type, title, text) {
     const toast = document.getElementById('toast');
@@ -759,6 +879,7 @@
     if (user) {
       document.getElementById('authPage').style.display = 'none';
       document.getElementById('mainSite').style.display = 'block';
+      updateHomeStats();
       updateProfile();
       updateQueueUI();
       if (currentMatch) {
@@ -786,7 +907,10 @@
       saveUsers(users);
     }
     checkAuth();
-    setInterval(() => { if (!currentMatch) updateQueueUI(); }, 5000);
+    setInterval(() => {
+      if (!currentMatch) updateQueueUI();
+      updateHomeStats();
+    }, 5000);
   });
 </script>
 </body>
