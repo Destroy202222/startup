@@ -22,46 +22,13 @@
       --gradient-start: #ff7b00;
       --gradient-end: #ffb347;
       --gold: #ffd700;
-      --silver: #c0c0c0;
-      --bronze: #cd7f32;
-    }
-    body[data-theme="red"] {
-      --primary: #e03131;
-      --primary-hover: #fa5252;
-      --primary-glow: rgba(224,49,49,0.25);
-      --gradient-start: #e03131;
-      --gradient-end: #fa5252;
-      --shadow-color: rgba(224,49,49,0.15);
-    }
-    body[data-theme="green"] {
-      --primary: #2b8a3e;
-      --primary-hover: #40c057;
-      --primary-glow: rgba(43,138,62,0.25);
-      --gradient-start: #2b8a3e;
-      --gradient-end: #40c057;
-      --shadow-color: rgba(43,138,62,0.15);
-    }
-    body[data-theme="black"] {
-      --primary: #ffffff;
-      --primary-hover: #cccccc;
-      --primary-glow: rgba(255,255,255,0.15);
-      --gradient-start: #ffffff;
-      --gradient-end: #888888;
-      --shadow-color: rgba(255,255,255,0.1);
-      --bg-main: #0d0d0d;
-      --bg-card: rgba(20,20,20,0.95);
-      --border-color: rgba(255,255,255,0.06);
-      --text-primary: #ffffff;
-      --text-secondary: #aaaaaa;
-      --text-muted: #666666;
     }
     * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',system-ui,sans-serif; }
     body {
       background: var(--bg-main);
       color: var(--text-primary);
       min-height:100vh;
-      transition: background .3s,color .3s;
-      padding-bottom: 80px; /* отступ для нижней навигации */
+      padding-bottom: 90px; /* отступ для увеличенной нижней навигации */
     }
     .main-wrapper { position:relative; z-index:1; min-height:100vh; }
 
@@ -69,7 +36,7 @@
     .header {
       background: var(--bg-main);
       border-bottom:2px solid var(--primary);
-      padding:.6rem 1rem;
+      padding:.8rem 1rem;
       text-align:center;
       position:sticky;
       top:0;
@@ -175,7 +142,7 @@
       display:none;
       max-width:1300px;
       margin:2rem auto;
-      padding:0 1rem 2rem;
+      padding:0 1.5rem 2rem;
       animation:fadeIn .4s ease;
       position:relative;
       z-index:2;
@@ -183,14 +150,14 @@
     .page-content.active { display:block; }
     @keyframes fadeIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
 
-    /* ===== ГЛАВНОЕ МЕНЮ (как на скриншоте) ===== */
+    /* ===== ГЛАВНОЕ МЕНЮ (точная копия скриншота) ===== */
     .home-hero {
       max-width:900px;
       margin:0 auto;
       text-align:center;
     }
     .home-hero .main-title {
-      font-size:3rem;
+      font-size:3.2rem;
       font-weight:900;
       letter-spacing:2px;
       color:var(--text-primary);
@@ -204,11 +171,11 @@
       display:inline-block;
     }
     .home-hero .sub-title {
-      font-size:1.8rem;
+      font-size:2rem;
       font-weight:900;
       color:var(--primary);
       text-transform:uppercase;
-      letter-spacing:4px;
+      letter-spacing:6px;
       margin-bottom:1.5rem;
     }
     .home-hero .description {
@@ -223,7 +190,7 @@
       background:var(--bg-card);
       backdrop-filter:blur(8px);
       border-radius:24px;
-      padding:2rem;
+      padding:2rem 2rem;
       border:1px solid var(--border-color);
       margin-bottom:2rem;
       text-align:left;
@@ -232,21 +199,21 @@
       margin-right:auto;
     }
     .home-hero .prize-block .prize-title {
-      font-size:1.2rem;
+      font-size:1.3rem;
       font-weight:800;
       color:var(--primary);
       text-transform:uppercase;
       letter-spacing:1px;
-      margin-bottom:1rem;
+      margin-bottom:1.2rem;
       text-align:center;
     }
     .home-hero .prize-block .prize-item {
       display:flex;
       justify-content:space-between;
-      padding:.4rem 0;
+      padding:.5rem 0;
       border-bottom:1px solid var(--border-color);
       font-weight:600;
-      font-size:0.95rem;
+      font-size:1rem;
       color:var(--text-secondary);
     }
     .home-hero .prize-block .prize-item:last-child {
@@ -270,10 +237,10 @@
     .btn-action {
       background:linear-gradient(45deg,var(--gradient-start),var(--gradient-end));
       color:var(--bg-main);
-      padding:.8rem 2rem;
+      padding:.85rem 2.2rem;
       border-radius:60px;
       font-weight:800;
-      font-size:1rem;
+      font-size:1.1rem;
       border:none;
       cursor:pointer;
       transition:.3s;
@@ -297,9 +264,9 @@
       box-shadow:0 0 20px var(--primary-glow);
     }
 
-    /* ===== СТРАНИЦА ПОИСКА МАТЧА (как на скриншоте) ===== */
+    /* ===== СТРАНИЦА ПОИСКА МАТЧА (точная копия скриншота) ===== */
     .match-search-page .page-title {
-      font-size:2.2rem;
+      font-size:2.4rem;
       font-weight:900;
       text-align:center;
       background:linear-gradient(45deg,var(--gradient-start),var(--gradient-end));
@@ -310,33 +277,37 @@
     .match-search-page .sub-title {
       text-align:center;
       color:var(--text-secondary);
-      font-size:1rem;
+      font-size:1.1rem;
       margin-bottom:2rem;
       font-weight:500;
+      max-width:700px;
+      margin-left:auto;
+      margin-right:auto;
     }
     .match-search-page .search-status {
       background:var(--bg-card);
       backdrop-filter:blur(8px);
       border-radius:24px;
-      padding:2rem;
+      padding:2.5rem 2rem;
       border:1px solid var(--border-color);
       max-width:600px;
       margin:0 auto;
       text-align:center;
     }
     .match-search-page .search-status .status-label {
-      font-size:1.2rem;
+      font-size:1.3rem;
       font-weight:700;
-      color:var(--text-secondary);
+      color:var(--text-primary);
       margin-bottom:1rem;
+      letter-spacing:0.5px;
     }
     .match-search-page .search-status .btn-queue {
       background:linear-gradient(45deg,var(--gradient-start),var(--gradient-end));
       color:var(--bg-main);
-      padding:.8rem 2.5rem;
+      padding:.9rem 3rem;
       border-radius:60px;
       font-weight:800;
-      font-size:1.1rem;
+      font-size:1.2rem;
       border:none;
       cursor:pointer;
       box-shadow:0 0 30px var(--primary-glow);
@@ -362,30 +333,35 @@
       cursor:not-allowed;
       transform:none;
     }
+    .match-search-page .search-status .search-type {
+      color:var(--text-secondary);
+      font-size:0.95rem;
+      margin:0.8rem 0 1.2rem 0;
+      font-weight:500;
+    }
     .match-search-page .search-status .counters {
       display:flex;
       justify-content:space-around;
-      margin-top:1.5rem;
       gap:1rem;
       flex-wrap:wrap;
+      margin-top:0.5rem;
     }
     .match-search-page .search-status .counter-item {
       background:var(--bg-input);
       border-radius:16px;
       padding:.6rem 1.2rem;
       border:1px solid var(--border-color);
-      min-width:120px;
+      min-width:140px;
     }
     .match-search-page .search-status .counter-item .number {
-      font-size:1.8rem;
+      font-size:2rem;
       font-weight:900;
       color:var(--primary);
     }
     .match-search-page .search-status .counter-item .label {
-      font-size:0.7rem;
+      font-size:0.8rem;
       color:var(--text-secondary);
       font-weight:600;
-      text-transform:uppercase;
     }
 
     /* ===== СТРАНИЦА МАТЧА (внутри поиска) ===== */
@@ -642,7 +618,7 @@
       display: flex;
       justify-content: space-around;
       align-items: center;
-      padding: 0.6rem 0.2rem;
+      padding: 0.8rem 0.4rem;
       z-index: 1000;
       box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
     }
@@ -651,26 +627,26 @@
       flex-direction: column;
       align-items: center;
       color: var(--text-secondary);
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       font-weight: 600;
       text-decoration: none;
-      padding: 0.2rem 0.3rem;
+      padding: 0.2rem 0.4rem;
       border: none;
       background: none;
       cursor: pointer;
       transition: .3s;
-      min-width: 44px;
+      min-width: 50px;
       position: relative;
     }
     .bottom-nav .nav-item i {
-      font-size: 1.6rem;
-      margin-bottom: 0.1rem;
+      font-size: 1.8rem;
+      margin-bottom: 0.15rem;
       transition: .3s;
     }
     .bottom-nav .nav-item span {
       display: block;
       line-height: 1.2;
-      font-size: 0.65rem;
+      font-size: 0.7rem;
     }
     .bottom-nav .nav-item.active {
       color: var(--primary);
@@ -695,7 +671,7 @@
     /* ===== TOAST ===== */
     .toast {
       position:fixed;
-      bottom:90px;
+      bottom:100px;
       left:50%;
       transform:translateX(-50%) translateY(100px);
       background:var(--bg-card);
@@ -726,11 +702,12 @@
       .profile-info .sfp-block { justify-content:center; flex-wrap:wrap; }
       .profile-stats { grid-template-columns:1fr 1fr; }
       .rank-grid { grid-template-columns:repeat(5,1fr); }
-      .home-hero .main-title { font-size:2.2rem; }
-      .home-hero .sub-title { font-size:1.4rem; }
-      .bottom-nav .nav-item i { font-size:1.4rem; }
-      .bottom-nav .nav-item span { font-size:0.6rem; }
+      .home-hero .main-title { font-size:2.4rem; }
+      .home-hero .sub-title { font-size:1.6rem; }
+      .bottom-nav .nav-item i { font-size:1.6rem; }
+      .bottom-nav .nav-item span { font-size:0.65rem; }
       .match-search-page .search-status .counters { flex-direction:column; align-items:center; }
+      .match-search-page .page-title { font-size:2rem; }
     }
     @media (max-width:500px) {
       .profile-stats { grid-template-columns:1fr 1fr; }
@@ -740,9 +717,10 @@
       .home-hero .main-title { font-size:1.8rem; }
       .home-hero .sub-title { font-size:1.2rem; }
       .home-hero .prize-block .prize-item { font-size:0.8rem; flex-wrap:wrap; gap:0.3rem; }
-      .bottom-nav .nav-item i { font-size:1.2rem; }
-      .bottom-nav .nav-item span { font-size:0.5rem; }
+      .bottom-nav .nav-item i { font-size:1.4rem; }
+      .bottom-nav .nav-item span { font-size:0.55rem; }
       .match-search-page .page-title { font-size:1.6rem; }
+      .match-search-page .search-status { padding:1.5rem 1rem; }
     }
   </style>
 </head>
@@ -821,7 +799,7 @@
 
       <div class="search-status">
         <div class="status-label">Статус поиска</div>
-        <div style="margin-bottom:1rem;">
+        <div style="margin-bottom:0.5rem;">
           <button class="btn-queue" id="queueBtn" onclick="addBotToQueue()">
             <i class="fas fa-plus"></i> Найти матч
           </button>
@@ -829,7 +807,7 @@
             <i class="fas fa-times"></i> Выйти
           </button>
         </div>
-        <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:0.5rem;">Одиночный поиск матча.</p>
+        <div class="search-type">Одиночный поиск матча.</div>
 
         <div class="counters">
           <div class="counter-item">
@@ -963,9 +941,6 @@
       </button>
     </nav>
 
-    <footer class="footer" style="display:none;">
-      <!-- футер скрыт, так как не нужен -->
-    </footer>
   </div>
 </div>
 
@@ -1132,7 +1107,6 @@
   function updateQueueUI() {
     const count = queue.length;
     document.getElementById('queuePlayersCount').textContent = count;
-    // Количество игроков в матче – если матч идёт, то общее количество игроков, иначе 0
     const matchPlayers = currentMatch ? (currentMatch.terrorists.length + currentMatch.ct.length) : 0;
     document.getElementById('matchPlayersCount').textContent = matchPlayers;
 
