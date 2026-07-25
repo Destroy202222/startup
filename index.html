@@ -277,6 +277,7 @@
       border: 1px solid rgba(255,255,255,0.04);
       text-align: center;
       margin-bottom: 14px;
+      transition: all 0.3s ease;
     }
     .search-main-block .label {
       font-size: 18px;
@@ -284,6 +285,14 @@
       color: #fff;
       margin-bottom: 12px;
       letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .search-main-block .label i {
+      color: #ff7b00;
+      font-size: 20px;
     }
     .search-main-block .btn-queue {
       background: linear-gradient(135deg, #ff7b00, #ffb347);
@@ -329,6 +338,7 @@
       justify-content: center;
       gap: 16px;
       flex-wrap: wrap;
+      transition: all 0.3s ease;
     }
     .search-counter {
       background: rgba(26, 26, 34, 0.6);
@@ -356,6 +366,37 @@
       margin-top: 2px;
     }
 
+    /* Режим поиска (скрываем всё, показываем только счётчик и таймер) */
+    .search-main-block.searching .label,
+    .search-main-block.searching .btn-queue,
+    .search-main-block.searching .search-type,
+    .search-main-block.searching .search-counters {
+      display: none !important;
+    }
+    .search-main-block.searching .search-progress {
+      display: block !important;
+    }
+
+    .search-progress {
+      display: none;
+      padding: 10px 0;
+    }
+    .search-progress .progress-text {
+      font-size: 38px;
+      font-weight: 900;
+      color: #ff7b00;
+      letter-spacing: 1px;
+    }
+    .search-progress .progress-timer {
+      font-size: 16px;
+      color: #888;
+      margin-top: 4px;
+    }
+    .search-progress .progress-timer span {
+      color: #fff;
+      font-weight: 600;
+    }
+
     /* Блок "Играть в пати" */
     .party-block {
       background: rgba(20, 20, 28, 0.7);
@@ -378,6 +419,7 @@
     }
     .party-block .party-title i {
       color: #ff7b00;
+      font-size: 20px;
     }
     .party-block .party-sub {
       color: #888;
@@ -603,7 +645,7 @@
     .player .status { margin-left: auto; font-size: 9px; color: #51cf66; }
     .match-actions { text-align: center; margin-top: 16px; }
 
-    /* ===== ДРУЗЬЯ (ОБНОВЛЁННЫЕ) ===== */
+    /* ===== ДРУЗЬЯ ===== */
     .friends-page .friends-tabs {
       display: flex;
       gap: 12px;
@@ -763,7 +805,7 @@
       margin-bottom: 8px;
     }
 
-    /* ===== КОШЕЛЁК (ТОЧНАЯ КОПИЯ) ===== */
+    /* ===== КОШЕЛЁК ===== */
     .wallet-page .wallet-balance {
       text-align: center;
       padding: 20px 0 16px;
@@ -1385,6 +1427,7 @@
       .search-main-block .btn-queue { font-size: 16px; padding: 12px 28px; }
       .search-counter { min-width: 80px; padding: 4px 12px; }
       .search-counter .num { font-size: 20px; }
+      .search-progress .progress-text { font-size: 30px; }
       .party-block .party-code-display .code-box { font-size: 16px; padding: 4px 12px; }
       .chart-container { height: 70px; gap: 3px; }
       .chart-bar { width: 8px; }
@@ -1410,6 +1453,7 @@
       .search-title { font-size: 20px; }
       .search-main-block .btn-queue { font-size: 14px; padding: 10px 20px; }
       .search-counter .num { font-size: 18px; }
+      .search-progress .progress-text { font-size: 24px; }
       .party-block .party-add input { width: 80px; }
       .party-block .party-code-display .code-box { font-size: 14px; padding: 4px 10px; }
       .chart-container { height: 50px; gap: 2px; }
@@ -1526,10 +1570,12 @@
       <div class="search-title">Поиск матча Standoff 2</div>
       <p class="search-sub">Играй соло или вместе с друзьями. Создай пати, поделись кодом и заходите в матч одной группой.</p>
 
-      <div class="search-main-block">
-        <div class="label">Статус поиска</div>
-        <div style="margin-bottom:4px;">
-          <button class="btn-queue" id="queueBtn" onclick="addBot()">
+      <div class="search-main-block" id="searchMainBlock">
+        <div class="label">
+          <i class="fas fa-crosshairs"></i> Статус поиска
+        </div>
+        <div>
+          <button class="btn-queue" id="queueBtn" onclick="startSearch()">
             <i class="fas fa-search"></i> Поиск матча
           </button>
           <button class="btn-queue leave" id="leaveBtn" onclick="leaveQueue()" style="display:none; margin-left:10px;">
@@ -1537,7 +1583,8 @@
           </button>
         </div>
         <div class="search-type">Одиночный поиск матча.</div>
-        <div class="search-counters">
+
+        <div class="search-counters" id="searchCounters">
           <div class="search-counter">
             <div class="num" id="matchCount">0</div>
             <div class="lbl">Игроков в матче</div>
@@ -1546,6 +1593,12 @@
             <div class="num" id="queueCount">0</div>
             <div class="lbl">Игроков в очереди</div>
           </div>
+        </div>
+
+        <!-- Прогресс поиска (появляется после нажатия) -->
+        <div class="search-progress" id="searchProgress">
+          <div class="progress-text" id="progressText">0/10</div>
+          <div class="progress-timer">⏱️ <span id="searchTimer">00:00</span></div>
         </div>
       </div>
 
@@ -1593,7 +1646,7 @@
     </div>
   </div>
 
-  <!-- ===== ДРУЗЬЯ (ОБНОВЛЁННЫЕ) ===== -->
+  <!-- ===== ДРУЗЬЯ ===== -->
   <div class="page friends-page" id="pageFriends">
     <div class="friends-tabs">
       <button class="tab active" data-tab="friends" onclick="switchFriendsTab('friends')">
@@ -1633,7 +1686,7 @@
     </div>
   </div>
 
-  <!-- ===== КОШЕЛЁК (ТОЧНАЯ КОПИЯ) ===== -->
+  <!-- ===== КОШЕЛЁК ===== -->
   <div class="page wallet-page" id="pageWallet">
     <div class="wallet-balance">
       <div class="amount">0 ⭐</div>
@@ -1643,10 +1696,10 @@
     </div>
 
     <div class="wallet-actions">
-      <button class="btn-wallet stars" onclick="showToast('info', 'Пополнение', 'Пополнение Stars' )">
+      <button class="btn-wallet stars" onclick="showToast('info', 'Пополнение', 'Пополнение Stars')">
         <i class="fas fa-star"></i> Пополнить Stars
       </button>
-      <button class="btn-wallet rub" onclick="showToast('info', 'Пополнение', 'Пополнение рублями' )">
+      <button class="btn-wallet rub" onclick="showToast('info', 'Пополнение', 'Пополнение рублями')">
         <i class="fas fa-credit-card"></i> Пополнить рублями
       </button>
     </div>
@@ -1735,6 +1788,9 @@
   let botCounter = 0;
   let partyFriends = [];
   let friendsTab = 'friends';
+  let isSearching = false;
+  let searchTimerInterval = null;
+  let searchSeconds = 0;
 
   // ===== ГЕНЕРАЦИЯ КОДА =====
   function generateCode() {
@@ -1932,6 +1988,148 @@
     });
   }
 
+  // ===== ПОИСК МАТЧА (С ТАЙМЕРОМ) =====
+  function startSearch() {
+    if (isSearching) return;
+    if (currentMatch) return showToast('info', 'Идёт матч', 'Дождитесь окончания');
+
+    const user = getCurrentUser();
+    if (!user) return showToast('error', 'Ошибка', 'Авторизуйтесь');
+
+    // Добавляем пользователя в очередь
+    if (!queue.some(p => p.id === user.id)) {
+      queue.push({ id: user.id, username: user.username });
+    }
+
+    isSearching = true;
+    searchSeconds = 0;
+
+    // Переключаем блок в режим поиска
+    const block = document.getElementById('searchMainBlock');
+    block.classList.add('searching');
+
+    // Обновляем счётчик
+    updateProgressText();
+
+    // Запускаем таймер
+    if (searchTimerInterval) clearInterval(searchTimerInterval);
+    searchTimerInterval = setInterval(() => {
+      searchSeconds++;
+      const mins = String(Math.floor(searchSeconds / 60)).padStart(2, '0');
+      const secs = String(searchSeconds % 60).padStart(2, '0');
+      document.getElementById('searchTimer').textContent = mins + ':' + secs;
+    }, 1000);
+
+    // Скрываем кнопку "Найти матч", показываем "Выйти"
+    document.getElementById('queueBtn').style.display = 'none';
+    document.getElementById('leaveBtn').style.display = 'inline-flex';
+
+    showToast('info', 'Поиск начат', 'Ищем игроков...');
+
+    // Симуляция добавления ботов (для демонстрации)
+    setTimeout(() => {
+      if (isSearching && queue.length < 10) {
+        const botName = 'Bot' + (botCounter + 1);
+        botCounter++;
+        queue.push({ id: 'bot_' + Date.now(), username: botName });
+        updateProgressText();
+        showToast('info', 'Игрок найден', botName + ' присоединился к поиску (' + queue.length + '/10)');
+        if (queue.length === 10) {
+          clearInterval(searchTimerInterval);
+          isSearching = false;
+          document.getElementById('searchMainBlock').classList.remove('searching');
+          document.getElementById('queueBtn').style.display = 'inline-flex';
+          document.getElementById('leaveBtn').style.display = 'none';
+          startMatch();
+        }
+      }
+    }, 2000);
+  }
+
+  function updateProgressText() {
+    document.getElementById('progressText').textContent = queue.length + '/10';
+  }
+
+  function leaveQueue() {
+    const user = getCurrentUser();
+    if (!user) return;
+    const idx = queue.findIndex(p => p.id === user.id);
+    if (idx === -1) { updateQueueUI(); return; }
+    queue.splice(idx, 1);
+
+    if (isSearching) {
+      isSearching = false;
+      clearInterval(searchTimerInterval);
+      document.getElementById('searchMainBlock').classList.remove('searching');
+      document.getElementById('queueBtn').style.display = 'inline-flex';
+      document.getElementById('leaveBtn').style.display = 'none';
+      document.getElementById('searchTimer').textContent = '00:00';
+      showToast('info', 'Поиск отменён', 'Вы вышли из поиска');
+    }
+
+    updateQueueUI();
+  }
+
+  function updateQueueUI() {
+    const count = queue.length;
+    document.getElementById('queueCount').textContent = count;
+    const matchPlayers = currentMatch ? (currentMatch.terrorists.length + currentMatch.ct.length) : 0;
+    document.getElementById('matchCount').textContent = matchPlayers;
+    if (!isSearching && !currentMatch) {
+      document.getElementById('queueBtn').style.display = 'inline-flex';
+      document.getElementById('leaveBtn').style.display = 'none';
+    }
+  }
+
+  // ===== МАТЧ =====
+  function startMatch() {
+    const shuffled = [...queue];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    const half = Math.floor(shuffled.length / 2);
+    const terrorists = shuffled.slice(0, half);
+    const ct = shuffled.slice(half);
+    currentMatch = { terrorists, ct };
+    queue = [];
+
+    document.getElementById('searchMainBlock').classList.remove('searching');
+    document.getElementById('queueBtn').style.display = 'inline-flex';
+    document.getElementById('leaveBtn').style.display = 'none';
+
+    navigate('matches');
+    document.getElementById('matchContainer').style.display = 'block';
+    document.querySelector('.search-main-block').style.display = 'none';
+    document.querySelector('.party-block').style.display = 'none';
+    renderMatch();
+    updateQueueUI();
+    showToast('success', 'Матч начался!', `${terrorists.length + ct.length} игроков в игре`);
+  }
+
+  function renderMatch() {
+    if (!currentMatch) return;
+    const t = document.getElementById('teamT');
+    const ct = document.getElementById('teamCT');
+    t.innerHTML = currentMatch.terrorists.map(p => `
+      <div class="player"><div class="avatar">${p.username.charAt(0).toUpperCase()}</div><span class="name">${p.username}</span><span class="status"><i class="fas fa-circle"></i> онлайн</span></div>
+    `).join('') || '<p style="color:#888;text-align:center;padding:8px 0;">Нет игроков</p>';
+    ct.innerHTML = currentMatch.ct.map(p => `
+      <div class="player"><div class="avatar">${p.username.charAt(0).toUpperCase()}</div><span class="name">${p.username}</span><span class="status"><i class="fas fa-circle"></i> онлайн</span></div>
+    `).join('') || '<p style="color:#888;text-align:center;padding:8px 0;">Нет игроков</p>';
+  }
+
+  function endMatch() {
+    if (!confirm('Завершить матч?')) return;
+    currentMatch = null;
+    document.getElementById('matchContainer').style.display = 'none';
+    document.querySelector('.search-main-block').style.display = 'block';
+    document.querySelector('.party-block').style.display = 'block';
+    navigate('matches');
+    updateQueueUI();
+    showToast('info', 'Матч завершён', 'Возврат в поиск');
+  }
+
   // ===== ДРУЗЬЯ (страница) =====
   function switchFriendsTab(tab) {
     friendsTab = tab;
@@ -2005,10 +2203,6 @@
         </div>
       `;
     }).join('');
-  }
-
-  function searchFriend() {
-    // Убрано поле поиска
   }
 
   // ===== ДЕЙСТВИЯ С ДРУЗЬЯМИ =====
@@ -2099,85 +2293,6 @@
     if (!code) return showToast('error', 'Ошибка', 'Введите промокод');
     showToast('success', 'Промокод применён!', 'Промокод ' + code + ' активирован');
     input.value = '';
-  }
-
-  // ===== ОЧЕРЕДЬ =====
-  function addBot() {
-    if (currentMatch) return showToast('info', 'Идёт матч', 'Дождитесь окончания');
-    if (queue.length >= 10) return showToast('error', 'Очередь полна', 'Нажмите позже');
-    botCounter++;
-    const name = `Bot${botCounter}`;
-    queue.push({ id: 'bot_' + Date.now(), username: name });
-    showToast('info', 'Бот добавлен', `${name} (${queue.length}/10)`);
-    updateQueueUI();
-    if (queue.length === 10) startMatch();
-  }
-
-  function leaveQueue() {
-    const user = getCurrentUser();
-    if (!user) return;
-    const idx = queue.findIndex(p => p.id === user.id);
-    if (idx === -1) { updateQueueUI(); return; }
-    queue.splice(idx, 1);
-    showToast('info', 'Вы вышли из очереди', '');
-    updateQueueUI();
-  }
-
-  function updateQueueUI() {
-    const count = queue.length;
-    document.getElementById('queueCount').textContent = count;
-    const matchPlayers = currentMatch ? (currentMatch.terrorists.length + currentMatch.ct.length) : 0;
-    document.getElementById('matchCount').textContent = matchPlayers;
-    const btn = document.getElementById('queueBtn');
-    const leave = document.getElementById('leaveBtn');
-    const user = getCurrentUser();
-    const inQueue = user && queue.some(p => p.id === user.id);
-    btn.disabled = (count >= 10 || currentMatch !== null);
-    if (inQueue) { leave.style.display = 'inline-flex'; } else { leave.style.display = 'none'; }
-  }
-
-  // ===== МАТЧ =====
-  function startMatch() {
-    const shuffled = [...queue];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    const half = Math.floor(shuffled.length / 2);
-    const terrorists = shuffled.slice(0, half);
-    const ct = shuffled.slice(half);
-    currentMatch = { terrorists, ct };
-    queue = [];
-    navigate('matches');
-    document.getElementById('matchContainer').style.display = 'block';
-    document.querySelector('.search-main-block').style.display = 'none';
-    document.querySelector('.party-block').style.display = 'none';
-    renderMatch();
-    updateQueueUI();
-    showToast('success', 'Матч начался!', `${terrorists.length + ct.length} игроков в игре`);
-  }
-
-  function renderMatch() {
-    if (!currentMatch) return;
-    const t = document.getElementById('teamT');
-    const ct = document.getElementById('teamCT');
-    t.innerHTML = currentMatch.terrorists.map(p => `
-      <div class="player"><div class="avatar">${p.username.charAt(0).toUpperCase()}</div><span class="name">${p.username}</span><span class="status"><i class="fas fa-circle"></i> онлайн</span></div>
-    `).join('') || '<p style="color:#888;text-align:center;padding:8px 0;">Нет игроков</p>';
-    ct.innerHTML = currentMatch.ct.map(p => `
-      <div class="player"><div class="avatar">${p.username.charAt(0).toUpperCase()}</div><span class="name">${p.username}</span><span class="status"><i class="fas fa-circle"></i> онлайн</span></div>
-    `).join('') || '<p style="color:#888;text-align:center;padding:8px 0;">Нет игроков</p>';
-  }
-
-  function endMatch() {
-    if (!confirm('Завершить матч?')) return;
-    currentMatch = null;
-    document.getElementById('matchContainer').style.display = 'none';
-    document.querySelector('.search-main-block').style.display = 'block';
-    document.querySelector('.party-block').style.display = 'block';
-    navigate('matches');
-    updateQueueUI();
-    showToast('info', 'Матч завершён', 'Возврат в поиск');
   }
 
   // ===== ПРОФИЛЬ =====
