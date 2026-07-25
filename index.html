@@ -664,14 +664,6 @@
       font-size: 22px;
       font-weight: 900;
     }
-    .friends-page .friends-header .count-badge {
-      font-size: 14px;
-      font-weight: 600;
-      color: #ff7b00;
-      background: rgba(255,123,0,0.1);
-      padding: 2px 12px;
-      border-radius: 30px;
-    }
 
     .friends-page .friends-stats {
       display: flex;
@@ -779,20 +771,7 @@
       margin-left: 4px;
     }
 
-    .friends-page .friends-counts {
-      display: flex;
-      gap: 20px;
-      margin-bottom: 14px;
-      flex-wrap: wrap;
-    }
-    .friends-page .friends-counts .count-item {
-      font-size: 13px;
-      font-weight: 600;
-      color: #888;
-    }
-    .friends-page .friends-counts .count-item span {
-      color: #fff;
-    }
+    /* Убрали строку Друзья (0) Входящие (0) Исходящие (0) */
 
     .friends-page .friends-empty {
       text-align: center;
@@ -870,7 +849,7 @@
       background: rgba(255,123,0,0.25);
     }
 
-    /* ===== КОШЕЛЁК (СЛЕВА И СПРАВА) ===== */
+    /* ===== КОШЕЛЁК (СЛЕВА И СПРАВА С РАЗДЕЛИТЕЛЕМ) ===== */
     .wallet-page .wallet-balance {
       display: flex;
       justify-content: space-between;
@@ -1736,7 +1715,6 @@
   <div class="page friends-page" id="pageFriends">
     <div class="friends-header">
       <span class="title">Друзья</span>
-      <span class="count-badge" style="display:none;">0/100</span>
     </div>
 
     <div class="friends-stats">
@@ -1773,12 +1751,6 @@
       </button>
     </div>
 
-    <div class="friends-counts">
-      <div class="count-item">Друзья (<span id="friendsCount">0</span>)</div>
-      <div class="count-item">Входящие (<span id="incomingCount">0</span>)</div>
-      <div class="count-item">Исходящие (<span id="outgoingCount">0</span>)</div>
-    </div>
-
     <div id="friendsListContainer">
       <div class="friends-empty">
         <i class="fas fa-user-friends"></i>
@@ -1799,7 +1771,7 @@
     </div>
   </div>
 
-  <!-- ===== КОШЕЛЁК (СЛЕВА И СПРАВА) ===== -->
+  <!-- ===== КОШЕЛЁК (СЛЕВА И СПРАВА С РАЗДЕЛИТЕЛЕМ) ===== -->
   <div class="page wallet-page" id="pageWallet">
     <div class="wallet-balance">
       <div class="balance-item">
@@ -2288,9 +2260,6 @@
     document.getElementById('friendsStatIncoming').textContent = data.incoming.length;
     document.getElementById('friendsStatOutgoing').textContent = data.outgoing.length;
 
-    document.getElementById('friendsCount').textContent = data.friends.length;
-    document.getElementById('incomingCount').textContent = data.incoming.length;
-    document.getElementById('outgoingCount').textContent = data.outgoing.length;
     document.getElementById('friendsBadge').textContent = data.friends.length;
     document.getElementById('incomingBadge').textContent = data.incoming.length;
     document.getElementById('outgoingBadge').textContent = data.outgoing.length;
