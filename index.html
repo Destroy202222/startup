@@ -6,18 +6,14 @@
   <title>Faceit 5x5</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
   <style>
-    /* ===== БАЗОВЫЕ СБРОСЫ ===== */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: #0a0a0a;
-      color: #ffffff;
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      color: #fff;
+      font-family: 'Segoe UI', system-ui, sans-serif;
       padding-bottom: 70px;
       min-height: 100vh;
-      line-height: 1.4;
     }
-
-    /* ===== ШАПКА (ЛОГОТИП) ===== */
     .header {
       background: #0a0a0a;
       border-bottom: 2px solid #ff7b00;
@@ -35,7 +31,6 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       display: inline-block;
-      letter-spacing: 0.3px;
     }
     .logo .badge {
       background: #ff7b00;
@@ -46,7 +41,6 @@
       border-radius: 30px;
       -webkit-text-fill-color: #000;
       margin-left: 4px;
-      vertical-align: middle;
     }
     .logo .sub {
       display: block;
@@ -55,57 +49,54 @@
       -webkit-text-fill-color: #666;
       letter-spacing: 2px;
       margin-top: 2px;
-      font-weight: 600;
     }
-
-    /* ===== СТРАНИЦЫ ===== */
     .page {
       display: none;
       max-width: 1000px;
       margin: 24px auto 0;
       padding: 0 16px 30px;
-      animation: fade 0.3s ease;
+      animation: fade .3s ease;
     }
     .page.active { display: block; }
-    @keyframes fade {
-      0% { opacity: 0; transform: translateY(10px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes fade { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
 
-    /* ===== ГЛАВНОЕ МЕНЮ (ТОЧНАЯ КОПИЯ ПО ОПИСАНИЮ) ===== */
+    /* ГЛАВНОЕ МЕНЮ – СОВРЕМЕННЫЙ ДИЗАЙН */
     .home-hero {
       text-align: center;
       max-width: 750px;
       margin: 0 auto;
     }
-
-    /* Оранжевый бейдж " #1 Faceit 5x5 Standoff 2 " */
-    .orange-badge {
-      background: #ff7b00;
-      color: #ffffff;
+    .hero-badge {
       display: inline-block;
-      padding: 6px 24px 5px;
+      background: rgba(255, 123, 0, 0.15);
+      color: #ff7b00;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 6px 20px;
       border-radius: 60px;
-      font-size: 15px;
-      font-weight: 800;
-      letter-spacing: 0.5px;
       text-transform: uppercase;
-      box-shadow: 0 0 30px rgba(255,123,0,0.3);
-      margin-bottom: 18px;
+      border: 1px solid rgba(255, 123, 0, 0.25);
+      margin-bottom: 20px;
+      backdrop-filter: blur(4px);
+      letter-spacing: 0.5px;
     }
-
-    /* Большой заголовок */
     .main-title {
-      font-size: 44px;
+      font-size: 52px;
       font-weight: 900;
-      background: linear-gradient(135deg, #ff7b00, #ffb347);
+      line-height: 1.1;
+      background: linear-gradient(135deg, #ff7b00 0%, #ffb347 50%, #ffd700 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 12px;
-      letter-spacing: -0.5px;
+      margin-bottom: 16px;
+      letter-spacing: -1px;
     }
-
-    /* Описание */
+    .main-subtitle {
+      font-size: 20px;
+      font-weight: 300;
+      color: #aaa;
+      margin-bottom: 24px;
+      letter-spacing: 1px;
+    }
     .desc {
       font-size: 17px;
       color: #b0b0b0;
@@ -114,17 +105,50 @@
       margin: 0 auto 32px;
       font-weight: 400;
     }
-    .desc strong {
-      color: #ffffff;
-      font-weight: 600;
+    .desc strong { color: #fff; font-weight: 600; }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      max-width: 700px;
+      margin: 0 auto 32px;
+    }
+    .feature-item {
+      background: #141414;
+      border-radius: 16px;
+      padding: 20px 16px;
+      border: 1px solid #2a2a2a;
+      transition: .3s;
+    }
+    .feature-item:hover {
+      border-color: #ff7b00;
+      transform: translateY(-4px);
+      box-shadow: 0 8px 30px rgba(255, 123, 0, 0.08);
+    }
+    .feature-item i {
+      font-size: 28px;
+      color: #ff7b00;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .feature-item h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .feature-item p {
+      font-size: 13px;
+      color: #888;
+      line-height: 1.4;
     }
 
-    /* Блоки статистики (два блока) */
     .stats-row {
       display: flex;
       justify-content: center;
       gap: 30px;
       flex-wrap: wrap;
+      margin-top: 4px;
     }
     .stat-block {
       background: #141414;
@@ -148,7 +172,27 @@
       margin-top: 2px;
     }
 
-    /* ===== ОСТАЛЬНЫЕ СТРАНИЦЫ ===== */
+    .btn-start {
+      display: inline-block;
+      background: linear-gradient(135deg, #ff7b00, #ffb347);
+      color: #000;
+      font-size: 18px;
+      font-weight: 800;
+      padding: 14px 44px;
+      border-radius: 60px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 0 30px rgba(255, 123, 0, 0.3);
+      transition: .2s;
+      margin-top: 8px;
+      text-decoration: none;
+    }
+    .btn-start:hover {
+      transform: scale(1.04);
+      box-shadow: 0 0 50px rgba(255, 123, 0, 0.5);
+    }
+
+    /* ПОИСК МАТЧА */
     .search-title {
       font-size: 32px;
       font-weight: 900;
@@ -185,7 +229,7 @@
       border: none;
       cursor: pointer;
       box-shadow: 0 0 25px rgba(255,123,0,0.3);
-      transition: 0.2s;
+      transition: .2s;
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -261,6 +305,7 @@
     .player .status { margin-left: auto; font-size: 11px; color: #51cf66; }
     .match-actions { text-align: center; margin-top: 22px; }
 
+    /* ПРОФИЛЬ */
     .profile-card {
       background: #141414;
       border-radius: 24px;
@@ -346,7 +391,6 @@
     .rank-cell.active { border-color: #ffd700; background: rgba(255,215,0,0.08); }
     .rank-cell.active .name { color: #ffd700; }
 
-    /* ===== СТРАНИЦЫ-ЗАГЛУШКИ ===== */
     .placeholder {
       text-align: center;
       padding: 50px 0;
@@ -355,7 +399,7 @@
     .placeholder i { font-size: 40px; color: #ff7b00; display: block; margin-bottom: 10px; }
     .placeholder h2 { font-size: 22px; font-weight: 800; color: #fff; }
 
-    /* ===== НИЖНЯЯ НАВИГАЦИЯ (КОМПАКТНАЯ) ===== */
+    /* НИЖНЯЯ НАВИГАЦИЯ */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -397,7 +441,6 @@
       border-radius: 2px;
     }
 
-    /* ===== TOAST ===== */
     .toast {
       position: fixed;
       bottom: 80px;
@@ -408,7 +451,7 @@
       border-radius: 16px;
       padding: 10px 24px;
       opacity: 0;
-      transition: 0.4s;
+      transition: .4s;
       z-index: 999;
       text-align: center;
       pointer-events: none;
@@ -420,7 +463,6 @@
     .toast .ttl.info { color: #ff7b00; }
     .toast .txt { color: #aaa; font-size: 14px; }
 
-    /* ===== АВТОРИЗАЦИЯ ===== */
     .auth-page {
       display: flex;
       justify-content: center;
@@ -476,8 +518,8 @@
     .auth-box .link a:hover { text-decoration: underline; }
 
     @media (max-width: 768px) {
-      .main-title { font-size: 32px; }
-      .orange-badge { font-size: 13px; padding: 4px 16px; }
+      .main-title { font-size: 36px; }
+      .features-grid { grid-template-columns: 1fr 1fr; }
       .search-title { font-size: 26px; }
       .search-box { padding: 22px 16px; }
       .search-box .btn-queue { font-size: 15px; padding: 10px 24px; }
@@ -491,14 +533,14 @@
       .stat-block .number { font-size: 26px; }
     }
     @media (max-width: 480px) {
-      .main-title { font-size: 26px; }
-      .orange-badge { font-size: 11px; padding: 3px 12px; }
+      .main-title { font-size: 28px; }
+      .main-subtitle { font-size: 16px; }
+      .features-grid { grid-template-columns: 1fr; }
       .search-title { font-size: 20px; }
       .search-box .btn-queue { font-size: 13px; padding: 8px 16px; }
       .counter .num { font-size: 18px; }
       .rank-grid { grid-template-columns: repeat(2, 1fr); }
       .stat-block .number { font-size: 22px; }
-      .stat-block .label { font-size: 11px; }
     }
   </style>
 </head>
@@ -541,25 +583,53 @@
     </div>
   </header>
 
-  <!-- ===== ГЛАВНОЕ МЕНЮ (НОВАЯ КОПИЯ) ===== -->
+  <!-- ===== ГЛАВНОЕ МЕНЮ (СОВРЕМЕННЫЙ ДИЗАЙН) ===== -->
   <div class="page active" id="pageHome">
     <div class="home-hero">
-      <div class="orange-badge">#1 Faceit 5x5 Standoff 2</div>
-      <div class="main-title">Faceit 5x5 Arena</div>
+      <div class="hero-badge">🔥 Новый сезон</div>
+      <h1 class="main-title">Faceit 5x5 Arena</h1>
+      <p class="main-subtitle">Соревновательный матчмейкинг для Standoff 2</p>
       <p class="desc">
-        Быстрый поиск матчей, рейтинговая система и еженедельные турниры для настоящих бойцов.<br/>
-        Собирай команду, поднимайся в рейтинге и становись частью сильного соревновательного комьюнити <strong>Faceit 5x5</strong>.
+        Играй в формате 5×5 с друзьями или соло. Рейтинговая система, 
+        честный подбор и еженедельные турниры. <strong>Стань лучшим!</strong>
       </p>
+
+      <div class="features-grid">
+        <div class="feature-item">
+          <i class="fas fa-users"></i>
+          <h3>Командные матчи</h3>
+          <p>Собирай пати из 5 человек и сражайся</p>
+        </div>
+        <div class="feature-item">
+          <i class="fas fa-chart-line"></i>
+          <h3>Рейтинг SFP</h3>
+          <p>Поднимайся в рангах от новичка до платины</p>
+        </div>
+        <div class="feature-item">
+          <i class="fas fa-trophy"></i>
+          <h3>Турниры</h3>
+          <p>Участвуй в турнирах с призовым фондом</p>
+        </div>
+      </div>
+
       <div class="stats-row">
         <div class="stat-block">
           <div class="number" id="usersCount">0</div>
-          <div class="label">Зарегистрировано</div>
+          <div class="label">Игроков</div>
+        </div>
+        <div class="stat-block">
+          <div class="number" id="matchesCount">0</div>
+          <div class="label">Матчей сыграно</div>
         </div>
         <div class="stat-block">
           <div class="number" id="tournamentsCount">0</div>
-          <div class="label">Проведено турниров</div>
+          <div class="label">Турниров</div>
         </div>
       </div>
+
+      <button class="btn-start" onclick="navigate('matches')">
+        <i class="fas fa-play"></i> Найти матч
+      </button>
     </div>
   </div>
 
@@ -856,7 +926,11 @@
   function updateHomeStats() {
     const users = getUsers();
     document.getElementById('usersCount').textContent = users.length;
-    // Для турниров можно использовать отдельный счётчик, пока ставим 0
+    // Здесь можно посчитать общее количество матчей и турниров из данных пользователей
+    let totalMatches = 0;
+    users.forEach(u => totalMatches += (u.matches || 0));
+    document.getElementById('matchesCount').textContent = totalMatches;
+    // Турниры пока заглушка
     document.getElementById('tournamentsCount').textContent = '0';
   }
 
