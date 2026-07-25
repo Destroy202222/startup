@@ -389,10 +389,9 @@
 
     .profile-stats {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+      grid-template-columns: repeat(4, 1fr);
       gap: 8px;
       margin: 16px 0 18px;
-      align-items: stretch;
     }
     .stat-item {
       background: rgba(26,26,34,0.6);
@@ -414,65 +413,6 @@
       text-transform: uppercase;
       letter-spacing: 0.3px;
       margin-top: 3px;
-    }
-
-    /* Круговой график Winrate */
-    .winrate-circle-wrap {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      background: rgba(26,26,34,0.6);
-      border-radius: 14px;
-      padding: 4px 12px 4px 6px;
-      border: 1px solid rgba(255,255,255,0.04);
-    }
-    .winrate-circle {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      position: relative;
-      flex-shrink: 0;
-    }
-    .winrate-circle svg {
-      transform: rotate(-90deg);
-      width: 44px;
-      height: 44px;
-    }
-    .winrate-circle .bg {
-      fill: none;
-      stroke: rgba(255,255,255,0.06);
-      stroke-width: 4;
-    }
-    .winrate-circle .progress {
-      fill: none;
-      stroke-width: 4;
-      stroke-linecap: round;
-      transition: stroke-dasharray 0.6s ease, stroke 0.3s ease;
-    }
-    .winrate-circle .center-text {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 11px;
-      font-weight: 800;
-      color: #fff;
-    }
-    .winrate-circle .center-text .win {
-      color: #51cf66;
-    }
-    .winrate-circle .center-text .loss {
-      color: #ff6b6b;
-    }
-    .winrate-circle .center-text .divider {
-      color: #666;
-      font-size: 8px;
-    }
-    .winrate-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: #aaa;
     }
 
     /* Динамика матчей (гистограмма) */
@@ -506,9 +446,9 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-width: 18px;
       height: 100%;
       justify-content: flex-end;
+      min-width: 18px;
     }
     .chart-bar {
       width: 12px;
@@ -722,7 +662,7 @@
       .home-title { font-size: 32px; }
       .profile-header { flex-direction: column; text-align: center; }
       .profile-info .details { justify-content: center; }
-      .profile-stats { grid-template-columns: 1fr 1fr 1fr; }
+      .profile-stats { grid-template-columns: 1fr 1fr; }
       .match-grid { grid-template-columns: 1fr; }
       .search-title { font-size: 26px; }
       .search-box { padding: 22px 16px; }
@@ -744,9 +684,6 @@
       .chart-container { height: 60px; gap: 3px; }
       .chart-bar { width: 6px; }
       .chart-bar-wrap { min-width: 10px; }
-      .winrate-circle { width: 36px; height: 36px; }
-      .winrate-circle svg { width: 36px; height: 36px; }
-      .winrate-circle .center-text { font-size: 9px; }
     }
   </style>
 </head>
@@ -833,7 +770,7 @@
     </div>
   </div>
 
-  <!-- ===== ПРОФИЛЬ С ГРАФИКАМИ ===== -->
+  <!-- ===== ПРОФИЛЬ ===== -->
   <div class="page" id="pageProfile">
     <div class="profile-card">
       <div class="profile-header">
@@ -867,20 +804,6 @@
         <div class="stat-item">
           <div class="value" id="pWr">0%</div>
           <div class="label">Винрейт</div>
-        </div>
-        <div class="stat-item">
-          <div class="winrate-circle-wrap">
-            <div class="winrate-circle" id="winrateCircle">
-              <svg viewBox="0 0 44 44">
-                <circle class="bg" cx="22" cy="22" r="18"/>
-                <circle class="progress" id="winrateArc" cx="22" cy="22" r="18" stroke="#51cf66" stroke-dasharray="0 113"/>
-              </svg>
-              <div class="center-text" id="winrateText">
-                <span class="win" id="wrWin">50</span><span class="divider">/</span><span class="loss" id="wrLoss">50</span>
-              </div>
-            </div>
-            <span class="winrate-label">WR</span>
-          </div>
         </div>
         <div class="stat-item">
           <div class="value" id="pMatches">0</div>
@@ -1103,7 +1026,7 @@
     showToast('info', 'Матч завершён', 'Возврат в поиск');
   }
 
-  // ===== ПРОФИЛЬ С ГРАФИКАМИ =====
+  // ===== ПРОФИЛЬ =====
   function updateProfile() {
     const user = getCurrentUser();
     if (!user) {
@@ -1132,16 +1055,12 @@
     const deaths = user.deaths || 0;
     const matches = user.matches || 0;
     const wins = user.wins || 0;
-    const losses = user.losses || 0;
     const kd = deaths > 0 ? (kills / deaths) : (kills > 0 ? kills : 0);
     const winrate = matches > 0 ? Math.round((wins / matches) * 100) : 0;
     document.getElementById('pKd').textContent = kd.toFixed(2);
     document.getElementById('pWr').textContent = winrate + '%';
     document.getElementById('pMatches').textContent = matches;
     document.getElementById('pMvp').textContent = user.mvp || 0;
-
-    // Круговой график Winrate
-    updateWinrateCircle(winrate);
 
     // Динамика матчей (гистограмма)
     const history = user.matchHistory || [];
@@ -1163,25 +1082,6 @@
     }
   }
 
-  // ===== КРУГОВОЙ ГРАФИК WINRATE =====
-  function updateWinrateCircle(winrate) {
-    const win = winrate || 0;
-    const loss = 100 - win;
-    const circumference = 2 * Math.PI * 18; // r=18
-    const dash = (win / 100) * circumference;
-
-    const arc = document.getElementById('winrateArc');
-    arc.style.strokeDasharray = dash + ' ' + circumference;
-
-    // Меняем цвет в зависимости от винрейта
-    if (win >= 60) arc.style.stroke = '#51cf66';
-    else if (win >= 40) arc.style.stroke = '#ffd700';
-    else arc.style.stroke = '#ff6b6b';
-
-    document.getElementById('wrWin').textContent = Math.round(win);
-    document.getElementById('wrLoss').textContent = Math.round(loss);
-  }
-
   // ===== ГИСТОГРАММА ДИНАМИКИ МАТЧЕЙ =====
   function renderChart(history) {
     const container = document.getElementById('chartContainer');
@@ -1192,14 +1092,15 @@
 
     // Берём последние 15 матчей
     const lastMatches = history.slice(-15);
+    const maxKills = Math.max(1, ...lastMatches.map(m => m.kills || 0));
     const maxHeight = 80;
 
     let html = '';
     lastMatches.forEach((m, index) => {
       const isWin = m.result === 'win';
-      const height = Math.max(8, Math.min(80, (m.kills || 10) * 2));
+      const kills = m.kills || 0;
+      const height = Math.max(8, Math.min(80, (kills / maxKills) * maxHeight));
       const barClass = isWin ? 'win' : 'loss';
-      const label = isWin ? 'W' : 'L';
 
       html += `
         <div class="chart-bar-wrap">
