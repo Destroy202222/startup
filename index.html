@@ -771,8 +771,6 @@
       margin-left: 4px;
     }
 
-    /* Убрали строку Друзья (0) Входящие (0) Исходящие (0) */
-
     .friends-page .friends-empty {
       text-align: center;
       padding: 30px 0;
@@ -849,49 +847,53 @@
       background: rgba(255,123,0,0.25);
     }
 
-    /* ===== КОШЕЛЁК (СЛЕВА И СПРАВА С РАЗДЕЛИТЕЛЕМ) ===== */
+    /* ===== КОШЕЛЁК (ДВА БЛОКА С ОРАНЖЕВОЙ ОБВОДКОЙ) ===== */
     .wallet-page .wallet-balance {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      padding: 20px 10px 16px;
-      gap: 20px;
-      flex-wrap: wrap;
+      align-items: stretch;
+      gap: 16px;
+      margin-bottom: 20px;
     }
     .wallet-page .wallet-balance .balance-item {
-      text-align: center;
       flex: 1;
-      min-width: 80px;
+      text-align: center;
+      background: rgba(255, 123, 0, 0.03);
+      border: 1.5px solid rgba(255, 123, 0, 0.25);
+      border-radius: 16px;
+      padding: 16px 10px;
+      backdrop-filter: blur(4px);
+      transition: .3s;
+      min-width: 0;
+    }
+    .wallet-page .wallet-balance .balance-item:hover {
+      border-color: rgba(255,123,0,0.5);
+      background: rgba(255,123,0,0.06);
     }
     .wallet-page .wallet-balance .balance-item .amount {
-      font-size: 48px;
+      font-size: 36px;
       font-weight: 900;
       color: #ffd700;
       letter-spacing: 1px;
     }
     .wallet-page .wallet-balance .balance-item .currency {
-      font-size: 18px;
+      font-size: 14px;
       font-weight: 600;
       color: #888;
       display: block;
       margin-top: 2px;
     }
     .wallet-page .wallet-balance .balance-item .rub-amount {
-      font-size: 48px;
+      font-size: 36px;
       font-weight: 900;
       color: #fff;
     }
     .wallet-page .wallet-balance .balance-item .rub-currency {
-      font-size: 18px;
+      font-size: 14px;
       font-weight: 600;
       color: #888;
       display: block;
       margin-top: 2px;
-    }
-    .wallet-page .wallet-balance .divider {
-      width: 1px;
-      height: 60px;
-      background: rgba(255,255,255,0.06);
     }
 
     .wallet-page .wallet-actions {
@@ -1496,8 +1498,8 @@
       .top-page .page-title { font-size: 22px; }
       .top-item .elo { font-size: 14px; }
       .top-item .info .name { font-size: 13px; }
-      .wallet-page .wallet-balance .balance-item .amount { font-size: 36px; }
-      .wallet-page .wallet-balance .balance-item .rub-amount { font-size: 36px; }
+      .wallet-page .wallet-balance .balance-item .amount { font-size: 28px; }
+      .wallet-page .wallet-balance .balance-item .rub-amount { font-size: 28px; }
       .wallet-page .promo-block { flex-direction: column; align-items: stretch; }
     }
     @media (max-width: 480px) {
@@ -1530,9 +1532,8 @@
       .top-item .info .name { font-size: 13px; }
       .top-item .info .stats { font-size: 10px; }
       .wallet-page .wallet-balance { flex-direction: column; gap: 10px; }
-      .wallet-page .wallet-balance .divider { display: none; }
-      .wallet-page .wallet-balance .balance-item .amount { font-size: 28px; }
-      .wallet-page .wallet-balance .balance-item .rub-amount { font-size: 28px; }
+      .wallet-page .wallet-balance .balance-item .amount { font-size: 24px; }
+      .wallet-page .wallet-balance .balance-item .rub-amount { font-size: 24px; }
       .wallet-page .wallet-actions .btn-wallet { font-size: 12px; padding: 8px 16px; }
       .wallet-page .promo-block input { font-size: 12px; }
     }
@@ -1771,14 +1772,13 @@
     </div>
   </div>
 
-  <!-- ===== КОШЕЛЁК (СЛЕВА И СПРАВА С РАЗДЕЛИТЕЛЕМ) ===== -->
+  <!-- ===== КОШЕЛЁК (ДВА БЛОКА С ОРАНЖЕВОЙ ОБВОДКОЙ) ===== -->
   <div class="page wallet-page" id="pageWallet">
     <div class="wallet-balance">
       <div class="balance-item">
         <div class="amount">0 ⭐</div>
         <div class="currency">Telegram Stars</div>
       </div>
-      <div class="divider"></div>
       <div class="balance-item">
         <div class="rub-amount">0 ₽</div>
         <div class="rub-currency">Рубли</div>
