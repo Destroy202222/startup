@@ -66,109 +66,94 @@
     .page.active { display: block; }
     @keyframes fade { 0% { opacity: 0; transform: translateY(16px); } 100% { opacity: 1; transform: translateY(0); } }
 
-    /* ===== ГЛАВНОЕ МЕНЮ ===== */
+    /* ===== ГЛАВНОЕ МЕНЮ (НОВОЕ) ===== */
     .home-hero {
       text-align: center;
       max-width: 860px;
       margin: 0 auto;
       position: relative;
+      padding-top: 20px;
     }
     .home-hero::before {
       content: '';
       position: absolute;
-      top: -60px;
+      top: -40px;
       left: 50%;
       transform: translateX(-50%);
       width: 400px;
       height: 400px;
-      background: radial-gradient(circle, rgba(255,123,0,0.12) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(255,123,0,0.08) 0%, transparent 70%);
       border-radius: 50%;
       z-index: -1;
       pointer-events: none;
     }
-    .home-title {
-      font-size: 42px;
+
+    /* Маленький блок с обводкой */
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1.5px solid #ff7b00;
+      color: #ff7b00;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 8px 28px;
+      border-radius: 60px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      backdrop-filter: blur(4px);
+      margin-bottom: 30px;
+    }
+
+    /* Большой текст */
+    .hero-title {
+      font-size: 48px;
       font-weight: 900;
+      line-height: 1.15;
+      color: #ffffff;
+      max-width: 720px;
+      margin: 0 auto 40px;
+      letter-spacing: -0.5px;
+    }
+    .hero-title span {
       background: linear-gradient(135deg, #ff7b00, #ffb347);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 8px;
-      letter-spacing: -1px;
     }
-    .home-sub {
-      font-size: 18px;
-      color: #b0b0b8;
-      max-width: 600px;
-      margin: 0 auto 30px;
-      font-weight: 400;
+
+    /* Блоки статистики */
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
     }
-    .home-stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
-      max-width: 760px;
-      margin: 0 auto 32px;
-    }
-    .home-stat-card {
-      background: rgba(20, 20, 28, 0.7);
+    .hero-stat-card {
+      background: rgba(20, 20, 28, 0.6);
       backdrop-filter: blur(8px);
       border-radius: 20px;
-      padding: 20px 12px;
-      border: 1px solid rgba(255,255,255,0.04);
-      transition: .3s;
+      padding: 16px 32px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
       text-align: center;
+      min-width: 140px;
+      transition: .3s;
     }
-    .home-stat-card:hover {
-      border-color: rgba(255,123,0,0.3);
-      transform: translateY(-4px);
-      box-shadow: 0 8px 30px rgba(255,123,0,0.06);
+    .hero-stat-card:hover {
+      border-color: rgba(255, 123, 0, 0.3);
+      transform: translateY(-3px);
     }
-    .home-stat-card .number {
+    .hero-stat-card .number {
       font-size: 32px;
       font-weight: 900;
       background: linear-gradient(135deg, #ff7b00, #ffb347);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .home-stat-card .label {
-      font-size: 14px;
+    .hero-stat-card .label {
+      font-size: 13px;
       color: #999;
       font-weight: 600;
-      margin-top: 4px;
+      margin-top: 2px;
     }
-    .home-stat-card .prize-details {
-      font-size: 13px;
-      color: #ccc;
-      margin-top: 6px;
-      line-height: 1.6;
-    }
-    .home-stat-card .prize-details span {
-      display: block;
-      color: #ffd700;
-      font-weight: 700;
-    }
-    .btn-start {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      background: linear-gradient(135deg, #ff7b00, #ffb347);
-      color: #000;
-      font-size: 20px;
-      font-weight: 800;
-      padding: 18px 52px;
-      border-radius: 80px;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 0 40px rgba(255, 123, 0, 0.25);
-      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      text-decoration: none;
-      letter-spacing: 0.5px;
-    }
-    .btn-start:hover {
-      transform: scale(1.04);
-      box-shadow: 0 0 70px rgba(255, 123, 0, 0.45);
-    }
-    .btn-start i { font-size: 22px; }
 
     /* ===== ПОИСК МАТЧА ===== */
     .search-title {
@@ -415,7 +400,7 @@
       margin-top: 3px;
     }
 
-    /* Динамика матчей (гистограмма) */
+    /* Динамика матчей */
     .match-dynamics {
       margin-top: 16px;
       border-top: 1px solid rgba(255,255,255,0.04);
@@ -658,8 +643,10 @@
     .auth-box .link a:hover { text-decoration: underline; }
 
     @media (max-width: 768px) {
-      .home-stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
-      .home-title { font-size: 32px; }
+      .hero-title { font-size: 32px; }
+      .hero-stats { gap: 16px; }
+      .hero-stat-card { padding: 12px 20px; min-width: 100px; }
+      .hero-stat-card .number { font-size: 24px; }
       .profile-header { flex-direction: column; text-align: center; }
       .profile-info .details { justify-content: center; }
       .profile-stats { grid-template-columns: 1fr 1fr; }
@@ -674,8 +661,10 @@
       .chart-bar-wrap { min-width: 12px; }
     }
     @media (max-width: 480px) {
-      .home-title { font-size: 26px; }
-      .home-stats-grid { grid-template-columns: 1fr 1fr; }
+      .hero-title { font-size: 24px; }
+      .hero-badge { font-size: 11px; padding: 5px 16px; }
+      .hero-stats { gap: 12px; flex-direction: column; align-items: center; }
+      .hero-stat-card { width: 100%; max-width: 200px; }
       .profile-stats { grid-template-columns: 1fr 1fr; }
       .profile-info .sfp-number { font-size: 22px; }
       .search-title { font-size: 20px; }
@@ -726,18 +715,23 @@
     </div>
   </header>
 
-  <!-- ===== ГЛАВНОЕ МЕНЮ ===== -->
+  <!-- ===== ГЛАВНОЕ МЕНЮ (НОВОЕ) ===== -->
   <div class="page active" id="pageHome">
     <div class="home-hero">
-      <h1 class="home-title">Faceit 5x5 Arena</h1>
-      <p class="home-sub">Соревновательный матчмейкинг для Standoff 2. Играй 5×5, поднимай ELO и участвуй в турнирах.</p>
-      <div class="home-stats-grid">
-        <div class="home-stat-card"><div class="number" id="totalMatches">0</div><div class="label">Проведено игр</div></div>
-        <div class="home-stat-card"><div class="number" id="activePlayers">0</div><div class="label">Активные игроки</div></div>
-        <div class="home-stat-card"><div class="number" style="font-size:26px;">2 000₽</div><div class="label">Призовой фонд</div><div class="prize-details"><span>🥇 1 000₽</span><span>🥈 600₽</span><span>🥉 400₽</span></div></div>
-        <div class="home-stat-card"><div class="number" id="tournamentsCount">0</div><div class="label">Турниров проведено</div></div>
+      <div class="hero-badge">КИБЕРСПОРТИВНАЯ ПЛАТФОРМА STANDOFF</div>
+      <div class="hero-title">
+        Проверь свой скилл, поднимай уровень и играй против тех, кто тоже пришел побеждать.
       </div>
-      <button class="btn-start" onclick="navigate('matches')"><i class="fas fa-play"></i> Найти матч</button>
+      <div class="hero-stats">
+        <div class="hero-stat-card">
+          <div class="number" id="activePlayersHome">0</div>
+          <div class="label">Активные игроки</div>
+        </div>
+        <div class="hero-stat-card">
+          <div class="number" id="totalMatchesHome">0</div>
+          <div class="label">Сыгранно матчей</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -784,7 +778,7 @@
           <div class="sfp-block">
             <span class="sfp-number" id="pElo">1000</span>
             <span class="sfp-label">ELO</span>
-            <span class="rank-badge"><i class="fas fa-star"></i> <span id="pRank">Level 4</span></span>
+            <span class="rank-badge"><i class="fas fa-star"></i> <span id="pRank"></span></span>
           </div>
           <div class="elo-progress-wrap">
             <div class="elo-bar"><div class="fill" id="eloProgress" style="width:66%;"></div></div>
@@ -797,25 +791,12 @@
       </div>
 
       <div class="profile-stats">
-        <div class="stat-item">
-          <div class="value" id="pKd">0</div>
-          <div class="label">К/Д</div>
-        </div>
-        <div class="stat-item">
-          <div class="value" id="pWr">0%</div>
-          <div class="label">Винрейт</div>
-        </div>
-        <div class="stat-item">
-          <div class="value" id="pMatches">0</div>
-          <div class="label">Матчей</div>
-        </div>
-        <div class="stat-item">
-          <div class="value" id="pMvp">0</div>
-          <div class="label">MVP</div>
-        </div>
+        <div class="stat-item"><div class="value" id="pKd">0</div><div class="label">К/Д</div></div>
+        <div class="stat-item"><div class="value" id="pWr">0%</div><div class="label">Винрейт</div></div>
+        <div class="stat-item"><div class="value" id="pMatches">0</div><div class="label">Матчей</div></div>
+        <div class="stat-item"><div class="value" id="pMvp">0</div><div class="label">MVP</div></div>
       </div>
 
-      <!-- Динамика матчей -->
       <div class="match-dynamics">
         <div class="title"><i class="fas fa-chart-bar"></i> Динамика матчей</div>
         <div class="chart-container" id="chartContainer">
@@ -823,7 +804,6 @@
         </div>
       </div>
 
-      <!-- История матчей -->
       <div class="match-history">
         <div class="title"><i class="fas fa-history"></i> История матчей</div>
         <div id="matchHistoryList">
@@ -1044,7 +1024,7 @@
     const elo = user.elo || 1000;
     document.getElementById('pElo').textContent = elo;
     const levelData = getLevelInfo(elo);
-    document.getElementById('pRank').textContent = 'Level ' + levelData.level;
+    document.getElementById('pRank').textContent = '';
     document.getElementById('pLevelLabel').textContent = levelData.level;
     document.getElementById('pNextLevel').textContent = levelData.next;
     document.getElementById('pRemain').textContent = levelData.remain;
@@ -1062,11 +1042,9 @@
     document.getElementById('pMatches').textContent = matches;
     document.getElementById('pMvp').textContent = user.mvp || 0;
 
-    // Динамика матчей (гистограмма)
     const history = user.matchHistory || [];
     renderChart(history);
 
-    // История матчей
     const container = document.getElementById('matchHistoryList');
     if (history.length === 0) {
       container.innerHTML = '<div style="color:#666; text-align:center; padding:8px 0;">Нет сыгранных матчей</div>';
@@ -1082,26 +1060,21 @@
     }
   }
 
-  // ===== ГИСТОГРАММА ДИНАМИКИ МАТЧЕЙ =====
   function renderChart(history) {
     const container = document.getElementById('chartContainer');
     if (!history || history.length === 0) {
       container.innerHTML = '<div style="color:#666; text-align:center; width:100%; padding:10px 0;">Нет данных</div>';
       return;
     }
-
-    // Берём последние 15 матчей
     const lastMatches = history.slice(-15);
     const maxKills = Math.max(1, ...lastMatches.map(m => m.kills || 0));
     const maxHeight = 80;
-
     let html = '';
     lastMatches.forEach((m, index) => {
       const isWin = m.result === 'win';
       const kills = m.kills || 0;
       const height = Math.max(8, Math.min(80, (kills / maxKills) * maxHeight));
       const barClass = isWin ? 'win' : 'loss';
-
       html += `
         <div class="chart-bar-wrap">
           <div class="chart-bar ${barClass}" style="height: ${height}px; ${isWin ? '' : 'align-self: flex-start; border-radius: 0 0 3px 3px;'}"></div>
@@ -1109,7 +1082,6 @@
         </div>
       `;
     });
-
     container.innerHTML = html;
   }
 
@@ -1137,9 +1109,10 @@
   // ===== СТАТИСТИКА ГЛАВНОЙ =====
   function updateHomeStats() {
     const users = getUsers();
-    document.getElementById('totalMatches').textContent = users.reduce((acc, u) => acc + (u.matches || 0), 0);
-    document.getElementById('activePlayers').textContent = users.filter(u => (u.matches || 0) > 0).length;
-    document.getElementById('tournamentsCount').textContent = '0';
+    const totalMatches = users.reduce((acc, u) => acc + (u.matches || 0), 0);
+    const activePlayers = users.filter(u => (u.matches || 0) > 0).length;
+    document.getElementById('activePlayersHome').textContent = activePlayers;
+    document.getElementById('totalMatchesHome').textContent = totalMatches;
   }
 
   // ===== TOAST =====
