@@ -245,7 +245,7 @@
       font-weight: 700;
     }
 
-    /* ===== ПОИСК МАТЧА (КРАСИВЫЙ) ===== */
+    /* ===== ПОИСК МАТЧА ===== */
     .search-page-wrapper {
       max-width: 700px;
       margin: 0 auto;
@@ -269,7 +269,6 @@
       line-height: 1.5;
     }
 
-    /* Основной блок поиска */
     .search-main-block {
       background: rgba(20, 20, 28, 0.7);
       backdrop-filter: blur(8px);
@@ -539,70 +538,277 @@
       font-weight: 600;
     }
 
-    /* Матч контейнер */
-    .match-container {
-      display: none;
-      margin-top: 20px;
-    }
-    .match-container h2 {
-      text-align: center;
-      color: #ff7b00;
-      font-size: 26px;
-      font-weight: 800;
-    }
-    .match-container .sub {
-      text-align: center;
-      color: #aaa;
-      font-size: 15px;
-      margin: 4px 0 18px;
-    }
-    .match-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-    }
-    .team-card {
-      background: rgba(20,20,28,0.7);
-      backdrop-filter: blur(8px);
-      border-radius: 18px;
-      padding: 14px 14px;
-      border: 1px solid rgba(255,255,255,0.04);
-    }
-    .team-card h3 {
-      font-size: 17px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 10px;
-    }
-    .team-card.terrorists { border-left: 4px solid #ff6b6b; }
-    .team-card.ct { border-left: 4px solid #51cf66; }
-    .player {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 5px 8px;
-      background: rgba(26,26,34,0.5);
-      border-radius: 10px;
+    /* ===== ДРУЗЬЯ (точная копия скрина) ===== */
+    .friends-page .page-title {
+      font-size: 28px;
+      font-weight: 900;
       margin-bottom: 4px;
-      border: 1px solid rgba(255,255,255,0.04);
     }
-    .player .avatar {
-      width: 24px;
-      height: 24px;
+    .friends-page .page-sub {
+      color: #888;
+      font-size: 14px;
+      margin-bottom: 20px;
+      font-weight: 400;
+    }
+    .friends-search {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .friends-search input {
+      flex: 1;
+      background: rgba(26, 26, 34, 0.8);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: #fff;
+      font-size: 15px;
+      transition: .2s;
+    }
+    .friends-search input:focus {
+      outline: none;
+      border-color: #ff7b00;
+      box-shadow: 0 0 20px rgba(255,123,0,0.1);
+    }
+    .friends-search input::placeholder {
+      color: #555;
+    }
+    .friends-search button {
+      background: rgba(255,123,0,0.15);
+      border: 1px solid rgba(255,123,0,0.3);
+      color: #ff7b00;
+      padding: 10px 20px;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: .2s;
+      white-space: nowrap;
+    }
+    .friends-search button:hover {
+      background: rgba(255,123,0,0.25);
+    }
+
+    .friends-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      padding-bottom: 10px;
+    }
+    .friends-tabs .tab {
+      padding: 6px 16px;
+      border-radius: 40px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      cursor: pointer;
+      transition: .2s;
+      background: none;
+      border: none;
+    }
+    .friends-tabs .tab.active {
+      background: rgba(255,123,0,0.15);
+      color: #ff7b00;
+    }
+    .friends-tabs .tab:hover {
+      color: #fff;
+    }
+
+    .friends-counts {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 16px;
+    }
+    .friends-counts .count-item {
+      font-size: 14px;
+      font-weight: 600;
+      color: #888;
+    }
+    .friends-counts .count-item span {
+      color: #fff;
+    }
+
+    .friends-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .friends-list .friend-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      background: rgba(26,26,34,0.5);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.04);
+      transition: .3s;
+    }
+    .friends-list .friend-item:hover {
+      border-color: rgba(255,123,0,0.2);
+    }
+    .friends-list .friend-item .avatar {
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      background: rgba(255,123,0,0.2);
+      background: linear-gradient(135deg, #ff7b00, #ffb347);
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 14px;
       font-weight: 700;
-      color: #ff7b00;
-      font-size: 12px;
+      color: #000;
+      flex-shrink: 0;
     }
-    .player .name { font-weight: 500; font-size: 13px; }
-    .player .status { margin-left: auto; font-size: 10px; color: #51cf66; }
-    .match-actions { text-align: center; margin-top: 18px; }
+    .friends-list .friend-item .info {
+      flex: 1;
+    }
+    .friends-list .friend-item .info .name {
+      font-weight: 600;
+      font-size: 15px;
+    }
+    .friends-list .friend-item .info .sub {
+      font-size: 12px;
+      color: #666;
+    }
+    .friends-list .friend-item .status {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 2px 12px;
+      border-radius: 40px;
+    }
+    .friends-list .friend-item .status.online {
+      background: rgba(81, 207, 102, 0.15);
+      color: #51cf66;
+    }
+    .friends-list .friend-item .status.offline {
+      background: rgba(255,255,255,0.04);
+      color: #666;
+    }
+    .friends-list .friend-item .btn-action {
+      background: rgba(255,123,0,0.12);
+      border: none;
+      color: #ff7b00;
+      padding: 4px 14px;
+      border-radius: 40px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: .2s;
+    }
+    .friends-list .friend-item .btn-action:hover {
+      background: rgba(255,123,0,0.25);
+    }
+    .friends-list .friend-item .btn-action.accept {
+      background: rgba(81, 207, 102, 0.15);
+      color: #51cf66;
+    }
+    .friends-list .friend-item .btn-action.accept:hover {
+      background: rgba(81, 207, 102, 0.25);
+    }
+    .friends-list .friend-item .btn-action.decline {
+      background: rgba(255,107,107,0.12);
+      color: #ff6b6b;
+    }
+    .friends-list .friend-item .btn-action.decline:hover {
+      background: rgba(255,107,107,0.25);
+    }
+
+    .friends-empty {
+      text-align: center;
+      padding: 30px 0;
+      color: #666;
+      font-size: 15px;
+    }
+    .friends-empty i {
+      font-size: 32px;
+      color: #333;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    /* ===== ТОП ИГРОКОВ (точная копия скрина) ===== */
+    .top-page .page-title {
+      font-size: 28px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+    .top-page .user-rank {
+      font-size: 16px;
+      font-weight: 600;
+      color: #888;
+      margin-bottom: 20px;
+    }
+    .top-page .user-rank span {
+      color: #ff7b00;
+    }
+
+    .top-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .top-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 16px;
+      background: rgba(26,26,34,0.5);
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.04);
+      transition: .3s;
+    }
+    .top-item:hover {
+      border-color: rgba(255,123,0,0.2);
+    }
+    .top-item .rank {
+      font-size: 18px;
+      font-weight: 800;
+      color: #666;
+      min-width: 32px;
+    }
+    .top-item .rank.gold { color: #ffd700; }
+    .top-item .rank.silver { color: #c0c0c0; }
+    .top-item .rank.bronze { color: #cd7f32; }
+
+    .top-item .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ff7b00, #ffb347);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 700;
+      color: #000;
+      flex-shrink: 0;
+    }
+    .top-item .info {
+      flex: 1;
+    }
+    .top-item .info .name {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .top-item .info .stats {
+      font-size: 13px;
+      color: #888;
+      font-weight: 400;
+    }
+    .top-item .elo {
+      font-size: 18px;
+      font-weight: 900;
+      color: #ff7b00;
+      text-align: right;
+    }
+    .top-item .elo-label {
+      font-size: 10px;
+      color: #666;
+      font-weight: 600;
+      text-transform: uppercase;
+      display: block;
+    }
 
     /* ===== ПРОФИЛЬ ===== */
     .profile-card {
@@ -827,14 +1033,6 @@
     .result.win { background: rgba(81, 207, 102, 0.15); color: #51cf66; }
     .result.loss { background: rgba(255, 107, 107, 0.15); color: #ff6b6b; }
 
-    .placeholder {
-      text-align: center;
-      padding: 50px 0;
-      color: #888;
-    }
-    .placeholder i { font-size: 40px; color: #ff7b00; display: block; margin-bottom: 10px; }
-    .placeholder h2 { font-size: 22px; font-weight: 800; color: #fff; }
-
     /* ===== НИЖНЯЯ НАВИГАЦИЯ ===== */
     .bottom-nav {
       position: fixed;
@@ -991,6 +1189,9 @@
       .chart-container { height: 80px; gap: 4px; }
       .chart-bar { width: 8px; }
       .chart-bar-wrap { min-width: 12px; }
+      .friends-tabs { gap: 4px; }
+      .friends-tabs .tab { font-size: 12px; padding: 4px 12px; }
+      .top-item .elo { font-size: 15px; }
     }
     @media (max-width: 480px) {
       .hero-title { font-size: 24px; }
@@ -1010,6 +1211,11 @@
       .chart-container { height: 60px; gap: 3px; }
       .chart-bar { width: 6px; }
       .chart-bar-wrap { min-width: 10px; }
+      .friends-page .page-title { font-size: 22px; }
+      .top-page .page-title { font-size: 22px; }
+      .top-item { flex-wrap: wrap; gap: 8px; }
+      .top-item .elo { min-width: 60px; }
+      .friends-list .friend-item { flex-wrap: wrap; gap: 6px; }
     }
   </style>
 </head>
@@ -1109,7 +1315,6 @@
       <div class="search-title">Поиск матча Standoff 2</div>
       <p class="search-sub">Играй соло или вместе с друзьями. Создай пати, поделись кодом и заходите в матч одной группой.</p>
 
-      <!-- Основной блок поиска -->
       <div class="search-main-block">
         <div class="label">Статус поиска</div>
         <div style="margin-bottom:4px;">
@@ -1121,7 +1326,6 @@
           </button>
         </div>
         <div class="search-type">Одиночный поиск матча.</div>
-
         <div class="search-counters">
           <div class="search-counter">
             <div class="num" id="matchCount">0</div>
@@ -1134,34 +1338,28 @@
         </div>
       </div>
 
-      <!-- Блок "Играть в пати" -->
       <div class="party-block">
         <div class="party-title"><i class="fas fa-users"></i> Играть в пати</div>
         <div class="party-sub">Играйте с друзьями в <strong>FACEIT</strong> — создайте пати и приглашайте товарищей по коду</div>
-
         <div class="party-code-display">
           <span class="code-label">Ваш код:</span>
           <span class="code-box" id="playerCode">—</span>
           <button class="btn-copy" onclick="copyCode()"><i class="fas fa-copy"></i> Копировать</button>
         </div>
-
         <div class="party-add">
           <input type="text" id="partyCodeInput" placeholder="Введите код" maxlength="6" />
           <button class="btn-add" onclick="addFriendByCode()">
             <i class="fas fa-user-plus"></i> Добавить
           </button>
         </div>
-
         <div class="party-friends-list" id="friendsList">
           <span class="empty">Нет друзей в пати</span>
         </div>
-
         <div class="party-feature">
           <i class="fas fa-info-circle"></i> Играйте вместе с друзьями в <strong>FACEIT</strong> — введите код друга, чтобы добавить его в пати
         </div>
       </div>
 
-      <!-- Матч контейнер -->
       <div class="match-container" id="matchContainer">
         <h2><i class="fas fa-swords"></i> Матч начался!</h2>
         <p class="sub">Команды сформированы. Удачи!</p>
@@ -1181,6 +1379,46 @@
           </button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ===== ДРУЗЬЯ (точная копия скрина) ===== -->
+  <div class="page friends-page" id="pageFriends">
+    <div class="page-title">Друзья</div>
+    <div class="page-sub">Запросы, входящие и список тиммейтов</div>
+
+    <div class="friends-search">
+      <input type="text" placeholder="Ник или ID игрока" id="friendSearchInput" />
+      <button onclick="searchFriend()"><i class="fas fa-search"></i> Найти</button>
+    </div>
+
+    <div class="friends-tabs">
+      <button class="tab active" data-tab="friends" onclick="switchFriendsTab('friends')">Друзья</button>
+      <button class="tab" data-tab="incoming" onclick="switchFriendsTab('incoming')">Входящие</button>
+      <button class="tab" data-tab="outgoing" onclick="switchFriendsTab('outgoing')">Исходящие</button>
+    </div>
+
+    <div class="friends-counts">
+      <div class="count-item">Друзья <span id="friendsCount">0</span></div>
+      <div class="count-item">Входящие <span id="incomingCount">0</span></div>
+      <div class="count-item">Исходящие <span id="outgoingCount">0</span></div>
+    </div>
+
+    <div class="friends-list" id="friendsListContainer">
+      <div class="friends-empty">
+        <i class="fas fa-user-friends"></i>
+        Друзей пока нет.
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ТОП ИГРОКОВ (точная копия скрина) ===== -->
+  <div class="page top-page" id="pageTop">
+    <div class="page-title">Топ игроков</div>
+    <div class="user-rank">Твоё место: <span id="userRank">#352</span></div>
+
+    <div class="top-list" id="topList">
+      <!-- Заполняется JS -->
     </div>
   </div>
 
@@ -1235,8 +1473,6 @@
 
   <!-- ===== ЗАГЛУШКИ ===== -->
   <div class="page" id="pageShop"><div class="placeholder"><i class="fas fa-store"></i><h2>Магазин</h2><p>Здесь будут товары и привилегии.</p></div></div>
-  <div class="page" id="pageFriends"><div class="placeholder"><i class="fas fa-user-friends"></i><h2>Друзья</h2><p>Список друзей и приглашения.</p></div></div>
-  <div class="page" id="pageTop"><div class="placeholder"><i class="fas fa-trophy"></i><h2>Топ игроков</h2><p>Рейтинг лучших игроков.</p></div></div>
   <div class="page" id="pageWallet"><div class="placeholder"><i class="fas fa-wallet"></i><h2>Кошелёк</h2><p>Ваш баланс и история транзакций.</p></div></div>
 
   <!-- ===== НИЖНЯЯ НАВИГАЦИЯ ===== -->
@@ -1257,7 +1493,7 @@
   let currentMatch = null;
   let botCounter = 0;
   let partyFriends = [];
-  let playerPartyCode = '';
+  let friendsTab = 'friends';
 
   // ===== ГЕНЕРАЦИЯ КОДА =====
   function generateCode() {
@@ -1267,6 +1503,21 @@
       code += letters[Math.floor(Math.random() * letters.length)];
     }
     return code;
+  }
+
+  // ===== ДРУЗЬЯ (данные) =====
+  function getFriendsData() {
+    const user = getCurrentUser();
+    if (!user) return { friends: [], incoming: [], outgoing: [] };
+    try {
+      return JSON.parse(localStorage.getItem('friendsData_' + user.id)) || { friends: [], incoming: [], outgoing: [] };
+    } catch { return { friends: [], incoming: [], outgoing: [] }; }
+  }
+
+  function saveFriendsData(data) {
+    const user = getCurrentUser();
+    if (!user) return;
+    localStorage.setItem('friendsData_' + user.id, JSON.stringify(data));
   }
 
   // ===== АУТЕНТИФИКАЦИЯ =====
@@ -1357,10 +1608,11 @@
     document.getElementById(pages[page]).classList.add('active');
     document.querySelectorAll('.bottom-nav .item').forEach(b => b.classList.remove('active'));
     document.querySelector(`.bottom-nav .item[data-page="${page}"]`)?.classList.add('active');
-    if (page === 'matches') updateQueueUI();
+    if (page === 'matches') { updateQueueUI(); updatePartyUI(); }
     if (page === 'profile') updateProfile();
     if (page === 'home') updateHomeStats();
-    if (page === 'matches') updatePartyUI();
+    if (page === 'friends') renderFriendsPage();
+    if (page === 'top') renderTopPage();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -1378,14 +1630,12 @@
       }
     }
     document.getElementById('playerCode').textContent = user.partyCode;
-
-    // Загружаем друзей из localStorage
     const friends = JSON.parse(localStorage.getItem('partyFriends_' + user.id) || '[]');
     partyFriends = friends;
-    renderFriends();
+    renderPartyFriends();
   }
 
-  function renderFriends() {
+  function renderPartyFriends() {
     const container = document.getElementById('friendsList');
     if (partyFriends.length === 0) {
       container.innerHTML = '<span class="empty">Нет друзей в пати</span>';
@@ -1394,7 +1644,7 @@
     container.innerHTML = partyFriends.map(f => `
       <span class="friend-tag">
         <i class="fas fa-circle"></i> ${f.username}
-        <span class="remove" onclick="removeFriend('${f.id}')">&times;</span>
+        <span class="remove" onclick="removePartyFriend('${f.id}')">&times;</span>
       </span>
     `).join('');
   }
@@ -1403,32 +1653,26 @@
     const code = document.getElementById('partyCodeInput').value.trim().toUpperCase();
     if (!code) return showToast('error', 'Ошибка', 'Введите код');
     if (code.length !== 6) return showToast('error', 'Ошибка', 'Код должен состоять из 6 букв');
-
     const users = getUsers();
     const user = getCurrentUser();
     if (!user) return showToast('error', 'Ошибка', 'Авторизуйтесь');
-
-    // Ищем пользователя с таким кодом
     const friend = users.find(u => u.partyCode === code && u.id !== user.id);
     if (!friend) return showToast('error', 'Ошибка', 'Игрок с таким кодом не найден');
-
-    // Проверяем, не добавлен ли уже
     if (partyFriends.some(f => f.id === friend.id)) {
       return showToast('info', 'Уже в пати', 'Этот игрок уже в вашей пати');
     }
-
     partyFriends.push({ id: friend.id, username: friend.username });
     localStorage.setItem('partyFriends_' + user.id, JSON.stringify(partyFriends));
-    renderFriends();
+    renderPartyFriends();
     document.getElementById('partyCodeInput').value = '';
     showToast('success', 'Добавлен!', friend.username + ' добавлен в пати');
   }
 
-  function removeFriend(id) {
+  function removePartyFriend(id) {
     partyFriends = partyFriends.filter(f => f.id !== id);
     const user = getCurrentUser();
     if (user) localStorage.setItem('partyFriends_' + user.id, JSON.stringify(partyFriends));
-    renderFriends();
+    renderPartyFriends();
     showToast('info', 'Удалён', 'Игрок удалён из пати');
   }
 
@@ -1437,7 +1681,6 @@
     navigator.clipboard.writeText(code).then(() => {
       showToast('success', 'Скопировано!', 'Код скопирован в буфер обмена');
     }).catch(() => {
-      // fallback
       const input = document.createElement('input');
       input.value = code;
       document.body.appendChild(input);
@@ -1446,6 +1689,209 @@
       document.body.removeChild(input);
       showToast('success', 'Скопировано!', 'Код скопирован в буфер обмена');
     });
+  }
+
+  // ===== ДРУЗЬЯ (страница) =====
+  function switchFriendsTab(tab) {
+    friendsTab = tab;
+    document.querySelectorAll('.friends-tabs .tab').forEach(t => t.classList.remove('active'));
+    document.querySelector(`.friends-tabs .tab[data-tab="${tab}"]`)?.classList.add('active');
+    renderFriendsPage();
+  }
+
+  function renderFriendsPage() {
+    const data = getFriendsData();
+    const user = getCurrentUser();
+    const users = getUsers();
+
+    document.getElementById('friendsCount').textContent = data.friends.length;
+    document.getElementById('incomingCount').textContent = data.incoming.length;
+    document.getElementById('outgoingCount').textContent = data.outgoing.length;
+
+    let list = [];
+    let title = '';
+
+    if (friendsTab === 'friends') {
+      list = data.friends;
+      title = 'ДРУЗЬЯ';
+    } else if (friendsTab === 'incoming') {
+      list = data.incoming;
+      title = 'ВХОДЯЩИЕ ЗАПРОСЫ';
+    } else {
+      list = data.outgoing;
+      title = 'ИСХОДЯЩИЕ ЗАПРОСЫ';
+    }
+
+    const container = document.getElementById('friendsListContainer');
+
+    if (list.length === 0) {
+      container.innerHTML = `
+        <div class="friends-empty">
+          <i class="fas fa-user-friends"></i>
+          ${friendsTab === 'friends' ? 'Друзей пока нет.' : friendsTab === 'incoming' ? 'Нет входящих запросов.' : 'Нет исходящих запросов.'}
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = list.map(id => {
+      const friend = users.find(u => u.id === id);
+      if (!friend) return '';
+      const isOnline = Math.random() > 0.4;
+      const isIncoming = friendsTab === 'incoming';
+      const isOutgoing = friendsTab === 'outgoing';
+      const initial = friend.username.charAt(0).toUpperCase();
+
+      let actions = '';
+      if (isIncoming) {
+        actions = `
+          <button class="btn-action accept" onclick="acceptFriend('${friend.id}')"><i class="fas fa-check"></i> Принять</button>
+          <button class="btn-action decline" onclick="declineFriend('${friend.id}')"><i class="fas fa-times"></i></button>
+        `;
+      } else if (isOutgoing) {
+        actions = `<button class="btn-action decline" onclick="cancelFriendRequest('${friend.id}')">Отменить</button>`;
+      } else {
+        actions = `<button class="btn-action" onclick="removeFriend('${friend.id}')">Удалить</button>`;
+      }
+
+      return `
+        <div class="friend-item">
+          <div class="avatar">${initial}</div>
+          <div class="info">
+            <div class="name">${friend.username}</div>
+            <div class="sub">ID: ${friend.standoffId || '—'}</div>
+          </div>
+          <span class="status ${isOnline ? 'online' : 'offline'}">${isOnline ? 'В сети' : 'Не в сети'}</span>
+          ${actions}
+        </div>
+      `;
+    }).join('');
+  }
+
+  function searchFriend() {
+    const query = document.getElementById('friendSearchInput').value.trim().toLowerCase();
+    if (!query) return renderFriendsPage();
+    const users = getUsers();
+    const results = users.filter(u => u.username.toLowerCase().includes(query) || (u.standoffId || '').includes(query));
+    const container = document.getElementById('friendsListContainer');
+    if (results.length === 0) {
+      container.innerHTML = `<div class="friends-empty"><i class="fas fa-search"></i>Ничего не найдено</div>`;
+      return;
+    }
+    container.innerHTML = results.map(u => {
+      const initial = u.username.charAt(0).toUpperCase();
+      const data = getFriendsData();
+      const isFriend = data.friends.includes(u.id);
+      const isIncoming = data.incoming.includes(u.id);
+      const isOutgoing = data.outgoing.includes(u.id);
+      let actions = '';
+      if (u.id === getCurrentUser()?.id) {
+        actions = `<span style="color:#666;font-size:12px;">Это вы</span>`;
+      } else if (isFriend) {
+        actions = `<button class="btn-action" onclick="removeFriend('${u.id}')">Удалить</button>`;
+      } else if (isIncoming) {
+        actions = `
+          <button class="btn-action accept" onclick="acceptFriend('${u.id}')"><i class="fas fa-check"></i> Принять</button>
+          <button class="btn-action decline" onclick="declineFriend('${u.id}')"><i class="fas fa-times"></i></button>
+        `;
+      } else if (isOutgoing) {
+        actions = `<button class="btn-action decline" onclick="cancelFriendRequest('${u.id}')">Отменить</button>`;
+      } else {
+        actions = `<button class="btn-action" onclick="sendFriendRequest('${u.id}')">Добавить</button>`;
+      }
+      return `
+        <div class="friend-item">
+          <div class="avatar">${initial}</div>
+          <div class="info">
+            <div class="name">${u.username}</div>
+            <div class="sub">ID: ${u.standoffId || '—'}</div>
+          </div>
+          ${actions}
+        </div>
+      `;
+    }).join('');
+  }
+
+  // ===== ДЕЙСТВИЯ С ДРУЗЬЯМИ =====
+  function sendFriendRequest(id) {
+    const data = getFriendsData();
+    if (data.outgoing.includes(id)) return showToast('info', 'Уже отправлено', 'Запрос уже отправлен');
+    if (data.friends.includes(id)) return showToast('info', 'Уже друзья', 'Этот игрок уже в друзьях');
+    data.outgoing.push(id);
+    saveFriendsData(data);
+    showToast('success', 'Запрос отправлен', 'Запрос в друзья отправлен');
+    renderFriendsPage();
+  }
+
+  function acceptFriend(id) {
+    const data = getFriendsData();
+    data.incoming = data.incoming.filter(i => i !== id);
+    if (!data.friends.includes(id)) data.friends.push(id);
+    saveFriendsData(data);
+    showToast('success', 'Добавлен в друзья!', '');
+    renderFriendsPage();
+  }
+
+  function declineFriend(id) {
+    const data = getFriendsData();
+    data.incoming = data.incoming.filter(i => i !== id);
+    saveFriendsData(data);
+    showToast('info', 'Отклонён', 'Запрос отклонён');
+    renderFriendsPage();
+  }
+
+  function cancelFriendRequest(id) {
+    const data = getFriendsData();
+    data.outgoing = data.outgoing.filter(i => i !== id);
+    saveFriendsData(data);
+    showToast('info', 'Отменён', 'Запрос отменён');
+    renderFriendsPage();
+  }
+
+  function removeFriend(id) {
+    if (!confirm('Удалить из друзей?')) return;
+    const data = getFriendsData();
+    data.friends = data.friends.filter(f => f !== id);
+    saveFriendsData(data);
+    showToast('info', 'Удалён', 'Игрок удалён из друзей');
+    renderFriendsPage();
+  }
+
+  // ===== ТОП ИГРОКОВ =====
+  function renderTopPage() {
+    const users = getUsers();
+    const sorted = [...users].sort((a, b) => (b.elo || 0) - (a.elo || 0));
+    const container = document.getElementById('topList');
+    const user = getCurrentUser();
+    const userRank = user ? sorted.findIndex(u => u.id === user.id) + 1 : 0;
+    document.getElementById('userRank').textContent = '#' + (userRank || 0);
+
+    const medals = ['🥇', '🥈', '🥉', '4', '5', '6', '7', '8', '9', '10'];
+    const rankClasses = ['gold', 'silver', 'bronze', '', '', '', '', '', '', ''];
+
+    container.innerHTML = sorted.slice(0, 10).map((u, i) => {
+      const initial = u.username.charAt(0).toUpperCase();
+      const kd = u.deaths > 0 ? (u.kills / u.deaths).toFixed(2) : (u.kills > 0 ? u.kills.toFixed(2) : '0.00');
+      const adr = u.adr || 0;
+      const matches = u.matches || 0;
+      const rank = i < 3 ? rankClasses[i] : '';
+      const medal = i < 3 ? medals[i] : (i + 1);
+
+      return `
+        <div class="top-item">
+          <div class="rank ${rank}">${medal}</div>
+          <div class="avatar">${initial}</div>
+          <div class="info">
+            <div class="name">${u.username}</div>
+            <div class="stats">${matches} матчей · K/D ${kd} · ADR ${adr}</div>
+          </div>
+          <div class="elo">
+            ${u.elo || 1000}
+            <span class="elo-label">ELO</span>
+          </div>
+        </div>
+      `;
+    }).join('');
   }
 
   // ===== ОЧЕРЕДЬ =====
@@ -1735,6 +2181,82 @@
             { map: 'Mirage', kills: 18, deaths: 10, adr: 92, date: '22.07.2026', result: 'win' },
             { map: 'Dust2', kills: 12, deaths: 14, adr: 70, date: '21.07.2026', result: 'loss' }
           ]
+        },
+        {
+          id: '3',
+          username: 'Jambo',
+          standoffId: '98765432',
+          password: 'jambo123',
+          regDate: '15.05.2024',
+          elo: 2454,
+          level: 6,
+          wins: 85,
+          losses: 45,
+          kills: 800,
+          deaths: 394,
+          adr: 172,
+          matches: 130,
+          winrate: 65,
+          mvp: 32,
+          partyCode: 'JAMB01',
+          matchHistory: []
+        },
+        {
+          id: '4',
+          username: 'DeFOLTY',
+          standoffId: '87654321',
+          password: 'defolty123',
+          regDate: '20.03.2024',
+          elo: 2286,
+          level: 5,
+          wins: 92,
+          losses: 54,
+          kills: 700,
+          deaths: 366,
+          adr: 153,
+          matches: 146,
+          winrate: 63,
+          mvp: 28,
+          partyCode: 'DEFOL1',
+          matchHistory: []
+        },
+        {
+          id: '5',
+          username: 'Quantum',
+          standoffId: '76543210',
+          password: 'quantum123',
+          regDate: '10.06.2024',
+          elo: 2260,
+          level: 5,
+          wins: 60,
+          losses: 35,
+          kills: 520,
+          deaths: 260,
+          adr: 168,
+          matches: 95,
+          winrate: 63,
+          mvp: 22,
+          partyCode: 'QUANT1',
+          matchHistory: []
+        },
+        {
+          id: '6',
+          username: 'JaSs',
+          standoffId: '65432109',
+          password: 'jass123',
+          regDate: '01.04.2024',
+          elo: 2137,
+          level: 5,
+          wins: 68,
+          losses: 34,
+          kills: 550,
+          deaths: 254,
+          adr: 156,
+          matches: 102,
+          winrate: 66,
+          mvp: 25,
+          partyCode: 'JASS01',
+          matchHistory: []
         }
       ];
       saveUsers(users);
