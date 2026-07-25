@@ -286,14 +286,14 @@
     .player .status { margin-left: auto; font-size: 11px; color: #51cf66; }
     .match-actions { text-align: center; margin-top: 22px; }
 
-    /* ===== ПРОФИЛЬ (ИЗНАЧАЛЬНЫЙ, НО С ELO) ===== */
+    /* ===== ПРОФИЛЬ ===== */
     .profile-card {
       background: rgba(20,20,28,0.8);
       backdrop-filter: blur(8px);
       border-radius: 24px;
       padding: 20px 24px;
       border: 1px solid rgba(255,255,255,0.04);
-      max-width: 700px;
+      max-width: 800px;
       margin: 0 auto;
     }
     .profile-header {
@@ -389,9 +389,10 @@
 
     .profile-stats {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
       gap: 8px;
       margin: 16px 0 18px;
+      align-items: stretch;
     }
     .stat-item {
       background: rgba(26,26,34,0.6);
@@ -413,6 +414,121 @@
       text-transform: uppercase;
       letter-spacing: 0.3px;
       margin-top: 3px;
+    }
+
+    /* Круговой график Winrate */
+    .winrate-circle-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: rgba(26,26,34,0.6);
+      border-radius: 14px;
+      padding: 4px 12px 4px 6px;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+    .winrate-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .winrate-circle svg {
+      transform: rotate(-90deg);
+      width: 44px;
+      height: 44px;
+    }
+    .winrate-circle .bg {
+      fill: none;
+      stroke: rgba(255,255,255,0.06);
+      stroke-width: 4;
+    }
+    .winrate-circle .progress {
+      fill: none;
+      stroke-width: 4;
+      stroke-linecap: round;
+      transition: stroke-dasharray 0.6s ease, stroke 0.3s ease;
+    }
+    .winrate-circle .center-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 11px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .winrate-circle .center-text .win {
+      color: #51cf66;
+    }
+    .winrate-circle .center-text .loss {
+      color: #ff6b6b;
+    }
+    .winrate-circle .center-text .divider {
+      color: #666;
+      font-size: 8px;
+    }
+    .winrate-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #aaa;
+    }
+
+    /* Динамика матчей (гистограмма) */
+    .match-dynamics {
+      margin-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.04);
+      padding-top: 16px;
+    }
+    .match-dynamics .title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chart-container {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 6px;
+      height: 120px;
+      padding: 8px 4px;
+      background: rgba(26,26,34,0.4);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.04);
+      overflow-x: auto;
+      min-height: 120px;
+    }
+    .chart-bar-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 18px;
+      height: 100%;
+      justify-content: flex-end;
+    }
+    .chart-bar {
+      width: 12px;
+      border-radius: 3px 3px 0 0;
+      transition: height 0.4s ease;
+      min-height: 2px;
+      position: relative;
+    }
+    .chart-bar.win {
+      background: linear-gradient(180deg, #51cf66, #2b8a3e);
+    }
+    .chart-bar.loss {
+      background: linear-gradient(180deg, #ff6b6b, #c0392b);
+      border-radius: 0 0 3px 3px;
+      align-self: flex-start;
+    }
+    .chart-bar-wrap .bar-label {
+      font-size: 7px;
+      color: #666;
+      margin-top: 2px;
     }
 
     /* История матчей */
@@ -606,13 +722,16 @@
       .home-title { font-size: 32px; }
       .profile-header { flex-direction: column; text-align: center; }
       .profile-info .details { justify-content: center; }
-      .profile-stats { grid-template-columns: 1fr 1fr; }
+      .profile-stats { grid-template-columns: 1fr 1fr 1fr; }
       .match-grid { grid-template-columns: 1fr; }
       .search-title { font-size: 26px; }
       .search-box { padding: 22px 16px; }
       .search-box .btn-queue { font-size: 15px; padding: 10px 24px; }
       .counter { min-width: 100px; padding: 6px 14px; }
       .counter .num { font-size: 22px; }
+      .chart-container { height: 80px; gap: 4px; }
+      .chart-bar { width: 8px; }
+      .chart-bar-wrap { min-width: 12px; }
     }
     @media (max-width: 480px) {
       .home-title { font-size: 26px; }
@@ -622,6 +741,12 @@
       .search-title { font-size: 20px; }
       .search-box .btn-queue { font-size: 13px; padding: 8px 16px; }
       .counter .num { font-size: 18px; }
+      .chart-container { height: 60px; gap: 3px; }
+      .chart-bar { width: 6px; }
+      .chart-bar-wrap { min-width: 10px; }
+      .winrate-circle { width: 36px; height: 36px; }
+      .winrate-circle svg { width: 36px; height: 36px; }
+      .winrate-circle .center-text { font-size: 9px; }
     }
   </style>
 </head>
@@ -708,7 +833,7 @@
     </div>
   </div>
 
-  <!-- ===== ПРОФИЛЬ ===== -->
+  <!-- ===== ПРОФИЛЬ С ГРАФИКАМИ ===== -->
   <div class="page" id="pageProfile">
     <div class="profile-card">
       <div class="profile-header">
@@ -735,12 +860,47 @@
       </div>
 
       <div class="profile-stats">
-        <div class="stat-item"><div class="value" id="pKd">0</div><div class="label">К/Д</div></div>
-        <div class="stat-item"><div class="value" id="pWr">0%</div><div class="label">Винрейт</div></div>
-        <div class="stat-item"><div class="value" id="pMatches">0</div><div class="label">Матчей</div></div>
-        <div class="stat-item"><div class="value" id="pMvp">0</div><div class="label">MVP</div></div>
+        <div class="stat-item">
+          <div class="value" id="pKd">0</div>
+          <div class="label">К/Д</div>
+        </div>
+        <div class="stat-item">
+          <div class="value" id="pWr">0%</div>
+          <div class="label">Винрейт</div>
+        </div>
+        <div class="stat-item">
+          <div class="winrate-circle-wrap">
+            <div class="winrate-circle" id="winrateCircle">
+              <svg viewBox="0 0 44 44">
+                <circle class="bg" cx="22" cy="22" r="18"/>
+                <circle class="progress" id="winrateArc" cx="22" cy="22" r="18" stroke="#51cf66" stroke-dasharray="0 113"/>
+              </svg>
+              <div class="center-text" id="winrateText">
+                <span class="win" id="wrWin">50</span><span class="divider">/</span><span class="loss" id="wrLoss">50</span>
+              </div>
+            </div>
+            <span class="winrate-label">WR</span>
+          </div>
+        </div>
+        <div class="stat-item">
+          <div class="value" id="pMatches">0</div>
+          <div class="label">Матчей</div>
+        </div>
+        <div class="stat-item">
+          <div class="value" id="pMvp">0</div>
+          <div class="label">MVP</div>
+        </div>
       </div>
 
+      <!-- Динамика матчей -->
+      <div class="match-dynamics">
+        <div class="title"><i class="fas fa-chart-bar"></i> Динамика матчей</div>
+        <div class="chart-container" id="chartContainer">
+          <div style="color:#666; text-align:center; width:100%; padding:10px 0;">Нет данных</div>
+        </div>
+      </div>
+
+      <!-- История матчей -->
       <div class="match-history">
         <div class="title"><i class="fas fa-history"></i> История матчей</div>
         <div id="matchHistoryList">
@@ -943,11 +1103,10 @@
     showToast('info', 'Матч завершён', 'Возврат в поиск');
   }
 
-  // ===== ПРОФИЛЬ =====
+  // ===== ПРОФИЛЬ С ГРАФИКАМИ =====
   function updateProfile() {
     const user = getCurrentUser();
     if (!user) {
-      // Если пользователь не найден, показываем заглушку
       document.getElementById('pName').textContent = 'Игрок';
       document.getElementById('pId').textContent = '—';
       document.getElementById('pReg').textContent = '—';
@@ -973,6 +1132,7 @@
     const deaths = user.deaths || 0;
     const matches = user.matches || 0;
     const wins = user.wins || 0;
+    const losses = user.losses || 0;
     const kd = deaths > 0 ? (kills / deaths) : (kills > 0 ? kills : 0);
     const winrate = matches > 0 ? Math.round((wins / matches) * 100) : 0;
     document.getElementById('pKd').textContent = kd.toFixed(2);
@@ -980,7 +1140,14 @@
     document.getElementById('pMatches').textContent = matches;
     document.getElementById('pMvp').textContent = user.mvp || 0;
 
+    // Круговой график Winrate
+    updateWinrateCircle(winrate);
+
+    // Динамика матчей (гистограмма)
     const history = user.matchHistory || [];
+    renderChart(history);
+
+    // История матчей
     const container = document.getElementById('matchHistoryList');
     if (history.length === 0) {
       container.innerHTML = '<div style="color:#666; text-align:center; padding:8px 0;">Нет сыгранных матчей</div>';
@@ -994,6 +1161,55 @@
         </div>
       `).join('');
     }
+  }
+
+  // ===== КРУГОВОЙ ГРАФИК WINRATE =====
+  function updateWinrateCircle(winrate) {
+    const win = winrate || 0;
+    const loss = 100 - win;
+    const circumference = 2 * Math.PI * 18; // r=18
+    const dash = (win / 100) * circumference;
+
+    const arc = document.getElementById('winrateArc');
+    arc.style.strokeDasharray = dash + ' ' + circumference;
+
+    // Меняем цвет в зависимости от винрейта
+    if (win >= 60) arc.style.stroke = '#51cf66';
+    else if (win >= 40) arc.style.stroke = '#ffd700';
+    else arc.style.stroke = '#ff6b6b';
+
+    document.getElementById('wrWin').textContent = Math.round(win);
+    document.getElementById('wrLoss').textContent = Math.round(loss);
+  }
+
+  // ===== ГИСТОГРАММА ДИНАМИКИ МАТЧЕЙ =====
+  function renderChart(history) {
+    const container = document.getElementById('chartContainer');
+    if (!history || history.length === 0) {
+      container.innerHTML = '<div style="color:#666; text-align:center; width:100%; padding:10px 0;">Нет данных</div>';
+      return;
+    }
+
+    // Берём последние 15 матчей
+    const lastMatches = history.slice(-15);
+    const maxHeight = 80;
+
+    let html = '';
+    lastMatches.forEach((m, index) => {
+      const isWin = m.result === 'win';
+      const height = Math.max(8, Math.min(80, (m.kills || 10) * 2));
+      const barClass = isWin ? 'win' : 'loss';
+      const label = isWin ? 'W' : 'L';
+
+      html += `
+        <div class="chart-bar-wrap">
+          <div class="chart-bar ${barClass}" style="height: ${height}px; ${isWin ? '' : 'align-self: flex-start; border-radius: 0 0 3px 3px;'}"></div>
+          <span class="bar-label">${index + 1}</span>
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
   }
 
   function getLevelInfo(elo) {
@@ -1082,7 +1298,23 @@
           matches: 214,
           winrate: 63,
           mvp: 48,
-          matchHistory: []
+          matchHistory: [
+            { map: 'Mirage', kills: 18, deaths: 10, adr: 92, date: '22.07.2026', result: 'win' },
+            { map: 'Dust2', kills: 12, deaths: 14, adr: 70, date: '21.07.2026', result: 'loss' },
+            { map: 'Inferno', kills: 22, deaths: 8, adr: 105, date: '20.07.2026', result: 'win' },
+            { map: 'Mirage', kills: 8, deaths: 16, adr: 45, date: '19.07.2026', result: 'loss' },
+            { map: 'Nuke', kills: 15, deaths: 11, adr: 78, date: '18.07.2026', result: 'win' },
+            { map: 'Dust2', kills: 20, deaths: 9, adr: 95, date: '17.07.2026', result: 'win' },
+            { map: 'Inferno', kills: 6, deaths: 18, adr: 35, date: '16.07.2026', result: 'loss' },
+            { map: 'Mirage', kills: 25, deaths: 6, adr: 120, date: '15.07.2026', result: 'win' },
+            { map: 'Nuke', kills: 10, deaths: 15, adr: 55, date: '14.07.2026', result: 'loss' },
+            { map: 'Dust2', kills: 16, deaths: 12, adr: 82, date: '13.07.2026', result: 'win' },
+            { map: 'Inferno', kills: 14, deaths: 13, adr: 68, date: '12.07.2026', result: 'loss' },
+            { map: 'Mirage', kills: 19, deaths: 7, adr: 98, date: '11.07.2026', result: 'win' },
+            { map: 'Nuke', kills: 5, deaths: 20, adr: 28, date: '10.07.2026', result: 'loss' },
+            { map: 'Dust2', kills: 21, deaths: 8, adr: 100, date: '09.07.2026', result: 'win' },
+            { map: 'Inferno', kills: 11, deaths: 14, adr: 62, date: '08.07.2026', result: 'loss' }
+          ]
         },
         {
           id: '2',
