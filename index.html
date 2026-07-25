@@ -18,7 +18,6 @@
       min-height: 100vh;
       line-height: 1.5;
     }
-    /* Шапка */
     .header {
       background: rgba(11, 11, 15, 0.85);
       backdrop-filter: blur(12px);
@@ -67,7 +66,7 @@
     .page.active { display: block; }
     @keyframes fade { 0% { opacity: 0; transform: translateY(16px); } 100% { opacity: 1; transform: translateY(0); } }
 
-    /* ===== ГЛАВНОЕ МЕНЮ (НОВОЕ) ===== */
+    /* ===== ГЛАВНОЕ МЕНЮ ===== */
     .home-hero {
       text-align: center;
       max-width: 860px;
@@ -172,7 +171,7 @@
     }
     .btn-start i { font-size: 22px; }
 
-    /* ===== ПОИСК МАТЧА (без изменений) ===== */
+    /* ===== ПОИСК МАТЧА ===== */
     .search-title {
       font-size: 32px;
       font-weight: 900;
@@ -288,7 +287,7 @@
     .player .status { margin-left: auto; font-size: 11px; color: #51cf66; }
     .match-actions { text-align: center; margin-top: 22px; }
 
-    /* ===== ПРОФИЛЬ (НОВЫЙ ДИЗАЙН) ===== */
+    /* ===== ПРОФИЛЬ (ТОЧНАЯ КОПИЯ) ===== */
     .profile-card {
       background: rgba(20,20,28,0.8);
       backdrop-filter: blur(8px);
@@ -302,7 +301,7 @@
       display: flex;
       align-items: center;
       gap: 16px;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       flex-wrap: wrap;
     }
     .profile-avatar {
@@ -354,7 +353,7 @@
     .profile-actions {
       display: flex;
       gap: 8px;
-      margin: 12px 0 16px;
+      margin: 6px 0 14px;
       flex-wrap: wrap;
     }
     .profile-actions .btn-share {
@@ -587,7 +586,7 @@
     .result.win { background: rgba(81, 207, 102, 0.15); color: #51cf66; }
     .result.loss { background: rgba(255, 107, 107, 0.15); color: #ff6b6b; }
 
-    /* ===== ПРОЧИЕ СТРАНИЦЫ (заглушки) ===== */
+    /* ===== ЗАГЛУШКИ ===== */
     .placeholder {
       text-align: center;
       padding: 50px 0;
@@ -596,7 +595,7 @@
     .placeholder i { font-size: 40px; color: #ff7b00; display: block; margin-bottom: 10px; }
     .placeholder h2 { font-size: 22px; font-weight: 800; color: #fff; }
 
-    /* ===== НИЖНЯЯ НАВИГАЦИЯ (уменьшенная) ===== */
+    /* ===== НИЖНЯЯ НАВИГАЦИЯ (НОРМАЛЬНЫЙ РАЗМЕР) ===== */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -608,9 +607,8 @@
       display: flex;
       justify-content: space-around;
       align-items: center;
-      padding: 4px 0 3px;
+      padding: 6px 0 4px;
       z-index: 100;
-      flex-wrap: nowrap;
     }
     .bottom-nav .progress-bar {
       position: absolute;
@@ -627,23 +625,23 @@
       flex-direction: column;
       align-items: center;
       color: #888;
-      font-size: 9px;
+      font-size: 10px;
       font-weight: 600;
       background: none;
       border: none;
       cursor: pointer;
-      padding: 2px 4px;
-      min-width: 38px;
+      padding: 2px 6px;
+      min-width: 44px;
       position: relative;
       transition: .2s;
     }
     .bottom-nav .item i {
-      font-size: 18px;
+      font-size: 22px;
       margin-bottom: 1px;
       transition: .2s;
     }
     .bottom-nav .item span {
-      font-size: 9px;
+      font-size: 10px;
       line-height: 1.2;
     }
     .bottom-nav .item.active {
@@ -757,9 +755,6 @@
       .counter { min-width: 100px; padding: 6px 14px; }
       .counter .num { font-size: 22px; }
       .tabs .tab { font-size: 12px; padding: 4px 12px; }
-      .bottom-nav .item i { font-size: 16px; }
-      .bottom-nav .item span { font-size: 8px; }
-      .bottom-nav .item { min-width: 32px; }
     }
     @media (max-width: 480px) {
       .home-title { font-size: 26px; }
@@ -767,13 +762,12 @@
       .profile-stats-grid { grid-template-columns: 1fr 1fr; }
       .win-loss { gap: 16px; font-size: 14px; }
       .elo-header .elo-value { font-size: 18px; }
-      .elo-header .elo-level { font-size: 14px; }
       .search-title { font-size: 20px; }
       .search-box .btn-queue { font-size: 13px; padding: 8px 16px; }
       .counter .num { font-size: 18px; }
-      .bottom-nav .item i { font-size: 14px; }
-      .bottom-nav .item span { font-size: 7px; }
-      .bottom-nav .item { min-width: 28px; }
+      .bottom-nav .item i { font-size: 18px; }
+      .bottom-nav .item span { font-size: 9px; }
+      .bottom-nav .item { min-width: 36px; }
     }
   </style>
 </head>
@@ -816,12 +810,11 @@
     </div>
   </header>
 
-  <!-- ===== ГЛАВНОЕ МЕНЮ (НОВОЕ) ===== -->
+  <!-- ===== ГЛАВНОЕ МЕНЮ ===== -->
   <div class="page active" id="pageHome">
     <div class="home-hero">
       <h1 class="home-title">Faceit 5x5 Arena</h1>
       <p class="home-sub">Соревновательный матчмейкинг для Standoff 2. Играй 5×5, поднимай ELO и участвуй в турнирах.</p>
-
       <div class="home-stats-grid">
         <div class="home-stat-card">
           <div class="number" id="totalMatches">0</div>
@@ -845,7 +838,6 @@
           <div class="label">Турниров проведено</div>
         </div>
       </div>
-
       <button class="btn-start" onclick="navigate('matches')">
         <i class="fas fa-play"></i> Найти матч
       </button>
@@ -881,7 +873,7 @@
     </div>
   </div>
 
-  <!-- ===== ПРОФИЛЬ (НОВЫЙ) ===== -->
+  <!-- ===== ПРОФИЛЬ (ТОЧНАЯ КОПИЯ) ===== -->
   <div class="page" id="pageProfile">
     <div class="profile-card">
       <!-- Верхняя часть -->
@@ -978,7 +970,7 @@
   <div class="page" id="pageTop"><div class="placeholder"><i class="fas fa-trophy"></i><h2>Топ игроков</h2><p>Рейтинг лучших игроков.</p></div></div>
   <div class="page" id="pageWallet"><div class="placeholder"><i class="fas fa-wallet"></i><h2>Кошелёк</h2><p>Ваш баланс и история транзакций.</p></div></div>
 
-  <!-- ===== НИЖНЯЯ НАВИГАЦИЯ (УМЕНЬШЕННАЯ) ===== -->
+  <!-- ===== НИЖНЯЯ НАВИГАЦИЯ (НОРМАЛЬНЫЙ РАЗМЕР) ===== -->
   <nav class="bottom-nav" id="bottomNav">
     <div class="progress-bar" id="scrollProgress"></div>
     <button class="item" data-page="profile" onclick="navigate('profile')"><i class="fas fa-user"></i><span>Профиль</span></button>
@@ -1057,7 +1049,7 @@
       avgKills: 0,
       avgDeaths: 0,
       avgAdr: 0,
-      matchHistory: [] // [{map, kills, deaths, adr, date, result}]
+      matchHistory: []
     };
     users.push(newUser);
     saveUsers(users);
@@ -1169,7 +1161,7 @@
     showToast('info', 'Матч завершён', 'Возврат в поиск');
   }
 
-  // ===== ПРОФИЛЬ (НОВЫЙ) =====
+  // ===== ПРОФИЛЬ (ТОЧНАЯ КОПИЯ) =====
   function updateProfile() {
     const user = getCurrentUser();
     if (!user) return;
@@ -1316,7 +1308,6 @@
   document.addEventListener('DOMContentLoaded', function() {
     let users = getUsers();
     if (users.length === 0) {
-      // Создаём тестового пользователя Des с данными как на скрине
       users = [
         {
           id: '1',
