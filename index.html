@@ -61,11 +61,11 @@
       color: var(--text-primary);
       min-height:100vh;
       transition: background .3s,color .3s;
-      padding-bottom: 70px; /* отступ для нижней навигации */
+      padding-bottom: 70px;
     }
     .main-wrapper { position:relative; z-index:1; min-height:100vh; }
 
-    /* ===== НАВИГАЦИЯ СВЕРХУ (только логотип) ===== */
+    /* ===== ШАПКА С ЛОГОТИПОМ ===== */
     .header {
       background: var(--bg-main);
       border-bottom:2px solid var(--primary);
@@ -75,10 +75,10 @@
       top:0;
       z-index:1000;
       box-shadow:0 4px 30px rgba(0,0,0,0.3);
+      cursor:pointer;
     }
     .logo-center {
       display:inline-block;
-      cursor:pointer;
       transition:.3s;
     }
     .logo-center:hover { transform:scale(1.02); }
@@ -192,7 +192,48 @@
     }
     .page-content .sub-title { color:var(--text-secondary); font-size:1rem; margin-bottom:2rem; font-weight:500; }
 
-    /* ===== СТРАНИЦА МАТЧЕЙ (поиск матча) ===== */
+    /* ===== ГЛАВНОЕ МЕНЮ (home) ===== */
+    .home-hero {
+      max-width:700px;
+      margin:0 auto;
+      text-align:center;
+    }
+    .home-hero h2 {
+      font-size:2.2rem;
+      font-weight:900;
+      background:linear-gradient(45deg,var(--gradient-start),var(--gradient-end));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      margin-bottom:1rem;
+    }
+    .home-hero p {
+      color:var(--text-secondary);
+      font-size:1.1rem;
+      line-height:1.6;
+      max-width:600px;
+      margin:0 auto;
+    }
+    .home-features {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+      gap:1.5rem;
+      margin-top:2rem;
+    }
+    .feature-card {
+      background:var(--bg-card);
+      backdrop-filter:blur(8px);
+      border-radius:16px;
+      padding:1.5rem;
+      border:1px solid var(--border-color);
+      text-align:center;
+      transition:.3s;
+    }
+    .feature-card:hover { border-color:var(--primary); transform:translateY(-3px); }
+    .feature-card .icon { font-size:2rem; color:var(--primary); margin-bottom:.5rem; }
+    .feature-card h3 { color:var(--text-primary); font-weight:700; }
+    .feature-card p { color:var(--text-secondary); font-size:.85rem; margin-top:.3rem; font-weight:500; }
+
+    /* ===== СТРАНИЦА ПОИСКА МАТЧА ===== */
     .queue-status {
       background:var(--bg-card);
       backdrop-filter:blur(8px);
@@ -257,7 +298,7 @@
       margin-top:.5rem;
     }
 
-    /* ===== СТРАНИЦА МАТЧА ===== */
+    /* ===== СТРАНИЦА МАТЧА (внутри поиска) ===== */
     .match-grid {
       display:grid;
       grid-template-columns:1fr 1fr;
@@ -549,7 +590,6 @@
     .bottom-nav .nav-item:hover {
       color: var(--primary-hover);
     }
-    /* Индикатор активного пункта (можно убрать, если не нужно) */
     .bottom-nav .nav-item.active::after {
       content: '';
       position: absolute;
@@ -561,7 +601,7 @@
       border-radius: 2px;
     }
 
-    /* ===== ПОИСК ИГРОКОВ ===== */
+    /* ===== ПОИСК ИГРОКОВ (не используется, но оставим) ===== */
     .search-container {
       max-width:600px;
       margin:0 auto;
@@ -767,16 +807,29 @@
 <div class="main-wrapper">
   <div class="main-content" id="mainSite">
     <!-- ===== ШАПКА С ЛОГОТИПОМ ===== -->
-    <header class="header">
-      <div class="logo-center" onclick="navigateTo('matches')" title="На главную">
+    <header class="header" onclick="navigateTo('home')">
+      <div class="logo-center">
         <h1>⚡ Faceit <span class="badge">5x5</span><span class="sub">✦ Matchmaking Standoff 2 ✦</span></h1>
       </div>
     </header>
 
     <!-- ===== СТРАНИЦЫ ===== -->
 
-    <!-- 1. МАТЧИ (поиск матча) — по умолчанию активна -->
-    <div class="page-content active" id="pageMatches">
+    <!-- 0. ГЛАВНОЕ МЕНЮ (home) -->
+    <div class="page-content active" id="pageHome">
+      <div class="home-hero">
+        <h2>Добро пожаловать в Faceit 5x5!</h2>
+        <p>Здесь вы можете найти матч по Standoff 2 в формате 5×5. Перейдите в раздел <strong>«Поиск матча»</strong>, чтобы присоединиться к очереди и начать игру.</p>
+        <div class="home-features">
+          <div class="feature-card"><div class="icon"><i class="fas fa-users"></i></div><h3>5×5 Матчи</h3><p>Собирайте команду из 10 игроков и играйте</p></div>
+          <div class="feature-card"><div class="icon"><i class="fas fa-shield-alt"></i></div><h3>Честная игра</h3><p>Случайное распределение по командам</p></div>
+          <div class="feature-card"><div class="icon"><i class="fas fa-clock"></i></div><h3>Быстрый поиск</h3><p>Как только наберётся 10 человек — матч начинается</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1. ПОИСК МАТЧА (ранее "Матчи") -->
+    <div class="page-content" id="pageMatches">
       <h1 class="page-title"><i class="fas fa-search"></i> Поиск матча</h1>
       <p class="sub-title">Нажмите «Найти матч» несколько раз, чтобы добавить ботов в очередь. Как только будет 10 игроков — матч начнётся автоматически.</p>
       <div class="queue-status">
@@ -795,7 +848,7 @@
         <div class="status-text" id="queueStatusText">Нажмите «Найти матч», чтобы добавить бота в очередь</div>
       </div>
 
-      <!-- Страница матча (встраивается сюда же, но показывается отдельно) -->
+      <!-- Контейнер для матча -->
       <div id="matchPageContainer" style="display:none;">
         <h1 class="page-title"><i class="fas fa-swords"></i> Матч начался!</h1>
         <p class="sub-title">Команды сформированы. Удачи!</p>
@@ -901,9 +954,9 @@
         <i class="fas fa-user-friends"></i>
         <span>Друзья</span>
       </button>
-      <button class="nav-item active" data-page="matches" onclick="navigateTo('matches')">
-        <i class="fas fa-gamepad"></i>
-        <span>Матчи</span>
+      <button class="nav-item" data-page="matches" onclick="navigateTo('matches')">
+        <i class="fas fa-search"></i>
+        <span>Поиск матча</span>
       </button>
       <button class="nav-item" data-page="top" onclick="navigateTo('top')">
         <i class="fas fa-trophy"></i>
@@ -1017,9 +1070,10 @@
   }
 
   // ============================================================
-  // НАВИГАЦИЯ ПО НИЖНЕМУ МЕНЮ
+  // НАВИГАЦИЯ
   // ============================================================
   const pageMap = {
+    home: 'pageHome',
     profile: 'pageProfile',
     shop: 'pageShop',
     friends: 'pageFriends',
@@ -1035,7 +1089,7 @@
     const target = document.getElementById(pageMap[page]);
     if (target) target.classList.add('active');
 
-    // Обновить активный пункт в нижнем меню
+    // Обновить активный пункт в нижнем меню (если страница есть в навигации)
     document.querySelectorAll('.bottom-nav .nav-item').forEach(btn => {
       btn.classList.remove('active');
       if (btn.dataset.page === page) {
@@ -1043,15 +1097,13 @@
       }
     });
 
-    // Если перешли на страницу матчей, обновляем очередь
+    // Если перешли на страницу поиска матча, обновляем очередь
     if (page === 'matches') {
       updateQueueUI();
-      // Если есть текущий матч, показываем его, иначе скрываем
       const matchContainer = document.getElementById('matchPageContainer');
       if (currentMatch) {
         matchContainer.style.display = 'block';
         renderMatch();
-        // Скрываем стандартную очередь
         document.querySelector('.queue-status').style.display = 'none';
       } else {
         matchContainer.style.display = 'none';
@@ -1138,7 +1190,7 @@
     currentMatch = { terrorists, ct };
     queue = [];
 
-    // Переключаемся на страницу матчей
+    // Переключаемся на страницу поиска матча
     navigateTo('matches');
     // Показываем контейнер матча
     document.getElementById('matchPageContainer').style.display = 'block';
@@ -1254,7 +1306,6 @@
     const theme = localStorage.getItem('faceit_theme') || 'orange';
     changeTheme(theme);
     const lang = localStorage.getItem('faceit_lang') || 'ru';
-    // Здесь можно добавить смену языка, если нужно
   }
 
   // ============================================================
@@ -1283,17 +1334,17 @@
       updateProfileUI();
       loadSettings();
       updateQueueUI();
-      // Если есть текущий матч, показываем его
+      // Если есть текущий матч, показываем его на странице поиска
       if (currentMatch) {
         document.getElementById('matchPageContainer').style.display = 'block';
         document.querySelector('.queue-status').style.display = 'none';
         renderMatch();
+        // По умолчанию открываем страницу поиска матча (так как матч активен)
+        navigateTo('matches');
       } else {
-        document.getElementById('matchPageContainer').style.display = 'none';
-        document.querySelector('.queue-status').style.display = 'block';
+        // Иначе открываем главное меню
+        navigateTo('home');
       }
-      // По умолчанию открываем вкладку "Матчи"
-      navigateTo('matches');
     } else {
       document.getElementById('authPage').style.display = 'flex';
       document.getElementById('mainSite').classList.remove('visible');
