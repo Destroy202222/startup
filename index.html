@@ -294,13 +294,20 @@
       color: #ff7b00;
       font-size: 20px;
     }
+    .search-main-block .btn-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
     .search-main-block .btn-queue {
       background: linear-gradient(135deg, #ff7b00, #ffb347);
       color: #000;
-      padding: 14px 40px;
+      padding: 14px 36px;
       border-radius: 60px;
       font-weight: 800;
-      font-size: 18px;
+      font-size: 17px;
       border: none;
       cursor: pointer;
       box-shadow: 0 0 30px rgba(255,123,0,0.3);
@@ -326,10 +333,18 @@
       cursor: not-allowed;
       transform: none;
     }
+    .search-main-block .btn-queue.cancel {
+      background: #ff6b6b;
+      color: #fff;
+      box-shadow: 0 0 20px rgba(255,0,0,0.3);
+    }
+    .search-main-block .btn-queue.cancel:hover {
+      background: #ff4444;
+    }
     .search-main-block .search-type {
       color: #888;
       font-size: 13px;
-      margin: 10px 0 16px;
+      margin: 0 0 16px;
       font-weight: 400;
     }
 
@@ -366,15 +381,19 @@
       margin-top: 2px;
     }
 
-    /* Режим поиска (скрываем всё, показываем только счётчик и таймер) */
     .search-main-block.searching .label,
-    .search-main-block.searching .btn-queue,
     .search-main-block.searching .search-type,
     .search-main-block.searching .search-counters {
       display: none !important;
     }
     .search-main-block.searching .search-progress {
       display: block !important;
+    }
+    .search-main-block.searching .btn-queue.search-btn {
+      display: inline-flex !important;
+    }
+    .search-main-block.searching .btn-queue.cancel-btn {
+      display: inline-flex !important;
     }
 
     .search-progress {
@@ -645,7 +664,7 @@
     .player .status { margin-left: auto; font-size: 9px; color: #51cf66; }
     .match-actions { text-align: center; margin-top: 16px; }
 
-    /* ===== ДРУЗЬЯ ===== */
+    /* ===== ДРУЗЬЯ (ИСПРАВЛЕНО) ===== */
     .friends-page .friends-tabs {
       display: flex;
       gap: 12px;
@@ -1424,7 +1443,7 @@
       .match-grid { grid-template-columns: 1fr; }
       .search-title { font-size: 24px; }
       .search-main-block { padding: 18px 14px; }
-      .search-main-block .btn-queue { font-size: 16px; padding: 12px 28px; }
+      .search-main-block .btn-queue { font-size: 15px; padding: 10px 24px; }
       .search-counter { min-width: 80px; padding: 4px 12px; }
       .search-counter .num { font-size: 20px; }
       .search-progress .progress-text { font-size: 30px; }
@@ -1451,7 +1470,7 @@
       .profile-stats { grid-template-columns: 1fr 1fr; }
       .profile-info .sfp-number { font-size: 20px; }
       .search-title { font-size: 20px; }
-      .search-main-block .btn-queue { font-size: 14px; padding: 10px 20px; }
+      .search-main-block .btn-queue { font-size: 13px; padding: 8px 16px; }
       .search-counter .num { font-size: 18px; }
       .search-progress .progress-text { font-size: 24px; }
       .party-block .party-add input { width: 80px; }
@@ -1574,12 +1593,12 @@
         <div class="label">
           <i class="fas fa-crosshairs"></i> Статус поиска
         </div>
-        <div>
-          <button class="btn-queue" id="queueBtn" onclick="startSearch()">
+        <div class="btn-row">
+          <button class="btn-queue search-btn" id="queueBtn" onclick="startSearch()">
             <i class="fas fa-search"></i> Поиск матча
           </button>
-          <button class="btn-queue leave" id="leaveBtn" onclick="leaveQueue()" style="display:none; margin-left:10px;">
-            <i class="fas fa-times"></i> Выйти
+          <button class="btn-queue cancel-btn" id="cancelBtn" onclick="cancelSearch()" style="display:none;">
+            <i class="fas fa-times"></i> Отменить поиск
           </button>
         </div>
         <div class="search-type">Одиночный поиск матча.</div>
@@ -1595,7 +1614,7 @@
           </div>
         </div>
 
-        <!-- Прогресс поиска (появляется после нажатия) -->
+        <!-- Прогресс поиска -->
         <div class="search-progress" id="searchProgress">
           <div class="progress-text" id="progressText">0/10</div>
           <div class="progress-timer">⏱️ <span id="searchTimer">00:00</span></div>
@@ -1988,7 +2007,7 @@
     });
   }
 
-  // ===== ПОИСК МАТЧА (С ТАЙМЕРОМ) =====
+  // ===== ПОИСК МАТЧА (С ТАЙМЕРОМ И 2 КНОПКАМИ) =====
   function startSearch() {
     if (isSearching) return;
     if (currentMatch) return showToast('info', 'Идёт матч', 'Дождитесь окончания');
@@ -1996,10 +2015,11 @@
     const user = getCurrentUser();
     if (!user) return showToast('error', 'Ошибка', 'Авторизуйтесь');
 
+    // Очищаем очередь при старте
+    queue = [];
+
     // Добавляем пользователя в очередь
-    if (!queue.some(p => p.id === user.id)) {
-      queue.push({ id: user.id, username: user.username });
-    }
+    queue.push({ id: user.id, username: user.username });
 
     isSearching = true;
     searchSeconds = 0;
@@ -2007,6 +2027,10 @@
     // Переключаем блок в режим поиска
     const block = document.getElementById('searchMainBlock');
     block.classList.add('searching');
+
+    // Показываем кнопку "Отменить поиск", скрываем "Поиск матча"
+    document.getElementById('queueBtn').style.display = 'none';
+    document.getElementById('cancelBtn').style.display = 'inline-flex';
 
     // Обновляем счётчик
     updateProgressText();
@@ -2020,54 +2044,62 @@
       document.getElementById('searchTimer').textContent = mins + ':' + secs;
     }, 1000);
 
-    // Скрываем кнопку "Найти матч", показываем "Выйти"
-    document.getElementById('queueBtn').style.display = 'none';
-    document.getElementById('leaveBtn').style.display = 'inline-flex';
-
     showToast('info', 'Поиск начат', 'Ищем игроков...');
 
-    // Симуляция добавления ботов (для демонстрации)
-    setTimeout(() => {
-      if (isSearching && queue.length < 10) {
+    // Симуляция добавления ботов
+    simulateBotSearch();
+  }
+
+  function simulateBotSearch() {
+    if (!isSearching) return;
+
+    const maxBots = 9;
+    const currentBots = queue.length - 1; // минус пользователь
+
+    if (currentBots < maxBots && isSearching) {
+      setTimeout(() => {
+        if (!isSearching) return;
         const botName = 'Bot' + (botCounter + 1);
         botCounter++;
         queue.push({ id: 'bot_' + Date.now(), username: botName });
         updateProgressText();
-        showToast('info', 'Игрок найден', botName + ' присоединился к поиску (' + queue.length + '/10)');
-        if (queue.length === 10) {
+        showToast('info', 'Игрок найден', botName + ' присоединился (' + queue.length + '/10)');
+
+        if (queue.length >= 10) {
           clearInterval(searchTimerInterval);
           isSearching = false;
           document.getElementById('searchMainBlock').classList.remove('searching');
           document.getElementById('queueBtn').style.display = 'inline-flex';
-          document.getElementById('leaveBtn').style.display = 'none';
+          document.getElementById('cancelBtn').style.display = 'none';
           startMatch();
+        } else {
+          // Продолжаем поиск
+          simulateBotSearch();
         }
-      }
-    }, 2000);
+      }, 1500 + Math.random() * 2000);
+    }
+  }
+
+  function cancelSearch() {
+    if (!isSearching) return;
+
+    isSearching = false;
+    clearInterval(searchTimerInterval);
+    queue = [];
+
+    document.getElementById('searchMainBlock').classList.remove('searching');
+    document.getElementById('queueBtn').style.display = 'inline-flex';
+    document.getElementById('cancelBtn').style.display = 'none';
+    document.getElementById('searchTimer').textContent = '00:00';
+    document.getElementById('progressText').textContent = '0/10';
+
+    updateQueueUI();
+    showToast('info', 'Поиск отменён', 'Вы отменили поиск');
   }
 
   function updateProgressText() {
     document.getElementById('progressText').textContent = queue.length + '/10';
-  }
-
-  function leaveQueue() {
-    const user = getCurrentUser();
-    if (!user) return;
-    const idx = queue.findIndex(p => p.id === user.id);
-    if (idx === -1) { updateQueueUI(); return; }
-    queue.splice(idx, 1);
-
-    if (isSearching) {
-      isSearching = false;
-      clearInterval(searchTimerInterval);
-      document.getElementById('searchMainBlock').classList.remove('searching');
-      document.getElementById('queueBtn').style.display = 'inline-flex';
-      document.getElementById('leaveBtn').style.display = 'none';
-      document.getElementById('searchTimer').textContent = '00:00';
-      showToast('info', 'Поиск отменён', 'Вы вышли из поиска');
-    }
-
-    updateQueueUI();
+    document.getElementById('queueCount').textContent = queue.length;
   }
 
   function updateQueueUI() {
@@ -2077,7 +2109,7 @@
     document.getElementById('matchCount').textContent = matchPlayers;
     if (!isSearching && !currentMatch) {
       document.getElementById('queueBtn').style.display = 'inline-flex';
-      document.getElementById('leaveBtn').style.display = 'none';
+      document.getElementById('cancelBtn').style.display = 'none';
     }
   }
 
@@ -2096,7 +2128,7 @@
 
     document.getElementById('searchMainBlock').classList.remove('searching');
     document.getElementById('queueBtn').style.display = 'inline-flex';
-    document.getElementById('leaveBtn').style.display = 'none';
+    document.getElementById('cancelBtn').style.display = 'none';
 
     navigate('matches');
     document.getElementById('matchContainer').style.display = 'block';
@@ -2130,7 +2162,7 @@
     showToast('info', 'Матч завершён', 'Возврат в поиск');
   }
 
-  // ===== ДРУЗЬЯ (страница) =====
+  // ===== ДРУЗЬЯ =====
   function switchFriendsTab(tab) {
     friendsTab = tab;
     document.querySelectorAll('.friends-tabs .tab').forEach(t => t.classList.remove('active'));
