@@ -6,32 +6,22 @@
   <title>Faceit 5x5</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', system-ui, sans-serif;
-    }
-    :root {
-      --primary: #ff7b00;
-      --bg: #0a0a0a;
-      --card: #141414;
-      --border: #2a2a2a;
-      --text: #ffffff;
-      --text2: #aaaaaa;
-      --gold: #ffd700;
-    }
+    /* ===== БАЗОВЫЕ СБРОСЫ ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background: var(--bg);
-      color: var(--text);
-      padding-bottom: 90px;
+      background: #0a0a0a;
+      color: #ffffff;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      padding-bottom: 95px;
       min-height: 100vh;
+      line-height: 1.4;
     }
-    /* Шапка */
+
+    /* ===== ШАПКА (ЛОГОТИП) ===== */
     .header {
-      background: var(--bg);
-      border-bottom: 2px solid var(--primary);
-      padding: 12px 16px;
+      background: #0a0a0a;
+      border-bottom: 2px solid #ff7b00;
+      padding: 14px 16px 12px;
       text-align: center;
       position: sticky;
       top: 0;
@@ -39,82 +29,90 @@
       cursor: pointer;
     }
     .logo h1 {
-      font-size: 26px;
+      font-size: 28px;
       font-weight: 900;
-      background: linear-gradient(45deg, #ff7b00, #ffb347);
+      background: linear-gradient(135deg, #ff7b00, #ffb347);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       display: inline-block;
+      letter-spacing: 0.5px;
     }
     .logo .badge {
-      background: var(--primary);
+      background: #ff7b00;
       color: #000;
-      font-size: 11px;
-      padding: 2px 10px;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 2px 12px;
       border-radius: 30px;
       -webkit-text-fill-color: #000;
       margin-left: 6px;
+      vertical-align: middle;
     }
     .logo .sub {
       display: block;
       font-size: 10px;
       color: #666;
       -webkit-text-fill-color: #666;
-      letter-spacing: 2px;
+      letter-spacing: 2.5px;
       margin-top: 2px;
+      font-weight: 600;
     }
 
-    /* Страницы */
+    /* ===== СТРАНИЦЫ ===== */
     .page {
       display: none;
-      max-width: 900px;
-      margin: 30px auto;
-      padding: 0 16px 40px;
-      animation: fade .3s ease;
+      max-width: 1000px;
+      margin: 28px auto 0;
+      padding: 0 18px 40px;
+      animation: fade 0.3s ease;
     }
     .page.active { display: block; }
-    @keyframes fade { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fade {
+      0% { opacity: 0; transform: translateY(12px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
 
     /* ===== ГЛАВНОЕ МЕНЮ (ТОЧНАЯ КОПИЯ) ===== */
     .orange-badge {
       background: #ff7b00;
-      color: #fff;
+      color: #ffffff;
       display: inline-block;
-      padding: 8px 28px;
-      border-radius: 40px;
+      padding: 10px 34px 8px;
+      border-radius: 60px;
       font-size: 18px;
       font-weight: 800;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
       text-transform: uppercase;
       text-align: center;
       line-height: 1.3;
-      box-shadow: 0 0 30px rgba(255,123,0,0.3);
+      box-shadow: 0 0 40px rgba(255,123,0,0.35);
       margin-bottom: 28px;
     }
     .orange-badge .line2 {
       display: block;
-      font-size: 22px;
+      font-size: 24px;
       letter-spacing: 3px;
+      margin-top: -2px;
     }
     .desc {
       font-size: 17px;
-      color: #bbb;
+      color: #b0b0b0;
       line-height: 1.7;
       max-width: 680px;
       margin: 0 auto 32px;
       font-weight: 400;
     }
     .desc strong {
-      color: #fff;
+      color: #ffffff;
       font-weight: 600;
     }
     .prize-block {
       background: #141414;
-      border-radius: 20px;
-      padding: 24px 28px;
+      border-radius: 24px;
+      padding: 26px 32px 22px;
       border: 1px solid #2a2a2a;
       max-width: 680px;
-      margin: 0 auto 32px;
+      margin: 0 auto 34px;
       text-align: left;
     }
     .prize-title {
@@ -129,14 +127,14 @@
     .prize-item {
       display: flex;
       justify-content: space-between;
-      padding: 8px 0;
+      padding: 9px 0;
       border-bottom: 1px solid #2a2a2a;
       font-size: 16px;
       font-weight: 500;
-      color: #aaa;
+      color: #aaaaaa;
     }
     .prize-item:last-child { border-bottom: none; }
-    .prize-item .place { color: #fff; font-weight: 600; }
+    .prize-item .place { color: #ffffff; font-weight: 600; }
     .prize-item .reward { color: #ffd700; font-weight: 700; }
 
     .actions {
@@ -144,12 +142,12 @@
       flex-wrap: wrap;
       gap: 14px;
       justify-content: center;
-      margin-top: 10px;
+      margin-top: 6px;
     }
     .btn {
-      background: linear-gradient(45deg, #ff7b00, #ffb347);
-      color: #000;
-      padding: 12px 30px;
+      background: linear-gradient(135deg, #ff7b00, #ffb347);
+      color: #000000;
+      padding: 13px 34px;
       border-radius: 60px;
       font-weight: 800;
       font-size: 16px;
@@ -158,63 +156,65 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      box-shadow: 0 0 25px rgba(255,123,0,0.3);
-      transition: .2s;
+      box-shadow: 0 0 30px rgba(255,123,0,0.3);
+      transition: 0.2s;
+      letter-spacing: 0.3px;
     }
-    .btn:hover { transform: scale(1.04); box-shadow: 0 0 40px rgba(255,123,0,0.5); }
+    .btn:hover { transform: scale(1.04); box-shadow: 0 0 50px rgba(255,123,0,0.5); }
     .btn-outline {
       background: transparent;
       border: 2px solid #ff7b00;
       color: #ff7b00;
       box-shadow: none;
     }
-    .btn-outline:hover { background: rgba(255,123,0,0.15); box-shadow: 0 0 20px rgba(255,123,0,0.2); }
+    .btn-outline:hover { background: rgba(255,123,0,0.12); box-shadow: 0 0 20px rgba(255,123,0,0.2); }
 
     /* ===== ПОИСК МАТЧА (ТОЧНАЯ КОПИЯ) ===== */
     .search-title {
-      font-size: 34px;
+      font-size: 36px;
       font-weight: 900;
       text-align: center;
-      background: linear-gradient(45deg, #ff7b00, #ffb347);
+      background: linear-gradient(135deg, #ff7b00, #ffb347);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
     }
     .search-sub {
       text-align: center;
-      color: #aaa;
+      color: #aaaaaa;
       font-size: 17px;
-      max-width: 640px;
+      max-width: 660px;
       margin: 0 auto 30px;
       font-weight: 400;
-      line-height: 1.5;
+      line-height: 1.6;
     }
     .search-box {
       background: #141414;
       border-radius: 24px;
-      padding: 32px 28px;
+      padding: 34px 30px 30px;
       border: 1px solid #2a2a2a;
-      max-width: 560px;
+      max-width: 580px;
       margin: 0 auto;
       text-align: center;
     }
     .search-box .label {
       font-size: 22px;
       font-weight: 700;
-      color: #fff;
-      margin-bottom: 16px;
+      color: #ffffff;
+      margin-bottom: 14px;
     }
     .search-box .btn-queue {
-      background: linear-gradient(45deg, #ff7b00, #ffb347);
-      color: #000;
-      padding: 14px 40px;
+      background: linear-gradient(135deg, #ff7b00, #ffb347);
+      color: #000000;
+      padding: 14px 44px;
       border-radius: 60px;
       font-weight: 800;
       font-size: 18px;
       border: none;
       cursor: pointer;
       box-shadow: 0 0 30px rgba(255,123,0,0.3);
-      transition: .2s;
+      transition: 0.2s;
       display: inline-flex;
       align-items: center;
       gap: 8px;
@@ -228,7 +228,7 @@
     .search-box .btn-queue.leave:hover { background: #ff4444; }
     .search-box .btn-queue:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
     .search-box .search-type {
-      color: #aaa;
+      color: #aaaaaa;
       font-size: 15px;
       margin: 12px 0 18px;
       font-weight: 400;
@@ -236,54 +236,57 @@
     .counters {
       display: flex;
       justify-content: center;
-      gap: 24px;
+      gap: 28px;
       flex-wrap: wrap;
     }
     .counter {
       background: #1a1a1a;
       border-radius: 16px;
-      padding: 10px 20px;
+      padding: 10px 22px;
       border: 1px solid #2a2a2a;
-      min-width: 130px;
+      min-width: 140px;
     }
     .counter .num {
-      font-size: 28px;
+      font-size: 30px;
       font-weight: 900;
       color: #ff7b00;
     }
     .counter .lbl {
       font-size: 13px;
-      color: #888;
+      color: #888888;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      margin-top: 2px;
     }
 
     /* ===== МАТЧ (внутри поиска) ===== */
     .match-container {
       display: none;
-      margin-top: 30px;
+      margin-top: 32px;
     }
     .match-container h2 {
       text-align: center;
       color: #ff7b00;
-      font-size: 26px;
-      margin-bottom: 6px;
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 4px;
     }
     .match-container .sub {
       text-align: center;
-      color: #aaa;
-      margin-bottom: 20px;
+      color: #aaaaaa;
+      font-size: 16px;
+      margin-bottom: 22px;
     }
     .match-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      gap: 24px;
     }
     .team-card {
       background: #141414;
       border-radius: 20px;
-      padding: 18px;
+      padding: 18px 16px;
       border: 1px solid #2a2a2a;
     }
     .team-card h3 {
@@ -292,7 +295,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
     .team-card.terrorists { border-left: 4px solid #ff6b6b; }
     .team-card.ct { border-left: 4px solid #51cf66; }
@@ -317,60 +320,59 @@
       font-weight: 700;
       color: #ff7b00;
       flex-shrink: 0;
+      font-size: 14px;
     }
-    .player .name { font-weight: 500; }
+    .player .name { font-weight: 500; font-size: 15px; }
     .player .status { margin-left: auto; font-size: 12px; color: #51cf66; }
 
-    .match-actions {
-      text-align: center;
-      margin-top: 24px;
-    }
+    .match-actions { text-align: center; margin-top: 26px; }
 
-    /* ===== ПРОФИЛЬ (кратко) ===== */
+    /* ===== ПРОФИЛЬ ===== */
     .profile-card {
       background: #141414;
-      border-radius: 20px;
-      padding: 20px;
+      border-radius: 24px;
+      padding: 24px 28px;
       border: 1px solid #2a2a2a;
-      max-width: 700px;
+      max-width: 720px;
       margin: 0 auto;
     }
     .profile-header {
       display: flex;
       align-items: center;
-      gap: 16px;
-      margin-bottom: 16px;
+      gap: 18px;
+      margin-bottom: 18px;
     }
     .profile-avatar {
-      width: 64px;
-      height: 64px;
+      width: 68px;
+      height: 68px;
       border-radius: 50%;
       background: linear-gradient(135deg, #ff7b00, #ffb347);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
+      font-size: 30px;
       font-weight: 900;
       color: #000;
       flex-shrink: 0;
     }
-    .profile-info .username { font-size: 22px; font-weight: 900; }
-    .profile-info .details { font-size: 14px; color: #aaa; margin-top: 4px; }
+    .profile-info .username { font-size: 24px; font-weight: 900; }
+    .profile-info .details { font-size: 14px; color: #aaaaaa; margin-top: 4px; display: flex; gap: 18px; flex-wrap: wrap; }
     .profile-info .sfp-block {
       display: flex;
       align-items: baseline;
       gap: 16px;
-      margin-top: 6px;
+      margin-top: 8px;
+      flex-wrap: wrap;
     }
-    .profile-info .sfp-number { font-size: 26px; font-weight: 900; }
-    .profile-info .sfp-label { font-size: 13px; color: #888; text-transform: uppercase; }
+    .profile-info .sfp-number { font-size: 28px; font-weight: 900; }
+    .profile-info .sfp-label { font-size: 13px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
     .profile-info .rank-badge {
       background: #1a1a1a;
       border: 1px solid #ffd700;
-      padding: 2px 14px;
+      padding: 2px 16px;
       border-radius: 40px;
       font-weight: 800;
-      font-size: 13px;
+      font-size: 14px;
       color: #ffd700;
       display: flex;
       align-items: center;
@@ -379,26 +381,26 @@
     .profile-stats {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin: 16px 0;
+      gap: 10px;
+      margin: 18px 0 20px;
     }
     .stat-item {
       background: #1a1a1a;
-      border-radius: 12px;
-      padding: 8px 0;
+      border-radius: 14px;
+      padding: 10px 0;
       text-align: center;
       border: 1px solid #2a2a2a;
     }
     .stat-item .value {
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 900;
-      background: linear-gradient(45deg, #ff7b00, #ffb347);
+      background: linear-gradient(135deg, #ff7b00, #ffb347);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .stat-item .label { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
-    .rank-system { margin-top: 16px; border-top: 1px solid #2a2a2a; padding-top: 16px; }
-    .rank-system .title { font-size: 16px; font-weight: 800; text-align: center; margin-bottom: 10px; }
+    .stat-item .label { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+    .rank-system { margin-top: 18px; border-top: 1px solid #2a2a2a; padding-top: 18px; }
+    .rank-system .title { font-size: 16px; font-weight: 800; text-align: center; margin-bottom: 12px; }
     .rank-grid {
       display: grid;
       grid-template-columns: repeat(10, 1fr);
@@ -414,8 +416,17 @@
     .rank-cell .num { font-size: 10px; color: #666; font-weight: 700; }
     .rank-cell .name { font-size: 8px; font-weight: 700; color: #aaa; text-transform: uppercase; line-height: 1.2; }
     .rank-cell .range { font-size: 7px; color: #555; }
-    .rank-cell.active { border-color: #ffd700; background: rgba(255,215,0,0.1); }
+    .rank-cell.active { border-color: #ffd700; background: rgba(255,215,0,0.08); }
     .rank-cell.active .name { color: #ffd700; }
+
+    /* ===== СТРАНИЦЫ-ЗАГЛУШКИ ===== */
+    .placeholder {
+      text-align: center;
+      padding: 60px 0;
+      color: #888;
+    }
+    .placeholder i { font-size: 48px; color: #ff7b00; display: block; margin-bottom: 12px; }
+    .placeholder h2 { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 6px; }
 
     /* ===== НИЖНЯЯ НАВИГАЦИЯ (УВЕЛИЧЕННАЯ) ===== */
     .bottom-nav {
@@ -429,7 +440,7 @@
       display: flex;
       justify-content: space-around;
       align-items: center;
-      padding: 10px 0 8px;
+      padding: 12px 0 10px;
       z-index: 100;
       box-shadow: 0 -4px 20px rgba(0,0,0,0.6);
     }
@@ -437,23 +448,24 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      color: #888;
+      color: #888888;
       font-size: 12px;
       font-weight: 600;
       background: none;
       border: none;
       cursor: pointer;
-      transition: .3s;
-      padding: 0 6px;
-      min-width: 50px;
+      transition: 0.2s;
+      padding: 0 4px;
+      min-width: 52px;
+      position: relative;
     }
     .bottom-nav .item i {
-      font-size: 26px;
+      font-size: 28px;
       margin-bottom: 2px;
-      transition: .3s;
+      transition: 0.2s;
     }
     .bottom-nav .item span {
-      font-size: 11px;
+      font-size: 12px;
       line-height: 1.2;
     }
     .bottom-nav .item.active {
@@ -475,23 +487,20 @@
       background: #ff7b00;
       border-radius: 2px;
     }
-    .bottom-nav .item {
-      position: relative;
-    }
 
     /* ===== TOAST ===== */
     .toast {
       position: fixed;
-      bottom: 100px;
+      bottom: 105px;
       left: 50%;
       transform: translateX(-50%) translateY(80px);
       background: #141414;
       border: 1px solid #2a2a2a;
       border-radius: 16px;
-      padding: 12px 24px;
+      padding: 12px 28px;
       box-shadow: 0 10px 40px rgba(0,0,0,0.8);
       opacity: 0;
-      transition: .4s ease;
+      transition: 0.4s ease;
       z-index: 999;
       max-width: 90%;
       text-align: center;
@@ -505,77 +514,124 @@
     .toast .ttl.success { color: #51cf66; }
     .toast .ttl.error { color: #ff6b6b; }
     .toast .ttl.info { color: #ff7b00; }
-    .toast .txt { color: #aaa; font-size: 14px; }
+    .toast .txt { color: #aaaaaa; font-size: 14px; }
 
     /* ===== АДАПТИВ ===== */
     @media (max-width: 768px) {
-      .orange-badge { font-size: 15px; padding: 6px 20px; }
-      .orange-badge .line2 { font-size: 18px; }
+      .orange-badge { font-size: 16px; padding: 8px 24px; }
+      .orange-badge .line2 { font-size: 20px; }
       .desc { font-size: 15px; }
       .prize-item { font-size: 14px; flex-wrap: wrap; gap: 4px; }
-      .btn { font-size: 14px; padding: 10px 20px; }
-      .search-title { font-size: 26px; }
+      .btn { font-size: 14px; padding: 10px 22px; }
+      .search-title { font-size: 28px; }
       .search-sub { font-size: 15px; }
-      .search-box { padding: 24px 16px; }
+      .search-box { padding: 24px 18px; }
       .search-box .btn-queue { font-size: 16px; padding: 12px 28px; }
-      .counters { gap: 12px; }
-      .counter { min-width: 100px; padding: 8px 12px; }
-      .counter .num { font-size: 22px; }
+      .counters { gap: 16px; }
+      .counter { min-width: 100px; padding: 8px 14px; }
+      .counter .num { font-size: 24px; }
       .match-grid { grid-template-columns: 1fr; }
       .profile-header { flex-direction: column; text-align: center; }
       .profile-stats { grid-template-columns: 1fr 1fr; }
       .rank-grid { grid-template-columns: repeat(5, 1fr); }
-      .bottom-nav .item i { font-size: 22px; }
-      .bottom-nav .item span { font-size: 10px; }
-      .bottom-nav { padding: 8px 0 6px; }
+      .bottom-nav .item i { font-size: 24px; }
+      .bottom-nav .item span { font-size: 11px; }
+      .bottom-nav { padding: 10px 0 8px; }
     }
     @media (max-width: 480px) {
-      .orange-badge { font-size: 13px; padding: 5px 16px; }
-      .orange-badge .line2 { font-size: 16px; }
-      .search-title { font-size: 20px; }
+      .orange-badge { font-size: 14px; padding: 6px 16px; }
+      .orange-badge .line2 { font-size: 17px; }
+      .search-title { font-size: 22px; }
       .search-box .btn-queue { font-size: 14px; padding: 10px 20px; }
-      .counter .num { font-size: 18px; }
+      .counter .num { font-size: 20px; }
       .rank-grid { grid-template-columns: repeat(2, 1fr); }
       .profile-stats { grid-template-columns: 1fr 1fr; }
     }
+
+    /* ===== АВТОРИЗАЦИЯ ===== */
+    .auth-page {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .auth-box {
+      background: #141414;
+      border-radius: 24px;
+      padding: 34px 28px;
+      max-width: 400px;
+      width: 100%;
+      border: 1px solid #2a2a2a;
+    }
+    .auth-box h1 {
+      font-size: 28px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #ff7b00, #ffb347);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
+    }
+    .auth-box .sub {
+      color: #888;
+      text-align: center;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+    .auth-box h2 { text-align: center; font-size: 22px; margin-bottom: 16px; }
+    .auth-box .field { margin-bottom: 14px; }
+    .auth-box .field label { display: block; color: #aaa; font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+    .auth-box .field input {
+      width: 100%;
+      padding: 12px 14px;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 15px;
+    }
+    .auth-box .field input:focus { outline: none; border-color: #ff7b00; }
+    .auth-box .btn { width: 100%; justify-content: center; margin-top: 6px; }
+    .auth-box .link { text-align: center; margin-top: 14px; }
+    .auth-box .link a { color: #ff7b00; cursor: pointer; font-weight: 600; text-decoration: none; }
+    .auth-box .link a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
 
+<!-- ===== TOAST ===== -->
 <div class="toast" id="toast">
   <div class="ttl" id="toastTitle">Успешно</div>
   <div class="txt" id="toastText">Действие выполнено</div>
 </div>
 
 <!-- ===== АВТОРИЗАЦИЯ ===== -->
-<div class="auth-page" id="authPage" style="display:flex; justify-content:center; align-items:center; min-height:100vh; padding:20px;">
-  <div style="background:#141414; border-radius:24px; padding:32px 28px; max-width:400px; width:100%; border:1px solid #2a2a2a;">
-    <div style="text-align:center; margin-bottom:24px;">
-      <h1 style="font-size:28px; font-weight:900; background:linear-gradient(45deg,#ff7b00,#ffb347); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">⚡ Faceit 5x5</h1>
-      <p style="color:#888; font-size:14px;">Поиск матчей по Standoff 2</p>
-    </div>
+<div class="auth-page" id="authPage">
+  <div class="auth-box">
+    <h1>⚡ Faceit 5x5</h1>
+    <div class="sub">Поиск матчей по Standoff 2</div>
     <div id="loginForm">
-      <h2 style="text-align:center; font-size:22px; margin-bottom:16px;">Вход</h2>
-      <div style="margin-bottom:12px;"><label style="color:#aaa; font-weight:600; font-size:14px;">Имя пользователя</label><input type="text" id="loginUsername" placeholder="Введите имя" style="width:100%; padding:12px; background:#1a1a1a; border:1px solid #2a2a2a; border-radius:12px; color:#fff; font-size:15px; margin-top:4px;"></div>
-      <div style="margin-bottom:16px;"><label style="color:#aaa; font-weight:600; font-size:14px;">Пароль</label><input type="password" id="loginPassword" placeholder="Введите пароль" style="width:100%; padding:12px; background:#1a1a1a; border:1px solid #2a2a2a; border-radius:12px; color:#fff; font-size:15px; margin-top:4px;"></div>
-      <button class="btn" id="loginBtn" style="width:100%; justify-content:center; font-size:16px;">Войти</button>
-      <div style="text-align:center; margin-top:14px;"><a onclick="showAuthForm('register')" style="color:#ff7b00; cursor:pointer; font-weight:600;">Нет аккаунта? Зарегистрироваться</a></div>
+      <h2>Вход</h2>
+      <div class="field"><label>Имя пользователя</label><input type="text" id="loginUsername" placeholder="Введите имя" /></div>
+      <div class="field"><label>Пароль</label><input type="password" id="loginPassword" placeholder="Введите пароль" /></div>
+      <button class="btn" id="loginBtn">Войти</button>
+      <div class="link"><a onclick="showAuthForm('register')">Нет аккаунта? Зарегистрироваться</a></div>
     </div>
     <div id="registerForm" style="display:none;">
-      <h2 style="text-align:center; font-size:22px; margin-bottom:16px;">Регистрация</h2>
-      <div style="margin-bottom:12px;"><label style="color:#aaa; font-weight:600; font-size:14px;">Имя пользователя <span style="color:#ff6b6b;">*</span></label><input type="text" id="regUsername" placeholder="Придумайте имя" style="width:100%; padding:12px; background:#1a1a1a; border:1px solid #2a2a2a; border-radius:12px; color:#fff; font-size:15px; margin-top:4px;"></div>
-      <div style="margin-bottom:12px;"><label style="color:#aaa; font-weight:600; font-size:14px;">ID Standoff 2 <span style="color:#ff6b6b;">*</span></label><input type="text" id="regStandoffId" placeholder="Только цифры" style="width:100%; padding:12px; background:#1a1a1a; border:1px solid #2a2a2a; border-radius:12px; color:#fff; font-size:15px; margin-top:4px;"></div>
-      <div style="margin-bottom:12px;"><label style="color:#aaa; font-weight:600; font-size:14px;">Пароль <span style="color:#ff6b6b;">*</span></label><input type="password" id="regPassword" placeholder="Минимум 8 символов" style="width:100%; padding:12px; background:#1a1a1a; border:1px solid #2a2a2a; border-radius:12px; color:#fff; font-size:15px; margin-top:4px;"></div>
-      <div style="margin-bottom:16px;"><label style="color:#aaa; font-weight:600; font-size:14px;">Подтверждение пароля <span style="color:#ff6b6b;">*</span></label><input type="password" id="regPasswordConfirm" placeholder="Повторите пароль" style="width:100%; padding:12px; background:#1a1a1a; border:1px solid #2a2a2a; border-radius:12px; color:#fff; font-size:15px; margin-top:4px;"></div>
-      <button class="btn" id="registerBtn" style="width:100%; justify-content:center; font-size:16px;">Зарегистрироваться</button>
-      <div style="text-align:center; margin-top:14px;"><a onclick="showAuthForm('login')" style="color:#ff7b00; cursor:pointer; font-weight:600;">Уже есть аккаунт? Войти</a></div>
+      <h2>Регистрация</h2>
+      <div class="field"><label>Имя пользователя <span style="color:#ff6b6b;">*</span></label><input type="text" id="regUsername" placeholder="Придумайте имя" /></div>
+      <div class="field"><label>ID Standoff 2 <span style="color:#ff6b6b;">*</span></label><input type="text" id="regStandoffId" placeholder="Только цифры" /></div>
+      <div class="field"><label>Пароль <span style="color:#ff6b6b;">*</span></label><input type="password" id="regPassword" placeholder="Минимум 8 символов" /></div>
+      <div class="field"><label>Подтверждение пароля <span style="color:#ff6b6b;">*</span></label><input type="password" id="regPasswordConfirm" placeholder="Повторите пароль" /></div>
+      <button class="btn" id="registerBtn">Зарегистрироваться</button>
+      <div class="link"><a onclick="showAuthForm('login')">Уже есть аккаунт? Войти</a></div>
     </div>
   </div>
 </div>
 
 <!-- ===== ОСНОВНОЙ САЙТ ===== -->
 <div class="main-wrapper" id="mainSite" style="display:none;">
-  <!-- Шапка с логотипом -->
+  <!-- Шапка -->
   <header class="header" onclick="navigate('home')">
     <div class="logo">
       <h1>⚡ Faceit <span class="badge">5x5</span><span class="sub">✦ Matchmaking Standoff 2 ✦</span></h1>
@@ -618,7 +674,7 @@
       <div class="label">Статус поиска</div>
       <div style="margin-bottom:6px;">
         <button class="btn-queue" id="queueBtn" onclick="addBot()"><i class="fas fa-plus"></i> Найти матч</button>
-        <button class="btn-queue leave" id="leaveBtn" onclick="leaveQueue()" style="display:none; margin-left:8px;"><i class="fas fa-times"></i> Выйти</button>
+        <button class="btn-queue leave" id="leaveBtn" onclick="leaveQueue()" style="display:none; margin-left:10px;"><i class="fas fa-times"></i> Выйти</button>
       </div>
       <div class="search-type">Одиночный поиск матча.</div>
       <div class="counters">
@@ -627,7 +683,7 @@
       </div>
     </div>
 
-    <!-- Контейнер матча (появляется после старта) -->
+    <!-- Контейнер матча -->
     <div class="match-container" id="matchContainer">
       <h2><i class="fas fa-swords"></i> Матч начался!</h2>
       <p class="sub">Команды сформированы. Удачи!</p>
@@ -675,11 +731,11 @@
     </div>
   </div>
 
-  <!-- ===== ЗАГЛУШКИ ДЛЯ ДРУГИХ СТРАНИЦ ===== -->
-  <div class="page" id="pageShop"><div style="text-align:center;padding:60px 0;"><i class="fas fa-store" style="font-size:48px;color:#ff7b00;"></i><h2 style="margin:12px 0 6px;">Магазин</h2><p style="color:#888;">Здесь будут товары и привилегии.</p></div></div>
-  <div class="page" id="pageFriends"><div style="text-align:center;padding:60px 0;"><i class="fas fa-user-friends" style="font-size:48px;color:#ff7b00;"></i><h2 style="margin:12px 0 6px;">Друзья</h2><p style="color:#888;">Список друзей и приглашения.</p></div></div>
-  <div class="page" id="pageTop"><div style="text-align:center;padding:60px 0;"><i class="fas fa-trophy" style="font-size:48px;color:#ff7b00;"></i><h2 style="margin:12px 0 6px;">Топ игроков</h2><p style="color:#888;">Рейтинг лучших игроков.</p></div></div>
-  <div class="page" id="pageWallet"><div style="text-align:center;padding:60px 0;"><i class="fas fa-wallet" style="font-size:48px;color:#ff7b00;"></i><h2 style="margin:12px 0 6px;">Кошелёк</h2><p style="color:#888;">Ваш баланс и история транзакций.</p></div></div>
+  <!-- ===== ЗАГЛУШКИ ===== -->
+  <div class="page" id="pageShop"><div class="placeholder"><i class="fas fa-store"></i><h2>Магазин</h2><p>Здесь будут товары и привилегии.</p></div></div>
+  <div class="page" id="pageFriends"><div class="placeholder"><i class="fas fa-user-friends"></i><h2>Друзья</h2><p>Список друзей и приглашения.</p></div></div>
+  <div class="page" id="pageTop"><div class="placeholder"><i class="fas fa-trophy"></i><h2>Топ игроков</h2><p>Рейтинг лучших игроков.</p></div></div>
+  <div class="page" id="pageWallet"><div class="placeholder"><i class="fas fa-wallet"></i><h2>Кошелёк</h2><p>Ваш баланс и история транзакций.</p></div></div>
 
   <!-- ===== НИЖНЯЯ НАВИГАЦИЯ ===== -->
   <nav class="bottom-nav">
@@ -859,10 +915,10 @@
     const ct = document.getElementById('teamCT');
     t.innerHTML = currentMatch.terrorists.map(p => `
       <div class="player"><div class="avatar">${p.username.charAt(0).toUpperCase()}</div><span class="name">${p.username}</span><span class="status"><i class="fas fa-circle"></i> онлайн</span></div>
-    `).join('') || '<p style="color:#888;text-align:center;">Нет игроков</p>';
+    `).join('') || '<p style="color:#888;text-align:center;padding:12px 0;">Нет игроков</p>';
     ct.innerHTML = currentMatch.ct.map(p => `
       <div class="player"><div class="avatar">${p.username.charAt(0).toUpperCase()}</div><span class="name">${p.username}</span><span class="status"><i class="fas fa-circle"></i> онлайн</span></div>
-    `).join('') || '<p style="color:#888;text-align:center;">Нет игроков</p>';
+    `).join('') || '<p style="color:#888;text-align:center;padding:12px 0;">Нет игроков</p>';
   }
 
   function endMatch() {
@@ -962,7 +1018,6 @@
   // ЗАПУСК
   // ============================================================
   document.addEventListener('DOMContentLoaded', function() {
-    // Создаём тестовых пользователей
     let users = getUsers();
     if (users.length === 0) {
       users = [
