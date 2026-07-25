@@ -286,7 +286,7 @@
     .player .status { margin-left: auto; font-size: 11px; color: #51cf66; }
     .match-actions { text-align: center; margin-top: 22px; }
 
-    /* ===== ПРОФИЛЬ — ТОЧНАЯ КОПИЯ ===== */
+    /* ===== ПРОФИЛЬ (ИЗНАЧАЛЬНЫЙ) ===== */
     .profile-card {
       background: rgba(20,20,28,0.8);
       backdrop-filter: blur(8px);
@@ -296,11 +296,11 @@
       max-width: 720px;
       margin: 0 auto;
     }
-    .profile-top {
+    .profile-header {
       display: flex;
       align-items: center;
       gap: 16px;
-      margin-bottom: 10px;
+      margin-bottom: 16px;
     }
     .profile-avatar {
       width: 72px;
@@ -318,229 +318,104 @@
     .profile-info .username {
       font-size: 24px;
       font-weight: 900;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .profile-info .username .badge {
-      font-size: 12px;
-      background: rgba(255,255,255,0.06);
-      padding: 2px 10px;
-      border-radius: 30px;
-      color: #aaa;
-      font-weight: 600;
+      color: #fff;
+      line-height: 1.2;
     }
     .profile-info .details {
       font-size: 14px;
       color: #aaa;
-      margin-top: 2px;
+      margin-top: 4px;
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
+      gap: 16px;
     }
-    .profile-info .details .flag { color: #fff; }
-    .profile-info .details .game-tag {
-      background: rgba(255,123,0,0.12);
-      color: #ff7b00;
-      padding: 2px 12px;
-      border-radius: 40px;
-      font-weight: 600;
-      font-size: 13px;
-    }
-    .profile-info .details .id { color: #666; }
-
-    .profile-actions {
+    .profile-info .details span { display: inline-flex; align-items: center; gap: 4px; }
+    .profile-info .sfp-block {
       display: flex;
-      gap: 8px;
-      margin: 6px 0 14px;
+      align-items: baseline;
+      gap: 16px;
+      margin-top: 6px;
+      flex-wrap: wrap;
     }
-    .profile-actions .btn-share {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.06);
-      color: #fff;
-      padding: 6px 18px;
-      border-radius: 40px;
+    .profile-info .sfp-number {
+      font-size: 28px;
+      font-weight: 900;
+    }
+    .profile-info .sfp-label {
       font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: .2s;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .profile-info .rank-badge {
+      background: rgba(26,26,34,0.6);
+      border: 1px solid #ffd700;
+      padding: 2px 16px;
+      border-radius: 40px;
+      font-weight: 800;
+      font-size: 14px;
+      color: #ffd700;
       display: inline-flex;
       align-items: center;
       gap: 6px;
     }
-    .profile-actions .btn-share:hover {
-      background: rgba(255,123,0,0.15);
-      border-color: rgba(255,123,0,0.3);
-    }
 
-    /* ELO блок */
-    .elo-block {
-      background: rgba(26,26,34,0.6);
-      border-radius: 16px;
-      padding: 16px 20px;
-      margin: 16px 0 18px;
-      border: 1px solid rgba(255,255,255,0.04);
-    }
-    .elo-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-    .elo-header .elo-title {
-      font-size: 18px;
-      font-weight: 800;
-      color: #ffd700;
-    }
-    .elo-header .elo-value {
-      font-size: 22px;
-      font-weight: 900;
-      color: #fff;
-    }
-    .elo-progress {
-      width: 100%;
-      height: 6px;
-      background: rgba(255,255,255,0.06);
-      border-radius: 4px;
-      overflow: hidden;
-      margin-top: 6px;
-    }
-    .elo-progress .fill {
-      height: 100%;
-      background: linear-gradient(90deg, #ff7b00, #ffd700);
-      border-radius: 4px;
-      transition: width .3s;
-    }
-    .elo-progress-label {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      color: #888;
-      margin-top: 4px;
-    }
-
-    /* Табы */
-    .tabs {
-      display: flex;
-      gap: 4px;
-      margin: 18px 0 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      padding-bottom: 6px;
-    }
-    .tabs .tab {
-      padding: 6px 18px;
-      border-radius: 40px;
-      font-size: 14px;
-      font-weight: 600;
-      color: #888;
-      cursor: pointer;
-      transition: .2s;
-      background: none;
-      border: none;
-    }
-    .tabs .tab.active {
-      background: rgba(255,123,0,0.15);
-      color: #ff7b00;
-    }
-    .tabs .tab:hover { color: #fff; }
-
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-
-    /* Статистика */
-    .profile-stats-grid {
+    .profile-stats {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin: 16px 0 20px;
+      gap: 10px;
+      margin: 18px 0 16px;
     }
-    .profile-stat-item {
+    .stat-item {
       background: rgba(26,26,34,0.6);
       border-radius: 14px;
-      padding: 12px 0;
+      padding: 10px 0;
       text-align: center;
       border: 1px solid rgba(255,255,255,0.04);
     }
-    .profile-stat-item .value {
+    .stat-item .value {
       font-size: 22px;
       font-weight: 900;
       background: linear-gradient(135deg, #ff7b00, #ffb347);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .profile-stat-item .label {
-      font-size: 11px;
+    .stat-item .label {
+      font-size: 10px;
       color: #888;
-      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.3px;
-      margin-top: 2px;
-    }
-
-    .win-loss {
-      display: flex;
-      gap: 30px;
-      justify-content: center;
-      margin: 12px 0 16px;
-      font-size: 16px;
-      font-weight: 600;
-    }
-    .win-loss .wins { color: #51cf66; }
-    .win-loss .losses { color: #ff6b6b; }
-
-    /* Отзывы тиммейтов */
-    .teammate-reviews {
-      background: rgba(26,26,34,0.6);
-      border-radius: 16px;
-      padding: 16px 20px;
-      margin: 16px 0 20px;
-      border: 1px solid rgba(255,255,255,0.04);
-    }
-    .teammate-reviews .review-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .teammate-reviews .review-header .title {
-      font-weight: 700;
-      font-size: 16px;
-    }
-    .teammate-reviews .review-header .percent {
-      font-size: 22px;
-      font-weight: 900;
-      color: #ffd700;
-    }
-    .teammate-reviews .review-sub {
-      font-size: 13px;
-      color: #888;
       margin-top: 4px;
     }
-    .teammate-avg {
-      display: flex;
-      gap: 24px;
-      justify-content: center;
-      margin-top: 12px;
-      flex-wrap: wrap;
+
+    .rank-system {
+      margin-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.04);
+      padding-top: 16px;
     }
-    .teammate-avg .avg-item {
+    .rank-system .title {
+      font-size: 16px;
+      font-weight: 800;
       text-align: center;
+      margin-bottom: 10px;
     }
-    .teammate-avg .avg-item .num {
-      font-size: 20px;
-      font-weight: 900;
-      color: #fff;
+    .rank-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 4px;
     }
-    .teammate-avg .avg-item .lbl {
-      font-size: 11px;
-      color: #888;
-      text-transform: uppercase;
+    .rank-cell {
+      background: rgba(26,26,34,0.6);
+      border-radius: 6px;
+      padding: 4px 2px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.04);
     }
+    .rank-cell .num { font-size: 10px; color: #666; font-weight: 700; }
+    .rank-cell .name { font-size: 8px; font-weight: 700; color: #aaa; text-transform: uppercase; line-height: 1.2; }
+    .rank-cell .range { font-size: 7px; color: #555; }
+    .rank-cell.active { border-color: #ffd700; background: rgba(255,215,0,0.08); }
+    .rank-cell.active .name { color: #ffd700; }
 
     /* История матчей */
     .match-history {
@@ -590,7 +465,7 @@
     .placeholder i { font-size: 40px; color: #ff7b00; display: block; margin-bottom: 10px; }
     .placeholder h2 { font-size: 22px; font-weight: 800; color: #fff; }
 
-    /* ===== НИЖНЯЯ НАВИГАЦИЯ (УВЕЛИЧЕННАЯ) ===== */
+    /* ===== НИЖНЯЯ НАВИГАЦИЯ ===== */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -740,16 +615,17 @@
     @media (max-width: 768px) {
       .home-stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
       .home-title { font-size: 32px; }
-      .profile-top { flex-direction: column; align-items: center; text-align: center; }
+      .profile-header { flex-direction: column; text-align: center; }
       .profile-info .details { justify-content: center; }
-      .profile-stats-grid { grid-template-columns: 1fr 1fr; }
+      .profile-info .sfp-block { justify-content: center; }
+      .profile-stats { grid-template-columns: 1fr 1fr; }
+      .rank-grid { grid-template-columns: repeat(5, 1fr); }
       .match-grid { grid-template-columns: 1fr; }
       .search-title { font-size: 26px; }
       .search-box { padding: 22px 16px; }
       .search-box .btn-queue { font-size: 15px; padding: 10px 24px; }
       .counter { min-width: 100px; padding: 6px 14px; }
       .counter .num { font-size: 22px; }
-      .tabs .tab { font-size: 12px; padding: 4px 12px; }
       .bottom-nav .item i { font-size: 22px; }
       .bottom-nav .item span { font-size: 10px; }
       .bottom-nav .item { min-width: 42px; }
@@ -757,9 +633,8 @@
     @media (max-width: 480px) {
       .home-title { font-size: 26px; }
       .home-stats-grid { grid-template-columns: 1fr 1fr; }
-      .profile-stats-grid { grid-template-columns: 1fr 1fr; }
-      .win-loss { gap: 16px; font-size: 14px; }
-      .elo-header .elo-value { font-size: 18px; }
+      .profile-stats { grid-template-columns: 1fr 1fr; }
+      .rank-grid { grid-template-columns: repeat(2, 1fr); }
       .search-title { font-size: 20px; }
       .search-box .btn-queue { font-size: 13px; padding: 8px 16px; }
       .counter .num { font-size: 18px; }
@@ -812,519 +687,8 @@
   <div class="page active" id="pageHome">
     <div class="home-hero">
       <h1 class="home-title">Faceit 5x5 Arena</h1>
-      <p class="home-sub">Соревновательный матчмейкинг для Standoff 2. Играй 5×5, поднимай ELO и участвуй в турнирах.</p>
+      <p class="home-sub">Соревновательный матчмейкинг для Standoff 2. Играй 5×5, поднимай рейтинг и участвуй в турнирах.</p>
       <div class="home-stats-grid">
         <div class="home-stat-card"><div class="number" id="totalMatches">0</div><div class="label">Проведено игр</div></div>
         <div class="home-stat-card"><div class="number" id="activePlayers">0</div><div class="label">Активные игроки</div></div>
-        <div class="home-stat-card"><div class="number" style="font-size:26px;">2 000₽</div><div class="label">Призовой фонд</div><div class="prize-details"><span>🥇 1 000₽</span><span>🥈 600₽</span><span>🥉 400₽</span></div></div>
-        <div class="home-stat-card"><div class="number" id="tournamentsCount">0</div><div class="label">Турниров проведено</div></div>
-      </div>
-      <button class="btn-start" onclick="navigate('matches')"><i class="fas fa-play"></i> Найти матч</button>
-    </div>
-  </div>
-
-  <!-- ===== ПОИСК МАТЧА ===== -->
-  <div class="page" id="pageMatches">
-    <div class="search-title">Поиск матча Standoff 2</div>
-    <p class="search-sub">Играй соло или вместе с друзьями. Создай пати, поделись кодом и заходите в матч одной группой.</p>
-    <div class="search-box">
-      <div class="label">Статус поиска</div>
-      <div style="margin-bottom:4px;">
-        <button class="btn-queue" id="queueBtn" onclick="addBot()"><i class="fas fa-plus"></i> Найти матч</button>
-        <button class="btn-queue leave" id="leaveBtn" onclick="leaveQueue()" style="display:none; margin-left:8px;"><i class="fas fa-times"></i> Выйти</button>
-      </div>
-      <div class="search-type">Одиночный поиск матча.</div>
-      <div class="counters">
-        <div class="counter"><div class="num" id="matchCount">0</div><div class="lbl">Игроков в матче</div></div>
-        <div class="counter"><div class="num" id="queueCount">0</div><div class="lbl">Игроков в очереди</div></div>
-      </div>
-    </div>
-    <div class="match-container" id="matchContainer">
-      <h2><i class="fas fa-swords"></i> Матч начался!</h2>
-      <p class="sub">Команды сформированы. Удачи!</p>
-      <div class="match-grid">
-        <div class="team-card terrorists"><h3><span style="color:#ff6b6b;">🔴</span> Террористы</h3><div id="teamT"></div></div>
-        <div class="team-card ct"><h3><span style="color:#51cf66;">🟢</span> Контр-террористы</h3><div id="teamCT"></div></div>
-      </div>
-      <div class="match-actions">
-        <button class="btn" onclick="endMatch()" style="background:#ff6b6b; color:#fff; box-shadow:0 0 20px rgba(255,0,0,0.3);"><i class="fas fa-times"></i> Закончить матч</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== ПРОФИЛЬ ===== -->
-  <div class="page" id="pageProfile">
-    <div class="profile-card">
-      <div class="profile-top">
-        <div class="profile-avatar" id="avatar">D</div>
-        <div class="profile-info">
-          <div class="username" id="pName">Des <span class="badge">@Des</span></div>
-          <div class="details">
-            <span class="flag"><i class="fas fa-flag"></i> RU · 18 y.o.</span>
-            <span class="game-tag"><i class="fas fa-gamepad"></i> ИГРА CSGO Recoil 1.3.1</span>
-            <span class="id"><i class="fas fa-id-card"></i> ID <span id="pId">4456416677</span></span>
-          </div>
-        </div>
-      </div>
-
-      <div class="profile-actions">
-        <button class="btn-share" onclick="showToast('info','Поделиться','Ссылка скопирована')">
-          <i class="fas fa-share-alt"></i> Поделиться
-        </button>
-      </div>
-
-      <!-- ELO блок -->
-      <div class="elo-block">
-        <div class="elo-header">
-          <span class="elo-title">ELO РЕЙТИНГ · LEVEL <span id="pLevel">4</span></span>
-          <span class="elo-value" id="pElo">1000</span>
-        </div>
-        <div class="elo-progress">
-          <div class="fill" id="eloProgress" style="width:66%;"></div>
-        </div>
-        <div class="elo-progress-label">
-          <span>Level <span id="pLevelLabel">4</span></span>
-          <span>до <span id="pNextLevel">1051</span> осталось <span id="pRemain">51</span></span>
-        </div>
-      </div>
-
-      <!-- Табы -->
-      <div class="tabs">
-        <button class="tab active" data-tab="overview" onclick="switchTab('overview')">Обзор</button>
-        <button class="tab" data-tab="stats" onclick="switchTab('stats')">Статистика</button>
-        <button class="tab" data-tab="seasons" onclick="switchTab('seasons')">Сезоны</button>
-      </div>
-
-      <div id="tab-overview" class="tab-content active">
-        <div class="profile-stats-grid">
-          <div class="profile-stat-item"><div class="value" id="pWinrate">0%</div><div class="label">WINRATE</div></div>
-          <div class="profile-stat-item"><div class="value" id="pKD">0</div><div class="label">K/D</div></div>
-          <div class="profile-stat-item"><div class="value" id="pADR">0</div><div class="label">ADR</div></div>
-          <div class="profile-stat-item"><div class="value" id="pGames">0</div><div class="label">ИГР</div></div>
-        </div>
-
-        <div class="win-loss">
-          <span class="wins"><i class="fas fa-trophy"></i> <span id="pWins">0</span> побед</span>
-          <span class="losses"><i class="fas fa-skull"></i> <span id="pLosses">0</span> поражений</span>
-        </div>
-
-        <div class="teammate-reviews">
-          <div class="review-header">
-            <span class="title">Отзывы тиммейтов</span>
-            <span class="percent" id="pTeammatePercent">0%</span>
-          </div>
-          <div class="review-sub">СРЕДНЕЕ ЗА <span id="pAvgMatches">0</span> МАТЧЕЙ</div>
-          <div class="teammate-avg">
-            <div class="avg-item"><div class="num" id="pAvgKills">0</div><div class="lbl">УБИЙСТВ</div></div>
-            <div class="avg-item"><div class="num" id="pAvgDeaths">0</div><div class="lbl">СМЕРТЕЙ</div></div>
-            <div class="avg-item"><div class="num" id="pAvgAdr">0</div><div class="lbl">ADR</div></div>
-          </div>
-        </div>
-
-        <div class="match-history">
-          <div class="title"><i class="fas fa-history"></i> История матчей</div>
-          <div id="matchHistoryList">
-            <div style="color:#666; text-align:center; padding:10px 0;">Нет сыгранных матчей</div>
-          </div>
-        </div>
-      </div>
-
-      <div id="tab-stats" class="tab-content"><div class="placeholder" style="padding:20px 0;"><p>Детальная статистика</p></div></div>
-      <div id="tab-seasons" class="tab-content"><div class="placeholder" style="padding:20px 0;"><p>Информация о сезонах</p></div></div>
-    </div>
-  </div>
-
-  <!-- ===== ЗАГЛУШКИ ===== -->
-  <div class="page" id="pageShop"><div class="placeholder"><i class="fas fa-store"></i><h2>Магазин</h2><p>Здесь будут товары и привилегии.</p></div></div>
-  <div class="page" id="pageFriends"><div class="placeholder"><i class="fas fa-user-friends"></i><h2>Друзья</h2><p>Список друзей и приглашения.</p></div></div>
-  <div class="page" id="pageTop"><div class="placeholder"><i class="fas fa-trophy"></i><h2>Топ игроков</h2><p>Рейтинг лучших игроков.</p></div></div>
-  <div class="page" id="pageWallet"><div class="placeholder"><i class="fas fa-wallet"></i><h2>Кошелёк</h2><p>Ваш баланс и история транзакций.</p></div></div>
-
-  <!-- ===== НИЖНЯЯ НАВИГАЦИЯ (УВЕЛИЧЕННАЯ) ===== -->
-  <nav class="bottom-nav" id="bottomNav">
-    <div class="progress-bar" id="scrollProgress"></div>
-    <button class="item" data-page="profile" onclick="navigate('profile')"><i class="fas fa-user"></i><span>Профиль</span></button>
-    <button class="item" data-page="shop" onclick="navigate('shop')"><i class="fas fa-store"></i><span>Шоп</span></button>
-    <button class="item" data-page="friends" onclick="navigate('friends')"><i class="fas fa-user-friends"></i><span>Друзья</span></button>
-    <button class="item active" data-page="matches" onclick="navigate('matches')"><i class="fas fa-search"></i><span>Поиск матча</span></button>
-    <button class="item" data-page="top" onclick="navigate('top')"><i class="fas fa-trophy"></i><span>Топ</span></button>
-    <button class="item" data-page="wallet" onclick="navigate('wallet')"><i class="fas fa-wallet"></i><span>Кошелёк</span></button>
-  </nav>
-</div>
-
-<script>
-  // ===== СОСТОЯНИЕ =====
-  let currentUser = null;
-  let queue = [];
-  let currentMatch = null;
-  let botCounter = 0;
-
-  // ===== АУТЕНТИФИКАЦИЯ =====
-  function getUsers() {
-    try { return JSON.parse(localStorage.getItem('faceit_users')) || []; } catch { return []; }
-  }
-  function saveUsers(u) { localStorage.setItem('faceit_users', JSON.stringify(u)); }
-  function getCurrentUser() {
-    try { return JSON.parse(localStorage.getItem('faceit_current_user')); } catch { return null; }
-  }
-  function setCurrentUser(u) {
-    currentUser = u;
-    localStorage.setItem('faceit_current_user', JSON.stringify(u));
-  }
-  function clearCurrentUser() {
-    currentUser = null;
-    localStorage.removeItem('faceit_current_user');
-  }
-
-  document.getElementById('loginBtn').addEventListener('click', function() {
-    const username = document.getElementById('loginUsername').value.trim();
-    const password = document.getElementById('loginPassword').value;
-    if (!username || !password) return showToast('error', 'Ошибка', 'Заполните все поля');
-    const users = getUsers();
-    const user = users.find(u => u.username === username && u.password === password);
-    if (!user) return showToast('error', 'Ошибка', 'Неверное имя или пароль');
-    setCurrentUser(user);
-    showToast('success', 'Добро пожаловать!', user.username);
-    checkAuth();
-  });
-
-  document.getElementById('registerBtn').addEventListener('click', function() {
-    const username = document.getElementById('regUsername').value.trim();
-    const standoffId = document.getElementById('regStandoffId').value.trim();
-    const password = document.getElementById('regPassword').value;
-    const confirm = document.getElementById('regPasswordConfirm').value;
-    if (!username || !standoffId || !password || !confirm) return showToast('error', 'Ошибка', 'Заполните все поля');
-    if (password !== confirm) return showToast('error', 'Ошибка', 'Пароли не совпадают');
-    if (password.length < 8) return showToast('error', 'Ошибка', 'Пароль минимум 8 символов');
-    if (!/^\d+$/.test(standoffId)) return showToast('error', 'Ошибка', 'ID только цифры');
-    const users = getUsers();
-    if (users.find(u => u.username === username)) return showToast('error', 'Ошибка', 'Имя занято');
-    if (users.find(u => u.standoffId === standoffId)) return showToast('error', 'Ошибка', 'ID уже используется');
-    const newUser = {
-      id: Date.now().toString(),
-      username,
-      standoffId,
-      password,
-      regDate: new Date().toLocaleDateString('ru-RU'),
-      elo: 1000,
-      level: 4,
-      wins: 0,
-      losses: 0,
-      kills: 0,
-      deaths: 0,
-      adr: 0,
-      matches: 0,
-      winrate: 0,
-      teammatePercent: 0,
-      avgKills: 0,
-      avgDeaths: 0,
-      avgAdr: 0,
-      matchHistory: []
-    };
-    users.push(newUser);
-    saveUsers(users);
-    setCurrentUser(newUser);
-    showToast('success', 'Регистрация успешна!', 'Добро пожаловать, ' + username);
-    checkAuth();
-  });
-
-  function showAuthForm(form) {
-    document.getElementById('loginForm').style.display = form === 'login' ? 'block' : 'none';
-    document.getElementById('registerForm').style.display = form === 'register' ? 'block' : 'none';
-  }
-
-  // ===== НАВИГАЦИЯ =====
-  const pages = {
-    home: 'pageHome',
-    profile: 'pageProfile',
-    shop: 'pageShop',
-    friends: 'pageFriends',
-    matches: 'pageMatches',
-    top: 'pageTop',
-    wallet: 'pageWallet'
-  };
-
-  function navigate(page) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(pages[page]).classList.add('active');
-    document.querySelectorAll('.bottom-nav .item').forEach(b => b.classList.remove('active'));
-    document.querySelector(`.bottom-nav .item[data-page="${page}"]`)?.classList.add('active');
-    if (page === 'matches') updateQueueUI();
-    if (page === 'profile') updateProfile();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  // ===== ОЧЕРЕДЬ =====
-  function addBot() {
-    if (currentMatch) return showToast('info', 'Идёт матч', 'Дождитесь окончания');
-    if (queue.length >= 10) return showToast('error', 'Очередь полна', 'Нажмите позже');
-    botCounter++;
-    const name = `Bot${botCounter}`;
-    queue.push({ id: 'bot_' + Date.now(), username: name });
-    showToast('info', 'Бот добавлен', `${name} (${queue.length}/10)`);
-    updateQueueUI();
-    if (queue.length === 10) startMatch();
-  }
-
-  function leaveQueue() {
-    const user = getCurrentUser();
-    if (!user) return;
-    const idx = queue.findIndex(p => p.id === user.id);
-    if (idx === -1) { updateQueueUI(); return; }
-    queue.splice(idx, 1);
-    showToast('info', 'Вы вышли из очереди', '');
-    updateQueueUI();
-  }
-
-  function updateQueueUI() {
-    const count = queue.length;
-    document.getElementById('queueCount').textContent = count;
-    const matchPlayers = currentMatch ? (currentMatch.terrorists.length + currentMatch.ct.length) : 0;
-    document.getElementById('matchCount').textContent = matchPlayers;
-    const btn = document.getElementById('queueBtn');
-    const leave = document.getElementById('leaveBtn');
-    const user = getCurrentUser();
-    const inQueue = user && queue.some(p => p.id === user.id);
-    btn.disabled = (count >= 10 || currentMatch !== null);
-    if (inQueue) { leave.style.display = 'inline-flex'; } else { leave.style.display = 'none'; }
-  }
-
-  // ===== МАТЧ =====
-  function startMatch() {
-    const shuffled = [...queue];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    const half = Math.floor(shuffled.length / 2);
-    const terrorists = shuffled.slice(0, half);
-    const ct = shuffled.slice(half);
-    currentMatch = { terrorists, ct };
-    queue = [];
-    navigate('matches');
-    document.getElementById('matchContainer').style.display = 'block';
-    document.querySelector('.search-box').style.display = 'none';
-    renderMatch();
-    updateQueueUI();
-    showToast('success', 'Матч начался!', `${terrorists.length + ct.length} игроков в игре`);
-  }
-
-  function renderMatch() {
-    if (!currentMatch) return;
-    const t = document.getElementById('teamT');
-    const ct = document.getElementById('teamCT');
-    t.innerHTML = currentMatch.terrorists.map(p => `
-      <div class="player"><div class="avatar">${p.username.charAt(0).toUpperCase()}</div><span class="name">${p.username}</span><span class="status"><i class="fas fa-circle"></i> онлайн</span></div>
-    `).join('') || '<p style="color:#888;text-align:center;padding:10px 0;">Нет игроков</p>';
-    ct.innerHTML = currentMatch.ct.map(p => `
-      <div class="player"><div class="avatar">${p.username.charAt(0).toUpperCase()}</div><span class="name">${p.username}</span><span class="status"><i class="fas fa-circle"></i> онлайн</span></div>
-    `).join('') || '<p style="color:#888;text-align:center;padding:10px 0;">Нет игроков</p>';
-  }
-
-  function endMatch() {
-    if (!confirm('Завершить матч?')) return;
-    currentMatch = null;
-    document.getElementById('matchContainer').style.display = 'none';
-    document.querySelector('.search-box').style.display = 'block';
-    navigate('matches');
-    updateQueueUI();
-    showToast('info', 'Матч завершён', 'Возврат в поиск');
-  }
-
-  // ===== ПРОФИЛЬ =====
-  function updateProfile() {
-    const user = getCurrentUser();
-    if (!user) return;
-    document.getElementById('pName').textContent = user.username;
-    document.getElementById('pId').textContent = user.standoffId || '—';
-    document.getElementById('avatar').textContent = user.username.charAt(0).toUpperCase();
-
-    const elo = user.elo || 1000;
-    document.getElementById('pElo').textContent = elo;
-    const levelData = getLevelInfo(elo);
-    document.getElementById('pLevel').textContent = levelData.level;
-    document.getElementById('pLevelLabel').textContent = levelData.level;
-    document.getElementById('pNextLevel').textContent = levelData.next;
-    document.getElementById('pRemain').textContent = levelData.remain;
-    const progress = ((elo - levelData.min) / (levelData.next - levelData.min)) * 100;
-    document.getElementById('eloProgress').style.width = Math.min(progress, 100) + '%';
-
-    const kills = user.kills || 0;
-    const deaths = user.deaths || 0;
-    const matches = user.matches || 0;
-    const wins = user.wins || 0;
-    const losses = user.losses || 0;
-    const kd = deaths > 0 ? (kills / deaths) : (kills > 0 ? kills : 0);
-    const winrate = matches > 0 ? Math.round((wins / matches) * 100) : 0;
-    const adr = user.adr || 0;
-    document.getElementById('pWinrate').textContent = winrate + '%';
-    document.getElementById('pKD').textContent = kd.toFixed(1);
-    document.getElementById('pADR').textContent = adr;
-    document.getElementById('pGames').textContent = matches;
-    document.getElementById('pWins').textContent = wins;
-    document.getElementById('pLosses').textContent = losses;
-
-    document.getElementById('pTeammatePercent').textContent = (user.teammatePercent || 0) + '%';
-    document.getElementById('pAvgMatches').textContent = Math.max(matches, 0);
-    document.getElementById('pAvgKills').textContent = user.avgKills || 0;
-    document.getElementById('pAvgDeaths').textContent = user.avgDeaths || 0;
-    document.getElementById('pAvgAdr').textContent = user.avgAdr || 0;
-
-    const history = user.matchHistory || [];
-    const container = document.getElementById('matchHistoryList');
-    if (history.length === 0) {
-      container.innerHTML = '<div style="color:#666; text-align:center; padding:10px 0;">Нет сыгранных матчей</div>';
-    } else {
-      container.innerHTML = history.slice().reverse().map(m => `
-        <div class="match-item">
-          <span class="map"><i class="fas fa-map"></i> ${m.map || 'Mirage'}</span>
-          <span class="stats"><span>🔫 ${m.kills || 0}</span> <span>💀 ${m.deaths || 0}</span> <span>📊 ${m.adr || 0}</span></span>
-          <span class="date">${m.date || '—'}</span>
-          <span class="result ${m.result === 'win' ? 'win' : 'loss'}">${m.result === 'win' ? 'Победа' : 'Поражение'}</span>
-        </div>
-      `).join('');
-    }
-  }
-
-  function getLevelInfo(elo) {
-    const levels = [
-      { min: 0, next: 500, level: 1 },
-      { min: 501, next: 700, level: 2 },
-      { min: 701, next: 900, level: 3 },
-      { min: 901, next: 1050, level: 4 },
-      { min: 1051, next: 1250, level: 5 },
-      { min: 1251, next: 1500, level: 6 },
-      { min: 1501, next: 1800, level: 7 },
-      { min: 1801, next: 2100, level: 8 },
-      { min: 2101, next: 2500, level: 9 },
-      { min: 2501, next: Infinity, level: 10 }
-    ];
-    for (let l of levels) {
-      if (elo >= l.min && elo < l.next) {
-        return { level: l.level, next: l.next, remain: l.next - elo, min: l.min };
-      }
-    }
-    return { level: 10, next: Infinity, remain: 0, min: 2501 };
-  }
-
-  function switchTab(tab) {
-    document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
-    document.querySelector(`.tabs .tab[data-tab="${tab}"]`)?.classList.add('active');
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    document.getElementById('tab-' + tab).classList.add('active');
-  }
-
-  // ===== СТАТИСТИКА ГЛАВНОЙ =====
-  function updateHomeStats() {
-    const users = getUsers();
-    document.getElementById('totalMatches').textContent = users.reduce((acc, u) => acc + (u.matches || 0), 0);
-    document.getElementById('activePlayers').textContent = users.filter(u => (u.matches || 0) > 0).length;
-    document.getElementById('tournamentsCount').textContent = '0';
-  }
-
-  // ===== ПРОГРЕСС СКРОЛЛА =====
-  window.addEventListener('scroll', function() {
-    const scrollTop = window.scrollY;
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-    document.getElementById('scrollProgress').style.width = progress + '%';
-  });
-
-  // ===== TOAST =====
-  function showToast(type, title, text) {
-    const toast = document.getElementById('toast');
-    const ttl = document.getElementById('toastTitle');
-    const txt = document.getElementById('toastText');
-    ttl.className = 'ttl ' + type;
-    ttl.textContent = title;
-    txt.textContent = text;
-    toast.classList.add('visible');
-    clearTimeout(toast._t);
-    toast._t = setTimeout(() => toast.classList.remove('visible'), 4000);
-  }
-
-  // ===== ПРОВЕРКА АВТОРИЗАЦИИ =====
-  function checkAuth() {
-    const user = getCurrentUser();
-    if (user) {
-      document.getElementById('authPage').style.display = 'none';
-      document.getElementById('mainSite').style.display = 'block';
-      updateHomeStats();
-      updateProfile();
-      updateQueueUI();
-      if (currentMatch) {
-        document.getElementById('matchContainer').style.display = 'block';
-        document.querySelector('.search-box').style.display = 'none';
-        renderMatch();
-        navigate('matches');
-      } else {
-        navigate('home');
-      }
-    } else {
-      document.getElementById('authPage').style.display = 'flex';
-      document.getElementById('mainSite').style.display = 'none';
-    }
-  }
-
-  // ===== ЗАПУСК =====
-  document.addEventListener('DOMContentLoaded', function() {
-    let users = getUsers();
-    if (users.length === 0) {
-      users = [
-        {
-          id: '1',
-          username: 'Des',
-          standoffId: '4456416677',
-          password: 'des123',
-          regDate: '12.04.2024',
-          elo: 1000,
-          level: 4,
-          wins: 0,
-          losses: 0,
-          kills: 0,
-          deaths: 0,
-          adr: 0,
-          matches: 0,
-          winrate: 0,
-          teammatePercent: 0,
-          avgKills: 0,
-          avgDeaths: 0,
-          avgAdr: 0,
-          matchHistory: []
-        },
-        {
-          id: '2',
-          username: 'Player1',
-          standoffId: '12345678',
-          password: 'player123',
-          regDate: '01.01.2025',
-          elo: 1500,
-          level: 6,
-          wins: 5,
-          losses: 3,
-          kills: 120,
-          deaths: 80,
-          adr: 85,
-          matches: 8,
-          winrate: 62,
-          teammatePercent: 75,
-          avgKills: 15,
-          avgDeaths: 10,
-          avgAdr: 85,
-          matchHistory: [
-            { map: 'Mirage', kills: 18, deaths: 10, adr: 92, date: '22.07.2026', result: 'win' },
-            { map: 'Dust2', kills: 12, deaths: 14, adr: 70, date: '21.07.2026', result: 'loss' }
-          ]
-        }
-      ];
-      saveUsers(users);
-    }
-    checkAuth();
-    setInterval(() => {
-      if (!currentMatch) updateQueueUI();
-      updateHomeStats();
-    }, 5000);
-  });
-</script>
-</body>
-</html>
+        <div class="home-stat-card"><div class
