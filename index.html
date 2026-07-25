@@ -61,7 +61,7 @@
       color: var(--text-primary);
       min-height:100vh;
       transition: background .3s,color .3s;
-      padding-bottom: 70px;
+      padding-bottom: 80px; /* отступ для нижней навигации */
     }
     .main-wrapper { position:relative; z-index:1; min-height:100vh; }
 
@@ -83,7 +83,7 @@
     }
     .logo-center:hover { transform:scale(1.02); }
     .logo-center h1 {
-      font-size:1.6rem;
+      font-size:1.8rem;
       font-weight:900;
       letter-spacing:1px;
       background:linear-gradient(45deg,var(--gradient-start),var(--gradient-end),var(--gradient-start));
@@ -182,97 +182,155 @@
     }
     .page-content.active { display:block; }
     @keyframes fadeIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-    .page-content .page-title {
-      font-size:2.4rem;
-      font-weight:900;
-      background:linear-gradient(45deg,var(--gradient-start),var(--gradient-end));
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
-      margin-bottom:.5rem;
-    }
-    .page-content .sub-title { color:var(--text-secondary); font-size:1rem; margin-bottom:2rem; font-weight:500; }
 
-    /* ===== ГЛАВНОЕ МЕНЮ (home) ===== */
+    /* ===== ГЛАВНОЕ МЕНЮ (как на скриншоте) ===== */
     .home-hero {
-      max-width:700px;
+      max-width:900px;
       margin:0 auto;
       text-align:center;
     }
-    .home-hero h2 {
-      font-size:2.2rem;
+    .home-hero .main-title {
+      font-size:3rem;
       font-weight:900;
+      letter-spacing:2px;
+      color:var(--text-primary);
+      text-transform:uppercase;
+      margin-bottom:0.2rem;
+    }
+    .home-hero .main-title span {
       background:linear-gradient(45deg,var(--gradient-start),var(--gradient-end));
       -webkit-background-clip:text;
       -webkit-text-fill-color:transparent;
-      margin-bottom:1rem;
+      display:inline-block;
     }
-    .home-hero p {
-      color:var(--text-secondary);
+    .home-hero .sub-title {
+      font-size:1.8rem;
+      font-weight:900;
+      color:var(--primary);
+      text-transform:uppercase;
+      letter-spacing:4px;
+      margin-bottom:1.5rem;
+    }
+    .home-hero .description {
       font-size:1.1rem;
-      line-height:1.6;
-      max-width:600px;
-      margin:0 auto;
+      color:var(--text-secondary);
+      line-height:1.8;
+      max-width:700px;
+      margin:0 auto 2rem;
+      font-weight:500;
     }
-    .home-features {
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-      gap:1.5rem;
-      margin-top:2rem;
-    }
-    .feature-card {
-      background:var(--bg-card);
-      backdrop-filter:blur(8px);
-      border-radius:16px;
-      padding:1.5rem;
-      border:1px solid var(--border-color);
-      text-align:center;
-      transition:.3s;
-    }
-    .feature-card:hover { border-color:var(--primary); transform:translateY(-3px); }
-    .feature-card .icon { font-size:2rem; color:var(--primary); margin-bottom:.5rem; }
-    .feature-card h3 { color:var(--text-primary); font-weight:700; }
-    .feature-card p { color:var(--text-secondary); font-size:.85rem; margin-top:.3rem; font-weight:500; }
-
-    /* ===== СТРАНИЦА ПОИСКА МАТЧА ===== */
-    .queue-status {
+    .home-hero .prize-block {
       background:var(--bg-card);
       backdrop-filter:blur(8px);
       border-radius:24px;
-      padding:2.5rem;
+      padding:2rem;
       border:1px solid var(--border-color);
       margin-bottom:2rem;
-      max-width:600px;
+      text-align:left;
+      max-width:700px;
       margin-left:auto;
       margin-right:auto;
     }
-    .queue-status .count {
-      font-size:4rem;
+    .home-hero .prize-block .prize-title {
+      font-size:1.2rem;
+      font-weight:800;
+      color:var(--primary);
+      text-transform:uppercase;
+      letter-spacing:1px;
+      margin-bottom:1rem;
+      text-align:center;
+    }
+    .home-hero .prize-block .prize-item {
+      display:flex;
+      justify-content:space-between;
+      padding:.4rem 0;
+      border-bottom:1px solid var(--border-color);
+      font-weight:600;
+      font-size:0.95rem;
+      color:var(--text-secondary);
+    }
+    .home-hero .prize-block .prize-item:last-child {
+      border-bottom:none;
+    }
+    .home-hero .prize-block .prize-item .place {
+      color:var(--text-primary);
+      font-weight:700;
+    }
+    .home-hero .prize-block .prize-item .reward {
+      color:var(--gold);
+      font-weight:700;
+    }
+    .home-hero .actions {
+      display:flex;
+      flex-wrap:wrap;
+      gap:1rem;
+      justify-content:center;
+      margin-top:1.5rem;
+    }
+    .btn-action {
+      background:linear-gradient(45deg,var(--gradient-start),var(--gradient-end));
+      color:var(--bg-main);
+      padding:.8rem 2rem;
+      border-radius:60px;
+      font-weight:800;
+      font-size:1rem;
+      border:none;
+      cursor:pointer;
+      transition:.3s;
+      display:inline-flex;
+      align-items:center;
+      gap:.6rem;
+      box-shadow:0 0 30px var(--primary-glow);
+    }
+    .btn-action:hover {
+      transform:scale(1.05);
+      box-shadow:0 0 50px var(--primary-glow);
+    }
+    .btn-action.outline {
+      background:transparent;
+      border:2px solid var(--primary);
+      color:var(--primary);
+      box-shadow:none;
+    }
+    .btn-action.outline:hover {
+      background:var(--primary-glow);
+      box-shadow:0 0 20px var(--primary-glow);
+    }
+
+    /* ===== СТРАНИЦА ПОИСКА МАТЧА (как на скриншоте) ===== */
+    .match-search-page .page-title {
+      font-size:2.2rem;
       font-weight:900;
+      text-align:center;
       background:linear-gradient(45deg,var(--gradient-start),var(--gradient-end));
       -webkit-background-clip:text;
       -webkit-text-fill-color:transparent;
-      line-height:1.2;
+      margin-bottom:0.5rem;
     }
-    .queue-status .label {
+    .match-search-page .sub-title {
+      text-align:center;
       color:var(--text-secondary);
+      font-size:1rem;
+      margin-bottom:2rem;
+      font-weight:500;
+    }
+    .match-search-page .search-status {
+      background:var(--bg-card);
+      backdrop-filter:blur(8px);
+      border-radius:24px;
+      padding:2rem;
+      border:1px solid var(--border-color);
+      max-width:600px;
+      margin:0 auto;
+      text-align:center;
+    }
+    .match-search-page .search-status .status-label {
       font-size:1.2rem;
-      font-weight:600;
-      margin-top:.3rem;
+      font-weight:700;
+      color:var(--text-secondary);
+      margin-bottom:1rem;
     }
-    .queue-actions {
-      display:flex;
-      flex-direction:column;
-      gap:.8rem;
-      margin-top:1.5rem;
-      align-items:center;
-    }
-    .queue-actions .btn-row {
-      display:flex;
-      gap:.8rem;
-      flex-wrap:wrap;
-      justify-content:center;
-    }
-    .btn-queue {
+    .match-search-page .search-status .btn-queue {
       background:linear-gradient(45deg,var(--gradient-start),var(--gradient-end));
       color:var(--bg-main);
       padding:.8rem 2.5rem;
@@ -287,15 +345,47 @@
       align-items:center;
       gap:.6rem;
     }
-    .btn-queue:hover { transform:scale(1.05); box-shadow:0 0 50px var(--primary-glow); }
-    .btn-queue.leave { background:#ff6b6b; color:#fff; box-shadow:0 0 20px rgba(255,0,0,0.3); }
-    .btn-queue.leave:hover { background:#ff4444; }
-    .btn-queue:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
-
-    .queue-status .status-text {
-      color:var(--text-muted);
-      font-size:.9rem;
-      margin-top:.5rem;
+    .match-search-page .search-status .btn-queue:hover {
+      transform:scale(1.05);
+      box-shadow:0 0 50px var(--primary-glow);
+    }
+    .match-search-page .search-status .btn-queue.leave {
+      background:#ff6b6b;
+      color:#fff;
+      box-shadow:0 0 20px rgba(255,0,0,0.3);
+    }
+    .match-search-page .search-status .btn-queue.leave:hover {
+      background:#ff4444;
+    }
+    .match-search-page .search-status .btn-queue:disabled {
+      opacity:0.5;
+      cursor:not-allowed;
+      transform:none;
+    }
+    .match-search-page .search-status .counters {
+      display:flex;
+      justify-content:space-around;
+      margin-top:1.5rem;
+      gap:1rem;
+      flex-wrap:wrap;
+    }
+    .match-search-page .search-status .counter-item {
+      background:var(--bg-input);
+      border-radius:16px;
+      padding:.6rem 1.2rem;
+      border:1px solid var(--border-color);
+      min-width:120px;
+    }
+    .match-search-page .search-status .counter-item .number {
+      font-size:1.8rem;
+      font-weight:900;
+      color:var(--primary);
+    }
+    .match-search-page .search-status .counter-item .label {
+      font-size:0.7rem;
+      color:var(--text-secondary);
+      font-weight:600;
+      text-transform:uppercase;
     }
 
     /* ===== СТРАНИЦА МАТЧА (внутри поиска) ===== */
@@ -540,7 +630,7 @@
       margin-bottom: 0.5rem;
     }
 
-    /* ===== НИЖНЯЯ НАВИГАЦИЯ ===== */
+    /* ===== НИЖНЯЯ НАВИГАЦИЯ (УВЕЛИЧЕННАЯ) ===== */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -552,7 +642,7 @@
       display: flex;
       justify-content: space-around;
       align-items: center;
-      padding: 0.4rem 0.2rem;
+      padding: 0.6rem 0.2rem;
       z-index: 1000;
       box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
     }
@@ -561,7 +651,7 @@
       flex-direction: column;
       align-items: center;
       color: var(--text-secondary);
-      font-size: 0.6rem;
+      font-size: 0.7rem;
       font-weight: 600;
       text-decoration: none;
       padding: 0.2rem 0.3rem;
@@ -569,17 +659,18 @@
       background: none;
       cursor: pointer;
       transition: .3s;
-      min-width: 40px;
+      min-width: 44px;
       position: relative;
     }
     .bottom-nav .nav-item i {
-      font-size: 1.4rem;
+      font-size: 1.6rem;
       margin-bottom: 0.1rem;
       transition: .3s;
     }
     .bottom-nav .nav-item span {
       display: block;
       line-height: 1.2;
+      font-size: 0.65rem;
     }
     .bottom-nav .nav-item.active {
       color: var(--primary);
@@ -601,131 +692,10 @@
       border-radius: 2px;
     }
 
-    /* ===== ПОИСК ИГРОКОВ (не используется, но оставим) ===== */
-    .search-container {
-      max-width:600px;
-      margin:0 auto;
-    }
-    .search-box {
-      display:flex;
-      gap:.6rem;
-      margin-bottom:2rem;
-    }
-    .search-box input {
-      flex:1;
-      padding:.8rem 1rem;
-      background:var(--bg-input);
-      border:2px solid var(--border-color);
-      border-radius:12px;
-      color:var(--text-primary);
-      font-size:1rem;
-      transition:.3s;
-    }
-    .search-box input:focus { outline:none; border-color:var(--primary); box-shadow:0 0 20px var(--primary-glow); }
-    .search-box button {
-      padding:.8rem 2rem;
-      background:var(--primary);
-      border:none;
-      border-radius:40px;
-      font-weight:700;
-      color:var(--bg-main);
-      cursor:pointer;
-      transition:.3s;
-    }
-    .search-box button:hover { background:var(--primary-hover); box-shadow:0 0 20px var(--primary-glow); }
-    .search-results {
-      display:flex;
-      flex-direction:column;
-      gap:.6rem;
-    }
-    .search-result-item {
-      background:var(--bg-card);
-      backdrop-filter:blur(8px);
-      border-radius:16px;
-      padding:.8rem 1.2rem;
-      border:1px solid var(--border-color);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      transition:.3s;
-      cursor:pointer;
-    }
-    .search-result-item:hover { border-color:var(--primary); transform:translateX(5px); }
-    .search-result-item .name { font-weight:700; color:var(--text-primary); }
-    .search-result-item .id { color:var(--text-secondary); font-size:.8rem; }
-    .search-result-item .view-btn {
-      background:var(--primary);
-      border:none;
-      border-radius:40px;
-      padding:.3rem 1rem;
-      font-weight:700;
-      color:var(--bg-main);
-      cursor:pointer;
-      transition:.3s;
-    }
-    .search-result-item .view-btn:hover { background:var(--primary-hover); }
-
-    /* ===== НАСТРОЙКИ ===== */
-    .settings-card {
-      max-width:600px;
-      margin:0 auto;
-      background:var(--bg-card);
-      border-radius:24px;
-      padding:2rem;
-      border:1px solid var(--border-color);
-    }
-    .settings-card .setting-row {
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding:.8rem 0;
-      border-bottom:1px solid var(--border-color);
-      flex-wrap:wrap;
-      gap:.5rem;
-    }
-    .settings-card .setting-row:last-child { border-bottom:none; }
-    .settings-card .setting-row .label { color:var(--text-secondary); font-weight:600; }
-    .settings-card .setting-row select {
-      background:var(--bg-input);
-      border:2px solid var(--border-color);
-      border-radius:12px;
-      padding:.4rem .8rem;
-      color:var(--text-primary);
-      font-weight:600;
-      cursor:pointer;
-    }
-    .settings-card .btn-save {
-      margin-top:1.5rem;
-      width:100%;
-      padding:.8rem;
-      background:var(--primary);
-      border:none;
-      border-radius:40px;
-      font-weight:700;
-      color:var(--bg-main);
-      cursor:pointer;
-      transition:.3s;
-    }
-    .settings-card .btn-save:hover { background:var(--primary-hover); box-shadow:0 0 20px var(--primary-glow); }
-
-    /* ===== ФУТЕР ===== */
-    .footer {
-      background:var(--bg-main);
-      border-top:1px solid var(--border-color);
-      padding:2rem 1rem;
-      text-align:center;
-      color:var(--text-muted);
-      margin-top:2rem;
-      font-size:0.8rem;
-    }
-    .footer .socials { font-size:1.5rem; margin-bottom:1rem; }
-    .footer .socials a { color:var(--text-secondary); margin:0 .8rem; transition:.3s; }
-    .footer .socials a:hover { color:var(--primary); transform:scale(1.1); }
-
     /* ===== TOAST ===== */
     .toast {
       position:fixed;
-      bottom:80px;
+      bottom:90px;
       left:50%;
       transform:translateX(-50%) translateY(100px);
       background:var(--bg-card);
@@ -756,21 +726,23 @@
       .profile-info .sfp-block { justify-content:center; flex-wrap:wrap; }
       .profile-stats { grid-template-columns:1fr 1fr; }
       .rank-grid { grid-template-columns:repeat(5,1fr); }
-      .queue-status .count { font-size:3rem; }
-      .queue-actions .btn-row { flex-direction:column; width:100%; }
-      .btn-queue { width:100%; justify-content:center; }
-      .bottom-nav .nav-item span { font-size:0.5rem; }
-      .bottom-nav .nav-item i { font-size:1.2rem; }
+      .home-hero .main-title { font-size:2.2rem; }
+      .home-hero .sub-title { font-size:1.4rem; }
+      .bottom-nav .nav-item i { font-size:1.4rem; }
+      .bottom-nav .nav-item span { font-size:0.6rem; }
+      .match-search-page .search-status .counters { flex-direction:column; align-items:center; }
     }
     @media (max-width:500px) {
       .profile-stats { grid-template-columns:1fr 1fr; }
       .rank-grid { grid-template-columns:repeat(2,1fr); }
       .profile-avatar { width:56px; height:56px; font-size:1.8rem; }
       .profile-info .username { font-size:1.3rem; }
-      .queue-status .count { font-size:2.5rem; }
-      .search-box { flex-direction:column; }
-      .profile-card { padding: 1rem; }
-      .bottom-nav .nav-item { min-width:32px; }
+      .home-hero .main-title { font-size:1.8rem; }
+      .home-hero .sub-title { font-size:1.2rem; }
+      .home-hero .prize-block .prize-item { font-size:0.8rem; flex-wrap:wrap; gap:0.3rem; }
+      .bottom-nav .nav-item i { font-size:1.2rem; }
+      .bottom-nav .nav-item span { font-size:0.5rem; }
+      .match-search-page .page-title { font-size:1.6rem; }
     }
   </style>
 </head>
@@ -818,40 +790,63 @@
     <!-- 0. ГЛАВНОЕ МЕНЮ (home) -->
     <div class="page-content active" id="pageHome">
       <div class="home-hero">
-        <h2>Добро пожаловать в Faceit 5x5!</h2>
-        <p>Здесь вы можете найти матч по Standoff 2 в формате 5×5. Перейдите в раздел <strong>«Поиск матча»</strong>, чтобы присоединиться к очереди и начать игру.</p>
-        <div class="home-features">
-          <div class="feature-card"><div class="icon"><i class="fas fa-users"></i></div><h3>5×5 Матчи</h3><p>Собирайте команду из 10 игроков и играйте</p></div>
-          <div class="feature-card"><div class="icon"><i class="fas fa-shield-alt"></i></div><h3>Честная игра</h3><p>Случайное распределение по командам</p></div>
-          <div class="feature-card"><div class="icon"><i class="fas fa-clock"></i></div><h3>Быстрый поиск</h3><p>Как только наберётся 10 человек — матч начинается</p></div>
+        <div class="main-title"><span>КИБЕРСПОРТИВНАЯ ПЛАТФОРМА</span></div>
+        <div class="sub-title">STANDOFF 2</div>
+        <p class="description">
+          Проверь свой скилл, поднимай уровень и играй против тех, кто тоже пришел побеждать.<br/>
+          Собирай победные серии, расти в рейтинге, открывай новые уровни и становись частью сильного соревновательного комьюнити <strong>Standoff 2.</strong>
+        </p>
+
+        <div class="prize-block">
+          <div class="prize-title">ПРИЗОВОЙ ФОНД СЕЗОНА</div>
+          <div class="prize-item"><span class="place">1 место</span><span class="reward">5 000₽ + 8 000 Gold</span></div>
+          <div class="prize-item"><span class="place">2 место</span><span class="reward">3 000₽ + 5 000 Gold</span></div>
+          <div class="prize-item"><span class="place">3 место</span><span class="reward">2 000₽ + 3 000 Gold</span></div>
+          <div class="prize-item"><span class="place">4-7 место</span><span class="reward">1000 Gold</span></div>
+          <div class="prize-item"><span class="place">1-20 место</span><span class="reward">инвайт в квалификации следующего сезона</span></div>
+        </div>
+
+        <div class="actions">
+          <button class="btn-action" onclick="navigateTo('profile')"><i class="fas fa-user"></i> Мой профиль</button>
+          <button class="btn-action" onclick="navigateTo('matches')"><i class="fas fa-gamepad"></i> Играть матч</button>
+          <button class="btn-action outline" onclick="showToast('info','Приглашение','Скопируйте ссылку и отправьте другу')"><i class="fas fa-user-plus"></i> Пригласить друга</button>
         </div>
       </div>
     </div>
 
-    <!-- 1. ПОИСК МАТЧА (ранее "Матчи") -->
-    <div class="page-content" id="pageMatches">
-      <h1 class="page-title"><i class="fas fa-search"></i> Поиск матча</h1>
-      <p class="sub-title">Нажмите «Найти матч» несколько раз, чтобы добавить ботов в очередь. Как только будет 10 игроков — матч начнётся автоматически.</p>
-      <div class="queue-status">
-        <div class="count" id="queueCount">0/10</div>
-        <div class="label">Игроков в очереди</div>
-        <div class="queue-actions">
-          <div class="btn-row">
-            <button class="btn-queue" id="queueBtn" onclick="addBotToQueue()">
-              <i class="fas fa-plus"></i> Найти матч
-            </button>
-            <button class="btn-queue leave" id="leaveQueueBtn" onclick="leaveQueueCurrent()" style="display:none;">
-              <i class="fas fa-times"></i> Выйти из очереди
-            </button>
+    <!-- 1. ПОИСК МАТЧА -->
+    <div class="page-content match-search-page" id="pageMatches">
+      <h1 class="page-title">Поиск матча Standoff 2</h1>
+      <p class="sub-title">Играй соло или вместе с друзьями. Создай пати, поделись кодом и заходите в матч одной группой.</p>
+
+      <div class="search-status">
+        <div class="status-label">Статус поиска</div>
+        <div style="margin-bottom:1rem;">
+          <button class="btn-queue" id="queueBtn" onclick="addBotToQueue()">
+            <i class="fas fa-plus"></i> Найти матч
+          </button>
+          <button class="btn-queue leave" id="leaveQueueBtn" onclick="leaveQueueCurrent()" style="display:none; margin-left:0.5rem;">
+            <i class="fas fa-times"></i> Выйти
+          </button>
+        </div>
+        <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:0.5rem;">Одиночный поиск матча.</p>
+
+        <div class="counters">
+          <div class="counter-item">
+            <div class="number" id="matchPlayersCount">0</div>
+            <div class="label">Игроков в матче</div>
+          </div>
+          <div class="counter-item">
+            <div class="number" id="queuePlayersCount">0</div>
+            <div class="label">Игроков в очереди</div>
           </div>
         </div>
-        <div class="status-text" id="queueStatusText">Нажмите «Найти матч», чтобы добавить бота в очередь</div>
       </div>
 
       <!-- Контейнер для матча -->
-      <div id="matchPageContainer" style="display:none;">
-        <h1 class="page-title"><i class="fas fa-swords"></i> Матч начался!</h1>
-        <p class="sub-title">Команды сформированы. Удачи!</p>
+      <div id="matchPageContainer" style="display:none; margin-top:2rem;">
+        <h2 style="text-align:center; color:var(--primary);"><i class="fas fa-swords"></i> Матч начался!</h2>
+        <p style="text-align:center; color:var(--text-secondary);">Команды сформированы. Удачи!</p>
         <div class="match-grid" id="matchGrid">
           <div class="team-card terrorists">
             <h3><span class="team-icon">🔴</span> Террористы</h3>
@@ -954,7 +949,7 @@
         <i class="fas fa-user-friends"></i>
         <span>Друзья</span>
       </button>
-      <button class="nav-item" data-page="matches" onclick="navigateTo('matches')">
+      <button class="nav-item active" data-page="matches" onclick="navigateTo('matches')">
         <i class="fas fa-search"></i>
         <span>Поиск матча</span>
       </button>
@@ -968,15 +963,8 @@
       </button>
     </nav>
 
-    <footer class="footer">
-      <div class="socials">
-        <a href="#"><i class="fab fa-vk"></i></a>
-        <a href="#"><i class="fab fa-telegram"></i></a>
-        <a href="#"><i class="fab fa-youtube"></i></a>
-        <a href="#"><i class="fab fa-discord"></i></a>
-      </div>
-      <p>© 2026 Faceit 5x5 — неофициальный проект</p>
-      <p style="font-size:.75rem;margin-top:.3rem;">Сделано с ❤️</p>
+    <footer class="footer" style="display:none;">
+      <!-- футер скрыт, так как не нужен -->
     </footer>
   </div>
 </div>
@@ -1083,13 +1071,10 @@
   };
 
   function navigateTo(page) {
-    // Скрыть все страницы
     document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
-    // Показать нужную
     const target = document.getElementById(pageMap[page]);
     if (target) target.classList.add('active');
 
-    // Обновить активный пункт в нижнем меню (если страница есть в навигации)
     document.querySelectorAll('.bottom-nav .nav-item').forEach(btn => {
       btn.classList.remove('active');
       if (btn.dataset.page === page) {
@@ -1097,21 +1082,19 @@
       }
     });
 
-    // Если перешли на страницу поиска матча, обновляем очередь
     if (page === 'matches') {
       updateQueueUI();
       const matchContainer = document.getElementById('matchPageContainer');
       if (currentMatch) {
         matchContainer.style.display = 'block';
         renderMatch();
-        document.querySelector('.queue-status').style.display = 'none';
+        document.querySelector('.search-status').style.display = 'none';
       } else {
         matchContainer.style.display = 'none';
-        document.querySelector('.queue-status').style.display = 'block';
+        document.querySelector('.search-status').style.display = 'block';
       }
     }
 
-    // Если профиль — обновляем данные
     if (page === 'profile') {
       updateProfileUI();
     }
@@ -1148,11 +1131,13 @@
 
   function updateQueueUI() {
     const count = queue.length;
-    document.getElementById('queueCount').textContent = `${count}/10`;
+    document.getElementById('queuePlayersCount').textContent = count;
+    // Количество игроков в матче – если матч идёт, то общее количество игроков, иначе 0
+    const matchPlayers = currentMatch ? (currentMatch.terrorists.length + currentMatch.ct.length) : 0;
+    document.getElementById('matchPlayersCount').textContent = matchPlayers;
+
     const btnFind = document.getElementById('queueBtn');
     const btnLeave = document.getElementById('leaveQueueBtn');
-    const status = document.getElementById('queueStatusText');
-
     const user = getCurrentUser();
     const inQueue = user && queue.some(p => p.id === user.id);
 
@@ -1164,14 +1149,6 @@
       btnLeave.style.display = 'inline-flex';
     } else {
       btnLeave.style.display = 'none';
-    }
-
-    if (currentMatch) {
-      status.textContent = 'Матч уже идёт!';
-    } else if (count === 0) {
-      status.textContent = 'Нажмите «Найти матч», чтобы добавить бота в очередь';
-    } else {
-      status.textContent = `В очереди ${count}/10 игроков. Ожидайте...`;
     }
   }
 
@@ -1190,14 +1167,12 @@
     currentMatch = { terrorists, ct };
     queue = [];
 
-    // Переключаемся на страницу поиска матча
     navigateTo('matches');
-    // Показываем контейнер матча
     document.getElementById('matchPageContainer').style.display = 'block';
-    document.querySelector('.queue-status').style.display = 'none';
+    document.querySelector('.search-status').style.display = 'none';
     renderMatch();
-    showToast('success', 'Матч начался!', `${terrorists.length + ct.length} игроков в игре`);
     updateQueueUI();
+    showToast('success', 'Матч начался!', `${terrorists.length + ct.length} игроков в игре`);
   }
 
   function renderMatch() {
@@ -1226,7 +1201,7 @@
     if (!confirm('Завершить матч?')) return;
     currentMatch = null;
     document.getElementById('matchPageContainer').style.display = 'none';
-    document.querySelector('.queue-status').style.display = 'block';
+    document.querySelector('.search-status').style.display = 'block';
     navigateTo('matches');
     updateQueueUI();
     showToast('info', 'Матч завершён', 'Возврат в поиск матча');
@@ -1293,22 +1268,6 @@
   }
 
   // ============================================================
-  // НАСТРОЙКИ (вынесены отдельно, не в меню)
-  // ============================================================
-  function changeTheme(theme) {
-    document.body.setAttribute('data-theme', theme);
-    localStorage.setItem('faceit_theme', theme);
-  }
-  function changeLanguage(lang) {
-    localStorage.setItem('faceit_lang', lang);
-  }
-  function loadSettings() {
-    const theme = localStorage.getItem('faceit_theme') || 'orange';
-    changeTheme(theme);
-    const lang = localStorage.getItem('faceit_lang') || 'ru';
-  }
-
-  // ============================================================
   // TOAST
   // ============================================================
   function showToast(type, title, text) {
@@ -1332,17 +1291,13 @@
       document.getElementById('authPage').style.display = 'none';
       document.getElementById('mainSite').classList.add('visible');
       updateProfileUI();
-      loadSettings();
       updateQueueUI();
-      // Если есть текущий матч, показываем его на странице поиска
       if (currentMatch) {
         document.getElementById('matchPageContainer').style.display = 'block';
-        document.querySelector('.queue-status').style.display = 'none';
+        document.querySelector('.search-status').style.display = 'none';
         renderMatch();
-        // По умолчанию открываем страницу поиска матча (так как матч активен)
         navigateTo('matches');
       } else {
-        // Иначе открываем главное меню
         navigateTo('home');
       }
     } else {
@@ -1367,7 +1322,6 @@
       }
     });
 
-    // Создаём тестовых пользователей
     let users = getUsers();
     if (users.length === 0) {
       users = [
