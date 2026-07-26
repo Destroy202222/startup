@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тест кнопок</title>
+    <title>Тест Supabase</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    </script>
     <style>
         body {
             background: #0b0b0f;
@@ -19,12 +21,22 @@
             background: #1a1a24;
             padding: 40px;
             border-radius: 20px;
-            max-width: 400px;
+            max-width: 500px;
             width: 100%;
-            text-align: center;
         }
         .box h1 {
             color: #ffd700;
+            text-align: center;
+        }
+        .box input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            background: #222;
+            border: 1px solid #333;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 16px;
         }
         .box button {
             width: 100%;
@@ -50,93 +62,309 @@
             padding: 15px;
             background: #111;
             border-radius: 10px;
-            font-size: 14px;
-            max-height: 300px;
+            font-size: 13px;
+            max-height: 400px;
             overflow-y: auto;
             font-family: monospace;
             color: #0f0;
-            text-align: left;
             white-space: pre-wrap;
             word-break: break-all;
         }
-        .success {
-            color: #51cf66;
+        .log-error {
+            color: #ff6b6b !important;
+        }
+        .log-success {
+            color: #51cf66 !important;
+        }
+        .log-info {
+            color: #ffd700 !important;
+        }
+        .success-block {
+            text-align: center;
             padding: 20px;
+            color: #51cf66;
             font-size: 18px;
+            border: 1px solid #51cf66;
+            border-radius: 10px;
+            margin-top: 10px;
+            display: none;
+        }
+        .success-block.show {
+            display: block;
         }
     </style>
 </head>
 <body>
 
     <div class="box">
-        <h1>⚡ Тест кнопок</h1>
-        <p style="color:#888;margin-bottom:20px;">Проверка работы JavaScript</p>
+        <h1>⚡ Тест Supabase</h1>
+        <p style="text-align:center;color:#888;margin-bottom:20px;">Проверка подключения к базе данных</p>
 
-        <button id="testBtn1">Кнопка 1 (alert)</button>
-        <button id="testBtn2" class="secondary">Кнопка 2 (log)</button>
-        <button id="testBtn3" class="secondary">Кнопка 3 (изменить текст)</button>
+        <div id="authForm">
+            <input type="text" id="username" placeholder="Имя пользователя">
+            <input type="password" id="password" placeholder="Пароль (мин. 8 символов)">
+            <input type="password" id="confirm" placeholder="Подтвердите пароль">
+            <button id="registerBtn">Зарегистрироваться</button>
+            <button id="loginBtn" class="secondary" style="margin-top:5px;">Войти</button>
+            <button id="testConnectionBtn" class="secondary" style="margin-top:5px;background:#333;">Проверить подключение</button>
+        </div>
+
+        <div id="successBlock" class="success-block">
+            ✅ Успешно!<br>
+            <span id="successText"></span>
+        </div>
 
         <div id="log">📋 Журнал:<br></div>
-        <div id="result"></div>
     </div>
 
     <script>
         // ============================================================
-        //  ПРОСТЕЙШИЙ ТЕСТ
+        //  ТЕСТ SUPABASE
         // ============================================================
 
         console.log('🚀 СКРИПТ ЗАПУЩЕН!');
 
         const log = document.getElementById('log');
 
-        function addLog(text) {
+        function addLog(text, type = 'info') {
             const time = new Date().toLocaleTimeString();
-            log.innerHTML += `<div>[${time}] ${text}</div>`;
+            let color = '';
+            if (type === 'error') color = 'log-error';
+            else if (type === 'success') color = 'log-success';
+            else if (type === 'info') color = 'log-info';
+            log.innerHTML += `<div class="${color}">[${time}] ${text}</div>`;
             log.scrollTop = log.scrollHeight;
             console.log(text);
         }
 
-        addLog('✅ Скрипт загружен');
+        addLog('✅ Скрипт загружен', 'success');
 
-        // ---- КНОПКА 1 (alert) ----
-        const btn1 = document.getElementById('testBtn1');
-        if (btn1) {
-            btn1.onclick = function() {
-                alert('🎉 Кнопка 1 работает!');
-                addLog('🔔 Нажата кнопка 1 (alert)');
-            };
-            addLog('✅ Кнопка 1 подключена');
-        } else {
-            addLog('❌ Кнопка 1 не найдена!');
+        // ===== SUPABASE =====
+        const supabaseUrl = 'https://txokbboyhytmiurijvyh.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4b2tiYm95aHl0bWl1cmlqdnloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwNzE4MjksImV4cCI6MjEwMDY0NzgyOX0.L5jASUIzGizBBo364mUqmsiWKUAHeVUUvLN4Yuttees';
+
+        addLog('📌 Создаём клиент Supabase...', 'info');
+        let supabase;
+
+        try {
+            supabase = supabase.createClient(supabaseUrl, supabaseKey);
+            addLog('✅ Клиент Supabase создан', 'success');
+        } catch (e) {
+            addLog('❌ Ошибка создания клиента: ' + e.message, 'error');
         }
 
-        // ---- КНОПКА 2 (log) ----
-        const btn2 = document.getElementById('testBtn2');
-        if (btn2) {
-            btn2.onclick = function() {
-                addLog('🟢 Нажата кнопка 2 (log)');
-                console.log('✅ Кнопка 2 нажата');
-            };
-            addLog('✅ Кнопка 2 подключена');
-        } else {
-            addLog('❌ Кнопка 2 не найдена!');
+        // ============================================================
+        //  ПРОВЕРКА ПОДКЛЮЧЕНИЯ
+        // ============================================================
+        async function testConnection() {
+            addLog('🔍 Проверка подключения к Supabase...', 'info');
+
+            if (!supabase) {
+                addLog('❌ Клиент Supabase не создан!', 'error');
+                return;
+            }
+
+            try {
+                // Пробуем получить количество записей
+                const { data, error, count } = await supabase
+                    .from('users')
+                    .select('*', { count: 'exact', head: true });
+
+                if (error) {
+                    addLog('❌ Ошибка подключения: ' + error.message, 'error');
+                    addLog('❌ Код ошибки: ' + error.code, 'error');
+                    if (error.details) addLog('❌ Детали: ' + error.details, 'error');
+                    return;
+                }
+
+                addLog('✅ Подключение работает!', 'success');
+                addLog('📊 Количество пользователей в базе: ' + count, 'info');
+
+                // Получаем список пользователей
+                const { data: users, error: usersError } = await supabase
+                    .from('users')
+                    .select('username')
+                    .limit(5);
+
+                if (usersError) {
+                    addLog('❌ Ошибка получения пользователей: ' + usersError.message, 'error');
+                    return;
+                }
+
+                if (users && users.length > 0) {
+                    addLog('👥 Пользователи в базе: ' + users.map(u => u.username).join(', '), 'info');
+                } else {
+                    addLog('👤 В базе пока нет пользователей', 'info');
+                }
+
+            } catch (e) {
+                addLog('❌ Критическая ошибка: ' + e.message, 'error');
+            }
         }
 
-        // ---- КНОПКА 3 (изменить текст) ----
-        const btn3 = document.getElementById('testBtn3');
-        if (btn3) {
-            btn3.onclick = function() {
-                const result = document.getElementById('result');
-                result.innerHTML = '<div class="success">✅ Кнопка 3 сработала!</div>';
-                addLog('🟢 Нажата кнопка 3 (изменён текст)');
-            };
-            addLog('✅ Кнопка 3 подключена');
-        } else {
-            addLog('❌ Кнопка 3 не найдена!');
+        // ============================================================
+        //  РЕГИСТРАЦИЯ
+        // ============================================================
+        async function registerUser() {
+            addLog('🔵 РЕГИСТРАЦИЯ: начата', 'info');
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const confirm = document.getElementById('confirm').value;
+
+            addLog('📝 Имя: "' + username + '"', 'info');
+
+            if (!username || !password || !confirm) {
+                addLog('❌ Заполните все поля', 'error');
+                return;
+            }
+            if (password !== confirm) {
+                addLog('❌ Пароли не совпадают', 'error');
+                return;
+            }
+            if (password.length < 8) {
+                addLog('❌ Пароль минимум 8 символов', 'error');
+                return;
+            }
+
+            if (!supabase) {
+                addLog('❌ Клиент Supabase не создан!', 'error');
+                return;
+            }
+
+            try {
+                addLog('🔍 Проверяем, существует ли пользователь...', 'info');
+
+                const { data: existing, error: checkError } = await supabase
+                    .from('users')
+                    .select('username')
+                    .eq('username', username)
+                    .maybeSingle();
+
+                if (checkError) {
+                    addLog('❌ Ошибка проверки: ' + checkError.message, 'error');
+                    return;
+                }
+
+                if (existing) {
+                    addLog('❌ Пользователь "' + username + '" уже существует', 'error');
+                    return;
+                }
+
+                addLog('👤 Создаём пользователя "' + username + '"...', 'info');
+
+                const { data, error } = await supabase
+                    .from('users')
+                    .insert([{
+                        username: username,
+                        password: password,
+                        reg_date: new Date().toLocaleDateString('ru-RU'),
+                        elo: 0,
+                        wins: 0,
+                        losses: 0,
+                        matches: 0,
+                        mvp: 0,
+                        party_code: 'TEST' + Math.random().toString(36).substring(2, 5).toUpperCase()
+                    }])
+                    .select()
+                    .single();
+
+                if (error) {
+                    addLog('❌ Ошибка создания: ' + error.message, 'error');
+                    if (error.details) addLog('❌ Детали: ' + error.details, 'error');
+                    return;
+                }
+
+                addLog('✅ УСПЕХ! Пользователь "' + data.username + '" создан!', 'success');
+                document.getElementById('successBlock').classList.add('show');
+                document.getElementById('successText').textContent = 'Пользователь ' + data.username + ' зарегистрирован!';
+
+            } catch (e) {
+                addLog('❌ Критическая ошибка: ' + e.message, 'error');
+            }
         }
 
-        addLog('✅ ВСЕ КНОПКИ ПОДКЛЮЧЕНЫ!');
-        addLog('📌 Нажмите любую кнопку');
+        // ============================================================
+        //  ВХОД
+        // ============================================================
+        async function loginUser() {
+            addLog('🔵 ВХОД: начат', 'info');
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            addLog('📝 Имя: "' + username + '"', 'info');
+
+            if (!username || !password) {
+                addLog('❌ Заполните все поля', 'error');
+                return;
+            }
+
+            if (!supabase) {
+                addLog('❌ Клиент Supabase не создан!', 'error');
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('username', username)
+                    .eq('password', password)
+                    .maybeSingle();
+
+                if (error) {
+                    addLog('❌ Ошибка входа: ' + error.message, 'error');
+                    return;
+                }
+
+                if (!data) {
+                    addLog('❌ Неверное имя или пароль', 'error');
+                    return;
+                }
+
+                addLog('✅ УСПЕХ! Найден пользователь: ' + data.username, 'success');
+                document.getElementById('successBlock').classList.add('show');
+                document.getElementById('successText').textContent = 'Добро пожаловать, ' + data.username + '!';
+
+            } catch (e) {
+                addLog('❌ Критическая ошибка: ' + e.message, 'error');
+            }
+        }
+
+        // ============================================================
+        //  ПОДКЛЮЧЕНИЕ КНОПОК
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            addLog('📌 DOM загружен, подключаем кнопки...', 'info');
+
+            const registerBtn = document.getElementById('registerBtn');
+            if (registerBtn) {
+                registerBtn.onclick = registerUser;
+                addLog('✅ Кнопка регистрации подключена', 'success');
+            } else {
+                addLog('❌ Кнопка registerBtn не найдена!', 'error');
+            }
+
+            const loginBtn = document.getElementById('loginBtn');
+            if (loginBtn) {
+                loginBtn.onclick = loginUser;
+                addLog('✅ Кнопка входа подключена', 'success');
+            } else {
+                addLog('❌ Кнопка loginBtn не найдена!', 'error');
+            }
+
+            const testBtn = document.getElementById('testConnectionBtn');
+            if (testBtn) {
+                testBtn.onclick = testConnection;
+                addLog('✅ Кнопка проверки подключена', 'success');
+            } else {
+                addLog('❌ Кнопка testConnectionBtn не найдена!', 'error');
+            }
+
+            addLog('✅ ВСЕ КНОПКИ ПОДКЛЮЧЕНЫ!', 'success');
+            addLog('📌 Нажмите "Проверить подключение" сначала', 'info');
+        });
     </script>
 
 </body>
