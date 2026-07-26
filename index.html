@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тест регистрации Supabase</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Brawl Stars</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
     </script>
     <style>
@@ -15,324 +19,1288 @@
         body {
             background: #0b0b0f;
             color: #fff;
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        /* ===== АВТОРИЗАЦИЯ ===== */
+        .auth-page {
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 20px;
+            background: radial-gradient(ellipse at center, #0f0f1a, #050508);
+            position: relative;
+            overflow: hidden;
         }
-        .box {
-            background: #1a1a24;
-            padding: 40px;
-            border-radius: 20px;
-            max-width: 400px;
-            width: 100%;
-            border: 1px solid #333;
-        }
-        .box h1 {
-            color: #ffd700;
-            text-align: center;
-            margin-bottom: 5px;
-        }
-        .box .sub {
-            text-align: center;
-            color: #888;
-            margin-bottom: 20px;
-            font-size: 13px;
-        }
-        .box input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 12px;
-            background: #222;
-            border: 1px solid #333;
-            border-radius: 10px;
-            color: #fff;
-            font-size: 16px;
-        }
-        .box input:focus {
-            outline: none;
-            border-color: #ffd700;
-        }
-        .box button {
-            width: 100%;
-            padding: 14px;
-            background: #ffd700;
-            color: #000;
-            border: none;
-            border-radius: 10px;
-            font-weight: 800;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: 0.3s;
-        }
-        .box button:hover {
-            opacity: 0.9;
-            transform: scale(1.02);
-        }
-        .box button.secondary {
-            background: #444;
-            color: #fff;
-        }
-        .box .msg {
-            margin-top: 15px;
-            padding: 12px;
-            border-radius: 10px;
-            text-align: center;
-            display: none;
-            font-weight: 600;
-        }
-        .box .msg.show {
-            display: block;
-        }
-        .box .msg.success {
-            background: rgba(81, 207, 102, 0.15);
-            color: #51cf66;
-            border: 1px solid rgba(81, 207, 102, 0.2);
-        }
-        .box .msg.error {
-            background: rgba(255, 107, 107, 0.15);
-            color: #ff6b6b;
-            border: 1px solid rgba(255, 107, 107, 0.2);
-        }
-        .box .msg.info {
-            background: rgba(255, 215, 0, 0.1);
-            color: #ffd700;
-            border: 1px solid rgba(255, 215, 0, 0.15);
-        }
-        .box .links {
-            text-align: center;
-            margin-top: 15px;
-            color: #888;
-        }
-        .box .links a {
-            color: #ffd700;
-            cursor: pointer;
-        }
-        .box .links a:hover {
-            text-decoration: underline;
-        }
-        .hidden {
-            display: none !important;
-        }
-        #log {
-            margin-top: 20px;
-            padding: 15px;
-            background: #0a0a12;
-            border-radius: 10px;
-            font-size: 12px;
-            max-height: 200px;
-            overflow-y: auto;
-            font-family: 'Courier New', monospace;
-            color: #0f0;
-            border: 1px solid #222;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
-        .log-error {
-            color: #ff6b6b !important;
-        }
-        .log-success {
-            color: #51cf66 !important;
-        }
-        .log-info {
-            color: #ffd700 !important;
-        }
-        .log-entry {
-            padding: 2px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-        }
-        .welcome {
-            text-align: center;
-            padding: 20px 0;
-        }
-        .welcome .avatar {
-            width: 80px;
-            height: 80px;
+        .auth-page::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.03), transparent 70%);
+            top: -200px;
+            right: -200px;
             border-radius: 50%;
+            pointer-events: none;
+        }
+        .auth-page::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.02), transparent 70%);
+            bottom: -100px;
+            left: -100px;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .auth-box {
+            background: rgba(18, 18, 30, 0.92);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 40px 36px 36px;
+            max-width: 420px;
+            width: 100%;
+            border: 1px solid rgba(255, 215, 0, 0.08);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-box .auth-logo {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .auth-box .auth-logo .icon {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .auth-box .auth-logo h1 {
+            font-size: 28px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .auth-box .auth-logo .sub {
+            color: #666;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 2px;
+            -webkit-text-fill-color: #666;
+        }
+
+        .auth-box .auth-tabs {
+            display: flex;
+            gap: 4px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 60px;
+            padding: 4px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .auth-box .auth-tabs .tab {
+            flex: 1;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 60px;
+            background: transparent;
+            color: #888;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            text-align: center;
+        }
+        .auth-box .auth-tabs .tab.active {
             background: linear-gradient(135deg, #ffd700, #ff8c00);
             color: #000;
-            font-size: 40px;
+            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.25);
+        }
+        .auth-box .auth-tabs .tab:hover:not(.active) {
+            color: #fff;
+        }
+
+        .auth-box .auth-form {
+            display: none;
+            animation: fadeSlide .4s ease;
+        }
+        .auth-box .auth-form.active {
+            display: block;
+        }
+        @keyframes fadeSlide {
+            0% {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-box .form-group {
+            margin-bottom: 16px;
+            position: relative;
+        }
+        .auth-box .form-group label {
+            display: block;
+            color: #999;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+        .auth-box .form-group .input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            transition: all 0.3s ease;
+        }
+        .auth-box .form-group .input-wrap:focus-within {
+            border-color: #ffd700;
+            box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.06);
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .auth-box .form-group .input-wrap i {
+            color: #666;
+            font-size: 16px;
+            padding: 0 0 0 16px;
+            transition: color 0.3s ease;
+            min-width: 40px;
+        }
+        .auth-box .form-group .input-wrap:focus-within i {
+            color: #ffd700;
+        }
+        .auth-box .form-group .input-wrap input {
+            width: 100%;
+            padding: 14px 16px 14px 4px;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 500;
+            outline: none;
+            font-family: inherit;
+        }
+        .auth-box .form-group .input-wrap input::placeholder {
+            color: #555;
+            font-weight: 400;
+            font-size: 14px;
+        }
+
+        .auth-box .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 6px 0 20px;
+        }
+        .auth-box .form-options label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #888;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .auth-box .form-options label input[type="checkbox"] {
+            accent-color: #ffd700;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        .auth-box .form-options a {
+            color: #888;
+            font-size: 13px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .auth-box .form-options a:hover {
+            color: #ffd700;
+        }
+
+        .auth-box .btn-auth {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 60px;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            color: #000;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 15px;
-            font-weight: 900;
+            gap: 10px;
+            margin-top: 4px;
+            position: relative;
+            overflow: hidden;
         }
-        .welcome h2 {
-            color: #fff;
-            margin-bottom: 5px;
+        .auth-box .btn-auth:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3);
         }
-        .welcome p {
+        .auth-box .btn-auth:active {
+            transform: scale(0.98);
+        }
+        .auth-box .btn-auth i {
+            font-size: 18px;
+        }
+
+        .auth-box .auth-divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 20px 0;
+            color: #444;
+            font-size: 12px;
+        }
+        .auth-box .auth-divider::before,
+        .auth-box .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .auth-box .auth-social {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        .auth-box .auth-social .social-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.03);
             color: #888;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .auth-box .auth-social .social-btn:hover {
+            border-color: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            background: rgba(255, 215, 0, 0.05);
+            transform: translateY(-2px);
+        }
+
+        /* Сообщения */
+        .auth-box .auth-message {
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 12px;
+            display: none;
+            animation: fadeSlide .3s ease;
+        }
+        .auth-box .auth-message.show {
+            display: block;
+        }
+        .auth-box .auth-message.success {
+            background: rgba(81, 207, 102, 0.12);
+            border: 1px solid rgba(81, 207, 102, 0.2);
+            color: #51cf66;
+        }
+        .auth-box .auth-message.error {
+            background: rgba(255, 107, 107, 0.12);
+            border: 1px solid rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+        .auth-box .auth-message.info {
+            background: rgba(255, 215, 0, 0.08);
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            color: #ffd700;
+        }
+
+        /* ===== ОСНОВНОЙ САЙТ ===== */
+        .main-wrapper {
+            display: none;
+        }
+        .main-wrapper.active {
+            display: block;
+        }
+
+        .header {
+            background: rgba(11, 11, 15, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 12px 16px 10px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            cursor: pointer;
+        }
+        .logo h1 {
+            font-size: 26px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+        .logo .sub {
+            display: block;
+            font-size: 9px;
+            color: #666;
+            -webkit-text-fill-color: #666;
+            letter-spacing: 2px;
+            margin-top: 2px;
+        }
+
+        .page {
+            display: none;
+            max-width: 1100px;
+            margin: 16px auto 0;
+            padding: 0 16px 16px;
+            animation: fade .4s ease;
+        }
+        .page.active {
+            display: block;
+        }
+        @keyframes fade {
+            0% {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .home-hero {
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 6px 0;
+        }
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255, 215, 0, 0.05);
+            border: 1.5px solid rgba(255, 215, 0, 0.4);
+            color: #ffd700;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 8px 28px;
+            border-radius: 60px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            backdrop-filter: blur(4px);
+        }
+        .hero-title {
+            font-size: 38px;
+            font-weight: 900;
+            line-height: 1.2;
+            color: #fff;
+            max-width: 750px;
+            margin: 0 auto 24px;
+            letter-spacing: -0.5px;
+        }
+        .hero-title span {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            max-width: 500px;
+            margin: 0 auto 24px;
+            flex-wrap: wrap;
+        }
+        .hero-stat {
+            background: rgba(20, 20, 28, 0.6);
+            backdrop-filter: blur(8px);
+            border-radius: 14px;
+            padding: 10px 24px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            text-align: center;
+            min-width: 120px;
+            flex: 1;
+            transition: .3s;
+        }
+        .hero-stat:hover {
+            border-color: rgba(255, 215, 0, 0.3);
+            transform: translateY(-2px);
+        }
+        .hero-stat .number {
+            font-size: 24px;
+            font-weight: 900;
+            color: #ffd700;
+        }
+        .hero-stat .label {
+            font-size: 10px;
+            color: #888;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+        .hero-actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+        }
+        .btn-hero {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            color: #000;
+            font-size: 16px;
+            font-weight: 800;
+            padding: 11px 28px;
+            border-radius: 60px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.25);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            text-decoration: none;
+            letter-spacing: 0.3px;
+        }
+        .btn-hero:hover {
+            transform: scale(1.04);
+            box-shadow: 0 0 45px rgba(255, 215, 0, 0.45);
+        }
+        .btn-hero.outline {
+            background: transparent;
+            border: 2px solid #ffd700;
+            color: #ffd700;
+            box-shadow: none;
+        }
+        .btn-hero.outline:hover {
+            background: rgba(255, 215, 0, 0.1);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+        }
+        .btn-hero i {
+            font-size: 16px;
+        }
+
+        .prize-block {
+            background: rgba(20, 20, 28, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 18px;
+            padding: 18px 22px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            max-width: 680px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .prize-block .prize-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: #ffd700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+        .prize-block .prize-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        .prize-block .prize-item {
+            background: rgba(26, 26, 34, 0.6);
+            border-radius: 12px;
+            padding: 8px 4px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: .3s;
+        }
+        .prize-block .prize-item:hover {
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+        .prize-block .prize-item .place {
+            font-size: 11px;
+            font-weight: 700;
+            color: #aaa;
+        }
+        .prize-block .prize-item .reward {
+            font-size: 16px;
+            font-weight: 900;
+            color: #ffd700;
+            margin-top: 2px;
+        }
+        .prize-block .prize-item.gold {
+            border-color: rgba(255, 215, 0, 0.2);
+            background: rgba(255, 215, 0, 0.05);
+        }
+        .prize-block .prize-item.silver {
+            border-color: rgba(192, 192, 192, 0.15);
+            background: rgba(192, 192, 192, 0.03);
+        }
+        .prize-block .prize-item.bronze {
+            border-color: rgba(205, 127, 50, 0.15);
+            background: rgba(205, 127, 50, 0.03);
+        }
+        .prize-block .prize-premium {
+            margin-top: 8px;
+            padding: 6px 12px;
+            background: rgba(26, 26, 34, 0.6);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 12px;
+            color: #888;
+        }
+        .prize-block .prize-premium strong {
+            color: #ffd700;
+            font-weight: 700;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(20, 20, 28, 0.85);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 6px 0 4px;
+            z-index: 100;
+        }
+        .bottom-nav .item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #888;
+            font-size: 10px;
+            font-weight: 600;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 2px 6px;
+            min-width: 44px;
+            position: relative;
+            transition: .2s;
+        }
+        .bottom-nav .item i {
+            font-size: 22px;
+            margin-bottom: 1px;
+            transition: .2s;
+        }
+        .bottom-nav .item span {
+            font-size: 10px;
+            line-height: 1.2;
+        }
+        .bottom-nav .item.active {
+            color: #ffd700;
+        }
+        .bottom-nav .item.active i {
+            text-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+        }
+        .bottom-nav .item.active::after {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 20%;
+            right: 20%;
+            height: 2px;
+            background: #ffd700;
+            border-radius: 2px;
+        }
+        .bottom-nav .item:hover {
+            color: #ff8c00;
+        }
+
+        .profile-card {
+            background: rgba(20, 20, 28, 0.8);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            padding: 18px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+        .profile-avatar {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 900;
+            color: #000;
+            flex-shrink: 0;
+        }
+        .profile-info .username {
+            font-size: 20px;
+            font-weight: 900;
+            color: #fff;
+        }
+        .profile-info .details {
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 3px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin: 14px 0 16px;
+        }
+        .stat-item {
+            background: rgba(26, 26, 34, 0.6);
+            border-radius: 12px;
+            padding: 6px 0;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .stat-item .value {
+            font-size: 18px;
+            font-weight: 900;
+            color: #ffd700;
+        }
+        .stat-item .label {
+            font-size: 8px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-top: 2px;
+        }
+        .profile-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 16px 0 14px;
+        }
+        .profile-actions .btn-action {
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 13px;
+            border: none;
+            cursor: pointer;
+            transition: .2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .profile-actions .btn-action.edit {
+            background: rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            color: #ffd700;
+        }
+        .profile-actions .btn-action.logout {
+            background: rgba(255, 107, 107, 0.12);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            color: #ff6b6b;
+        }
+        .profile-actions .btn-action.logout:hover {
+            background: rgba(255, 107, 107, 0.25);
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.1);
+        }
+
+        /* Поиск матча */
+        .search-page-wrapper {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .search-header-block {
+            background: rgba(255, 215, 0, 0.03);
+            border: 1.5px solid rgba(255, 215, 0, 0.25);
+            border-radius: 20px;
+            padding: 20px 24px;
+            margin-bottom: 20px;
+            text-align: center;
+            backdrop-filter: blur(4px);
+        }
+        .search-header-block .search-title {
+            font-size: 28px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+        .search-header-block .search-sub {
+            color: #999;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.6;
+            max-width: 560px;
+            margin: 0 auto;
+        }
+        .search-main-block {
+            background: rgba(20, 20, 28, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            padding: 22px 20px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            text-align: center;
+            margin-bottom: 14px;
+            transition: all 0.3s ease;
+        }
+        .search-main-block .label {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 12px;
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .search-main-block .label i {
+            color: #ffd700;
+            font-size: 20px;
+        }
+        .search-main-block .btn-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 6px;
+        }
+        .search-main-block .btn-queue {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            color: #000;
+            padding: 14px 36px;
+            border-radius: 60px;
+            font-weight: 800;
+            font-size: 17px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+            transition: .3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .search-main-block .btn-queue:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
+        }
+        .search-main-block .btn-queue.cancel {
+            background: #ff6b6b;
+            color: #fff;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+        }
+        .search-main-block .btn-queue.cancel:hover {
+            background: #ff4444;
+        }
+        .search-main-block .search-type {
+            color: #888;
+            font-size: 13px;
+            margin: 0 0 16px;
+            font-weight: 400;
+        }
+        .search-counters {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            transition: all 0.3s ease;
+        }
+        .search-counter {
+            background: rgba(26, 26, 34, 0.6);
+            border-radius: 12px;
+            padding: 6px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            min-width: 100px;
+            text-align: center;
+            transition: .3s;
+        }
+        .search-counter:hover {
+            border-color: rgba(255, 215, 0, 0.2);
+        }
+        .search-counter .num {
+            font-size: 24px;
+            font-weight: 900;
+            color: #ffd700;
+        }
+        .search-counter .lbl {
+            font-size: 10px;
+            color: #888;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-top: 2px;
+        }
+        .search-main-block.searching .label,
+        .search-main-block.searching .search-type,
+        .search-main-block.searching .search-counters {
+            display: none !important;
+        }
+        .search-main-block.searching .search-progress {
+            display: block !important;
+        }
+        .search-progress {
+            display: none;
+            padding: 10px 0;
+        }
+        .search-progress .progress-text {
+            font-size: 38px;
+            font-weight: 900;
+            color: #ffd700;
+            letter-spacing: 1px;
+        }
+        .search-progress .progress-timer {
+            font-size: 16px;
+            color: #888;
+            margin-top: 4px;
+        }
+        .search-progress .progress-timer span {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(70px);
+            background: rgba(20, 20, 28, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 10px 24px;
+            opacity: 0;
+            transition: .4s;
+            z-index: 999;
+            text-align: center;
+            pointer-events: none;
+        }
+        .toast.visible {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        .toast .ttl {
+            font-weight: 800;
+        }
+        .toast .ttl.success {
+            color: #51cf66;
+        }
+        .toast .ttl.error {
+            color: #ff6b6b;
+        }
+        .toast .ttl.info {
+            color: #ffd700;
+        }
+        .toast .txt {
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .placeholder {
+            text-align: center;
+            padding: 40px 0;
+            color: #888;
+        }
+        .placeholder i {
+            font-size: 34px;
+            color: #ffd700;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .placeholder h2 {
+            font-size: 20px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        @media (max-width: 480px) {
+            .auth-box {
+                padding: 28px 20px 24px;
+            }
+            .auth-box .auth-logo h1 {
+                font-size: 24px;
+            }
+            .hero-title {
+                font-size: 24px;
+            }
+            .hero-stats-row {
+                flex-direction: column;
+                gap: 8px;
+            }
+            .hero-stat {
+                width: 100%;
+            }
+            .hero-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            .btn-hero {
+                width: 100%;
+                justify-content: center;
+            }
+            .prize-block .prize-grid {
+                grid-template-columns: 1fr;
+            }
+            .profile-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="box" id="app">
-        <h1>⚡ Brawl Stars</h1>
-        <div class="sub">Тест регистрации</div>
-
-        <!-- Форма входа -->
-        <div id="loginBlock">
-            <h2 style="text-align:center;margin-bottom:15px;font-size:18px;">Вход</h2>
-            <input type="text" id="loginUsername" placeholder="Имя пользователя">
-            <input type="password" id="loginPassword" placeholder="Пароль">
-            <button id="loginBtn">Войти</button>
-            <div class="links">
-                <a id="showRegisterLink">Нет аккаунта? Зарегистрироваться</a>
+    <!-- ===== АВТОРИЗАЦИЯ ===== -->
+    <div class="auth-page" id="authPage">
+        <div class="auth-box">
+            <div class="auth-logo">
+                <span class="icon">⚡</span>
+                <h1>Brawl Stars</h1>
+                <div class="sub">Competitive Platform</div>
             </div>
-            <div class="msg" id="loginMsg"></div>
+
+            <div class="auth-tabs">
+                <button class="tab active" data-tab="login" onclick="switchAuthTab('login')">
+                    <i class="fas fa-sign-in-alt"></i> Вход
+                </button>
+                <button class="tab" data-tab="register" onclick="switchAuthTab('register')">
+                    <i class="fas fa-user-plus"></i> Регистрация
+                </button>
+            </div>
+
+            <!-- Вход -->
+            <div class="auth-form active" id="loginForm">
+                <div class="form-group">
+                    <label>Имя пользователя</label>
+                    <div class="input-wrap">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="loginUsername" placeholder="Введите имя" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <div class="input-wrap">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="loginPassword" placeholder="Введите пароль" />
+                    </div>
+                </div>
+                <button class="btn-auth" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> Войти
+                </button>
+                <div class="auth-message" id="loginMessage"></div>
+            </div>
+
+            <!-- Регистрация -->
+            <div class="auth-form" id="registerForm">
+                <div class="form-group">
+                    <label>Имя пользователя</label>
+                    <div class="input-wrap">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="regUsername" placeholder="Придумайте имя" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <div class="input-wrap">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="regPassword" placeholder="Минимум 8 символов" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Подтверждение пароля</label>
+                    <div class="input-wrap">
+                        <i class="fas fa-check-circle"></i>
+                        <input type="password" id="regPasswordConfirm" placeholder="Повторите пароль" />
+                    </div>
+                </div>
+                <button class="btn-auth" id="registerBtn">
+                    <i class="fas fa-user-plus"></i> Создать аккаунт
+                </button>
+                <div class="auth-message" id="registerMessage"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== ОСНОВНОЙ САЙТ ===== -->
+    <div class="main-wrapper" id="mainSite">
+        <header class="header" onclick="navigate('home')">
+            <div class="logo">
+                <h1>⚡ Brawl Stars</h1>
+            </div>
+        </header>
+
+        <!-- Главная -->
+        <div class="page active" id="pageHome">
+            <div class="home-hero">
+                <div class="hero-badge">КИБЕРСПОРТИВНАЯ ПЛАТФОРМА BRAWL STARS</div>
+                <div class="hero-title">
+                    Проверь свой <span>скилл</span>, поднимай <span>уровень</span> и играй против тех, кто тоже пришел <span>побеждать</span>.
+                </div>
+                <div class="hero-stats-row">
+                    <div class="hero-stat">
+                        <div class="number" id="activePlayersHome">0</div>
+                        <div class="label">Активные игроки</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="number" id="totalMatchesHome">0</div>
+                        <div class="label">Сыграно матчей</div>
+                    </div>
+                </div>
+                <div class="hero-actions">
+                    <button class="btn-hero" onclick="navigate('matches')">
+                        <i class="fas fa-search"></i> Поиск матча
+                    </button>
+                    <button class="btn-hero outline" onclick="navigate('profile')">
+                        <i class="fas fa-user"></i> Профиль
+                    </button>
+                </div>
+                <div class="prize-block">
+                    <div class="prize-title">🏆 Призовой фонд — 10 000 ₽</div>
+                    <div class="prize-grid">
+                        <div class="prize-item gold">
+                            <div class="place">🥇 1 место</div>
+                            <div class="reward">5 000 ₽</div>
+                        </div>
+                        <div class="prize-item silver">
+                            <div class="place">🥈 2 место</div>
+                            <div class="reward">3 000 ₽</div>
+                        </div>
+                        <div class="prize-item bronze">
+                            <div class="place">🥉 3 место</div>
+                            <div class="reward">2 000 ₽</div>
+                        </div>
+                    </div>
+                    <div class="prize-premium">
+                        <strong>4-15 место</strong> — Premium статус
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Форма регистрации -->
-        <div id="registerBlock" class="hidden">
-            <h2 style="text-align:center;margin-bottom:15px;font-size:18px;">Регистрация</h2>
-            <input type="text" id="regUsername" placeholder="Имя пользователя">
-            <input type="password" id="regPassword" placeholder="Пароль (мин. 8 символов)">
-            <input type="password" id="regPasswordConfirm" placeholder="Подтвердите пароль">
-            <button id="registerBtn">Зарегистрироваться</button>
-            <div class="links">
-                <a id="showLoginLink">Уже есть аккаунт? Войти</a>
+        <!-- Поиск матча -->
+        <div class="page" id="pageMatches">
+            <div class="search-page-wrapper">
+                <div class="search-header-block">
+                    <div class="search-title">Поиск матча Brawl Stars</div>
+                    <p class="search-sub">Играй соло или вместе с друзьями.</p>
+                </div>
+                <div class="search-main-block" id="searchMainBlock">
+                    <div class="label">
+                        <i class="fas fa-crosshairs"></i> Статус поиска
+                    </div>
+                    <div class="btn-row">
+                        <button class="btn-queue" id="queueBtn" onclick="startSearch()">
+                            <i class="fas fa-search"></i> Поиск матча
+                        </button>
+                        <button class="btn-queue cancel" id="cancelBtn" onclick="cancelSearch()" style="display:none;">
+                            <i class="fas fa-times"></i> Отменить поиск
+                        </button>
+                    </div>
+                    <div class="search-type">Одиночный поиск матча.</div>
+                    <div class="search-counters" id="searchCounters">
+                        <div class="search-counter">
+                            <div class="num" id="matchCount">0</div>
+                            <div class="lbl">Игроков в матче</div>
+                        </div>
+                        <div class="search-counter">
+                            <div class="num" id="queueCount">0</div>
+                            <div class="lbl">Игроков в очереди</div>
+                        </div>
+                    </div>
+                    <div class="search-progress" id="searchProgress">
+                        <div class="progress-text" id="progressText">0/6</div>
+                        <div class="progress-timer">⏱️ <span id="searchTimer">00:00</span></div>
+                    </div>
+                </div>
             </div>
-            <div class="msg" id="registerMsg"></div>
         </div>
 
-        <!-- Блок успеха -->
-        <div id="welcomeBlock" class="hidden">
-            <div class="welcome">
-                <div class="avatar" id="userAvatar">?</div>
-                <h2 id="userName">Игрок</h2>
-                <p>Вы успешно вошли в систему!</p>
-                <button id="logoutBtn" style="background:#ff6b6b;color:#fff;margin-top:15px;">Выйти</button>
+        <!-- Профиль -->
+        <div class="page" id="pageProfile">
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="profile-avatar" id="avatar">?</div>
+                    <div class="profile-info">
+                        <div class="username" id="pName">Игрок</div>
+                        <div class="details">
+                            <span><i class="fas fa-calendar-alt"></i> Дата регистрации: <span id="pReg">—</span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-stats">
+                    <div class="stat-item"><div class="value" id="pWr">0%</div><div class="label">Винрейт</div></div>
+                    <div class="stat-item"><div class="value" id="pMatches">0</div><div class="label">Матчей</div></div>
+                    <div class="stat-item"><div class="value" id="pMvp">0</div><div class="label">MVP</div></div>
+                </div>
+                <div class="profile-actions">
+                    <button class="btn-action edit" onclick="showToast('info', 'Редактирование', 'Функция редактирования профиля')">
+                        <i class="fas fa-edit"></i> Редактировать
+                    </button>
+                    <button class="btn-action logout" onclick="handleLogout()">
+                        <i class="fas fa-sign-out-alt"></i> Выйти с аккаунта
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- Лог -->
-        <div id="log">📋 Журнал операций:<br></div>
+        <!-- Заглушки -->
+        <div class="page" id="pageShop"><div class="placeholder"><i class="fas fa-store"></i><h2>Магазин</h2><p>Здесь будут товары и привилегии.</p></div></div>
+        <div class="page" id="pageFriends"><div class="placeholder"><i class="fas fa-user-friends"></i><h2>Друзья</h2><p>Скоро здесь будут ваши друзья.</p></div></div>
+        <div class="page" id="pageTop"><div class="placeholder"><i class="fas fa-trophy"></i><h2>Топ игроков</h2><p>Скоро здесь будет топ.</p></div></div>
+        <div class="page" id="pageWallet"><div class="placeholder"><i class="fas fa-wallet"></i><h2>Кошелёк</h2><p>Скоро здесь будет кошелёк.</p></div></div>
+        <div class="page" id="matchPage"><div class="placeholder"><i class="fas fa-swords"></i><h2>Матч</h2><p>Идёт поиск...</p></div></div>
+
+        <!-- Нижняя навигация -->
+        <nav class="bottom-nav">
+            <button class="item" data-page="profile" onclick="navigate('profile')"><i class="fas fa-user"></i><span>Профиль</span></button>
+            <button class="item" data-page="shop" onclick="navigate('shop')"><i class="fas fa-store"></i><span>Шоп</span></button>
+            <button class="item" data-page="friends" onclick="navigate('friends')"><i class="fas fa-user-friends"></i><span>Друзья</span></button>
+            <button class="item active" data-page="matches" onclick="navigate('matches')"><i class="fas fa-search"></i><span>Поиск</span></button>
+            <button class="item" data-page="top" onclick="navigate('top')"><i class="fas fa-trophy"></i><span>Топ</span></button>
+            <button class="item" data-page="wallet" onclick="navigate('wallet')"><i class="fas fa-wallet"></i><span>Кошелёк</span></button>
+        </nav>
     </div>
 
     <script>
         // ============================================================
-        //  ТЕСТ РЕГИСТРАЦИИ SUPABASE
+        //  ГЛАВНЫЙ СКРИПТ
         // ============================================================
 
         console.log('🚀 СКРИПТ ЗАПУЩЕН!');
 
-        const log = document.getElementById('log');
-
-        function addLog(text, type = 'info') {
-            const time = new Date().toLocaleTimeString();
-            const div = document.createElement('div');
-            div.className = 'log-entry ' + (type === 'error' ? 'log-error' : type === 'success' ? 'log-success' :
-            'log-info');
-            div.textContent = '[' + time + '] ' + text;
-            log.appendChild(div);
-            log.scrollTop = log.scrollHeight;
-            console.log(text);
-        }
-
-        addLog('✅ Скрипт загружен', 'success');
-
         // ===== SUPABASE =====
         const supabaseUrl = 'https://txokbboyhytmiurijvyh.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4b2tiYm95aHl0bWl1cmlqdnloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwNzE4MjksImV4cCI6MjEwMDY0NzgyOX0.L5jASUIzGizBBo364mUqmsiWKUAHeVUUvLN4Yuttees';
-
-        addLog('📌 Создаём клиент Supabase...', 'info');
         const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-        addLog('✅ Клиент создан', 'success');
+
+        console.log('✅ Supabase инициализирован');
 
         // ===== ПЕРЕМЕННЫЕ =====
         let currentUser = null;
+        let queue = [];
+        let isSearching = false;
+        let searchTimerInterval = null;
+        let searchSeconds = 0;
+        let botCounter = 0;
 
         // ============================================================
-        //  ПОКАЗ СООБЩЕНИЯ
+        //  TOAST
         // ============================================================
-        function showMessage(elementId, text, type) {
-            const el = document.getElementById(elementId);
-            el.textContent = text;
-            el.className = 'msg show ' + type;
-            addLog(text, type);
+        function showToast(type, title, text) {
+            const toast = document.getElementById('toast');
+            const ttl = document.getElementById('toastTitle');
+            const txt = document.getElementById('toastText');
+            ttl.className = 'ttl ' + type;
+            ttl.textContent = title;
+            txt.textContent = text;
+            toast.classList.add('visible');
+            clearTimeout(toast._t);
+            toast._t = setTimeout(() => toast.classList.remove('visible'), 4000);
         }
 
-        function hideMessage(elementId) {
-            const el = document.getElementById(elementId);
-            el.className = 'msg';
-            el.textContent = '';
+        // ============================================================
+        //  ГЕНЕРАЦИЯ КОДА
+        // ============================================================
+        function generateCode() {
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let code = '';
+            for (let i = 0; i < 6; i++) {
+                code += letters[Math.floor(Math.random() * letters.length)];
+            }
+            return code;
         }
 
         // ============================================================
-        //  ПЕРЕКЛЮЧЕНИЕ ФОРМ
+        //  ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
         // ============================================================
-        function showRegisterForm() {
-            document.getElementById('loginBlock').classList.add('hidden');
-            document.getElementById('registerBlock').classList.remove('hidden');
-            hideMessage('loginMsg');
-            hideMessage('registerMsg');
-            addLog('🔄 Переключено на регистрацию', 'info');
-        }
+        function switchAuthTab(tab) {
+            document.querySelectorAll('.auth-tabs .tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.auth-tabs .tab[data-tab="${tab}"]`).classList.add('active');
 
-        function showLoginForm() {
-            document.getElementById('loginBlock').classList.remove('hidden');
-            document.getElementById('registerBlock').classList.add('hidden');
-            hideMessage('loginMsg');
-            hideMessage('registerMsg');
-            addLog('🔄 Переключено на вход', 'info');
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            if (tab === 'login') {
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                document.getElementById('registerForm').classList.add('active');
+            }
+
+            document.getElementById('loginMessage').className = 'auth-message';
+            document.getElementById('loginMessage').textContent = '';
+            document.getElementById('registerMessage').className = 'auth-message';
+            document.getElementById('registerMessage').textContent = '';
         }
 
         // ============================================================
         //  РЕГИСТРАЦИЯ
         // ============================================================
         async function registerUser() {
-            addLog('🔵 РЕГИСТРАЦИЯ: начата', 'info');
+            console.log('🔵 РЕГИСТРАЦИЯ: начата');
 
             const username = document.getElementById('regUsername').value.trim();
             const password = document.getElementById('regPassword').value;
             const confirm = document.getElementById('regPasswordConfirm').value;
-
-            addLog('📝 Имя: "' + username + '"', 'info');
+            const messageEl = document.getElementById('registerMessage');
 
             if (!username || !password || !confirm) {
-                showMessage('registerMsg', '❌ Заполните все поля', 'error');
+                messageEl.className = 'auth-message show error';
+                messageEl.textContent = '❌ Заполните все поля';
                 return;
             }
             if (password !== confirm) {
-                showMessage('registerMsg', '❌ Пароли не совпадают', 'error');
+                messageEl.className = 'auth-message show error';
+                messageEl.textContent = '❌ Пароли не совпадают';
                 return;
             }
             if (password.length < 8) {
-                showMessage('registerMsg', '❌ Пароль минимум 8 символов', 'error');
+                messageEl.className = 'auth-message show error';
+                messageEl.textContent = '❌ Пароль минимум 8 символов';
                 return;
             }
 
-            showMessage('registerMsg', '⏳ Проверяем данные...', 'info');
+            messageEl.className = 'auth-message show info';
+            messageEl.textContent = '⏳ Проверяем данные...';
 
             try {
-                // Проверяем, существует ли пользователь
-                addLog('🔍 Проверяем существование пользователя...', 'info');
-                const { data: existing, error: checkError } = await supabase
+                const { data: existing } = await supabase
                     .from('users')
                     .select('username')
                     .eq('username', username)
                     .maybeSingle();
 
-                if (checkError) {
-                    addLog('❌ Ошибка проверки: ' + checkError.message, 'error');
-                    showMessage('registerMsg', '❌ Ошибка: ' + checkError.message, 'error');
-                    return;
-                }
-
                 if (existing) {
-                    addLog('❌ Пользователь "' + username + '" уже существует', 'error');
-                    showMessage('registerMsg', '❌ Имя пользователя уже занято', 'error');
+                    messageEl.className = 'auth-message show error';
+                    messageEl.textContent = '❌ Имя пользователя уже занято';
                     return;
                 }
 
-                // Создаём пользователя
-                addLog('👤 Создаём пользователя "' + username + '"...', 'info');
                 const { data, error } = await supabase
                     .from('users')
                     .insert([{
@@ -344,35 +1312,31 @@
                         losses: 0,
                         matches: 0,
                         mvp: 0,
-                        party_code: 'TEST' + Math.random().toString(36).substring(2, 5).toUpperCase()
+                        party_code: generateCode()
                     }])
                     .select()
                     .single();
 
                 if (error) {
-                    addLog('❌ Ошибка создания: ' + error.message, 'error');
-                    showMessage('registerMsg', '❌ Ошибка: ' + error.message, 'error');
+                    messageEl.className = 'auth-message show error';
+                    messageEl.textContent = '❌ Ошибка: ' + error.message;
                     return;
                 }
 
-                addLog('✅ УСПЕХ! Пользователь "' + data.username + '" создан!', 'success');
-                showMessage('registerMsg', '✅ Успешно! Добро пожаловать, ' + username, 'success');
-
+                console.log('✅ Пользователь создан:', data);
                 currentUser = data;
+                messageEl.className = 'auth-message show success';
+                messageEl.textContent = '✅ Успешно! Добро пожаловать, ' + username;
 
-                // Показываем экран приветствия
-                setTimeout(function() {
-                    document.getElementById('loginBlock').classList.add('hidden');
-                    document.getElementById('registerBlock').classList.add('hidden');
-                    document.getElementById('welcomeBlock').classList.remove('hidden');
-                    document.getElementById('userName').textContent = currentUser.username;
-                    document.getElementById('userAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
-                    addLog('🎉 Показан экран приветствия', 'success');
-                }, 1500);
+                setTimeout(() => {
+                    showToast('success', 'Добро пожаловать!', username);
+                    checkAuth();
+                }, 1000);
 
             } catch (e) {
-                addLog('❌ Критическая ошибка: ' + e.message, 'error');
-                showMessage('registerMsg', '❌ Ошибка соединения с сервером', 'error');
+                messageEl.className = 'auth-message show error';
+                messageEl.textContent = '❌ Ошибка соединения с сервером';
+                console.error('❌ Ошибка:', e);
             }
         }
 
@@ -380,19 +1344,20 @@
         //  ВХОД
         // ============================================================
         async function loginUser() {
-            addLog('🔵 ВХОД: начат', 'info');
+            console.log('🔵 ВХОД: начат');
 
             const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value;
-
-            addLog('📝 Имя: "' + username + '"', 'info');
+            const messageEl = document.getElementById('loginMessage');
 
             if (!username || !password) {
-                showMessage('loginMsg', '❌ Заполните все поля', 'error');
+                messageEl.className = 'auth-message show error';
+                messageEl.textContent = '❌ Заполните все поля';
                 return;
             }
 
-            showMessage('loginMsg', '⏳ Ищем пользователя...', 'info');
+            messageEl.className = 'auth-message show info';
+            messageEl.textContent = '⏳ Ищем пользователя...';
 
             try {
                 const { data, error } = await supabase
@@ -403,104 +1368,169 @@
                     .maybeSingle();
 
                 if (error) {
-                    addLog('❌ Ошибка входа: ' + error.message, 'error');
-                    showMessage('loginMsg', '❌ Ошибка: ' + error.message, 'error');
+                    messageEl.className = 'auth-message show error';
+                    messageEl.textContent = '❌ Ошибка сервера';
                     return;
                 }
 
                 if (!data) {
-                    addLog('❌ Пользователь не найден', 'error');
-                    showMessage('loginMsg', '❌ Неверное имя или пароль', 'error');
+                    messageEl.className = 'auth-message show error';
+                    messageEl.textContent = '❌ Неверное имя или пароль';
                     return;
                 }
 
-                addLog('✅ УСПЕХ! Найден пользователь: ' + data.username, 'success');
-                showMessage('loginMsg', '✅ Добро пожаловать, ' + username, 'success');
-
+                console.log('✅ Пользователь найден:', data);
                 currentUser = data;
+                messageEl.className = 'auth-message show success';
+                messageEl.textContent = '✅ Добро пожаловать, ' + username;
 
-                setTimeout(function() {
-                    document.getElementById('loginBlock').classList.add('hidden');
-                    document.getElementById('registerBlock').classList.add('hidden');
-                    document.getElementById('welcomeBlock').classList.remove('hidden');
-                    document.getElementById('userName').textContent = currentUser.username;
-                    document.getElementById('userAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
-                    addLog('🎉 Показан экран приветствия', 'success');
-                }, 1500);
+                setTimeout(() => {
+                    showToast('success', 'Добро пожаловать!', username);
+                    checkAuth();
+                }, 1000);
 
             } catch (e) {
-                addLog('❌ Критическая ошибка: ' + e.message, 'error');
-                showMessage('loginMsg', '❌ Ошибка соединения с сервером', 'error');
+                messageEl.className = 'auth-message show error';
+                messageEl.textContent = '❌ Ошибка соединения с сервером';
+                console.error('❌ Ошибка:', e);
+            }
+        }
+
+        // ============================================================
+        //  ПРОВЕРКА АВТОРИЗАЦИИ
+        // ============================================================
+        function checkAuth() {
+            if (currentUser) {
+                document.getElementById('authPage').style.display = 'none';
+                document.getElementById('mainSite').style.display = 'block';
+                document.getElementById('pName').textContent = currentUser.username;
+                document.getElementById('avatar').textContent = currentUser.username.charAt(0).toUpperCase();
+                document.getElementById('pReg').textContent = currentUser.reg_date || '—';
+                navigate('home');
+            } else {
+                document.getElementById('authPage').style.display = 'flex';
+                document.getElementById('mainSite').style.display = 'none';
             }
         }
 
         // ============================================================
         //  ВЫХОД
         // ============================================================
-        function logoutUser() {
-            addLog('🔴 Выход', 'info');
+        function handleLogout() {
+            if (!confirm('Выйти из аккаунта?')) return;
             currentUser = null;
-            document.getElementById('loginBlock').classList.remove('hidden');
-            document.getElementById('registerBlock').classList.add('hidden');
-            document.getElementById('welcomeBlock').classList.add('hidden');
-            hideMessage('loginMsg');
-            hideMessage('registerMsg');
-            addLog('✅ Выход выполнен', 'success');
+            checkAuth();
+            showToast('info', 'Выход', 'Вы вышли из аккаунта');
+        }
+
+        // ============================================================
+        //  НАВИГАЦИЯ
+        // ============================================================
+        const pages = {
+            home: 'pageHome',
+            profile: 'pageProfile',
+            shop: 'pageShop',
+            friends: 'pageFriends',
+            matches: 'pageMatches',
+            top: 'pageTop',
+            wallet: 'pageWallet',
+            matchPage: 'matchPage'
+        };
+
+        function navigate(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const target = document.getElementById(pages[page]);
+            if (target) target.classList.add('active');
+            document.querySelectorAll('.bottom-nav .item').forEach(b => b.classList.remove('active'));
+            const navItem = document.querySelector(`.bottom-nav .item[data-page="${page}"]`);
+            if (navItem) navItem.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ============================================================
+        //  ПОИСК МАТЧА
+        // ============================================================
+        function startSearch() {
+            if (isSearching) return;
+            if (!currentUser) return showToast('error', 'Ошибка', 'Авторизуйтесь');
+
+            queue = [{ id: currentUser.id, username: currentUser.username }];
+            isSearching = true;
+            searchSeconds = 0;
+
+            document.getElementById('searchMainBlock').classList.add('searching');
+            document.getElementById('queueBtn').style.display = 'none';
+            document.getElementById('cancelBtn').style.display = 'inline-flex';
+            document.getElementById('searchProgress').style.display = 'block';
+            document.getElementById('progressText').textContent = '1/6';
+
+            if (searchTimerInterval) clearInterval(searchTimerInterval);
+            searchTimerInterval = setInterval(() => {
+                searchSeconds++;
+                const mins = String(Math.floor(searchSeconds / 60)).padStart(2, '0');
+                const secs = String(searchSeconds % 60).padStart(2, '0');
+                document.getElementById('searchTimer').textContent = mins + ':' + secs;
+            }, 1000);
+
+            showToast('info', 'Поиск начат', 'Ищем игроков...');
+            simulateBotSearch();
+        }
+
+        function simulateBotSearch() {
+            if (!isSearching) return;
+            const maxBots = 5;
+            const currentBots = queue.length - 1;
+
+            if (currentBots < maxBots && isSearching) {
+                setTimeout(() => {
+                    if (!isSearching) return;
+                    const botName = 'Bot' + (botCounter + 1);
+                    botCounter++;
+                    queue.push({ id: 'bot_' + Date.now(), username: botName });
+                    document.getElementById('progressText').textContent = queue.length + '/6';
+                    showToast('info', 'Игрок найден', botName + ' присоединился');
+
+                    if (queue.length >= 6) {
+                        clearInterval(searchTimerInterval);
+                        isSearching = false;
+                        document.getElementById('searchMainBlock').classList.remove('searching');
+                        document.getElementById('queueBtn').style.display = 'inline-flex';
+                        document.getElementById('cancelBtn').style.display = 'none';
+                        document.getElementById('searchProgress').style.display = 'none';
+                        showToast('success', 'Матч найден!', '6 игроков собрано');
+                        navigate('matchPage');
+                    } else {
+                        simulateBotSearch();
+                    }
+                }, 1500 + Math.random() * 2000);
+            }
+        }
+
+        function cancelSearch() {
+            if (!isSearching) return;
+            isSearching = false;
+            clearInterval(searchTimerInterval);
+            queue = [];
+            document.getElementById('searchMainBlock').classList.remove('searching');
+            document.getElementById('queueBtn').style.display = 'inline-flex';
+            document.getElementById('cancelBtn').style.display = 'none';
+            document.getElementById('searchProgress').style.display = 'none';
+            document.getElementById('searchTimer').textContent = '00:00';
+            showToast('info', 'Поиск отменён', 'Вы отменили поиск');
         }
 
         // ============================================================
         //  ПОДКЛЮЧЕНИЕ ОБРАБОТЧИКОВ
         // ============================================================
         document.addEventListener('DOMContentLoaded', function() {
-            addLog('📌 DOM загружен, подключаем обработчики...', 'info');
+            console.log('✅ DOM ЗАГРУЖЕН!');
 
-            // Регистрация
-            const registerBtn = document.getElementById('registerBtn');
-            if (registerBtn) {
-                registerBtn.onclick = registerUser;
-                addLog('✅ Кнопка регистрации подключена', 'success');
-            } else {
-                addLog('❌ Кнопка registerBtn не найдена!', 'error');
-            }
+            document.getElementById('registerBtn').onclick = registerUser;
+            document.getElementById('loginBtn').onclick = loginUser;
 
-            // Вход
-            const loginBtn = document.getElementById('loginBtn');
-            if (loginBtn) {
-                loginBtn.onclick = loginUser;
-                addLog('✅ Кнопка входа подключена', 'success');
-            } else {
-                addLog('❌ Кнопка loginBtn не найдена!', 'error');
-            }
-
-            // Переключение на регистрацию
-            const showRegisterLink = document.getElementById('showRegisterLink');
-            if (showRegisterLink) {
-                showRegisterLink.onclick = function(e) {
-                    e.preventDefault();
-                    showRegisterForm();
-                };
-                addLog('✅ Ссылка на регистрацию подключена', 'success');
-            }
-
-            // Переключение на вход
-            const showLoginLink = document.getElementById('showLoginLink');
-            if (showLoginLink) {
-                showLoginLink.onclick = function(e) {
-                    e.preventDefault();
-                    showLoginForm();
-                };
-                addLog('✅ Ссылка на вход подключена', 'success');
-            }
-
-            // Выход
-            const logoutBtn = document.getElementById('logoutBtn');
-            if (logoutBtn) {
-                logoutBtn.onclick = logoutUser;
-                addLog('✅ Кнопка выхода подключена', 'success');
-            }
-
-            addLog('✅ ВСЕ ОБРАБОТЧИКИ ПОДКЛЮЧЕНЫ!', 'success');
-            addLog('📌 Попробуйте зарегистрироваться!', 'info');
+            console.log('✅ Регистрация и вход подключены');
+            checkAuth();
+            console.log('✅ ВСЕ ГОТОВО!');
         });
     </script>
 
