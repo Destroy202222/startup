@@ -211,11 +211,6 @@
       color: #ffd700;
       margin-top: 2px;
     }
-    .prize-block .prize-item .sub {
-      font-size: 9px;
-      color: #666;
-      margin-top: 2px;
-    }
     .prize-block .prize-item.gold { border-color: rgba(255,215,0,0.2); background: rgba(255,215,0,0.05); }
     .prize-block .prize-item.silver { border-color: rgba(192,192,192,0.15); background: rgba(192,192,192,0.03); }
     .prize-block .prize-item.bronze { border-color: rgba(205,127,50,0.15); background: rgba(205,127,50,0.03); }
@@ -1434,68 +1429,10 @@
       flex-wrap: wrap;
       gap: 12px;
     }
-    .profile-info .sfp-block {
-      display: flex;
-      align-items: baseline;
-      gap: 12px;
-      margin-top: 5px;
-      flex-wrap: wrap;
-    }
-    .profile-info .sfp-number {
-      font-size: 24px;
-      font-weight: 900;
-      color: #fff;
-    }
-    .profile-info .sfp-label {
-      font-size: 11px;
-      color: #888;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .profile-info .rank-badge {
-      background: rgba(26,26,34,0.8);
-      border: 1px solid rgba(255,255,255,0.06);
-      padding: 2px 12px;
-      border-radius: 40px;
-      font-weight: 800;
-      font-size: 12px;
-      color: #888;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .profile-info .rank-badge i { color: #666; }
-
-    .elo-progress-wrap {
-      margin-top: 3px;
-      width: 100%;
-      max-width: 280px;
-    }
-    .elo-progress-wrap .elo-bar {
-      width: 100%;
-      height: 4px;
-      background: rgba(255,255,255,0.06);
-      border-radius: 4px;
-      overflow: hidden;
-      margin-top: 3px;
-    }
-    .elo-progress-wrap .elo-bar .fill {
-      height: 100%;
-      background: linear-gradient(90deg, #ffd700, #ff8c00);
-      border-radius: 4px;
-      transition: width .3s;
-    }
-    .elo-progress-wrap .elo-labels {
-      display: flex;
-      justify-content: space-between;
-      font-size: 9px;
-      color: #888;
-      margin-top: 2px;
-    }
 
     .profile-stats {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 6px;
       margin: 14px 0 16px;
     }
@@ -1847,7 +1784,6 @@
       .btn-hero { width: 100%; justify-content: center; }
       .prize-block .prize-grid { grid-template-columns: 1fr; }
       .profile-stats { grid-template-columns: 1fr 1fr; }
-      .profile-info .sfp-number { font-size: 20px; }
       .search-header-block { padding: 12px 14px; }
       .search-header-block .search-title { font-size: 20px; }
       .search-header-block .search-sub { font-size: 13px; }
@@ -1954,21 +1890,18 @@
           <div class="prize-item gold">
             <div class="place">🥇 1 место</div>
             <div class="reward">5 000 ₽</div>
-            <div class="sub">+ 8 000 Gold</div>
           </div>
           <div class="prize-item silver">
             <div class="place">🥈 2 место</div>
             <div class="reward">3 000 ₽</div>
-            <div class="sub">+ 5 000 Gold</div>
           </div>
           <div class="prize-item bronze">
             <div class="place">🥉 3 место</div>
             <div class="reward">2 000 ₽</div>
-            <div class="sub">+ 3 000 Gold</div>
           </div>
         </div>
         <div class="prize-premium">
-          <strong>4-15 место</strong> — Premium статус + 1 000 Gold
+          <strong>4-15 место</strong> — Premium статус
         </div>
       </div>
     </div>
@@ -2204,18 +2137,6 @@
           <div class="details">
             <span><i class="fas fa-calendar-alt"></i> Дата регистрации: <span id="pReg">—</span></span>
           </div>
-          <div class="sfp-block">
-            <span class="sfp-number" id="pElo">0</span>
-            <span class="sfp-label">ELO</span>
-            <span class="rank-badge"><i class="fas fa-star"></i> <span id="pRank">Level 1</span></span>
-          </div>
-          <div class="elo-progress-wrap">
-            <div class="elo-bar"><div class="fill" id="eloProgress" style="width:0%;"></div></div>
-            <div class="elo-labels">
-              <span>Level <span id="pLevelLabel">1</span></span>
-              <span>до <span id="pNextLevel">500</span> осталось <span id="pRemain">500</span></span>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -2223,7 +2144,6 @@
         <div class="stat-item"><div class="value" id="pWr">0%</div><div class="label">Винрейт</div></div>
         <div class="stat-item"><div class="value" id="pMatches">0</div><div class="label">Матчей</div></div>
         <div class="stat-item"><div class="value" id="pMvp">0</div><div class="label">MVP</div></div>
-        <div class="stat-item"><div class="value" id="pElo2">0</div><div class="label">ELO</div></div>
       </div>
 
       <div class="profile-actions">
@@ -2356,12 +2276,8 @@
       password: password,
       regDate: new Date().toLocaleDateString('ru-RU'),
       elo: 0,
-      level: 1,
       wins: 0,
       losses: 0,
-      kills: 0,
-      deaths: 0,
-      adr: 0,
       matches: 0,
       winrate: 0,
       mvp: 0,
@@ -2957,17 +2873,6 @@
     document.getElementById('pReg').textContent = user.regDate || '—';
     document.getElementById('avatar').textContent = user.username.charAt(0).toUpperCase();
 
-    const elo = user.elo || 0;
-    document.getElementById('pElo').textContent = elo;
-    document.getElementById('pElo2').textContent = elo;
-    const levelData = getLevelInfo(elo);
-    document.getElementById('pRank').textContent = 'Level ' + levelData.level;
-    document.getElementById('pLevelLabel').textContent = levelData.level;
-    document.getElementById('pNextLevel').textContent = levelData.next;
-    document.getElementById('pRemain').textContent = levelData.remain;
-    const progress = ((elo - levelData.min) / (levelData.next - levelData.min)) * 100;
-    document.getElementById('eloProgress').style.width = Math.min(progress, 100) + '%';
-
     const matches = user.matches || 0;
     const wins = user.wins || 0;
     const winrate = matches > 0 ? Math.round((wins / matches) * 100) : 0;
@@ -3016,27 +2921,6 @@
       `;
     });
     container.innerHTML = html;
-  }
-
-  function getLevelInfo(elo) {
-    const levels = [
-      { min: 0, next: 500, level: 1 },
-      { min: 501, next: 700, level: 2 },
-      { min: 701, next: 900, level: 3 },
-      { min: 901, next: 1050, level: 4 },
-      { min: 1051, next: 1250, level: 5 },
-      { min: 1251, next: 1500, level: 6 },
-      { min: 1501, next: 1800, level: 7 },
-      { min: 1801, next: 2100, level: 8 },
-      { min: 2101, next: 2500, level: 9 },
-      { min: 2501, next: Infinity, level: 10 }
-    ];
-    for (let l of levels) {
-      if (elo >= l.min && elo < l.next) {
-        return { level: l.level, next: l.next, remain: l.next - elo, min: l.min };
-      }
-    }
-    return { level: 10, next: Infinity, remain: 0, min: 2501 };
   }
 
   // ===== СТАТИСТИКА ГЛАВНОЙ =====
