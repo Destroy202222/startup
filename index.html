@@ -606,24 +606,28 @@
     .match-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      gap: 16px;
       margin-bottom: 20px;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .team-block {
       background: rgba(20, 20, 28, 0.4);
       backdrop-filter: blur(8px);
-      border-radius: 20px;
-      padding: 18px 16px 16px;
+      border-radius: 16px;
+      padding: 14px 12px 12px;
       text-align: center;
       transition: .3s;
+      min-width: 0;
     }
     .team-block:hover {
       transform: translateY(-2px);
     }
 
     .team-block.ct {
-      border: 1.5px solid rgba(81, 207, 102, 0.4);
+      border: 2px solid rgba(81, 207, 102, 0.5);
     }
     .team-block.ct .team-name {
       color: #51cf66;
@@ -635,7 +639,7 @@
     }
 
     .team-block.terrorists {
-      border: 1.5px solid rgba(255, 123, 0, 0.4);
+      border: 2px solid rgba(255, 123, 0, 0.5);
     }
     .team-block.terrorists .team-name {
       color: #ff7b00;
@@ -647,31 +651,32 @@
     }
 
     .team-block .team-name {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 800;
-      letter-spacing: 0.5px;
-      margin-bottom: 4px;
+      letter-spacing: 1px;
+      margin-bottom: 2px;
+      text-transform: uppercase;
     }
     .team-block .team-sub {
-      font-size: 12px;
+      font-size: 11px;
       color: #666;
       font-weight: 500;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .team-players {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
     }
 
     .player-card {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       background: rgba(26, 26, 34, 0.6);
-      border-radius: 12px;
-      padding: 8px 12px;
+      border-radius: 10px;
+      padding: 6px 10px;
       border: 1px solid rgba(255,255,255,0.04);
       transition: .2s;
     }
@@ -679,14 +684,14 @@
       border-color: rgba(255,255,255,0.08);
     }
     .player-card .avatar {
-      width: 32px;
-      height: 32px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       background: linear-gradient(135deg, #ff7b00, #ffb347);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 700;
       color: #000;
       flex-shrink: 0;
@@ -696,48 +701,53 @@
       display: flex;
       flex-direction: column;
       align-items: flex-start;
+      min-width: 0;
     }
     .player-card .info .name {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
     }
     .player-card .info .status {
-      font-size: 10px;
+      font-size: 9px;
       color: #51cf66;
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
     }
     .player-card .captain-badge {
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 700;
-      padding: 2px 10px;
+      padding: 1px 8px;
       border-radius: 40px;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
       flex-shrink: 0;
     }
 
     .match-actions {
       text-align: center;
-      margin-top: 10px;
+      margin-top: 6px;
     }
     .match-actions .btn-end {
       background: #ff6b6b;
       color: #fff;
-      padding: 10px 28px;
+      padding: 8px 24px;
       border-radius: 60px;
       font-weight: 700;
-      font-size: 15px;
+      font-size: 14px;
       border: none;
       cursor: pointer;
       box-shadow: 0 0 20px rgba(255,0,0,0.3);
       transition: .2s;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
     .match-actions .btn-end:hover {
       background: #ff4444;
@@ -1632,7 +1642,7 @@
       .profile-actions { flex-direction: column; align-items: stretch; }
       .profile-actions .btn-action { justify-content: center; }
       .match-page .match-title { font-size: 22px; }
-      .team-block .team-name { font-size: 17px; }
+      .team-block .team-name { font-size: 15px; }
     }
     @media (max-width: 480px) {
       .hero-title { font-size: 24px; }
@@ -1670,8 +1680,8 @@
       .wallet-page .promo-block input { font-size: 12px; }
       .match-grid { grid-template-columns: 1fr; }
       .match-page .match-title { font-size: 18px; }
-      .team-block { padding: 12px 10px; }
-      .team-block .team-name { font-size: 15px; }
+      .team-block { padding: 10px 8px; }
+      .team-block .team-name { font-size: 13px; }
       .player-card .info .name { font-size: 12px; }
     }
   </style>
@@ -1837,15 +1847,13 @@
     <div class="match-grid" id="matchGrid">
       <!-- CT (синяя обводка) -->
       <div class="team-block ct" id="teamBlockCT">
-        <div class="team-name">🟢 Контр-террористы</div>
-        <div class="team-sub">Капитан: <span id="ctCaptain">—</span></div>
+        <div class="team-name">COUNTER-TERRORIST</div>
         <div class="team-players" id="teamCTPlayers"></div>
       </div>
 
       <!-- Террористы (оранжевая обводка) -->
       <div class="team-block terrorists" id="teamBlockTerrorists">
-        <div class="team-name">🔴 Террористы</div>
-        <div class="team-sub">Капитан: <span id="tCaptain">—</span></div>
+        <div class="team-name">TERRORIST</div>
         <div class="team-players" id="teamTPlayers"></div>
       </div>
     </div>
@@ -2139,10 +2147,10 @@
     profile: 'pageProfile',
     shop: 'pageShop',
     friends: 'pageFriends',
-    matches: 'pageMatches', // поиск матча
+    matches: 'pageMatches',
     top: 'pageTop',
     wallet: 'pageWallet',
-    matchPage: 'matchPage'   // страница матча
+    matchPage: 'matchPage'
   };
 
   function navigate(page) {
@@ -2347,7 +2355,6 @@
     document.getElementById('queueBtn').style.display = 'inline-flex';
     document.getElementById('cancelBtn').style.display = 'none';
 
-    // Переходим на страницу матча
     navigate('matchPage');
     renderMatchPage();
     showToast('success', 'Матч начался!', `${terrorists.length + ct.length} игроков в игре`);
@@ -2356,45 +2363,54 @@
   function renderMatchPage() {
     if (!currentMatch) return;
 
-    // Получаем случайных капитанов из каждой команды
+    // Определяем капитанов (первый игрок в каждой команде становится капитаном)
     const tCaptain = currentMatch.terrorists.length > 0 ? 
-      currentMatch.terrorists[Math.floor(Math.random() * currentMatch.terrorists.length)].username : '—';
+      currentMatch.terrorists[0].username : null;
     const ctCaptain = currentMatch.ct.length > 0 ? 
-      currentMatch.ct[Math.floor(Math.random() * currentMatch.ct.length)].username : '—';
+      currentMatch.ct[0].username : null;
 
-    document.getElementById('tCaptain').textContent = tCaptain;
-    document.getElementById('ctCaptain').textContent = ctCaptain;
+    // Сортируем игроков: капитан первый, остальные по порядку
+    const sortedTerrorists = [...currentMatch.terrorists].sort((a, b) => {
+      if (a.username === tCaptain) return -1;
+      if (b.username === tCaptain) return 1;
+      return 0;
+    });
+    const sortedCT = [...currentMatch.ct].sort((a, b) => {
+      if (a.username === ctCaptain) return -1;
+      if (b.username === ctCaptain) return 1;
+      return 0;
+    });
 
     const tContainer = document.getElementById('teamTPlayers');
     const ctContainer = document.getElementById('teamCTPlayers');
 
-    tContainer.innerHTML = currentMatch.terrorists.map(p => {
+    tContainer.innerHTML = sortedTerrorists.map(p => {
       const isCaptain = p.username === tCaptain;
       return `
         <div class="player-card">
           <div class="avatar">${p.username.charAt(0).toUpperCase()}</div>
           <div class="info">
-            <span class="name">${p.username}${isCaptain ? ' 👑' : ''}</span>
+            <span class="name">${p.username}</span>
             <span class="status"><i class="fas fa-circle"></i> онлайн</span>
           </div>
-          ${isCaptain ? `<span class="captain-badge"><i class="fas fa-crown"></i> КАПИТАН</span>` : ''}
+          ${isCaptain ? `<span class="captain-badge"><i class="fas fa-crown"></i> Капитан</span>` : ''}
         </div>
       `;
-    }).join('') || '<p style="color:#888;text-align:center;padding:8px 0;">Нет игроков</p>';
+    }).join('') || '<p style="color:#888;text-align:center;padding:8px 0;font-size:13px;">Нет игроков</p>';
 
-    ctContainer.innerHTML = currentMatch.ct.map(p => {
+    ctContainer.innerHTML = sortedCT.map(p => {
       const isCaptain = p.username === ctCaptain;
       return `
         <div class="player-card">
           <div class="avatar">${p.username.charAt(0).toUpperCase()}</div>
           <div class="info">
-            <span class="name">${p.username}${isCaptain ? ' 👑' : ''}</span>
+            <span class="name">${p.username}</span>
             <span class="status"><i class="fas fa-circle"></i> онлайн</span>
           </div>
-          ${isCaptain ? `<span class="captain-badge"><i class="fas fa-crown"></i> КАПИТАН</span>` : ''}
+          ${isCaptain ? `<span class="captain-badge"><i class="fas fa-crown"></i> Капитан</span>` : ''}
         </div>
       `;
-    }).join('') || '<p style="color:#888;text-align:center;padding:8px 0;">Нет игроков</p>';
+    }).join('') || '<p style="color:#888;text-align:center;padding:8px 0;font-size:13px;">Нет игроков</p>';
   }
 
   function endMatch() {
