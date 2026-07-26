@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Brawl Stars</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -17,6 +17,8 @@
       padding-bottom: 70px;
       min-height: 100vh;
       line-height: 1.5;
+      touch-action: pan-x pan-y;
+      -webkit-text-size-adjust: 100%;
     }
     .header {
       background: rgba(11, 11, 15, 0.85);
@@ -580,7 +582,6 @@
       margin-bottom: 4px;
     }
 
-    /* НОВЫЙ БЛОК СВЕРХУ */
     .match-info-bar {
       background: rgba(20, 20, 28, 0.8);
       backdrop-filter: blur(8px);
@@ -618,7 +619,6 @@
       color: #ffd700;
     }
 
-    /* КОМАНДЫ */
     .match-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -735,7 +735,6 @@
       flex-shrink: 0;
     }
 
-    /* ===== БАНЫ (КРАСИВЫЕ И СНИЗУ) ===== */
     .bans-container {
       max-width: 900px;
       margin: 0 auto 16px;
@@ -1595,7 +1594,6 @@
     .placeholder i { font-size: 34px; color: #ffd700; display: block; margin-bottom: 8px; }
     .placeholder h2 { font-size: 20px; font-weight: 800; color: #fff; }
 
-    /* ===== НИЖНЯЯ НАВИГАЦИЯ ===== */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -1972,7 +1970,6 @@
 
   <!-- ===== МАТЧ (НОВЫЙ ДИЗАЙН) ===== -->
   <div class="page match-page" id="matchPage">
-    <!-- Верхний блок с информацией о матче -->
     <div class="match-info-bar" id="matchInfoBar">
       <div class="info-item">
         <i class="fas fa-hashtag"></i>
@@ -1984,7 +1981,6 @@
       </div>
     </div>
 
-    <!-- КОМАНДЫ -->
     <div class="match-grid" id="matchGrid">
       <div class="team-block blue" id="teamBlockBlue">
         <div class="team-name">BLUE TEAM</div>
@@ -1996,9 +1992,7 @@
       </div>
     </div>
 
-    <!-- БАНЫ (СНИЗУ, КРАСИВЫЕ) -->
     <div class="bans-container" id="bansContainer">
-      <!-- Бан режимов (вместо карт) -->
       <div class="ban-section modes-section" id="modesBanSection">
         <div class="ban-header">
           <div class="ban-title">
@@ -2174,7 +2168,6 @@
   <!-- ===== ЗАГЛУШКА ===== -->
   <div class="page" id="pageShop"><div class="placeholder"><i class="fas fa-store"></i><h2>Магазин</h2><p>Здесь будут товары и привилегии.</p></div></div>
 
-  <!-- ===== НИЖНЯЯ НАВИГАЦИЯ ===== -->
   <nav class="bottom-nav">
     <button class="item" data-page="profile" onclick="navigate('profile')"><i class="fas fa-user"></i><span>Профиль</span></button>
     <button class="item" data-page="shop" onclick="navigate('shop')"><i class="fas fa-store"></i><span>Шоп</span></button>
@@ -2185,12 +2178,13 @@
   </nav>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // ===== ПРИНУДИТЕЛЬНОЕ ОБНУЛЕНИЕ СТАТИСТИКИ =====
-  // Удаляем старые данные из localStorage
-  localStorage.removeItem('brawl_users');
-  localStorage.removeItem('brawl_current_user');
-  
+  // ===== ИНИЦИАЛИЗАЦИЯ SUPABASE =====
+  const supabaseUrl = 'https://txokbboyhytmiurijvyh.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4b2tiYm95aHl0bWl1cmlqdnloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwNzE4MjksImV4cCI6MjEwMDY0NzgyOX0.L5jASUIzGizBBo364mUqmsiWKUAHeVUUvLN4Yuttees';
+  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
   // ===== СОСТОЯНИЕ =====
   let currentUser = null;
   let queue = [];
@@ -2202,7 +2196,6 @@
   let searchTimerInterval = null;
   let searchSeconds = 0;
 
-  // Состояние драфта
   let draftState = {
     gameNumber: 1,
     modeOptions: ['Gem Grab', 'Brawl Ball', 'Knockout', 'Heist', 'Bounty', 'Hot Zone', 'Siege'],
@@ -2212,7 +2205,7 @@
     isComplete: false
   };
 
-  // ===== ГЕНЕРАЦИЯ КОДА =====
+  // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
   function generateCode() {
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     let code = '';
@@ -2222,76 +2215,173 @@
     return code;
   }
 
-  // ===== ДРУЗЬЯ (данные) =====
-  function getFriendsData() {
-    const user = getCurrentUser();
-    if (!user) return { friends: [], incoming: [], outgoing: [] };
+  // ===== РАБОТА С БАЗОЙ ДАННЫХ =====
+  async function createTables() {
     try {
-      return JSON.parse(localStorage.getItem('friendsData_' + user.id)) || { friends: [], incoming: [], outgoing: [] };
-    } catch { return { friends: [], incoming: [], outgoing: [] }; }
-  }
+      // Создаём таблицу users, если её нет
+      const { error: createError } = await supabase.rpc('create_users_table');
+      if (createError) {
+        // Если RPC нет, создаём через SQL (это нужно сделать вручную в Supabase Dashboard)
+        console.log('Таблицы нужно создать вручную через SQL Editor:');
+        console.log(`
+          CREATE TABLE users (
+            id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL,
+            reg_date TEXT NOT NULL,
+            elo INTEGER DEFAULT 0,
+            wins INTEGER DEFAULT 0,
+            losses INTEGER DEFAULT 0,
+            matches INTEGER DEFAULT 0,
+            mvp INTEGER DEFAULT 0,
+            party_code TEXT UNIQUE,
+            created_at TIMESTAMP DEFAULT NOW()
+          );
 
-  function saveFriendsData(data) {
-    const user = getCurrentUser();
-    if (!user) return;
-    localStorage.setItem('friendsData_' + user.id, JSON.stringify(data));
+          CREATE TABLE matches (
+            id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+            game_number INTEGER NOT NULL,
+            mode TEXT NOT NULL,
+            players JSONB NOT NULL,
+            created_at TIMESTAMP DEFAULT NOW()
+          );
+
+          CREATE TABLE friend_requests (
+            id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+            from_user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+            to_user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+            status TEXT DEFAULT 'pending',
+            created_at TIMESTAMP DEFAULT NOW()
+          );
+        `);
+      }
+    } catch (e) {
+      console.log('Таблицы уже существуют или ошибка создания:', e);
+    }
   }
 
   // ===== АУТЕНТИФИКАЦИЯ =====
-  function getUsers() {
-    try { return JSON.parse(localStorage.getItem('brawl_users')) || []; } catch { return []; }
-  }
-  function saveUsers(u) { localStorage.setItem('brawl_users', JSON.stringify(u)); }
-  function getCurrentUser() {
-    try { return JSON.parse(localStorage.getItem('brawl_current_user')); } catch { return null; }
-  }
-  function setCurrentUser(u) {
-    currentUser = u;
-    localStorage.setItem('brawl_current_user', JSON.stringify(u));
-  }
-  function clearCurrentUser() {
-    currentUser = null;
-    localStorage.removeItem('brawl_current_user');
+  async function loginUser(username, password) {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('username', username)
+      .eq('password', password)
+      .single();
+
+    if (error || !data) {
+      return null;
+    }
+    return data;
   }
 
-  document.getElementById('loginBtn').addEventListener('click', function() {
-    const username = document.getElementById('loginUsername').value.trim();
-    const password = document.getElementById('loginPassword').value;
-    if (!username || !password) return showToast('error', 'Ошибка', 'Заполните все поля');
-    const users = getUsers();
-    const user = users.find(u => u.username === username && u.password === password);
-    if (!user) return showToast('error', 'Ошибка', 'Неверное имя или пароль');
-    setCurrentUser(user);
-    showToast('success', 'Добро пожаловать!', user.username);
-    checkAuth();
-  });
+  async function registerUser(username, password) {
+    // Проверяем, существует ли пользователь
+    const { data: existing } = await supabase
+      .from('users')
+      .select('username')
+      .eq('username', username)
+      .single();
 
-  document.getElementById('registerBtn').addEventListener('click', function() {
-    const username = document.getElementById('regUsername').value.trim();
-    const password = document.getElementById('regPassword').value;
-    const confirm = document.getElementById('regPasswordConfirm').value;
-    if (!username || !password || !confirm) return showToast('error', 'Ошибка', 'Заполните все поля');
-    if (password !== confirm) return showToast('error', 'Ошибка', 'Пароли не совпадают');
-    if (password.length < 8) return showToast('error', 'Ошибка', 'Пароль минимум 8 символов');
-    const users = getUsers();
-    if (users.find(u => u.username === username)) return showToast('error', 'Ошибка', 'Имя занято');
+    if (existing) {
+      return { error: 'Имя уже занято' };
+    }
+
     const newUser = {
-      id: Date.now().toString(),
       username: username,
       password: password,
-      regDate: new Date().toLocaleDateString('ru-RU'),
+      reg_date: new Date().toLocaleDateString('ru-RU'),
       elo: 0,
       wins: 0,
       losses: 0,
       matches: 0,
-      winrate: 0,
       mvp: 0,
-      partyCode: generateCode(),
-      matchHistory: []
+      party_code: generateCode()
     };
-    users.push(newUser);
-    saveUsers(users);
-    setCurrentUser(newUser);
+
+    const { data, error } = await supabase
+      .from('users')
+      .insert([newUser])
+      .select()
+      .single();
+
+    if (error) {
+      return { error: error.message };
+    }
+    return { data };
+  }
+
+  async function getUsers() {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .order('elo', { ascending: false });
+
+    if (error) return [];
+    return data || [];
+  }
+
+  async function updateUserStats(userId, stats) {
+    const { error } = await supabase
+      .from('users')
+      .update(stats)
+      .eq('id', userId);
+
+    if (error) {
+      console.error('Ошибка обновления статистики:', error);
+    }
+  }
+
+  async function saveMatch(matchData) {
+    const { error } = await supabase
+      .from('matches')
+      .insert([matchData]);
+
+    if (error) {
+      console.error('Ошибка сохранения матча:', error);
+    }
+  }
+
+  // ===== ОБРАБОТЧИКИ АУТЕНТИФИКАЦИИ =====
+  document.getElementById('loginBtn').addEventListener('click', async function() {
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value;
+
+    if (!username || !password) {
+      return showToast('error', 'Ошибка', 'Заполните все поля');
+    }
+
+    const user = await loginUser(username, password);
+    if (!user) {
+      return showToast('error', 'Ошибка', 'Неверное имя или пароль');
+    }
+
+    currentUser = user;
+    showToast('success', 'Добро пожаловать!', user.username);
+    checkAuth();
+  });
+
+  document.getElementById('registerBtn').addEventListener('click', async function() {
+    const username = document.getElementById('regUsername').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const confirm = document.getElementById('regPasswordConfirm').value;
+
+    if (!username || !password || !confirm) {
+      return showToast('error', 'Ошибка', 'Заполните все поля');
+    }
+    if (password !== confirm) {
+      return showToast('error', 'Ошибка', 'Пароли не совпадают');
+    }
+    if (password.length < 8) {
+      return showToast('error', 'Ошибка', 'Пароль минимум 8 символов');
+    }
+
+    const result = await registerUser(username, password);
+    if (result.error) {
+      return showToast('error', 'Ошибка', result.error);
+    }
+
+    currentUser = result.data;
     showToast('success', 'Регистрация успешна!', 'Добро пожаловать, ' + username);
     checkAuth();
   });
@@ -2329,19 +2419,10 @@
 
   // ===== ПАТИ =====
   function updatePartyUI() {
-    const user = getCurrentUser();
-    if (!user) return;
-    if (!user.partyCode) {
-      user.partyCode = generateCode();
-      const users = getUsers();
-      const idx = users.findIndex(u => u.id === user.id);
-      if (idx !== -1) {
-        users[idx].partyCode = user.partyCode;
-        saveUsers(users);
-      }
-    }
-    document.getElementById('playerCode').textContent = user.partyCode;
-    const friends = JSON.parse(localStorage.getItem('partyFriends_' + user.id) || '[]');
+    if (!currentUser) return;
+    document.getElementById('playerCode').textContent = currentUser.party_code || '—';
+    // Для пати используем localStorage (временное решение)
+    const friends = JSON.parse(localStorage.getItem('partyFriends_' + currentUser.id) || '[]');
     partyFriends = friends;
     renderPartyFriends();
   }
@@ -2364,25 +2445,32 @@
     const code = document.getElementById('partyCodeInput').value.trim().toUpperCase();
     if (!code) return showToast('error', 'Ошибка', 'Введите код');
     if (code.length !== 6) return showToast('error', 'Ошибка', 'Код должен состоять из 6 букв');
-    const users = getUsers();
-    const user = getCurrentUser();
-    if (!user) return showToast('error', 'Ошибка', 'Авторизуйтесь');
-    const friend = users.find(u => u.partyCode === code && u.id !== user.id);
-    if (!friend) return showToast('error', 'Ошибка', 'Игрок с таким кодом не найден');
-    if (partyFriends.some(f => f.id === friend.id)) {
-      return showToast('info', 'Уже в пати', 'Этот игрок уже в вашей пати');
-    }
-    partyFriends.push({ id: friend.id, username: friend.username });
-    localStorage.setItem('partyFriends_' + user.id, JSON.stringify(partyFriends));
-    renderPartyFriends();
-    document.getElementById('partyCodeInput').value = '';
-    showToast('success', 'Добавлен!', friend.username + ' добавлен в пати');
+
+    // Поиск пользователя по коду (через базу)
+    supabase
+      .from('users')
+      .select('*')
+      .eq('party_code', code)
+      .neq('id', currentUser.id)
+      .single()
+      .then(({ data: friend, error }) => {
+        if (error || !friend) {
+          return showToast('error', 'Ошибка', 'Игрок с таким кодом не найден');
+        }
+        if (partyFriends.some(f => f.id === friend.id)) {
+          return showToast('info', 'Уже в пати', 'Этот игрок уже в вашей пати');
+        }
+        partyFriends.push({ id: friend.id, username: friend.username });
+        localStorage.setItem('partyFriends_' + currentUser.id, JSON.stringify(partyFriends));
+        renderPartyFriends();
+        document.getElementById('partyCodeInput').value = '';
+        showToast('success', 'Добавлен!', friend.username + ' добавлен в пати');
+      });
   }
 
   function removePartyFriend(id) {
     partyFriends = partyFriends.filter(f => f.id !== id);
-    const user = getCurrentUser();
-    if (user) localStorage.setItem('partyFriends_' + user.id, JSON.stringify(partyFriends));
+    localStorage.setItem('partyFriends_' + currentUser.id, JSON.stringify(partyFriends));
     renderPartyFriends();
     showToast('info', 'Удалён', 'Игрок удалён из пати');
   }
@@ -2406,12 +2494,10 @@
   function startSearch() {
     if (isSearching) return;
     if (currentMatch) return showToast('info', 'Идёт матч', 'Дождитесь окончания');
-
-    const user = getCurrentUser();
-    if (!user) return showToast('error', 'Ошибка', 'Авторизуйтесь');
+    if (!currentUser) return showToast('error', 'Ошибка', 'Авторизуйтесь');
 
     queue = [];
-    queue.push({ id: user.id, username: user.username });
+    queue.push({ id: currentUser.id, username: currentUser.username });
 
     isSearching = true;
     searchSeconds = 0;
@@ -2592,7 +2678,7 @@
   }
 
   // ===== МАТЧ =====
-  function startMatch() {
+  async function startMatch() {
     const shuffled = [...queue];
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -2603,6 +2689,13 @@
     const blue = shuffled.slice(half);
     currentMatch = { orange, blue };
     queue = [];
+
+    // Сохраняем матч в базу
+    await saveMatch({
+      game_number: draftState.gameNumber + 1,
+      mode: draftState.modeFinal || 'Gem Grab',
+      players: { orange, blue }
+    });
 
     document.getElementById('searchMainBlock').classList.remove('searching');
     document.getElementById('queueBtn').style.display = 'inline-flex';
@@ -2667,13 +2760,22 @@
     renderDraftUI();
   }
 
-  function endMatch() {
+  async function endMatch() {
     if (!currentMatch) return;
     if (!draftState.isComplete) {
       showToast('info', 'Дождитесь драфта', 'Сначала завершите выбор режима');
       return;
     }
     if (!confirm('Завершить матч?')) return;
+
+    // Обновляем статистику пользователей
+    if (currentUser) {
+      await updateUserStats(currentUser.id, {
+        matches: (currentUser.matches || 0) + 1
+      });
+      currentUser.matches = (currentUser.matches || 0) + 1;
+    }
+
     currentMatch = null;
     navigate('matches');
     updateQueueUI();
@@ -2692,43 +2794,71 @@
     const code = document.getElementById('friendCodeInput').value.trim().toUpperCase();
     if (!code) return showToast('error', 'Ошибка', 'Введите код');
     if (code.length !== 6) return showToast('error', 'Ошибка', 'Код должен состоять из 6 букв');
-    const users = getUsers();
-    const user = getCurrentUser();
-    if (!user) return showToast('error', 'Ошибка', 'Авторизуйтесь');
-    const friend = users.find(u => u.partyCode === code && u.id !== user.id);
-    if (!friend) return showToast('error', 'Ошибка', 'Игрок с таким кодом не найден');
 
-    const data = getFriendsData();
-    if (data.friends.includes(friend.id)) return showToast('info', 'Уже в друзьях', 'Этот игрок уже у вас в друзьях');
-    if (data.incoming.includes(friend.id)) return showToast('info', 'Запрос получен', 'Этот игрок уже отправил вам запрос');
+    supabase
+      .from('users')
+      .select('*')
+      .eq('party_code', code)
+      .neq('id', currentUser.id)
+      .single()
+      .then(({ data: friend, error }) => {
+        if (error || !friend) {
+          return showToast('error', 'Ошибка', 'Игрок с таким кодом не найден');
+        }
 
-    data.outgoing.push(friend.id);
-    saveFriendsData(data);
-    document.getElementById('friendCodeInput').value = '';
-    showToast('success', 'Запрос отправлен', 'Запрос в друзья отправлен игроку ' + friend.username);
-    renderFriendsPage();
+        // Проверяем, есть ли уже запрос
+        supabase
+          .from('friend_requests')
+          .select('*')
+          .or(`from_user_id.eq.${currentUser.id},to_user_id.eq.${currentUser.id}`)
+          .then(({ data: existing }) => {
+            if (existing && existing.length > 0) {
+              return showToast('info', 'Запрос уже отправлен', 'Вы уже отправили запрос этому игроку');
+            }
+
+            // Отправляем запрос в друзья
+            supabase
+              .from('friend_requests')
+              .insert([{
+                from_user_id: currentUser.id,
+                to_user_id: friend.id,
+                status: 'pending'
+              }])
+              .then(() => {
+                document.getElementById('friendCodeInput').value = '';
+                showToast('success', 'Запрос отправлен', 'Запрос в друзья отправлен игроку ' + friend.username);
+                renderFriendsPage();
+              });
+          });
+      });
   }
 
-  function renderFriendsPage() {
-    const data = getFriendsData();
-    const users = getUsers();
+  async function renderFriendsPage() {
+    // Получаем все запросы
+    const { data: requests } = await supabase
+      .from('friend_requests')
+      .select('*')
+      .or(`from_user_id.eq.${currentUser.id},to_user_id.eq.${currentUser.id}`);
 
-    document.getElementById('friendsStatFriends').textContent = data.friends.length;
-    document.getElementById('friendsStatIncoming').textContent = data.incoming.length;
-    document.getElementById('friendsStatOutgoing').textContent = data.outgoing.length;
+    const incoming = requests?.filter(r => r.to_user_id === currentUser.id && r.status === 'pending') || [];
+    const outgoing = requests?.filter(r => r.from_user_id === currentUser.id && r.status === 'pending') || [];
+    const friends = requests?.filter(r => r.status === 'accepted') || [];
 
-    document.getElementById('friendsBadge').textContent = data.friends.length;
-    document.getElementById('incomingBadge').textContent = data.incoming.length;
-    document.getElementById('outgoingBadge').textContent = data.outgoing.length;
+    document.getElementById('friendsStatFriends').textContent = friends.length;
+    document.getElementById('friendsStatIncoming').textContent = incoming.length;
+    document.getElementById('friendsStatOutgoing').textContent = outgoing.length;
+
+    document.getElementById('friendsBadge').textContent = friends.length;
+    document.getElementById('incomingBadge').textContent = incoming.length;
+    document.getElementById('outgoingBadge').textContent = outgoing.length;
 
     let list = [];
-
     if (friendsTab === 'friends') {
-      list = data.friends;
+      list = friends;
     } else if (friendsTab === 'incoming') {
-      list = data.incoming;
+      list = incoming;
     } else {
-      list = data.outgoing;
+      list = outgoing;
     }
 
     const container = document.getElementById('friendsListContainer');
@@ -2743,84 +2873,96 @@
       return;
     }
 
-    container.innerHTML = list.map(id => {
-      const friend = users.find(u => u.id === id);
-      if (!friend) return '';
-      const isOnline = Math.random() > 0.4;
+    // Получаем данные пользователей
+    const userIds = list.map(r => r.from_user_id === currentUser.id ? r.to_user_id : r.from_user_id);
+    const { data: users } = await supabase
+      .from('users')
+      .select('*')
+      .in('id', userIds);
+
+    container.innerHTML = users?.map(user => {
+      const initial = user.username.charAt(0).toUpperCase();
       const isIncoming = friendsTab === 'incoming';
       const isOutgoing = friendsTab === 'outgoing';
-      const initial = friend.username.charAt(0).toUpperCase();
 
       let actions = '';
       if (isIncoming) {
         actions = `
-          <button class="btn-action" onclick="acceptFriend('${friend.id}')" style="background:rgba(81,207,102,0.15);color:#51cf66;"><i class="fas fa-check"></i> Принять</button>
-          <button class="btn-action" onclick="declineFriend('${friend.id}')" style="background:rgba(255,107,107,0.12);color:#ff6b6b;"><i class="fas fa-times"></i></button>
+          <button class="btn-action" onclick="acceptFriend('${user.id}')" style="background:rgba(81,207,102,0.15);color:#51cf66;"><i class="fas fa-check"></i> Принять</button>
+          <button class="btn-action" onclick="declineFriend('${user.id}')" style="background:rgba(255,107,107,0.12);color:#ff6b6b;"><i class="fas fa-times"></i></button>
         `;
       } else if (isOutgoing) {
-        actions = `<button class="btn-action" onclick="cancelFriendRequest('${friend.id}')" style="background:rgba(255,107,107,0.12);color:#ff6b6b;">Отменить</button>`;
+        actions = `<button class="btn-action" onclick="cancelFriendRequest('${user.id}')" style="background:rgba(255,107,107,0.12);color:#ff6b6b;">Отменить</button>`;
       } else {
-        actions = `<button class="btn-action" onclick="removeFriend('${friend.id}')">Удалить</button>`;
+        actions = `<button class="btn-action" onclick="removeFriend('${user.id}')">Удалить</button>`;
       }
 
       return `
         <div class="friend-item">
           <div class="avatar">${initial}</div>
           <div class="info">
-            <div class="name">${friend.username}</div>
-            <div class="sub">ID: ${friend.id || '—'}</div>
+            <div class="name">${user.username}</div>
+            <div class="sub">ELO: ${user.elo || 0}</div>
           </div>
-          <span class="status ${isOnline ? 'online' : 'offline'}">${isOnline ? 'В сети' : 'Не в сети'}</span>
+          <span class="status online">В сети</span>
           ${actions}
         </div>
       `;
-    }).join('');
+    }).join('') || '';
   }
 
-  function acceptFriend(id) {
-    const data = getFriendsData();
-    data.incoming = data.incoming.filter(i => i !== id);
-    if (!data.friends.includes(id)) data.friends.push(id);
-    saveFriendsData(data);
+  async function acceptFriend(userId) {
+    await supabase
+      .from('friend_requests')
+      .update({ status: 'accepted' })
+      .eq('from_user_id', userId)
+      .eq('to_user_id', currentUser.id);
+
     showToast('success', 'Добавлен в друзья!', '');
     renderFriendsPage();
   }
 
-  function declineFriend(id) {
-    const data = getFriendsData();
-    data.incoming = data.incoming.filter(i => i !== id);
-    saveFriendsData(data);
+  async function declineFriend(userId) {
+    await supabase
+      .from('friend_requests')
+      .delete()
+      .eq('from_user_id', userId)
+      .eq('to_user_id', currentUser.id);
+
     showToast('info', 'Отклонён', 'Запрос отклонён');
     renderFriendsPage();
   }
 
-  function cancelFriendRequest(id) {
-    const data = getFriendsData();
-    data.outgoing = data.outgoing.filter(i => i !== id);
-    saveFriendsData(data);
+  async function cancelFriendRequest(userId) {
+    await supabase
+      .from('friend_requests')
+      .delete()
+      .eq('from_user_id', currentUser.id)
+      .eq('to_user_id', userId);
+
     showToast('info', 'Отменён', 'Запрос отменён');
     renderFriendsPage();
   }
 
-  function removeFriend(id) {
+  async function removeFriend(userId) {
     if (!confirm('Удалить из друзей?')) return;
-    const data = getFriendsData();
-    data.friends = data.friends.filter(f => f !== id);
-    saveFriendsData(data);
+    await supabase
+      .from('friend_requests')
+      .delete()
+      .or(`and(from_user_id.eq.${currentUser.id},to_user_id.eq.${userId}),and(from_user_id.eq.${userId},to_user_id.eq.${currentUser.id})`);
+
     showToast('info', 'Удалён', 'Игрок удалён из друзей');
     renderFriendsPage();
   }
 
   // ===== ТОП ИГРОКОВ =====
-  function renderTopPage() {
-    const users = getUsers();
-    const sorted = [...users].sort((a, b) => (b.elo || 0) - (a.elo || 0));
+  async function renderTopPage() {
+    const users = await getUsers();
     const container = document.getElementById('topList');
-    const user = getCurrentUser();
-    const userRank = user ? sorted.findIndex(u => u.id === user.id) + 1 : 0;
+    const userRank = currentUser ? users.findIndex(u => u.id === currentUser.id) + 1 : 0;
     document.getElementById('userRank').textContent = '#' + (userRank || 0);
 
-    if (sorted.length === 0) {
+    if (users.length === 0) {
       container.innerHTML = `
         <div class="friends-empty">
           <i class="fas fa-trophy"></i>
@@ -2830,7 +2972,7 @@
       return;
     }
 
-    container.innerHTML = sorted.slice(0, 10).map((u, i) => {
+    container.innerHTML = users.slice(0, 10).map((u, i) => {
       const initial = u.username.charAt(0).toUpperCase();
       const matches = u.matches || 0;
       const rankNum = i + 1;
@@ -2866,71 +3008,61 @@
   }
 
   // ===== ПРОФИЛЬ =====
-  function updateProfile() {
-    const user = getCurrentUser();
-    if (!user) {
+  async function updateProfile() {
+    if (!currentUser) {
       document.getElementById('pName').textContent = 'Игрок';
       document.getElementById('pReg').textContent = '—';
       document.getElementById('avatar').textContent = '?';
       return;
     }
-    document.getElementById('pName').textContent = user.username;
-    document.getElementById('pReg').textContent = user.regDate || '—';
-    document.getElementById('avatar').textContent = user.username.charAt(0).toUpperCase();
 
-    const matches = user.matches || 0;
-    const wins = user.wins || 0;
+    // Обновляем данные пользователя из базы
+    const { data: user } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', currentUser.id)
+      .single();
+
+    if (user) {
+      currentUser = user;
+    }
+
+    document.getElementById('pName').textContent = currentUser.username;
+    document.getElementById('pReg').textContent = currentUser.reg_date || '—';
+    document.getElementById('avatar').textContent = currentUser.username.charAt(0).toUpperCase();
+
+    const matches = currentUser.matches || 0;
+    const wins = currentUser.wins || 0;
     const winrate = matches > 0 ? Math.round((wins / matches) * 100) : 0;
     document.getElementById('pWr').textContent = winrate + '%';
     document.getElementById('pMatches').textContent = matches;
-    document.getElementById('pMvp').textContent = user.mvp || 0;
+    document.getElementById('pMvp').textContent = currentUser.mvp || 0;
 
-    const history = user.matchHistory || [];
-    renderChart(history);
+    // Получаем историю матчей
+    const { data: matchHistory } = await supabase
+      .from('matches')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(10);
 
     const container = document.getElementById('matchHistoryList');
-    if (history.length === 0) {
+    if (!matchHistory || matchHistory.length === 0) {
       container.innerHTML = '<div style="color:#666; text-align:center; padding:8px 0;">Нет сыгранных матчей</div>';
     } else {
-      container.innerHTML = history.slice().reverse().map(m => `
+      container.innerHTML = matchHistory.map(m => `
         <div class="match-item">
-          <span class="map"><i class="fas fa-gamepad"></i> ${m.map || 'Gem Grab'}</span>
-          <span class="stats"><span>🔫 ${m.kills || 0}</span> <span>💀 ${m.deaths || 0}</span> <span>📊 ${m.adr || 0}</span></span>
-          <span class="date">${m.date || '—'}</span>
-          <span class="result ${m.result === 'win' ? 'win' : 'loss'}">${m.result === 'win' ? 'Победа' : 'Поражение'}</span>
+          <span class="map"><i class="fas fa-gamepad"></i> ${m.mode || 'Gem Grab'}</span>
+          <span class="stats">Игра #${m.game_number}</span>
+          <span class="date">${new Date(m.created_at).toLocaleDateString()}</span>
+          <span class="result win">Победа</span>
         </div>
       `).join('');
     }
   }
 
-  function renderChart(history) {
-    const container = document.getElementById('chartContainer');
-    if (!history || history.length === 0) {
-      container.innerHTML = '<div style="color:#666; text-align:center; width:100%; padding:10px 0;">Нет данных</div>';
-      return;
-    }
-    const lastMatches = history.slice(-15);
-    const maxKills = Math.max(1, ...lastMatches.map(m => m.kills || 0));
-    const maxHeight = 80;
-    let html = '';
-    lastMatches.forEach((m, index) => {
-      const isWin = m.result === 'win';
-      const kills = m.kills || 0;
-      const height = Math.max(8, Math.min(80, (kills / maxKills) * maxHeight));
-      const barClass = isWin ? 'win' : 'loss';
-      html += `
-        <div class="chart-bar-wrap">
-          <div class="chart-bar ${barClass}" style="height: ${height}px; ${isWin ? '' : 'align-self: flex-start; border-radius: 0 0 3px 3px;'}"></div>
-          <span class="bar-label">${index + 1}</span>
-        </div>
-      `;
-    });
-    container.innerHTML = html;
-  }
-
   // ===== СТАТИСТИКА ГЛАВНОЙ =====
-  function updateHomeStats() {
-    const users = getUsers();
+  async function updateHomeStats() {
+    const users = await getUsers();
     const totalMatches = users.reduce((acc, u) => acc + (u.matches || 0), 0);
     const activePlayers = users.filter(u => (u.matches || 0) > 0).length;
     document.getElementById('totalMatchesHome').textContent = totalMatches;
@@ -2950,7 +3082,7 @@
     toast._t = setTimeout(() => toast.classList.remove('visible'), 4000);
   }
 
-  // ===== ОБРАБОТЧИКИ ДЛЯ БАНОВ =====
+  // ===== ОБРАБОТЧИКИ =====
   document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('modesBanContainer').addEventListener('click', function(e) {
       const btn = e.target.closest('.ban-btn');
@@ -2959,16 +3091,27 @@
       const value = btn.dataset.value;
       handleModesBan(value);
     });
+
+    // Создаём таблицы при запуске
+    createTables();
+
+    // Проверяем авторизацию
+    checkAuth();
+
+    setInterval(() => {
+      if (!currentMatch) updateQueueUI();
+      updateHomeStats();
+    }, 5000);
   });
 
   // ===== ПРОВЕРКА АВТОРИЗАЦИИ =====
-  function checkAuth() {
-    const user = getCurrentUser();
-    if (user) {
+  async function checkAuth() {
+    // Проверяем, есть ли текущий пользователь в сессии
+    if (currentUser) {
       document.getElementById('authPage').style.display = 'none';
       document.getElementById('mainSite').style.display = 'block';
-      updateHomeStats();
-      updateProfile();
+      await updateHomeStats();
+      await updateProfile();
       updateQueueUI();
       updatePartyUI();
       if (currentMatch) {
@@ -2983,30 +3126,12 @@
     }
   }
 
-  function handleLogout() {
+  async function handleLogout() {
     if (!confirm('Выйти из аккаунта?')) return;
-    clearCurrentUser();
-    checkAuth();
+    currentUser = null;
+    await checkAuth();
     showToast('info', 'Выход', 'Вы вышли из аккаунта');
   }
-
-  // ===== ЗАПУСК =====
-  document.addEventListener('DOMContentLoaded', function() {
-    // Принудительно обнуляем все данные при запуске
-    localStorage.removeItem('brawl_users');
-    localStorage.removeItem('brawl_current_user');
-    
-    let users = getUsers();
-    if (users.length === 0) {
-      users = [];
-      saveUsers(users);
-    }
-    checkAuth();
-    setInterval(() => {
-      if (!currentMatch) updateQueueUI();
-      updateHomeStats();
-    }, 5000);
-  });
 </script>
 </body>
 </html>
