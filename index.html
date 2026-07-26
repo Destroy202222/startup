@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
   <style>
+    /* ВСЕ СТИЛИ БЕЗ ИЗМЕНЕНИЙ - ОСТАВЛЯЕМ КАК БЫЛО */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: #0b0b0f;
@@ -2142,115 +2143,136 @@
   }
 
   // ===== ПЕРЕКЛЮЧЕНИЕ ФОРМ =====
-  document.getElementById('showRegisterLink').addEventListener('click', function(e) {
-    e.preventDefault();
-    document.getElementById('loginForm').style.display = 'none';
-    document.getElementById('registerForm').style.display = 'block';
-  });
+  document.addEventListener('DOMContentLoaded', function() {
+    // Переключение на регистрацию
+    document.getElementById('showRegisterLink').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.getElementById('loginForm').style.display = 'none';
+      document.getElementById('registerForm').style.display = 'block';
+    });
 
-  document.getElementById('showLoginLink').addEventListener('click', function(e) {
-    e.preventDefault();
-    document.getElementById('loginForm').style.display = 'block';
-    document.getElementById('registerForm').style.display = 'none';
-  });
+    // Переключение на вход
+    document.getElementById('showLoginLink').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.getElementById('loginForm').style.display = 'block';
+      document.getElementById('registerForm').style.display = 'none';
+    });
 
-  // ===== РЕГИСТРАЦИЯ =====
-  document.getElementById('registerBtn').addEventListener('click', async function() {
-    const username = document.getElementById('regUsername').value.trim();
-    const password = document.getElementById('regPassword').value;
-    const confirm = document.getElementById('regPasswordConfirm').value;
+    // РЕГИСТРАЦИЯ
+    document.getElementById('registerBtn').addEventListener('click', async function() {
+      const username = document.getElementById('regUsername').value.trim();
+      const password = document.getElementById('regPassword').value;
+      const confirm = document.getElementById('regPasswordConfirm').value;
 
-    if (!username || !password || !confirm) {
-      showToast('error', 'Ошибка', 'Заполните все поля');
-      return;
-    }
-    if (password !== confirm) {
-      showToast('error', 'Ошибка', 'Пароли не совпадают');
-      return;
-    }
-    if (password.length < 8) {
-      showToast('error', 'Ошибка', 'Пароль минимум 8 символов');
-      return;
-    }
-
-    try {
-      // Проверяем, существует ли пользователь
-      const { data: existing, error: checkError } = await supabase
-        .from('users')
-        .select('username')
-        .eq('username', username)
-        .maybeSingle();
-
-      if (existing) {
-        showToast('error', 'Ошибка', 'Имя пользователя уже занято');
+      if (!username || !password || !confirm) {
+        showToast('error', 'Ошибка', 'Заполните все поля');
+        return;
+      }
+      if (password !== confirm) {
+        showToast('error', 'Ошибка', 'Пароли не совпадают');
+        return;
+      }
+      if (password.length < 8) {
+        showToast('error', 'Ошибка', 'Пароль минимум 8 символов');
         return;
       }
 
-      // Создаём нового пользователя
-      const newUser = {
-        username: username,
-        password: password,
-        reg_date: new Date().toLocaleDateString('ru-RU'),
-        elo: 0,
-        wins: 0,
-        losses: 0,
-        matches: 0,
-        mvp: 0,
-        party_code: generateCode()
-      };
+      try {
+        // Проверяем, существует ли пользователь
+        const { data: existing, error: checkError } = await supabase
+          .from('users')
+          .select('username')
+          .eq('username', username)
+          .maybeSingle();
 
-      const { data, error } = await supabase
-        .from('users')
-        .insert([newUser])
-        .select()
-        .single();
+        if (existing) {
+          showToast('error', 'Ошибка', 'Имя пользователя уже занято');
+          return;
+        }
 
-      if (error) {
-        showToast('error', 'Ошибка', 'Ошибка регистрации: ' + error.message);
+        // Создаём нового пользователя
+        const newUser = {
+          username: username,
+          password: password,
+          reg_date: new Date().toLocaleDateString('ru-RU'),
+          elo: 0,
+          wins: 0,
+          losses: 0,
+          matches: 0,
+          mvp: 0,
+          party_code: generateCode()
+        };
+
+        const { data, error } = await supabase
+          .from('users')
+          .insert([newUser])
+          .select()
+          .single();
+
+        if (error) {
+          showToast('error', 'Ошибка', 'Ошибка регистрации: ' + error.message);
+          return;
+        }
+
+        currentUser = data;
+        showToast('success', 'Успешно!', 'Добро пожаловать, ' + username);
+        checkAuth();
+      } catch (e) {
+        showToast('error', 'Ошибка', 'Ошибка соединения с сервером');
+        console.error(e);
+      }
+    });
+
+    // ВХОД
+    document.getElementById('loginBtn').addEventListener('click', async function() {
+      const username = document.getElementById('loginUsername').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      if (!username || !password) {
+        showToast('error', 'Ошибка', 'Заполните все поля');
         return;
       }
 
-      currentUser = data;
-      showToast('success', 'Успешно!', 'Добро пожаловать, ' + username);
-      checkAuth();
-    } catch (e) {
-      showToast('error', 'Ошибка', 'Ошибка соединения с сервером');
-    }
-  });
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('username', username)
+          .eq('password', password)
+          .maybeSingle();
 
-  // ===== ВХОД =====
-  document.getElementById('loginBtn').addEventListener('click', async function() {
-    const username = document.getElementById('loginUsername').value.trim();
-    const password = document.getElementById('loginPassword').value;
+        if (error || !data) {
+          showToast('error', 'Ошибка', 'Неверное имя или пароль');
+          return;
+        }
 
-    if (!username || !password) {
-      showToast('error', 'Ошибка', 'Заполните все поля');
-      return;
-    }
-
-    try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('username', username)
-        .eq('password', password)
-        .maybeSingle();
-
-      if (error || !data) {
-        showToast('error', 'Ошибка', 'Неверное имя или пароль');
-        return;
+        currentUser = data;
+        showToast('success', 'Добро пожаловать!', data.username);
+        checkAuth();
+      } catch (e) {
+        showToast('error', 'Ошибка', 'Ошибка соединения с сервером');
+        console.error(e);
       }
+    });
 
-      currentUser = data;
-      showToast('success', 'Добро пожаловать!', data.username);
-      checkAuth();
-    } catch (e) {
-      showToast('error', 'Ошибка', 'Ошибка соединения с сервером');
-    }
+    // Обработчик для банов
+    document.getElementById('modesBanContainer').addEventListener('click', function(e) {
+      const btn = e.target.closest('.ban-btn');
+      if (!btn) return;
+      if (btn.classList.contains('banned') || btn.classList.contains('selected')) return;
+      const value = btn.dataset.value;
+      handleModesBan(value);
+    });
+
+    // Запуск проверки авторизации
+    checkAuth();
+
+    // Периодическое обновление
+    setInterval(() => {
+      if (!currentMatch) updateQueueUI();
+      updateHomeStats();
+    }, 5000);
   });
-
-  // ===== ОСТАЛЬНЫЕ ФУНКЦИИ (сокращены для краткости) =====
-  // ... здесь весь остальной код, который был ранее
 
   // ===== НАВИГАЦИЯ =====
   const pages = {
@@ -2976,24 +2998,6 @@
     clearTimeout(toast._t);
     toast._t = setTimeout(() => toast.classList.remove('visible'), 4000);
   }
-
-  // ===== ОБРАБОТЧИКИ =====
-  document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('modesBanContainer').addEventListener('click', function(e) {
-      const btn = e.target.closest('.ban-btn');
-      if (!btn) return;
-      if (btn.classList.contains('banned') || btn.classList.contains('selected')) return;
-      const value = btn.dataset.value;
-      handleModesBan(value);
-    });
-
-    checkAuth();
-
-    setInterval(() => {
-      if (!currentMatch) updateQueueUI();
-      updateHomeStats();
-    }, 5000);
-  });
 
   // ===== ПРОВЕРКА АВТОРИЗАЦИИ =====
   async function checkAuth() {
