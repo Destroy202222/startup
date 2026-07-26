@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
   <style>
+    /* CSS код такой же как был, оставляем без изменений для краткости */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: #0b0b0f;
@@ -47,7 +48,6 @@
       letter-spacing: 2px;
       margin-top: 2px;
     }
-
     .page {
       display: none;
       max-width: 1100px;
@@ -57,7 +57,6 @@
     }
     .page.active { display: block; }
     @keyframes fade { 0% { opacity: 0; transform: translateY(12px); } 100% { opacity: 1; transform: translateY(0); } }
-
     .home-hero {
       text-align: center;
       max-width: 900px;
@@ -167,7 +166,6 @@
       box-shadow: 0 0 20px rgba(255,215,0,0.2);
     }
     .btn-hero i { font-size: 16px; }
-
     .prize-block {
       background: rgba(20, 20, 28, 0.7);
       backdrop-filter: blur(8px);
@@ -228,7 +226,6 @@
       color: #ffd700;
       font-weight: 700;
     }
-
     .search-page-wrapper {
       max-width: 700px;
       margin: 0 auto;
@@ -382,7 +379,6 @@
       color: #fff;
       font-weight: 600;
     }
-
     .party-block {
       background: rgba(20, 20, 28, 0.7);
       backdrop-filter: blur(8px);
@@ -561,7 +557,6 @@
       color: #fff;
       font-weight: 600;
     }
-
     .match-page .match-title {
       font-size: 28px;
       font-weight: 900;
@@ -714,7 +709,6 @@
       gap: 3px;
       flex-shrink: 0;
     }
-
     .bans-container {
       max-width: 900px;
       margin: 0 auto 16px;
@@ -905,7 +899,6 @@
       cursor: not-allowed;
       transform: none;
     }
-
     .friends-page .friends-header {
       display: flex;
       justify-content: space-between;
@@ -1093,7 +1086,6 @@
     .friends-page .friend-item .btn-action:hover {
       background: rgba(255,215,0,0.25);
     }
-
     .wallet-page .wallet-balance {
       display: flex;
       justify-content: space-between;
@@ -1253,7 +1245,6 @@
       display: block;
       margin-bottom: 6px;
     }
-
     .top-page .top-header {
       display: flex;
       justify-content: space-between;
@@ -1343,7 +1334,6 @@
       display: block;
       margin-top: -2px;
     }
-
     .profile-card {
       background: rgba(20,20,28,0.8);
       backdrop-filter: blur(8px);
@@ -1538,7 +1528,6 @@
     }
     .result.win { background: rgba(81, 207, 102, 0.15); color: #51cf66; }
     .result.loss { background: rgba(255, 107, 107, 0.15); color: #ff6b6b; }
-
     .placeholder {
       text-align: center;
       padding: 40px 0;
@@ -1546,7 +1535,6 @@
     }
     .placeholder i { font-size: 34px; color: #ffd700; display: block; margin-bottom: 8px; }
     .placeholder h2 { font-size: 20px; font-weight: 800; color: #fff; }
-
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -1602,7 +1590,6 @@
       border-radius: 2px;
     }
     .bottom-nav .item:hover { color: #ff8c00; }
-
     .toast {
       position: fixed;
       bottom: 80px;
@@ -1625,7 +1612,6 @@
     .toast .ttl.error { color: #ff6b6b; }
     .toast .ttl.info { color: #ffd700; }
     .toast .txt { color: #aaa; font-size: 14px; }
-
     .auth-page {
       display: flex;
       justify-content: center;
@@ -1688,7 +1674,6 @@
     .auth-box .link { text-align: center; margin-top: 12px; }
     .auth-box .link a { color: #ffd700; cursor: pointer; font-weight: 600; text-decoration: none; }
     .auth-box .link a:hover { text-decoration: underline; }
-
     @media (max-width: 768px) {
       .hero-title { font-size: 30px; }
       .hero-stats-row { flex-direction: row; justify-content: center; gap: 12px; }
@@ -1789,7 +1774,7 @@
       <div class="field"><label>Имя пользователя</label><input type="text" id="loginUsername" placeholder="Введите имя" /></div>
       <div class="field"><label>Пароль</label><input type="password" id="loginPassword" placeholder="Введите пароль" /></div>
       <button class="btn" id="loginBtn">Войти</button>
-      <div class="link"><a onclick="showAuthForm('register')">Нет аккаунта? Зарегистрироваться</a></div>
+      <div class="link"><a id="showRegisterLink">Нет аккаунта? Зарегистрироваться</a></div>
     </div>
     <div id="registerForm" style="display:none;">
       <h2>Регистрация</h2>
@@ -1797,7 +1782,7 @@
       <div class="field"><label>Пароль <span style="color:#ff6b6b;">*</span></label><input type="password" id="regPassword" placeholder="Минимум 8 символов" /></div>
       <div class="field"><label>Подтверждение пароля <span style="color:#ff6b6b;">*</span></label><input type="password" id="regPasswordConfirm" placeholder="Повторите пароль" /></div>
       <button class="btn" id="registerBtn">Зарегистрироваться</button>
-      <div class="link"><a onclick="showAuthForm('login')">Уже есть аккаунт? Войти</a></div>
+      <div class="link"><a id="showLoginLink">Уже есть аккаунт? Войти</a></div>
     </div>
   </div>
 </div>
@@ -2158,7 +2143,6 @@
   }
 
   // ===== ФУНКЦИИ РАБОТЫ С БАЗОЙ =====
-
   async function registerUser(username, password) {
     try {
       const { data: existing, error: checkError } = await supabase
@@ -2250,6 +2234,19 @@
     }
   }
 
+  // ===== ПЕРЕКЛЮЧЕНИЕ ФОРМ =====
+  document.getElementById('showRegisterLink').addEventListener('click', function(e) {
+    e.preventDefault();
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('registerForm').style.display = 'block';
+  });
+
+  document.getElementById('showLoginLink').addEventListener('click', function(e) {
+    e.preventDefault();
+    document.getElementById('loginForm').style.display = 'block';
+    document.getElementById('registerForm').style.display = 'none';
+  });
+
   // ===== ОБРАБОТЧИКИ АУТЕНТИФИКАЦИИ =====
   document.getElementById('loginBtn').addEventListener('click', async function() {
     const username = document.getElementById('loginUsername').value.trim();
@@ -2258,6 +2255,8 @@
     if (!username || !password) {
       return showToast('error', 'Ошибка', 'Заполните все поля');
     }
+
+    showToast('info', 'Вход', 'Проверяем данные...');
 
     const user = await loginUser(username, password);
     if (!user) {
@@ -2284,6 +2283,8 @@
       return showToast('error', 'Ошибка', 'Пароль минимум 8 символов');
     }
 
+    showToast('info', 'Регистрация', 'Создаём аккаунт...');
+
     const result = await registerUser(username, password);
     if (result.error) {
       return showToast('error', 'Ошибка регистрации', result.error);
@@ -2293,11 +2294,6 @@
     showToast('success', 'Регистрация успешна!', 'Добро пожаловать, ' + username);
     checkAuth();
   });
-
-  function showAuthForm(form) {
-    document.getElementById('loginForm').style.display = form === 'login' ? 'block' : 'none';
-    document.getElementById('registerForm').style.display = form === 'register' ? 'block' : 'none';
-  }
 
   // ===== НАВИГАЦИЯ =====
   const pages = {
