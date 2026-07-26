@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
   <style>
-    /* ВСЕ СТИЛИ БЕЗ ИЗМЕНЕНИЙ - ОСТАВЛЯЕМ КАК БЫЛО */
+    /* ВСЕ СТИЛИ - ОСТАВЛЯЕМ КАК БЫЛО */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: #0b0b0f;
@@ -2107,6 +2107,10 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+  // ============================================
+  //   ВСЕ ФУНКЦИИ В ОДНОМ МЕСТЕ, БЕЗ ОБРЫВОВ
+  // ============================================
+
   // ===== ИНИЦИАЛИЗАЦИЯ SUPABASE =====
   const supabaseUrl = 'https://txokbboyhytmiurijvyh.supabase.co';
   const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4b2tiYm95aHl0bWl1cmlqdnloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwNzE4MjksImV4cCI6MjEwMDY0NzgyOX0.L5jASUIzGizBBo364mUqmsiWKUAHeVUUvLN4Yuttees';
@@ -2142,137 +2146,222 @@
     return code;
   }
 
+  // ===== TOAST =====
+  function showToast(type, title, text) {
+    const toast = document.getElementById('toast');
+    const ttl = document.getElementById('toastTitle');
+    const txt = document.getElementById('toastText');
+    ttl.className = 'ttl ' + type;
+    ttl.textContent = title;
+    txt.textContent = text;
+    toast.classList.add('visible');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => toast.classList.remove('visible'), 4000);
+    console.log('TOAST:', type, title, text);
+  }
+
+  // ===== РЕГИСТРАЦИЯ =====
+  async function handleRegister() {
+    console.log('🔵 Нажата кнопка регистрации');
+    
+    const username = document.getElementById('regUsername').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const confirm = document.getElementById('regPasswordConfirm').value;
+
+    if (!username || !password || !confirm) {
+      showToast('error', 'Ошибка', 'Заполните все поля');
+      return;
+    }
+    if (password !== confirm) {
+      showToast('error', 'Ошибка', 'Пароли не совпадают');
+      return;
+    }
+    if (password.length < 8) {
+      showToast('error', 'Ошибка', 'Пароль минимум 8 символов');
+      return;
+    }
+
+    try {
+      console.log('🔵 Проверяем пользователя:', username);
+      
+      // Проверяем, существует ли пользователь
+      const { data: existing, error: checkError } = await supabase
+        .from('users')
+        .select('username')
+        .eq('username', username)
+        .maybeSingle();
+
+      console.log('🔵 Результат проверки:', existing, checkError);
+
+      if (existing) {
+        showToast('error', 'Ошибка', 'Имя пользователя уже занято');
+        return;
+      }
+
+      // Создаём нового пользователя
+      const newUser = {
+        username: username,
+        password: password,
+        reg_date: new Date().toLocaleDateString('ru-RU'),
+        elo: 0,
+        wins: 0,
+        losses: 0,
+        matches: 0,
+        mvp: 0,
+        party_code: generateCode()
+      };
+
+      console.log('🔵 Создаём пользователя:', newUser);
+
+      const { data, error } = await supabase
+        .from('users')
+        .insert([newUser])
+        .select()
+        .single();
+
+      if (error) {
+        console.error('🔴 Ошибка регистрации:', error);
+        showToast('error', 'Ошибка', 'Ошибка регистрации: ' + error.message);
+        return;
+      }
+
+      console.log('🟢 Пользователь создан:', data);
+      currentUser = data;
+      showToast('success', 'Успешно!', 'Добро пожаловать, ' + username);
+      checkAuth();
+    } catch (e) {
+      console.error('🔴 Критическая ошибка:', e);
+      showToast('error', 'Ошибка', 'Ошибка соединения с сервером');
+    }
+  }
+
+  // ===== ВХОД =====
+  async function handleLogin() {
+    console.log('🔵 Нажата кнопка входа');
+    
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value;
+
+    if (!username || !password) {
+      showToast('error', 'Ошибка', 'Заполните все поля');
+      return;
+    }
+
+    try {
+      console.log('🔵 Ищем пользователя:', username);
+      
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('username', username)
+        .eq('password', password)
+        .maybeSingle();
+
+      if (error) {
+        console.error('🔴 Ошибка входа:', error);
+        showToast('error', 'Ошибка', 'Ошибка сервера');
+        return;
+      }
+
+      if (!data) {
+        console.log('🔴 Пользователь не найден');
+        showToast('error', 'Ошибка', 'Неверное имя или пароль');
+        return;
+      }
+
+      console.log('🟢 Пользователь найден:', data);
+      currentUser = data;
+      showToast('success', 'Добро пожаловать!', data.username);
+      checkAuth();
+    } catch (e) {
+      console.error('🔴 Критическая ошибка:', e);
+      showToast('error', 'Ошибка', 'Ошибка соединения с сервером');
+    }
+  }
+
   // ===== ПЕРЕКЛЮЧЕНИЕ ФОРМ =====
+  function showRegisterForm(e) {
+    e.preventDefault();
+    console.log('🔄 Переключение на регистрацию');
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('registerForm').style.display = 'block';
+  }
+
+  function showLoginForm(e) {
+    e.preventDefault();
+    console.log('🔄 Переключение на вход');
+    document.getElementById('loginForm').style.display = 'block';
+    document.getElementById('registerForm').style.display = 'none';
+  }
+
+  // ============================================
+  //   ПОДКЛЮЧЕНИЕ ОБРАБОТЧИКОВ (ВСЁ В ОДНОМ МЕСТЕ)
+  // ============================================
   document.addEventListener('DOMContentLoaded', function() {
-    // Переключение на регистрацию
-    document.getElementById('showRegisterLink').addEventListener('click', function(e) {
-      e.preventDefault();
-      document.getElementById('loginForm').style.display = 'none';
-      document.getElementById('registerForm').style.display = 'block';
-    });
+    console.log('🟢 DOM загружен, инициализация...');
 
-    // Переключение на вход
-    document.getElementById('showLoginLink').addEventListener('click', function(e) {
-      e.preventDefault();
-      document.getElementById('loginForm').style.display = 'block';
-      document.getElementById('registerForm').style.display = 'none';
-    });
+    // ---- КНОПКИ АУТЕНТИФИКАЦИИ ----
+    const registerBtn = document.getElementById('registerBtn');
+    const loginBtn = document.getElementById('loginBtn');
+    const showRegisterLink = document.getElementById('showRegisterLink');
+    const showLoginLink = document.getElementById('showLoginLink');
 
-    // РЕГИСТРАЦИЯ
-    document.getElementById('registerBtn').addEventListener('click', async function() {
-      const username = document.getElementById('regUsername').value.trim();
-      const password = document.getElementById('regPassword').value;
-      const confirm = document.getElementById('regPasswordConfirm').value;
+    if (registerBtn) {
+      registerBtn.addEventListener('click', handleRegister);
+      console.log('✅ Обработчик регистрации добавлен');
+    } else {
+      console.error('❌ Кнопка registerBtn не найдена!');
+    }
 
-      if (!username || !password || !confirm) {
-        showToast('error', 'Ошибка', 'Заполните все поля');
-        return;
-      }
-      if (password !== confirm) {
-        showToast('error', 'Ошибка', 'Пароли не совпадают');
-        return;
-      }
-      if (password.length < 8) {
-        showToast('error', 'Ошибка', 'Пароль минимум 8 символов');
-        return;
-      }
+    if (loginBtn) {
+      loginBtn.addEventListener('click', handleLogin);
+      console.log('✅ Обработчик входа добавлен');
+    } else {
+      console.error('❌ Кнопка loginBtn не найдена!');
+    }
 
-      try {
-        // Проверяем, существует ли пользователь
-        const { data: existing, error: checkError } = await supabase
-          .from('users')
-          .select('username')
-          .eq('username', username)
-          .maybeSingle();
+    if (showRegisterLink) {
+      showRegisterLink.addEventListener('click', showRegisterForm);
+      console.log('✅ Обработчик переключения на регистрацию добавлен');
+    } else {
+      console.error('❌ Ссылка showRegisterLink не найдена!');
+    }
 
-        if (existing) {
-          showToast('error', 'Ошибка', 'Имя пользователя уже занято');
-          return;
-        }
+    if (showLoginLink) {
+      showLoginLink.addEventListener('click', showLoginForm);
+      console.log('✅ Обработчик переключения на вход добавлен');
+    } else {
+      console.error('❌ Ссылка showLoginLink не найдена!');
+    }
 
-        // Создаём нового пользователя
-        const newUser = {
-          username: username,
-          password: password,
-          reg_date: new Date().toLocaleDateString('ru-RU'),
-          elo: 0,
-          wins: 0,
-          losses: 0,
-          matches: 0,
-          mvp: 0,
-          party_code: generateCode()
-        };
+    // ---- ОБРАБОТЧИК БАНОВ ----
+    const modesContainer = document.getElementById('modesBanContainer');
+    if (modesContainer) {
+      modesContainer.addEventListener('click', function(e) {
+        const btn = e.target.closest('.ban-btn');
+        if (!btn) return;
+        if (btn.classList.contains('banned') || btn.classList.contains('selected')) return;
+        const value = btn.dataset.value;
+        handleModesBan(value);
+      });
+      console.log('✅ Обработчик банов добавлен');
+    }
 
-        const { data, error } = await supabase
-          .from('users')
-          .insert([newUser])
-          .select()
-          .single();
-
-        if (error) {
-          showToast('error', 'Ошибка', 'Ошибка регистрации: ' + error.message);
-          return;
-        }
-
-        currentUser = data;
-        showToast('success', 'Успешно!', 'Добро пожаловать, ' + username);
-        checkAuth();
-      } catch (e) {
-        showToast('error', 'Ошибка', 'Ошибка соединения с сервером');
-        console.error(e);
-      }
-    });
-
-    // ВХОД
-    document.getElementById('loginBtn').addEventListener('click', async function() {
-      const username = document.getElementById('loginUsername').value.trim();
-      const password = document.getElementById('loginPassword').value;
-
-      if (!username || !password) {
-        showToast('error', 'Ошибка', 'Заполните все поля');
-        return;
-      }
-
-      try {
-        const { data, error } = await supabase
-          .from('users')
-          .select('*')
-          .eq('username', username)
-          .eq('password', password)
-          .maybeSingle();
-
-        if (error || !data) {
-          showToast('error', 'Ошибка', 'Неверное имя или пароль');
-          return;
-        }
-
-        currentUser = data;
-        showToast('success', 'Добро пожаловать!', data.username);
-        checkAuth();
-      } catch (e) {
-        showToast('error', 'Ошибка', 'Ошибка соединения с сервером');
-        console.error(e);
-      }
-    });
-
-    // Обработчик для банов
-    document.getElementById('modesBanContainer').addEventListener('click', function(e) {
-      const btn = e.target.closest('.ban-btn');
-      if (!btn) return;
-      if (btn.classList.contains('banned') || btn.classList.contains('selected')) return;
-      const value = btn.dataset.value;
-      handleModesBan(value);
-    });
-
-    // Запуск проверки авторизации
+    // ---- ЗАПУСК ----
     checkAuth();
 
-    // Периодическое обновление
+    // ---- ПЕРИОДИЧЕСКОЕ ОБНОВЛЕНИЕ ----
     setInterval(() => {
       if (!currentMatch) updateQueueUI();
       updateHomeStats();
     }, 5000);
+
+    console.log('🟢 Инициализация завершена');
   });
+
+  // ============================================
+  //   ВСЕ ОСТАЛЬНЫЕ ФУНКЦИИ (БЕЗ ИЗМЕНЕНИЙ)
+  // ============================================
 
   // ===== НАВИГАЦИЯ =====
   const pages = {
@@ -2288,9 +2377,11 @@
 
   function navigate(page) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(pages[page]).classList.add('active');
+    const target = document.getElementById(pages[page]);
+    if (target) target.classList.add('active');
     document.querySelectorAll('.bottom-nav .item').forEach(b => b.classList.remove('active'));
-    document.querySelector(`.bottom-nav .item[data-page="${page}"]`)?.classList.add('active');
+    const navItem = document.querySelector(`.bottom-nav .item[data-page="${page}"]`);
+    if (navItem) navItem.classList.add('active');
     if (page === 'matches') { updateQueueUI(); updatePartyUI(); }
     if (page === 'profile') updateProfile();
     if (page === 'home') updateHomeStats();
@@ -2303,7 +2394,8 @@
   // ===== ПАТИ =====
   function updatePartyUI() {
     if (!currentUser) return;
-    document.getElementById('playerCode').textContent = currentUser.party_code || '—';
+    const codeEl = document.getElementById('playerCode');
+    if (codeEl) codeEl.textContent = currentUser.party_code || '—';
     const friends = JSON.parse(localStorage.getItem('partyFriends_' + currentUser.id) || '[]');
     partyFriends = friends;
     renderPartyFriends();
@@ -2311,6 +2403,7 @@
 
   function renderPartyFriends() {
     const container = document.getElementById('friendsList');
+    if (!container) return;
     if (partyFriends.length === 0) {
       container.innerHTML = '<span class="empty">Нет друзей в пати</span>';
       return;
@@ -2384,10 +2477,12 @@
     searchSeconds = 0;
 
     const block = document.getElementById('searchMainBlock');
-    block.classList.add('searching');
+    if (block) block.classList.add('searching');
 
-    document.getElementById('queueBtn').style.display = 'none';
-    document.getElementById('cancelBtn').style.display = 'inline-flex';
+    const queueBtn = document.getElementById('queueBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    if (queueBtn) queueBtn.style.display = 'none';
+    if (cancelBtn) cancelBtn.style.display = 'inline-flex';
 
     updateProgressText();
 
@@ -2396,7 +2491,8 @@
       searchSeconds++;
       const mins = String(Math.floor(searchSeconds / 60)).padStart(2, '0');
       const secs = String(searchSeconds % 60).padStart(2, '0');
-      document.getElementById('searchTimer').textContent = mins + ':' + secs;
+      const timerEl = document.getElementById('searchTimer');
+      if (timerEl) timerEl.textContent = mins + ':' + secs;
     }, 1000);
 
     showToast('info', 'Поиск начат', 'Ищем игроков...');
@@ -2421,9 +2517,12 @@
         if (queue.length >= 6) {
           clearInterval(searchTimerInterval);
           isSearching = false;
-          document.getElementById('searchMainBlock').classList.remove('searching');
-          document.getElementById('queueBtn').style.display = 'inline-flex';
-          document.getElementById('cancelBtn').style.display = 'none';
+          const block = document.getElementById('searchMainBlock');
+          if (block) block.classList.remove('searching');
+          const queueBtn = document.getElementById('queueBtn');
+          const cancelBtn = document.getElementById('cancelBtn');
+          if (queueBtn) queueBtn.style.display = 'inline-flex';
+          if (cancelBtn) cancelBtn.style.display = 'none';
           startMatch();
         } else {
           simulateBotSearch();
@@ -2439,29 +2538,40 @@
     clearInterval(searchTimerInterval);
     queue = [];
 
-    document.getElementById('searchMainBlock').classList.remove('searching');
-    document.getElementById('queueBtn').style.display = 'inline-flex';
-    document.getElementById('cancelBtn').style.display = 'none';
-    document.getElementById('searchTimer').textContent = '00:00';
-    document.getElementById('progressText').textContent = '0/6';
+    const block = document.getElementById('searchMainBlock');
+    if (block) block.classList.remove('searching');
+    const queueBtn = document.getElementById('queueBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    if (queueBtn) queueBtn.style.display = 'inline-flex';
+    if (cancelBtn) cancelBtn.style.display = 'none';
+    const timerEl = document.getElementById('searchTimer');
+    if (timerEl) timerEl.textContent = '00:00';
+    const progressEl = document.getElementById('progressText');
+    if (progressEl) progressEl.textContent = '0/6';
 
     updateQueueUI();
     showToast('info', 'Поиск отменён', 'Вы отменили поиск');
   }
 
   function updateProgressText() {
-    document.getElementById('progressText').textContent = queue.length + '/6';
-    document.getElementById('queueCount').textContent = queue.length;
+    const progressEl = document.getElementById('progressText');
+    const queueEl = document.getElementById('queueCount');
+    if (progressEl) progressEl.textContent = queue.length + '/6';
+    if (queueEl) queueEl.textContent = queue.length;
   }
 
   function updateQueueUI() {
     const count = queue.length;
-    document.getElementById('queueCount').textContent = count;
+    const queueEl = document.getElementById('queueCount');
+    if (queueEl) queueEl.textContent = count;
     const matchPlayers = currentMatch ? (currentMatch.orange.length + currentMatch.blue.length) : 0;
-    document.getElementById('matchCount').textContent = matchPlayers;
+    const matchEl = document.getElementById('matchCount');
+    if (matchEl) matchEl.textContent = matchPlayers;
     if (!isSearching && !currentMatch) {
-      document.getElementById('queueBtn').style.display = 'inline-flex';
-      document.getElementById('cancelBtn').style.display = 'none';
+      const queueBtn = document.getElementById('queueBtn');
+      const cancelBtn = document.getElementById('cancelBtn');
+      if (queueBtn) queueBtn.style.display = 'inline-flex';
+      if (cancelBtn) cancelBtn.style.display = 'none';
     }
   }
 
@@ -2489,51 +2599,59 @@
   function renderDraftUI() {
     const state = draftState;
 
-    document.getElementById('matchGameNumber').textContent = '#' + state.gameNumber;
-    document.getElementById('matchSelectedMode').textContent = state.modeFinal || '—';
+    const gameNum = document.getElementById('matchGameNumber');
+    const modeEl = document.getElementById('matchSelectedMode');
+    if (gameNum) gameNum.textContent = '#' + state.gameNumber;
+    if (modeEl) modeEl.textContent = state.modeFinal || '—';
 
     const modesContainer = document.getElementById('modesBanContainer');
-    const modeBtns = modesContainer.querySelectorAll('.ban-btn');
-    modeBtns.forEach(btn => {
-      const val = btn.dataset.value;
-      if (state.modeBanned.includes(val)) {
-        btn.classList.add('banned');
-        btn.style.display = 'none';
-      } else if (state.modeFinal === val) {
-        btn.classList.add('selected');
-        btn.disabled = true;
-      } else if (state.isComplete) {
-        btn.disabled = true;
-      } else {
-        btn.classList.remove('banned', 'selected');
-        btn.style.display = '';
-        btn.disabled = false;
-      }
-    });
+    if (modesContainer) {
+      const modeBtns = modesContainer.querySelectorAll('.ban-btn');
+      modeBtns.forEach(btn => {
+        const val = btn.dataset.value;
+        if (state.modeBanned.includes(val)) {
+          btn.classList.add('banned');
+          btn.style.display = 'none';
+        } else if (state.modeFinal === val) {
+          btn.classList.add('selected');
+          btn.disabled = true;
+        } else if (state.isComplete) {
+          btn.disabled = true;
+        } else {
+          btn.classList.remove('banned', 'selected');
+          btn.style.display = '';
+          btn.disabled = false;
+        }
+      });
+    }
 
     const availableModes = state.modeOptions.filter(v => !state.modeBanned.includes(v) && v !== state.modeFinal);
-    document.getElementById('modesLeft').textContent = availableModes.length;
+    const leftEl = document.getElementById('modesLeft');
+    if (leftEl) leftEl.textContent = availableModes.length;
 
-    const modesStatus = document.getElementById('modesStatus');
-    if (state.modeFinal) {
-      modesStatus.textContent = '✅ ' + state.modeFinal;
-      modesStatus.className = 'status-text done';
-    } else if (!state.isComplete) {
-      modesStatus.textContent = 'Ход: ' + getCaptainName(state.currentCaptain);
-      modesStatus.className = 'status-text';
-    } else {
-      modesStatus.textContent = 'Ожидание...';
-      modesStatus.className = 'status-text';
+    const statusEl = document.getElementById('modesStatus');
+    if (statusEl) {
+      if (state.modeFinal) {
+        statusEl.textContent = '✅ ' + state.modeFinal;
+        statusEl.className = 'status-text done';
+      } else if (!state.isComplete) {
+        statusEl.textContent = 'Ход: ' + getCaptainName(state.currentCaptain);
+        statusEl.className = 'status-text';
+      } else {
+        statusEl.textContent = 'Ожидание...';
+        statusEl.className = 'status-text';
+      }
     }
-    document.getElementById('modesTurnName').textContent = !state.isComplete ? getCaptainName(state.currentCaptain) : '—';
 
-    document.getElementById('endMatchBtn').disabled = !state.isComplete;
+    const turnEl = document.getElementById('modesTurnName');
+    if (turnEl) turnEl.textContent = !state.isComplete ? getCaptainName(state.currentCaptain) : '—';
+
+    const endBtn = document.getElementById('endMatchBtn');
+    if (endBtn) endBtn.disabled = !state.isComplete;
 
     const bansContainer = document.getElementById('bansContainer');
-    if (state.isComplete) {
-      bansContainer.style.display = 'none';
-    } else {
-      bansContainer.style.display = 'grid';
+    if (bansContainer) {
+      bansContainer.style.display = state.isComplete ? 'none' : 'grid';
     }
   }
 
@@ -2581,9 +2699,12 @@
         }]);
     } catch (e) {}
 
-    document.getElementById('searchMainBlock').classList.remove('searching');
-    document.getElementById('queueBtn').style.display = 'inline-flex';
-    document.getElementById('cancelBtn').style.display = 'none';
+    const block = document.getElementById('searchMainBlock');
+    if (block) block.classList.remove('searching');
+    const queueBtn = document.getElementById('queueBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    if (queueBtn) queueBtn.style.display = 'inline-flex';
+    if (cancelBtn) cancelBtn.style.display = 'none';
 
     draftState.gameNumber = (draftState.gameNumber || 0) + 1;
     resetDraft();
@@ -2615,31 +2736,35 @@
     const oContainer = document.getElementById('teamOrangePlayers');
     const bContainer = document.getElementById('teamBluePlayers');
 
-    oContainer.innerHTML = sortedOrange.map(p => {
-      const isCaptain = p.username === oCaptain;
-      return `
-        <div class="player-card">
-          <div class="avatar">${p.username.charAt(0).toUpperCase()}</div>
-          <div class="info">
-            <span class="name">${p.username}</span>
+    if (oContainer) {
+      oContainer.innerHTML = sortedOrange.map(p => {
+        const isCaptain = p.username === oCaptain;
+        return `
+          <div class="player-card">
+            <div class="avatar">${p.username.charAt(0).toUpperCase()}</div>
+            <div class="info">
+              <span class="name">${p.username}</span>
+            </div>
+            ${isCaptain ? `<span class="captain-badge"><i class="fas fa-crown"></i> Капитан</span>` : ''}
           </div>
-          ${isCaptain ? `<span class="captain-badge"><i class="fas fa-crown"></i> Капитан</span>` : ''}
-        </div>
-      `;
-    }).join('') || '<p style="color:#888;text-align:center;padding:8px 0;font-size:13px;">Нет игроков</p>';
+        `;
+      }).join('') || '<p style="color:#888;text-align:center;padding:8px 0;font-size:13px;">Нет игроков</p>';
+    }
 
-    bContainer.innerHTML = sortedBlue.map(p => {
-      const isCaptain = p.username === bCaptain;
-      return `
-        <div class="player-card">
-          <div class="avatar">${p.username.charAt(0).toUpperCase()}</div>
-          <div class="info">
-            <span class="name">${p.username}</span>
+    if (bContainer) {
+      bContainer.innerHTML = sortedBlue.map(p => {
+        const isCaptain = p.username === bCaptain;
+        return `
+          <div class="player-card">
+            <div class="avatar">${p.username.charAt(0).toUpperCase()}</div>
+            <div class="info">
+              <span class="name">${p.username}</span>
+            </div>
+            ${isCaptain ? `<span class="captain-badge"><i class="fas fa-crown"></i> Капитан</span>` : ''}
           </div>
-          ${isCaptain ? `<span class="captain-badge"><i class="fas fa-crown"></i> Капитан</span>` : ''}
-        </div>
-      `;
-    }).join('') || '<p style="color:#888;text-align:center;padding:8px 0;font-size:13px;">Нет игроков</p>';
+        `;
+      }).join('') || '<p style="color:#888;text-align:center;padding:8px 0;font-size:13px;">Нет игроков</p>';
+    }
 
     renderDraftUI();
   }
@@ -2672,7 +2797,8 @@
   function switchFriendsTab(tab) {
     friendsTab = tab;
     document.querySelectorAll('.friends-tabs .tab').forEach(t => t.classList.remove('active'));
-    document.querySelector(`.friends-tabs .tab[data-tab="${tab}"]`)?.classList.add('active');
+    const activeTab = document.querySelector(`.friends-tabs .tab[data-tab="${tab}"]`);
+    if (activeTab) activeTab.classList.add('active');
     renderFriendsPage();
   }
 
@@ -2729,13 +2855,19 @@
     const outgoing = requests?.filter(r => r.from_user_id === currentUser.id && r.status === 'pending') || [];
     const friends = requests?.filter(r => r.status === 'accepted') || [];
 
-    document.getElementById('friendsStatFriends').textContent = friends.length;
-    document.getElementById('friendsStatIncoming').textContent = incoming.length;
-    document.getElementById('friendsStatOutgoing').textContent = outgoing.length;
+    const friendsStat = document.getElementById('friendsStatFriends');
+    const incomingStat = document.getElementById('friendsStatIncoming');
+    const outgoingStat = document.getElementById('friendsStatOutgoing');
+    if (friendsStat) friendsStat.textContent = friends.length;
+    if (incomingStat) incomingStat.textContent = incoming.length;
+    if (outgoingStat) outgoingStat.textContent = outgoing.length;
 
-    document.getElementById('friendsBadge').textContent = friends.length;
-    document.getElementById('incomingBadge').textContent = incoming.length;
-    document.getElementById('outgoingBadge').textContent = outgoing.length;
+    const friendsBadge = document.getElementById('friendsBadge');
+    const incomingBadge = document.getElementById('incomingBadge');
+    const outgoingBadge = document.getElementById('outgoingBadge');
+    if (friendsBadge) friendsBadge.textContent = friends.length;
+    if (incomingBadge) incomingBadge.textContent = incoming.length;
+    if (outgoingBadge) outgoingBadge.textContent = outgoing.length;
 
     let list = [];
     if (friendsTab === 'friends') {
@@ -2749,12 +2881,14 @@
     const container = document.getElementById('friendsListContainer');
 
     if (list.length === 0) {
-      container.innerHTML = `
-        <div class="friends-empty">
-          <i class="fas fa-user-friends"></i>
-          ${friendsTab === 'friends' ? 'Друзей пока нет.' : friendsTab === 'incoming' ? 'Нет входящих запросов.' : 'Нет исходящих запросов.'}
-        </div>
-      `;
+      if (container) {
+        container.innerHTML = `
+          <div class="friends-empty">
+            <i class="fas fa-user-friends"></i>
+            ${friendsTab === 'friends' ? 'Друзей пока нет.' : friendsTab === 'incoming' ? 'Нет входящих запросов.' : 'Нет исходящих запросов.'}
+          </div>
+        `;
+      }
       return;
     }
 
@@ -2764,35 +2898,37 @@
       .select('*')
       .in('id', userIds);
 
-    container.innerHTML = users?.map(user => {
-      const initial = user.username.charAt(0).toUpperCase();
-      const isIncoming = friendsTab === 'incoming';
-      const isOutgoing = friendsTab === 'outgoing';
+    if (container) {
+      container.innerHTML = users?.map(user => {
+        const initial = user.username.charAt(0).toUpperCase();
+        const isIncoming = friendsTab === 'incoming';
+        const isOutgoing = friendsTab === 'outgoing';
 
-      let actions = '';
-      if (isIncoming) {
-        actions = `
-          <button class="btn-action" onclick="acceptFriend('${user.id}')" style="background:rgba(81,207,102,0.15);color:#51cf66;"><i class="fas fa-check"></i> Принять</button>
-          <button class="btn-action" onclick="declineFriend('${user.id}')" style="background:rgba(255,107,107,0.12);color:#ff6b6b;"><i class="fas fa-times"></i></button>
-        `;
-      } else if (isOutgoing) {
-        actions = `<button class="btn-action" onclick="cancelFriendRequest('${user.id}')" style="background:rgba(255,107,107,0.12);color:#ff6b6b;">Отменить</button>`;
-      } else {
-        actions = `<button class="btn-action" onclick="removeFriend('${user.id}')">Удалить</button>`;
-      }
+        let actions = '';
+        if (isIncoming) {
+          actions = `
+            <button class="btn-action" onclick="acceptFriend('${user.id}')" style="background:rgba(81,207,102,0.15);color:#51cf66;"><i class="fas fa-check"></i> Принять</button>
+            <button class="btn-action" onclick="declineFriend('${user.id}')" style="background:rgba(255,107,107,0.12);color:#ff6b6b;"><i class="fas fa-times"></i></button>
+          `;
+        } else if (isOutgoing) {
+          actions = `<button class="btn-action" onclick="cancelFriendRequest('${user.id}')" style="background:rgba(255,107,107,0.12);color:#ff6b6b;">Отменить</button>`;
+        } else {
+          actions = `<button class="btn-action" onclick="removeFriend('${user.id}')">Удалить</button>`;
+        }
 
-      return `
-        <div class="friend-item">
-          <div class="avatar">${initial}</div>
-          <div class="info">
-            <div class="name">${user.username}</div>
-            <div class="sub">ELO: ${user.elo || 0}</div>
+        return `
+          <div class="friend-item">
+            <div class="avatar">${initial}</div>
+            <div class="info">
+              <div class="name">${user.username}</div>
+              <div class="sub">ELO: ${user.elo || 0}</div>
+            </div>
+            <span class="status online">В сети</span>
+            ${actions}
           </div>
-          <span class="status online">В сети</span>
-          ${actions}
-        </div>
-      `;
-    }).join('') || '';
+        `;
+      }).join('') || '';
+    }
   }
 
   async function acceptFriend(userId) {
@@ -2847,54 +2983,49 @@
         .select('*')
         .order('elo', { ascending: false });
 
-      if (error) {
-        document.getElementById('topList').innerHTML = `
-          <div class="friends-empty">
-            <i class="fas fa-trophy"></i>
-            Нет данных
-          </div>
-        `;
-        return;
-      }
-
       const container = document.getElementById('topList');
-      const userRank = currentUser ? users.findIndex(u => u.id === currentUser.id) + 1 : 0;
-      document.getElementById('userRank').textContent = '#' + (userRank || 0);
-
-      if (users.length === 0) {
-        container.innerHTML = `
-          <div class="friends-empty">
-            <i class="fas fa-trophy"></i>
-            Нет данных
-          </div>
-        `;
+      if (error || !users || users.length === 0) {
+        if (container) {
+          container.innerHTML = `
+            <div class="friends-empty">
+              <i class="fas fa-trophy"></i>
+              Нет данных
+            </div>
+          `;
+        }
         return;
       }
 
-      container.innerHTML = users.slice(0, 10).map((u, i) => {
-        const initial = u.username.charAt(0).toUpperCase();
-        const matches = u.matches || 0;
-        const rankNum = i + 1;
-        let rankClass = '';
-        if (rankNum === 1) rankClass = 'gold';
-        else if (rankNum === 2) rankClass = 'silver';
-        else if (rankNum === 3) rankClass = 'bronze';
+      const userRank = currentUser ? users.findIndex(u => u.id === currentUser.id) + 1 : 0;
+      const rankEl = document.getElementById('userRank');
+      if (rankEl) rankEl.textContent = '#' + (userRank || 0);
 
-        return `
-          <div class="top-item">
-            <div class="rank ${rankClass}">#${rankNum}</div>
-            <div class="avatar">${initial}</div>
-            <div class="info">
-              <div class="name">${u.username}</div>
-              <div class="stats">${matches} матчей</div>
+      if (container) {
+        container.innerHTML = users.slice(0, 10).map((u, i) => {
+          const initial = u.username.charAt(0).toUpperCase();
+          const matches = u.matches || 0;
+          const rankNum = i + 1;
+          let rankClass = '';
+          if (rankNum === 1) rankClass = 'gold';
+          else if (rankNum === 2) rankClass = 'silver';
+          else if (rankNum === 3) rankClass = 'bronze';
+
+          return `
+            <div class="top-item">
+              <div class="rank ${rankClass}">#${rankNum}</div>
+              <div class="avatar">${initial}</div>
+              <div class="info">
+                <div class="name">${u.username}</div>
+                <div class="stats">${matches} матчей</div>
+              </div>
+              <div class="elo">
+                ${u.elo || 0}
+                <span class="elo-label">ELO</span>
+              </div>
             </div>
-            <div class="elo">
-              ${u.elo || 0}
-              <span class="elo-label">ELO</span>
-            </div>
-          </div>
-        `;
-      }).join('');
+          `;
+        }).join('');
+      }
     } catch (e) {
       console.error('Ошибка загрузки топа:', e);
     }
@@ -2912,9 +3043,12 @@
   // ===== ПРОФИЛЬ =====
   async function updateProfile() {
     if (!currentUser) {
-      document.getElementById('pName').textContent = 'Игрок';
-      document.getElementById('pReg').textContent = '—';
-      document.getElementById('avatar').textContent = '?';
+      const nameEl = document.getElementById('pName');
+      const regEl = document.getElementById('pReg');
+      const avatarEl = document.getElementById('avatar');
+      if (nameEl) nameEl.textContent = 'Игрок';
+      if (regEl) regEl.textContent = '—';
+      if (avatarEl) avatarEl.textContent = '?';
       return;
     }
 
@@ -2929,16 +3063,22 @@
         currentUser = user;
       }
 
-      document.getElementById('pName').textContent = currentUser.username;
-      document.getElementById('pReg').textContent = currentUser.reg_date || '—';
-      document.getElementById('avatar').textContent = currentUser.username.charAt(0).toUpperCase();
+      const nameEl = document.getElementById('pName');
+      const regEl = document.getElementById('pReg');
+      const avatarEl = document.getElementById('avatar');
+      if (nameEl) nameEl.textContent = currentUser.username;
+      if (regEl) regEl.textContent = currentUser.reg_date || '—';
+      if (avatarEl) avatarEl.textContent = currentUser.username.charAt(0).toUpperCase();
 
       const matches = currentUser.matches || 0;
       const wins = currentUser.wins || 0;
       const winrate = matches > 0 ? Math.round((wins / matches) * 100) : 0;
-      document.getElementById('pWr').textContent = winrate + '%';
-      document.getElementById('pMatches').textContent = matches;
-      document.getElementById('pMvp').textContent = currentUser.mvp || 0;
+      const wrEl = document.getElementById('pWr');
+      const mEl = document.getElementById('pMatches');
+      const mvpEl = document.getElementById('pMvp');
+      if (wrEl) wrEl.textContent = winrate + '%';
+      if (mEl) mEl.textContent = matches;
+      if (mvpEl) mvpEl.textContent = currentUser.mvp || 0;
 
       const { data: matchHistory } = await supabase
         .from('matches')
@@ -2947,6 +3087,8 @@
         .limit(10);
 
       const container = document.getElementById('matchHistoryList');
+      if (!container) return;
+      
       if (!matchHistory || matchHistory.length === 0) {
         container.innerHTML = '<div style="color:#666; text-align:center; padding:8px 0;">Нет сыгранных матчей</div>';
       } else {
@@ -2972,42 +3114,39 @@
         .select('*');
 
       if (error) {
-        document.getElementById('totalMatchesHome').textContent = '0';
-        document.getElementById('activePlayersHome').textContent = '0';
+        const totalEl = document.getElementById('totalMatchesHome');
+        const activeEl = document.getElementById('activePlayersHome');
+        if (totalEl) totalEl.textContent = '0';
+        if (activeEl) activeEl.textContent = '0';
         return;
       }
 
       const totalMatches = users.reduce((acc, u) => acc + (u.matches || 0), 0);
       const activePlayers = users.filter(u => (u.matches || 0) > 0).length;
-      document.getElementById('totalMatchesHome').textContent = totalMatches;
-      document.getElementById('activePlayersHome').textContent = activePlayers;
+      const totalEl = document.getElementById('totalMatchesHome');
+      const activeEl = document.getElementById('activePlayersHome');
+      if (totalEl) totalEl.textContent = totalMatches;
+      if (activeEl) activeEl.textContent = activePlayers;
     } catch (e) {
       console.error('Ошибка загрузки статистики:', e);
     }
   }
 
-  // ===== TOAST =====
-  function showToast(type, title, text) {
-    const toast = document.getElementById('toast');
-    const ttl = document.getElementById('toastTitle');
-    const txt = document.getElementById('toastText');
-    ttl.className = 'ttl ' + type;
-    ttl.textContent = title;
-    txt.textContent = text;
-    toast.classList.add('visible');
-    clearTimeout(toast._t);
-    toast._t = setTimeout(() => toast.classList.remove('visible'), 4000);
-  }
-
   // ===== ПРОВЕРКА АВТОРИЗАЦИИ =====
   async function checkAuth() {
+    console.log('🔵 Проверка авторизации, currentUser:', currentUser);
+    
     if (currentUser) {
-      document.getElementById('authPage').style.display = 'none';
-      document.getElementById('mainSite').style.display = 'block';
+      const authPage = document.getElementById('authPage');
+      const mainSite = document.getElementById('mainSite');
+      if (authPage) authPage.style.display = 'none';
+      if (mainSite) mainSite.style.display = 'block';
+      
       await updateHomeStats();
       await updateProfile();
       updateQueueUI();
       updatePartyUI();
+      
       if (currentMatch) {
         renderMatchPage();
         navigate('matchPage');
@@ -3015,8 +3154,10 @@
         navigate('home');
       }
     } else {
-      document.getElementById('authPage').style.display = 'flex';
-      document.getElementById('mainSite').style.display = 'none';
+      const authPage = document.getElementById('authPage');
+      const mainSite = document.getElementById('mainSite');
+      if (authPage) authPage.style.display = 'flex';
+      if (mainSite) mainSite.style.display = 'none';
     }
   }
 
