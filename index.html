@@ -37,16 +37,6 @@
       -webkit-text-fill-color: transparent;
       display: inline-block;
     }
-    .logo .badge {
-      background: #ffd700;
-      color: #000;
-      font-size: 11px;
-      font-weight: 800;
-      padding: 2px 10px;
-      border-radius: 30px;
-      -webkit-text-fill-color: #000;
-      margin-left: 4px;
-    }
     .logo .sub {
       display: block;
       font-size: 9px;
@@ -127,9 +117,7 @@
     .hero-stat .number {
       font-size: 24px;
       font-weight: 900;
-      background: linear-gradient(135deg, #ffd700, #ff8c00);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #ffd700;
     }
     .hero-stat .label {
       font-size: 10px;
@@ -1521,9 +1509,7 @@
     .stat-item .value {
       font-size: 18px;
       font-weight: 900;
-      background: linear-gradient(135deg, #ffd700, #ff8c00);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #ffd700;
     }
     .stat-item .label {
       font-size: 8px;
@@ -1963,21 +1949,21 @@
         </button>
       </div>
       <div class="prize-block">
-        <div class="prize-title">🏆 Призовой фонд</div>
+        <div class="prize-title">🏆 Призовой фонд — 10 000 ₽</div>
         <div class="prize-grid">
           <div class="prize-item gold">
             <div class="place">🥇 1 место</div>
-            <div class="reward">1 000 ₽</div>
+            <div class="reward">5 000 ₽</div>
             <div class="sub">+ 8 000 Gold</div>
           </div>
           <div class="prize-item silver">
             <div class="place">🥈 2 место</div>
-            <div class="reward">600 ₽</div>
+            <div class="reward">3 000 ₽</div>
             <div class="sub">+ 5 000 Gold</div>
           </div>
           <div class="prize-item bronze">
             <div class="place">🥉 3 место</div>
-            <div class="reward">400 ₽</div>
+            <div class="reward">2 000 ₽</div>
             <div class="sub">+ 3 000 Gold</div>
           </div>
         </div>
@@ -2234,10 +2220,10 @@
       </div>
 
       <div class="profile-stats">
-        <div class="stat-item"><div class="value" id="pKd">0.00</div><div class="label">К/Д</div></div>
         <div class="stat-item"><div class="value" id="pWr">0%</div><div class="label">Винрейт</div></div>
         <div class="stat-item"><div class="value" id="pMatches">0</div><div class="label">Матчей</div></div>
         <div class="stat-item"><div class="value" id="pMvp">0</div><div class="label">MVP</div></div>
+        <div class="stat-item"><div class="value" id="pElo2">0</div><div class="label">ELO</div></div>
       </div>
 
       <div class="profile-actions">
@@ -2925,7 +2911,6 @@
 
     container.innerHTML = sorted.slice(0, 10).map((u, i) => {
       const initial = u.username.charAt(0).toUpperCase();
-      const kd = u.deaths > 0 ? (u.kills / u.deaths).toFixed(2) : (u.kills > 0 ? u.kills.toFixed(2) : '0.00');
       const matches = u.matches || 0;
       const rankNum = i + 1;
       let rankClass = '';
@@ -2939,7 +2924,7 @@
           <div class="avatar">${initial}</div>
           <div class="info">
             <div class="name">${u.username}</div>
-            <div class="stats">${matches} матчей · K/D ${kd}</div>
+            <div class="stats">${matches} матчей</div>
           </div>
           <div class="elo">
             ${u.elo || 0}
@@ -2974,6 +2959,7 @@
 
     const elo = user.elo || 0;
     document.getElementById('pElo').textContent = elo;
+    document.getElementById('pElo2').textContent = elo;
     const levelData = getLevelInfo(elo);
     document.getElementById('pRank').textContent = 'Level ' + levelData.level;
     document.getElementById('pLevelLabel').textContent = levelData.level;
@@ -2982,13 +2968,9 @@
     const progress = ((elo - levelData.min) / (levelData.next - levelData.min)) * 100;
     document.getElementById('eloProgress').style.width = Math.min(progress, 100) + '%';
 
-    const kills = user.kills || 0;
-    const deaths = user.deaths || 0;
     const matches = user.matches || 0;
     const wins = user.wins || 0;
-    const kd = deaths > 0 ? (kills / deaths) : (kills > 0 ? kills : 0);
     const winrate = matches > 0 ? Math.round((wins / matches) * 100) : 0;
-    document.getElementById('pKd').textContent = kd.toFixed(2);
     document.getElementById('pWr').textContent = winrate + '%';
     document.getElementById('pMatches').textContent = matches;
     document.getElementById('pMvp').textContent = user.mvp || 0;
