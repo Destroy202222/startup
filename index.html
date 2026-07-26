@@ -614,32 +614,36 @@
     }
 
     .team-block {
-      background: rgba(20, 20, 28, 0.4);
       backdrop-filter: blur(8px);
       border-radius: 16px;
       padding: 14px 12px 12px;
       text-align: center;
       transition: .3s;
       min-width: 0;
+      border: 2px solid transparent;
     }
     .team-block:hover {
       transform: translateY(-2px);
     }
 
+    /* CT — синяя обводка и прозрачный синий фон */
     .team-block.ct {
-      border: 2px solid rgba(81, 207, 102, 0.5);
+      border-color: rgba(52, 152, 219, 0.6);
+      background: rgba(52, 152, 219, 0.08);
     }
     .team-block.ct .team-name {
-      color: #51cf66;
+      color: #3498db;
     }
     .team-block.ct .captain-badge {
-      background: rgba(81, 207, 102, 0.15);
-      color: #51cf66;
-      border: 1px solid rgba(81, 207, 102, 0.3);
+      background: rgba(52, 152, 219, 0.15);
+      color: #3498db;
+      border: 1px solid rgba(52, 152, 219, 0.3);
     }
 
+    /* Террористы — оранжевая обводка и прозрачный оранжевый фон */
     .team-block.terrorists {
-      border: 2px solid rgba(255, 123, 0, 0.5);
+      border-color: rgba(255, 123, 0, 0.6);
+      background: rgba(255, 123, 0, 0.08);
     }
     .team-block.terrorists .team-name {
       color: #ff7b00;
@@ -656,12 +660,6 @@
       letter-spacing: 1px;
       margin-bottom: 2px;
       text-transform: uppercase;
-    }
-    .team-block .team-sub {
-      font-size: 11px;
-      color: #666;
-      font-weight: 500;
-      margin-bottom: 10px;
     }
 
     .team-players {
@@ -711,13 +709,6 @@
       overflow: hidden;
       text-overflow: ellipsis;
       max-width: 100%;
-    }
-    .player-card .info .status {
-      font-size: 9px;
-      color: #51cf66;
-      display: flex;
-      align-items: center;
-      gap: 3px;
     }
     .player-card .captain-badge {
       font-size: 9px;
@@ -1845,13 +1836,13 @@
     <p class="match-sub">Команды сформированы. Удачи!</p>
 
     <div class="match-grid" id="matchGrid">
-      <!-- CT (синяя обводка) -->
+      <!-- CT — синяя обводка и прозрачный синий фон -->
       <div class="team-block ct" id="teamBlockCT">
         <div class="team-name">COUNTER-TERRORIST</div>
         <div class="team-players" id="teamCTPlayers"></div>
       </div>
 
-      <!-- Террористы (оранжевая обводка) -->
+      <!-- Террористы — оранжевая обводка и прозрачный оранжевый фон -->
       <div class="team-block terrorists" id="teamBlockTerrorists">
         <div class="team-name">TERRORIST</div>
         <div class="team-players" id="teamTPlayers"></div>
@@ -2391,7 +2382,6 @@
           <div class="avatar">${p.username.charAt(0).toUpperCase()}</div>
           <div class="info">
             <span class="name">${p.username}</span>
-            <span class="status"><i class="fas fa-circle"></i> онлайн</span>
           </div>
           ${isCaptain ? `<span class="captain-badge"><i class="fas fa-crown"></i> Капитан</span>` : ''}
         </div>
@@ -2405,7 +2395,6 @@
           <div class="avatar">${p.username.charAt(0).toUpperCase()}</div>
           <div class="info">
             <span class="name">${p.username}</span>
-            <span class="status"><i class="fas fa-circle"></i> онлайн</span>
           </div>
           ${isCaptain ? `<span class="captain-badge"><i class="fas fa-crown"></i> Капитан</span>` : ''}
         </div>
