@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тест Supabase</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-    </script>
     <style>
         body {
             background: #0b0b0f;
@@ -92,6 +90,11 @@
         .success-block.show {
             display: block;
         }
+        .loading {
+            color: #ffd700;
+            text-align: center;
+            padding: 10px;
+        }
     </style>
 </head>
 <body>
@@ -100,7 +103,9 @@
         <h1>⚡ Тест Supabase</h1>
         <p style="text-align:center;color:#888;margin-bottom:20px;">Проверка подключения к базе данных</p>
 
-        <div id="authForm">
+        <div id="loadingStatus" class="loading">⏳ Загрузка Supabase...</div>
+
+        <div id="authForm" style="display:none;">
             <input type="text" id="username" placeholder="Имя пользователя">
             <input type="password" id="password" placeholder="Пароль (мин. 8 символов)">
             <input type="password" id="confirm" placeholder="Подтвердите пароль">
@@ -119,7 +124,7 @@
 
     <script>
         // ============================================================
-        //  ТЕСТ SUPABASE
+        //  ЗАГРУЗКА SUPABASE
         // ============================================================
 
         console.log('🚀 СКРИПТ ЗАПУЩЕН!');
@@ -139,18 +144,38 @@
 
         addLog('✅ Скрипт загружен', 'success');
 
-        // ===== SUPABASE =====
-        const supabaseUrl = 'https://txokbboyhytmiurijvyh.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4b2tiYm95aHl0bWl1cmlqdnloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwNzE4MjksImV4cCI6MjEwMDY0NzgyOX0.L5jASUIzGizBBo364mUqmsiWKUAHeVUUvLN4Yuttees';
+        // Загружаем Supabase
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+        script.onload = function() {
+            document.getElementById('loadingStatus').style.display = 'none';
+            document.getElementById('authForm').style.display = 'block';
+            addLog('✅ Supabase загружен!', 'success');
+            initSupabase();
+        };
+        script.onerror = function() {
+            document.getElementById('loadingStatus').innerHTML = '❌ Ошибка загрузки Supabase! Проверьте интернет.';
+            addLog('❌ Ошибка загрузки Supabase!', 'error');
+        };
+        document.head.appendChild(script);
 
-        addLog('📌 Создаём клиент Supabase...', 'info');
-        let supabase;
+        // ============================================================
+        //  ИНИЦИАЛИЗАЦИЯ SUPABASE
+        // ============================================================
+        let supabase = null;
 
-        try {
-            supabase = supabase.createClient(supabaseUrl, supabaseKey);
-            addLog('✅ Клиент Supabase создан', 'success');
-        } catch (e) {
-            addLog('❌ Ошибка создания клиента: ' + e.message, 'error');
+        function initSupabase() {
+            const supabaseUrl = 'https://txokbboyhytmiurijvyh.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4b2tiYm95aHl0bWl1cmlqdnloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwNzE4MjksImV4cCI6MjEwMDY0NzgyOX0.L5jASUIzGizBBo364mUqmsiWKUAHeVUUvLN4Yuttees';
+
+            try {
+                supabase = supabase.createClient(supabaseUrl, supabaseKey);
+                addLog('✅ Клиент Supabase создан', 'success');
+                // Автоматически проверяем подключение
+                setTimeout(testConnection, 1000);
+            } catch (e) {
+                addLog('❌ Ошибка создания клиента: ' + e.message, 'error');
+            }
         }
 
         // ============================================================
@@ -165,40 +190,30 @@
             }
 
             try {
-                // Пробуем получить количество записей
                 const { data, error, count } = await supabase
                     .from('users')
                     .select('*', { count: 'exact', head: true });
 
                 if (error) {
                     addLog('❌ Ошибка подключения: ' + error.message, 'error');
-                    addLog('❌ Код ошибки: ' + error.code, 'error');
-                    if (error.details) addLog('❌ Детали: ' + error.details, 'error');
+                    if (error.code) addLog('❌ Код: ' + error.code, 'error');
                     return;
                 }
 
                 addLog('✅ Подключение работает!', 'success');
-                addLog('📊 Количество пользователей в базе: ' + count, 'info');
+                addLog('📊 Пользователей в базе: ' + count, 'info');
 
-                // Получаем список пользователей
-                const { data: users, error: usersError } = await supabase
+                const { data: users } = await supabase
                     .from('users')
                     .select('username')
                     .limit(5);
 
-                if (usersError) {
-                    addLog('❌ Ошибка получения пользователей: ' + usersError.message, 'error');
-                    return;
-                }
-
                 if (users && users.length > 0) {
-                    addLog('👥 Пользователи в базе: ' + users.map(u => u.username).join(', '), 'info');
-                } else {
-                    addLog('👤 В базе пока нет пользователей', 'info');
+                    addLog('👥 Пользователи: ' + users.map(u => u.username).join(', '), 'info');
                 }
 
             } catch (e) {
-                addLog('❌ Критическая ошибка: ' + e.message, 'error');
+                addLog('❌ Ошибка: ' + e.message, 'error');
             }
         }
 
@@ -233,25 +248,18 @@
             }
 
             try {
-                addLog('🔍 Проверяем, существует ли пользователь...', 'info');
-
-                const { data: existing, error: checkError } = await supabase
+                const { data: existing } = await supabase
                     .from('users')
                     .select('username')
                     .eq('username', username)
                     .maybeSingle();
-
-                if (checkError) {
-                    addLog('❌ Ошибка проверки: ' + checkError.message, 'error');
-                    return;
-                }
 
                 if (existing) {
                     addLog('❌ Пользователь "' + username + '" уже существует', 'error');
                     return;
                 }
 
-                addLog('👤 Создаём пользователя "' + username + '"...', 'info');
+                addLog('👤 Создаём пользователя...', 'info');
 
                 const { data, error } = await supabase
                     .from('users')
@@ -270,8 +278,7 @@
                     .single();
 
                 if (error) {
-                    addLog('❌ Ошибка создания: ' + error.message, 'error');
-                    if (error.details) addLog('❌ Детали: ' + error.details, 'error');
+                    addLog('❌ Ошибка: ' + error.message, 'error');
                     return;
                 }
 
@@ -280,7 +287,7 @@
                 document.getElementById('successText').textContent = 'Пользователь ' + data.username + ' зарегистрирован!';
 
             } catch (e) {
-                addLog('❌ Критическая ошибка: ' + e.message, 'error');
+                addLog('❌ Ошибка: ' + e.message, 'error');
             }
         }
 
@@ -314,7 +321,7 @@
                     .maybeSingle();
 
                 if (error) {
-                    addLog('❌ Ошибка входа: ' + error.message, 'error');
+                    addLog('❌ Ошибка: ' + error.message, 'error');
                     return;
                 }
 
@@ -328,7 +335,7 @@
                 document.getElementById('successText').textContent = 'Добро пожаловать, ' + data.username + '!';
 
             } catch (e) {
-                addLog('❌ Критическая ошибка: ' + e.message, 'error');
+                addLog('❌ Ошибка: ' + e.message, 'error');
             }
         }
 
@@ -336,34 +343,27 @@
         //  ПОДКЛЮЧЕНИЕ КНОПОК
         // ============================================================
         document.addEventListener('DOMContentLoaded', function() {
-            addLog('📌 DOM загружен, подключаем кнопки...', 'info');
+            // Кнопки будут подключены после загрузки Supabase
+            // Но мы подключаем их здесь, они будут ждать
+            setTimeout(function() {
+                const registerBtn = document.getElementById('registerBtn');
+                if (registerBtn) {
+                    registerBtn.onclick = registerUser;
+                    addLog('✅ Кнопка регистрации подключена', 'success');
+                }
 
-            const registerBtn = document.getElementById('registerBtn');
-            if (registerBtn) {
-                registerBtn.onclick = registerUser;
-                addLog('✅ Кнопка регистрации подключена', 'success');
-            } else {
-                addLog('❌ Кнопка registerBtn не найдена!', 'error');
-            }
+                const loginBtn = document.getElementById('loginBtn');
+                if (loginBtn) {
+                    loginBtn.onclick = loginUser;
+                    addLog('✅ Кнопка входа подключена', 'success');
+                }
 
-            const loginBtn = document.getElementById('loginBtn');
-            if (loginBtn) {
-                loginBtn.onclick = loginUser;
-                addLog('✅ Кнопка входа подключена', 'success');
-            } else {
-                addLog('❌ Кнопка loginBtn не найдена!', 'error');
-            }
-
-            const testBtn = document.getElementById('testConnectionBtn');
-            if (testBtn) {
-                testBtn.onclick = testConnection;
-                addLog('✅ Кнопка проверки подключена', 'success');
-            } else {
-                addLog('❌ Кнопка testConnectionBtn не найдена!', 'error');
-            }
-
-            addLog('✅ ВСЕ КНОПКИ ПОДКЛЮЧЕНЫ!', 'success');
-            addLog('📌 Нажмите "Проверить подключение" сначала', 'info');
+                const testBtn = document.getElementById('testConnectionBtn');
+                if (testBtn) {
+                    testBtn.onclick = testConnection;
+                    addLog('✅ Кнопка проверки подключена', 'success');
+                }
+            }, 500);
         });
     </script>
 
