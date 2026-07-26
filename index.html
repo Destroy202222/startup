@@ -3,15 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тест регистрации</title>
+    <title>Тест Supabase</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
     </script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
         body {
             background: #0b0b0f;
             color: #fff;
@@ -22,26 +17,18 @@
             min-height: 100vh;
             padding: 20px;
         }
-        .container {
+        .box {
             background: #1a1a24;
             padding: 40px;
             border-radius: 20px;
             max-width: 400px;
             width: 100%;
-            border: 1px solid #333;
         }
-        .container h1 {
+        .box h1 {
             color: #ffd700;
             text-align: center;
-            margin-bottom: 5px;
         }
-        .container .sub {
-            text-align: center;
-            color: #888;
-            margin-bottom: 20px;
-            font-size: 13px;
-        }
-        .container input {
+        .box input {
             width: 100%;
             padding: 12px;
             margin-bottom: 12px;
@@ -51,11 +38,7 @@
             color: #fff;
             font-size: 16px;
         }
-        .container input:focus {
-            outline: none;
-            border-color: #ffd700;
-        }
-        .container button {
+        .box button {
             width: 100%;
             padding: 14px;
             background: #ffd700;
@@ -66,191 +49,130 @@
             font-size: 16px;
             cursor: pointer;
             margin-top: 10px;
-            transition: 0.3s;
         }
-        .container button:hover {
+        .box button:hover {
             opacity: 0.9;
-            transform: scale(1.02);
         }
-        .container .msg {
-            margin-top: 15px;
-            padding: 10px;
+        #log {
+            margin-top: 20px;
+            padding: 15px;
+            background: #111;
             border-radius: 10px;
-            text-align: center;
-            display: none;
-        }
-        .container .msg.show {
-            display: block;
-        }
-        .container .msg.success {
-            background: rgba(81, 207, 102, 0.2);
-            color: #51cf66;
-        }
-        .container .msg.error {
-            background: rgba(255, 107, 107, 0.2);
-            color: #ff6b6b;
-        }
-        .container .msg.info {
-            background: rgba(255, 215, 0, 0.2);
-            color: #ffd700;
-        }
-        .container .links {
-            text-align: center;
-            margin-top: 15px;
-            color: #888;
-        }
-        .container .links a {
-            color: #ffd700;
-            cursor: pointer;
-            text-decoration: none;
-        }
-        .container .links a:hover {
-            text-decoration: underline;
+            font-size: 13px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            color: #0f0;
+            white-space: pre-wrap;
+            word-break: break-all;
         }
         .hidden {
-            display: none !important;
+            display: none;
         }
-        .success-block {
+        .success {
+            color: #51cf66;
             text-align: center;
-            padding: 20px 0;
-        }
-        .success-block .avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: #ffd700;
-            color: #000;
-            font-size: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            font-weight: 900;
-        }
-        .success-block h2 {
-            color: #fff;
-            margin-bottom: 5px;
-        }
-        .success-block p {
-            color: #888;
-        }
-        .success-block button {
-            background: #ff6b6b;
-            color: #fff;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 14px;
-            cursor: pointer;
-            margin-top: 15px;
+            font-size: 18px;
+            padding: 20px;
         }
     </style>
 </head>
 <body>
 
-    <div class="container" id="app">
+    <div class="box">
         <h1>⚡ Brawl Stars</h1>
-        <div class="sub">Тест регистрации</div>
+        <p style="text-align:center;color:#888;margin-bottom:20px;">Тест Supabase</p>
 
-        <!-- Форма входа -->
-        <div id="loginBlock">
-            <h2 style="text-align:center;margin-bottom:15px;font-size:18px;">Вход</h2>
-            <input type="text" id="loginUsername" placeholder="Имя пользователя">
-            <input type="password" id="loginPassword" placeholder="Пароль">
-            <button id="loginBtn">Войти</button>
-            <div class="links">
-                <a id="showRegisterLink">Нет аккаунта? Зарегистрироваться</a>
-            </div>
-            <div class="msg" id="loginMsg"></div>
-        </div>
-
-        <!-- Форма регистрации -->
-        <div id="registerBlock" class="hidden">
-            <h2 style="text-align:center;margin-bottom:15px;font-size:18px;">Регистрация</h2>
-            <input type="text" id="regUsername" placeholder="Имя пользователя">
-            <input type="password" id="regPassword" placeholder="Пароль (мин. 8 символов)">
-            <input type="password" id="regPasswordConfirm" placeholder="Подтвердите пароль">
+        <div id="authForm">
+            <input type="text" id="username" placeholder="Имя пользователя">
+            <input type="password" id="password" placeholder="Пароль">
+            <input type="password" id="confirm" placeholder="Подтвердите пароль">
             <button id="registerBtn">Зарегистрироваться</button>
-            <div class="links">
-                <a id="showLoginLink">Уже есть аккаунт? Войти</a>
-            </div>
-            <div class="msg" id="registerMsg"></div>
+            <button id="loginBtn" style="background:#444;color:#fff;margin-top:5px;">Войти</button>
         </div>
 
-        <!-- Блок успешного входа -->
-        <div id="welcomeBlock" class="hidden">
-            <div class="success-block">
-                <div class="avatar" id="userAvatar">?</div>
-                <h2 id="userName">Игрок</h2>
-                <p>Вы успешно вошли в систему!</p>
-                <button id="logoutBtn">Выйти</button>
-            </div>
+        <div id="result" class="hidden success">
+            ✅ Успешно!<br>
+            <span id="resultText"></span>
         </div>
+
+        <div id="log">📋 Лог операций:</div>
     </div>
 
     <script>
         // ============================================================
-        //  ПРОСТЕЙШИЙ ТЕСТОВЫЙ СКРИПТ
+        //  МАКСИМАЛЬНО ПРОСТОЙ ТЕСТ
         // ============================================================
 
-        console.log('🚀 СКРИПТ ЗАПУЩЕН!');
+        const log = document.getElementById('log');
+
+        function addLog(text, isError = false) {
+            const time = new Date().toLocaleTimeString();
+            const color = isError ? '#ff6b6b' : '#51cf66';
+            log.innerHTML += `<div style="color:${color}">[${time}] ${text}</div>`;
+            log.scrollTop = log.scrollHeight;
+            console.log(text);
+        }
+
+        addLog('🚀 Скрипт запущен');
 
         // ===== SUPABASE =====
         const supabaseUrl = 'https://txokbboyhytmiurijvyh.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4b2tiYm95aHl0bWl1cmlqdnloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwNzE4MjksImV4cCI6MjEwMDY0NzgyOX0.L5jASUIzGizBBo364mUqmsiWKUAHeVUUvLN4Yuttees';
+
+        addLog('📌 Создаём клиент Supabase...');
         const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
-        console.log('✅ Supabase инициализирован');
-
-        // ===== ПЕРЕМЕННЫЕ =====
-        let currentUser = null;
+        addLog('✅ Клиент создан');
 
         // ============================================================
-        //  ФУНКЦИЯ ПОКАЗА СООБЩЕНИЯ
+        //  ПРОВЕРКА ПОДКЛЮЧЕНИЯ
         // ============================================================
-        function showMessage(elementId, text, type) {
-            const el = document.getElementById(elementId);
-            el.textContent = text;
-            el.className = 'msg show ' + type;
-            console.log('📝 Сообщение:', type, text);
-        }
+        async function testConnection() {
+            addLog('🔍 Проверяем подключение к Supabase...');
+            try {
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('count', { count: 'exact', head: true });
 
-        function hideMessage(elementId) {
-            const el = document.getElementById(elementId);
-            el.className = 'msg';
-            el.textContent = '';
+                if (error) {
+                    addLog('❌ Ошибка подключения: ' + error.message, true);
+                    return false;
+                }
+                addLog('✅ Подключение работает!');
+                return true;
+            } catch (e) {
+                addLog('❌ Критическая ошибка: ' + e.message, true);
+                return false;
+            }
         }
 
         // ============================================================
         //  РЕГИСТРАЦИЯ
         // ============================================================
         async function registerUser() {
-            console.log('🔵 РЕГИСТРАЦИЯ: НАЧАТА!');
+            addLog('🔵 РЕГИСТРАЦИЯ: начата');
 
-            const username = document.getElementById('regUsername').value.trim();
-            const password = document.getElementById('regPassword').value;
-            const confirm = document.getElementById('regPasswordConfirm').value;
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const confirm = document.getElementById('confirm').value;
 
-            console.log('📝 Данные:', { username, passwordLength: password ? password.length : 0 });
+            addLog('📝 Имя: "' + username + '"');
 
             if (!username || !password || !confirm) {
-                showMessage('registerMsg', '❌ Заполните все поля', 'error');
+                addLog('❌ Заполните все поля', true);
                 return;
             }
             if (password !== confirm) {
-                showMessage('registerMsg', '❌ Пароли не совпадают', 'error');
+                addLog('❌ Пароли не совпадают', true);
                 return;
             }
             if (password.length < 8) {
-                showMessage('registerMsg', '❌ Пароль минимум 8 символов', 'error');
+                addLog('❌ Пароль минимум 8 символов', true);
                 return;
             }
 
-            showMessage('registerMsg', '⏳ Проверяем данные...', 'info');
-
             try {
-                console.log('🔍 Проверяем существование пользователя...');
+                addLog('🔍 Проверяем, существует ли пользователь...');
 
                 const { data: existing, error: checkError } = await supabase
                     .from('users')
@@ -259,18 +181,16 @@
                     .maybeSingle();
 
                 if (checkError) {
-                    console.error('❌ Ошибка проверки:', checkError);
-                    showMessage('registerMsg', '❌ Ошибка проверки: ' + checkError.message, 'error');
+                    addLog('❌ Ошибка проверки: ' + JSON.stringify(checkError), true);
                     return;
                 }
 
                 if (existing) {
-                    console.log('❌ Пользователь уже существует');
-                    showMessage('registerMsg', '❌ Имя пользователя уже занято', 'error');
+                    addLog('❌ Пользователь уже существует', true);
                     return;
                 }
 
-                console.log('👤 Создаём пользователя...');
+                addLog('👤 Создаём пользователя...');
 
                 const { data, error } = await supabase
                     .from('users')
@@ -283,28 +203,22 @@
                         losses: 0,
                         matches: 0,
                         mvp: 0,
-                        party_code: 'ABCDEF'
+                        party_code: 'TEST' + Math.random().toString(36).substring(2, 5).toUpperCase()
                     }])
                     .select()
                     .single();
 
                 if (error) {
-                    console.error('❌ Ошибка создания:', error);
-                    showMessage('registerMsg', '❌ Ошибка: ' + error.message, 'error');
+                    addLog('❌ Ошибка создания: ' + JSON.stringify(error), true);
                     return;
                 }
 
-                console.log('✅ Пользователь создан:', data);
-                currentUser = data;
-                showMessage('registerMsg', '✅ Успешно! Добро пожаловать, ' + username, 'success');
-
-                setTimeout(function() {
-                    showWelcomeScreen();
-                }, 1000);
+                addLog('✅ УСПЕХ! Пользователь создан: ' + data.username);
+                document.getElementById('result').classList.remove('hidden');
+                document.getElementById('resultText').textContent = 'Пользователь ' + data.username + ' зарегистрирован!';
 
             } catch (e) {
-                console.error('❌ Критическая ошибка:', e);
-                showMessage('registerMsg', '❌ Ошибка: ' + e.message, 'error');
+                addLog('❌ Критическая ошибка: ' + e.message, true);
             }
         }
 
@@ -312,19 +226,17 @@
         //  ВХОД
         // ============================================================
         async function loginUser() {
-            console.log('🔵 ВХОД: НАЧАТ!');
+            addLog('🔵 ВХОД: начат');
 
-            const username = document.getElementById('loginUsername').value.trim();
-            const password = document.getElementById('loginPassword').value;
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
 
-            console.log('📝 Данные:', { username });
+            addLog('📝 Имя: "' + username + '"');
 
             if (!username || !password) {
-                showMessage('loginMsg', '❌ Заполните все поля', 'error');
+                addLog('❌ Заполните все поля', true);
                 return;
             }
-
-            showMessage('loginMsg', '⏳ Ищем пользователя...', 'info');
 
             try {
                 const { data, error } = await supabase
@@ -335,127 +247,36 @@
                     .maybeSingle();
 
                 if (error) {
-                    console.error('❌ Ошибка входа:', error);
-                    showMessage('loginMsg', '❌ Ошибка: ' + error.message, 'error');
+                    addLog('❌ Ошибка входа: ' + JSON.stringify(error), true);
                     return;
                 }
 
                 if (!data) {
-                    console.log('❌ Пользователь не найден');
-                    showMessage('loginMsg', '❌ Неверное имя или пароль', 'error');
+                    addLog('❌ Неверное имя или пароль', true);
                     return;
                 }
 
-                console.log('✅ Пользователь найден:', data);
-                currentUser = data;
-                showMessage('loginMsg', '✅ Добро пожаловать, ' + username, 'success');
-
-                setTimeout(function() {
-                    showWelcomeScreen();
-                }, 1000);
+                addLog('✅ УСПЕХ! Найден пользователь: ' + data.username);
+                document.getElementById('result').classList.remove('hidden');
+                document.getElementById('resultText').textContent = 'Добро пожаловать, ' + data.username + '!';
 
             } catch (e) {
-                console.error('❌ Критическая ошибка:', e);
-                showMessage('loginMsg', '❌ Ошибка: ' + e.message, 'error');
+                addLog('❌ Критическая ошибка: ' + e.message, true);
             }
         }
 
         // ============================================================
-        //  ПОКАЗ ЭКРАНА ПРИВЕТСТВИЯ
+        //  ПОДКЛЮЧЕНИЕ КНОПОК
         // ============================================================
-        function showWelcomeScreen() {
-            document.getElementById('loginBlock').classList.add('hidden');
-            document.getElementById('registerBlock').classList.add('hidden');
-            document.getElementById('welcomeBlock').classList.remove('hidden');
+        document.getElementById('registerBtn').onclick = registerUser;
+        document.getElementById('loginBtn').onclick = loginUser;
 
-            document.getElementById('userName').textContent = currentUser.username;
-            document.getElementById('userAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
-        }
+        addLog('✅ Обработчики подключены');
 
-        // ============================================================
-        //  ВЫХОД
-        // ============================================================
-        function logoutUser() {
-            currentUser = null;
-            document.getElementById('loginBlock').classList.remove('hidden');
-            document.getElementById('registerBlock').classList.add('hidden');
-            document.getElementById('welcomeBlock').classList.add('hidden');
-            hideMessage('loginMsg');
-            hideMessage('registerMsg');
-            console.log('🔴 Выход выполнен');
-        }
+        // Проверяем подключение при загрузке
+        setTimeout(testConnection, 1000);
 
-        // ============================================================
-        //  ПЕРЕКЛЮЧЕНИЕ ФОРМ
-        // ============================================================
-        function showRegisterForm() {
-            document.getElementById('loginBlock').classList.add('hidden');
-            document.getElementById('registerBlock').classList.remove('hidden');
-            hideMessage('loginMsg');
-            hideMessage('registerMsg');
-            console.log('🔄 Переключено на регистрацию');
-        }
-
-        function showLoginForm() {
-            document.getElementById('loginBlock').classList.remove('hidden');
-            document.getElementById('registerBlock').classList.add('hidden');
-            hideMessage('loginMsg');
-            hideMessage('registerMsg');
-            console.log('🔄 Переключено на вход');
-        }
-
-        // ============================================================
-        //  ПОДКЛЮЧЕНИЕ ОБРАБОТЧИКОВ
-        // ============================================================
-        console.log('📌 Подключаем обработчики...');
-
-        // Регистрация
-        const registerBtn = document.getElementById('registerBtn');
-        if (registerBtn) {
-            registerBtn.onclick = registerUser;
-            console.log('✅ Кнопка регистрации подключена');
-        } else {
-            console.error('❌ Кнопка registerBtn не найдена!');
-        }
-
-        // Вход
-        const loginBtn = document.getElementById('loginBtn');
-        if (loginBtn) {
-            loginBtn.onclick = loginUser;
-            console.log('✅ Кнопка входа подключена');
-        } else {
-            console.error('❌ Кнопка loginBtn не найдена!');
-        }
-
-        // Переключение на регистрацию
-        const showRegisterLink = document.getElementById('showRegisterLink');
-        if (showRegisterLink) {
-            showRegisterLink.onclick = function(e) {
-                e.preventDefault();
-                showRegisterForm();
-            };
-            console.log('✅ Ссылка на регистрацию подключена');
-        }
-
-        // Переключение на вход
-        const showLoginLink = document.getElementById('showLoginLink');
-        if (showLoginLink) {
-            showLoginLink.onclick = function(e) {
-                e.preventDefault();
-                showLoginForm();
-            };
-            console.log('✅ Ссылка на вход подключена');
-        }
-
-        // Выход
-        const logoutBtn = document.getElementById('logoutBtn');
-        if (logoutBtn) {
-            logoutBtn.onclick = logoutUser;
-            console.log('✅ Кнопка выхода подключена');
-        }
-
-        console.log('✅ ВСЕ ОБРАБОТЧИКИ ПОДКЛЮЧЕНЫ!');
-        console.log('✅ ГОТОВО! ЖДУ ДЕЙСТВИЙ...');
+        addLog('✅ ГОТОВО! Нажмите кнопку регистрации или входа');
     </script>
 
 </body>
