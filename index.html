@@ -847,7 +847,7 @@
       background: rgba(255,123,0,0.25);
     }
 
-    /* ===== КОШЕЛЁК (ДВА БЛОКА С ОРАНЖЕВОЙ ОБВОДКОЙ) ===== */
+    /* ===== КОШЕЛЁК ===== */
     .wallet-page .wallet-balance {
       display: flex;
       justify-content: space-between;
@@ -1104,7 +1104,7 @@
       margin-top: -2px;
     }
 
-    /* ===== ПРОФИЛЬ ===== */
+    /* ===== ПРОФИЛЬ (С ДВУМЯ КНОПКАМИ) ===== */
     .profile-card {
       background: rgba(20,20,28,0.8);
       backdrop-filter: blur(8px);
@@ -1233,8 +1233,46 @@
       margin-top: 2px;
     }
 
+    /* Две кнопки над динамикой матчей */
+    .profile-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 16px 0 14px;
+    }
+    .profile-actions .btn-action {
+      padding: 8px 20px;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 13px;
+      border: none;
+      cursor: pointer;
+      transition: .2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .profile-actions .btn-action.edit {
+      background: rgba(255, 123, 0, 0.15);
+      border: 1px solid rgba(255, 123, 0, 0.3);
+      color: #ff7b00;
+    }
+    .profile-actions .btn-action.edit:hover {
+      background: rgba(255, 123, 0, 0.25);
+      box-shadow: 0 0 20px rgba(255,123,0,0.1);
+    }
+    .profile-actions .btn-action.logout {
+      background: rgba(255, 107, 107, 0.12);
+      border: 1px solid rgba(255, 107, 107, 0.3);
+      color: #ff6b6b;
+    }
+    .profile-actions .btn-action.logout:hover {
+      background: rgba(255, 107, 107, 0.25);
+      box-shadow: 0 0 20px rgba(255,107,107,0.1);
+    }
+
     .match-dynamics {
-      margin-top: 14px;
+      margin-top: 0;
       border-top: 1px solid rgba(255,255,255,0.04);
       padding-top: 14px;
     }
@@ -1501,6 +1539,8 @@
       .wallet-page .wallet-balance .balance-item .amount { font-size: 28px; }
       .wallet-page .wallet-balance .balance-item .rub-amount { font-size: 28px; }
       .wallet-page .promo-block { flex-direction: column; align-items: stretch; }
+      .profile-actions { flex-direction: column; align-items: stretch; }
+      .profile-actions .btn-action { justify-content: center; }
     }
     @media (max-width: 480px) {
       .hero-title { font-size: 24px; }
@@ -1772,7 +1812,7 @@
     </div>
   </div>
 
-  <!-- ===== КОШЕЛЁК (ДВА БЛОКА С ОРАНЖЕВОЙ ОБВОДКОЙ) ===== -->
+  <!-- ===== КОШЕЛЁК ===== -->
   <div class="page wallet-page" id="pageWallet">
     <div class="wallet-balance">
       <div class="balance-item">
@@ -1807,7 +1847,7 @@
     </div>
   </div>
 
-  <!-- ===== ПРОФИЛЬ ===== -->
+  <!-- ===== ПРОФИЛЬ (С ДВУМЯ КНОПКАМИ) ===== -->
   <div class="page" id="pageProfile">
     <div class="profile-card">
       <div class="profile-header">
@@ -1838,6 +1878,16 @@
         <div class="stat-item"><div class="value" id="pWr">0%</div><div class="label">Винрейт</div></div>
         <div class="stat-item"><div class="value" id="pMatches">0</div><div class="label">Матчей</div></div>
         <div class="stat-item"><div class="value" id="pMvp">0</div><div class="label">MVP</div></div>
+      </div>
+
+      <!-- Две кнопки -->
+      <div class="profile-actions">
+        <button class="btn-action edit" onclick="showToast('info', 'Редактирование', 'Функция редактирования профиля')">
+          <i class="fas fa-edit"></i> Редактировать
+        </button>
+        <button class="btn-action logout" onclick="handleLogout()">
+          <i class="fas fa-sign-out-alt"></i> Выйти с аккаунта
+        </button>
       </div>
 
       <div class="match-dynamics">
