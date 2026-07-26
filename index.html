@@ -596,11 +596,138 @@
       color: #ff7b00;
       margin-bottom: 4px;
     }
-    .match-page .match-sub {
-      text-align: center;
-      color: #888;
-      font-size: 14px;
+
+    /* НОВЫЙ БЛОК СВЕРХУ */
+    .match-info-bar {
+      background: rgba(20, 20, 28, 0.8);
+      backdrop-filter: blur(8px);
+      border-radius: 16px;
+      padding: 14px 20px;
       margin-bottom: 20px;
+      border: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .match-info-bar .info-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #ccc;
+    }
+    .match-info-bar .info-item i {
+      color: #ff7b00;
+      font-size: 16px;
+    }
+    .match-info-bar .info-item .value {
+      color: #fff;
+      font-weight: 700;
+      background: rgba(255,255,255,0.06);
+      padding: 2px 12px;
+      border-radius: 30px;
+    }
+    .match-info-bar .info-item .value.highlight {
+      background: rgba(255,123,0,0.15);
+      color: #ff7b00;
+    }
+
+    /* БАНЫ */
+    .ban-section {
+      background: rgba(20, 20, 28, 0.6);
+      backdrop-filter: blur(8px);
+      border-radius: 14px;
+      padding: 14px 18px;
+      margin-bottom: 14px;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+    .ban-section .ban-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ban-section .ban-title i {
+      color: #ff7b00;
+    }
+    .ban-section .ban-title .turn {
+      font-size: 12px;
+      font-weight: 400;
+      color: #888;
+      margin-left: auto;
+    }
+    .ban-section .ban-title .turn span {
+      color: #ff7b00;
+      font-weight: 600;
+    }
+    .ban-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .ban-btn {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #ddd;
+      padding: 6px 18px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .ban-btn:hover:not(.banned):not(.selected) {
+      background: rgba(255,123,0,0.15);
+      border-color: rgba(255,123,0,0.3);
+      color: #fff;
+    }
+    .ban-btn.banned {
+      background: rgba(255, 60, 60, 0.15);
+      border-color: rgba(255, 60, 60, 0.3);
+      color: #ff6b6b;
+      text-decoration: line-through;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+    .ban-btn.selected {
+      background: rgba(81, 207, 102, 0.15);
+      border-color: rgba(81, 207, 102, 0.3);
+      color: #51cf66;
+      cursor: default;
+    }
+    .ban-btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+    .ban-btn:disabled:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.08);
+      color: #ddd;
+    }
+
+    .ban-status {
+      font-size: 12px;
+      color: #888;
+      margin-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .ban-status .left {
+      color: #aaa;
+    }
+    .ban-status .left span {
+      color: #ff7b00;
+      font-weight: 700;
     }
 
     .match-grid {
@@ -626,7 +753,6 @@
       transform: translateY(-2px);
     }
 
-    /* CT — синяя обводка и прозрачный синий фон */
     .team-block.ct {
       border-color: rgba(52, 152, 219, 0.6);
       background: rgba(52, 152, 219, 0.08);
@@ -640,7 +766,6 @@
       border: 1px solid rgba(52, 152, 219, 0.3);
     }
 
-    /* Террористы — оранжевая обводка и прозрачный оранжевый фон */
     .team-block.terrorists {
       border-color: rgba(255, 123, 0, 0.6);
       background: rgba(255, 123, 0, 0.08);
@@ -743,6 +868,12 @@
     .match-actions .btn-end:hover {
       background: #ff4444;
       transform: scale(1.03);
+    }
+
+    .match-actions .btn-end:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
     }
 
     /* ===== ДРУЗЬЯ ===== */
@@ -1634,6 +1765,8 @@
       .profile-actions .btn-action { justify-content: center; }
       .match-page .match-title { font-size: 22px; }
       .team-block .team-name { font-size: 15px; }
+      .match-info-bar { flex-direction: column; align-items: stretch; text-align: center; gap: 6px; }
+      .match-info-bar .info-item { justify-content: center; }
     }
     @media (max-width: 480px) {
       .hero-title { font-size: 24px; }
@@ -1674,6 +1807,8 @@
       .team-block { padding: 10px 8px; }
       .team-block .team-name { font-size: 13px; }
       .player-card .info .name { font-size: 12px; }
+      .match-info-bar { flex-direction: column; align-items: stretch; text-align: center; gap: 6px; }
+      .match-info-bar .info-item { justify-content: center; font-size: 12px; }
     }
   </style>
 </head>
@@ -1832,8 +1967,59 @@
 
   <!-- ===== МАТЧ (НОВЫЙ ДИЗАЙН) ===== -->
   <div class="page match-page" id="matchPage">
-    <div class="match-title"><i class="fas fa-swords"></i> Матч начался!</div>
-    <p class="match-sub">Команды сформированы. Удачи!</p>
+    <!-- Верхний блок с информацией о матче -->
+    <div class="match-info-bar" id="matchInfoBar">
+      <div class="info-item">
+        <i class="fas fa-hashtag"></i>
+        Номер игры: <span class="value highlight" id="matchGameNumber">#1</span>
+      </div>
+      <div class="info-item">
+        <i class="fas fa-map"></i>
+        Карта: <span class="value" id="matchSelectedMap">—</span>
+      </div>
+      <div class="info-item">
+        <i class="fas fa-clock"></i>
+        Кол-во раундов: <span class="value" id="matchSelectedRounds">—</span>
+      </div>
+    </div>
+
+    <!-- Бан раундов -->
+    <div class="ban-section" id="roundsBanSection">
+      <div class="ban-title">
+        <i class="fas fa-hourglass-half"></i> Бан раундов
+        <span class="turn">Ход: <span id="roundsTurnName">Капитан 1</span></span>
+      </div>
+      <div class="ban-buttons" id="roundsBanContainer">
+        <button class="ban-btn" data-value="10">10 раундов</button>
+        <button class="ban-btn" data-value="13">13 раундов</button>
+        <button class="ban-btn" data-value="16">16 раундов</button>
+      </div>
+      <div class="ban-status">
+        <span class="left">Осталось: <span id="roundsLeft">3</span></span>
+        <span id="roundsStatus">Выберите раунды</span>
+      </div>
+    </div>
+
+    <!-- Бан карт -->
+    <div class="ban-section" id="mapsBanSection">
+      <div class="ban-title">
+        <i class="fas fa-map-marked-alt"></i> Бан карт
+        <span class="turn">Ход: <span id="mapsTurnName">Капитан 1</span></span>
+      </div>
+      <div class="ban-buttons" id="mapsBanContainer">
+        <button class="ban-btn" data-value="Dust II">Dust II</button>
+        <button class="ban-btn" data-value="Mirage">Mirage</button>
+        <button class="ban-btn" data-value="Inferno">Inferno</button>
+        <button class="ban-btn" data-value="Nuke">Nuke</button>
+        <button class="ban-btn" data-value="Overpass">Overpass</button>
+        <button class="ban-btn" data-value="Vertigo">Vertigo</button>
+        <button class="ban-btn" data-value="Ancient">Ancient</button>
+      </div>
+      <div class="ban-status">
+        <span class="left">Осталось: <span id="mapsLeft">7</span></span>
+        <span id="mapsStatus">Выберите карты</span>
+      </div>
+    </div>
 
     <div class="match-grid" id="matchGrid">
       <!-- CT — синяя обводка и прозрачный синий фон -->
@@ -1850,7 +2036,7 @@
     </div>
 
     <div class="match-actions">
-      <button class="btn-end" onclick="endMatch()">
+      <button class="btn-end" id="endMatchBtn" onclick="endMatch()" disabled>
         <i class="fas fa-times"></i> Закончить матч
       </button>
     </div>
@@ -2034,6 +2220,23 @@
   let isSearching = false;
   let searchTimerInterval = null;
   let searchSeconds = 0;
+
+  // Состояние драфта
+  let draftState = {
+    gameNumber: 1,
+    // Раунды
+    roundsOptions: ['10', '13', '16'],
+    roundsBanned: [],
+    roundsFinal: null,
+    // Карты
+    mapOptions: ['Dust II', 'Mirage', 'Inferno', 'Nuke', 'Overpass', 'Vertigo', 'Ancient'],
+    mapBanned: [],
+    mapFinal: null,
+    // Ходы
+    turn: 'rounds', // 'rounds' | 'maps'
+    currentCaptain: 0, // 0 - первый капитан, 1 - второй
+    isComplete: false
+  };
 
   // ===== ГЕНЕРАЦИЯ КОДА =====
   function generateCode() {
@@ -2329,6 +2532,159 @@
     }
   }
 
+  // ===== ДРАФТ =====
+  function resetDraft() {
+    draftState = {
+      gameNumber: draftState.gameNumber + 1,
+      roundsOptions: ['10', '13', '16'],
+      roundsBanned: [],
+      roundsFinal: null,
+      mapOptions: ['Dust II', 'Mirage', 'Inferno', 'Nuke', 'Overpass', 'Vertigo', 'Ancient'],
+      mapBanned: [],
+      mapFinal: null,
+      turn: 'rounds',
+      currentCaptain: 0,
+      isComplete: false
+    };
+    renderDraftUI();
+  }
+
+  function getCaptainName(index) {
+    if (!currentMatch) return 'Капитан ' + (index + 1);
+    const captains = [];
+    if (currentMatch.terrorists.length > 0) captains.push(currentMatch.terrorists[0].username);
+    if (currentMatch.ct.length > 0) captains.push(currentMatch.ct[0].username);
+    return captains[index] || 'Капитан ' + (index + 1);
+  }
+
+  function renderDraftUI() {
+    const state = draftState;
+
+    // Обновляем информацию о матче
+    document.getElementById('matchGameNumber').textContent = '#' + state.gameNumber;
+    document.getElementById('matchSelectedMap').textContent = state.mapFinal || '—';
+    document.getElementById('matchSelectedRounds').textContent = state.roundsFinal || '—';
+
+    // Раунды
+    const roundsContainer = document.getElementById('roundsBanContainer');
+    const roundsBtns = roundsContainer.querySelectorAll('.ban-btn');
+    roundsBtns.forEach(btn => {
+      const val = btn.dataset.value;
+      btn.classList.remove('banned', 'selected');
+      btn.disabled = false;
+      if (state.roundsBanned.includes(val)) {
+        btn.classList.add('banned');
+        btn.disabled = true;
+      } else if (state.roundsFinal === val) {
+        btn.classList.add('selected');
+        btn.disabled = true;
+      } else if (state.isComplete || state.turn !== 'rounds') {
+        btn.disabled = true;
+      }
+    });
+
+    const availableRounds = state.roundsOptions.filter(v => !state.roundsBanned.includes(v) && v !== state.roundsFinal);
+    document.getElementById('roundsLeft').textContent = availableRounds.length;
+
+    if (state.roundsFinal) {
+      document.getElementById('roundsStatus').textContent = '✅ Выбрано: ' + state.roundsFinal + ' раундов';
+    } else if (state.turn === 'rounds' && !state.isComplete) {
+      document.getElementById('roundsStatus').textContent = 'Ход: ' + getCaptainName(state.currentCaptain);
+    } else {
+      document.getElementById('roundsStatus').textContent = 'Ожидание...';
+    }
+    document.getElementById('roundsTurnName').textContent = state.turn === 'rounds' ? getCaptainName(state.currentCaptain) : '—';
+
+    // Карты
+    const mapsContainer = document.getElementById('mapsBanContainer');
+    const mapsBtns = mapsContainer.querySelectorAll('.ban-btn');
+    mapsBtns.forEach(btn => {
+      const val = btn.dataset.value;
+      btn.classList.remove('banned', 'selected');
+      btn.disabled = false;
+      if (state.mapBanned.includes(val)) {
+        btn.classList.add('banned');
+        btn.disabled = true;
+      } else if (state.mapFinal === val) {
+        btn.classList.add('selected');
+        btn.disabled = true;
+      } else if (state.isComplete || state.turn !== 'maps') {
+        btn.disabled = true;
+      }
+    });
+
+    const availableMaps = state.mapOptions.filter(v => !state.mapBanned.includes(v) && v !== state.mapFinal);
+    document.getElementById('mapsLeft').textContent = availableMaps.length;
+
+    if (state.mapFinal) {
+      document.getElementById('mapsStatus').textContent = '✅ Выбрана: ' + state.mapFinal;
+    } else if (state.turn === 'maps' && !state.isComplete) {
+      document.getElementById('mapsStatus').textContent = 'Ход: ' + getCaptainName(state.currentCaptain);
+    } else {
+      document.getElementById('mapsStatus').textContent = 'Ожидание...';
+    }
+    document.getElementById('mapsTurnName').textContent = state.turn === 'maps' ? getCaptainName(state.currentCaptain) : '—';
+
+    // Кнопка завершения матча
+    document.getElementById('endMatchBtn').disabled = !state.isComplete;
+
+    // Скрываем баны после завершения
+    const roundsSection = document.getElementById('roundsBanSection');
+    const mapsSection = document.getElementById('mapsBanSection');
+    if (state.isComplete) {
+      roundsSection.style.display = 'none';
+      mapsSection.style.display = 'none';
+    } else {
+      roundsSection.style.display = 'block';
+      mapsSection.style.display = 'block';
+    }
+  }
+
+  function handleRoundsBan(value) {
+    const state = draftState;
+    if (state.isComplete) return;
+    if (state.turn !== 'rounds') return;
+    if (state.roundsBanned.includes(value)) return;
+    if (state.roundsFinal) return;
+
+    state.roundsBanned.push(value);
+
+    const available = state.roundsOptions.filter(v => !state.roundsBanned.includes(v));
+    if (available.length === 1) {
+      state.roundsFinal = available[0];
+      state.turn = 'maps';
+      state.currentCaptain = 0;
+      renderDraftUI();
+      showToast('info', 'Раунды выбраны!', 'Играем ' + state.roundsFinal + ' раундов');
+      return;
+    }
+
+    state.currentCaptain = state.currentCaptain === 0 ? 1 : 0;
+    renderDraftUI();
+  }
+
+  function handleMapsBan(value) {
+    const state = draftState;
+    if (state.isComplete) return;
+    if (state.turn !== 'maps') return;
+    if (state.mapBanned.includes(value)) return;
+    if (state.mapFinal) return;
+
+    state.mapBanned.push(value);
+
+    const available = state.mapOptions.filter(v => !state.mapBanned.includes(v));
+    if (available.length === 1) {
+      state.mapFinal = available[0];
+      state.isComplete = true;
+      renderDraftUI();
+      showToast('success', 'Драфт завершён!', 'Играем на ' + state.mapFinal);
+      return;
+    }
+
+    state.currentCaptain = state.currentCaptain === 0 ? 1 : 0;
+    renderDraftUI();
+  }
+
   // ===== МАТЧ (НОВЫЙ ДИЗАЙН) =====
   function startMatch() {
     const shuffled = [...queue];
@@ -2345,6 +2701,10 @@
     document.getElementById('searchMainBlock').classList.remove('searching');
     document.getElementById('queueBtn').style.display = 'inline-flex';
     document.getElementById('cancelBtn').style.display = 'none';
+
+    // Сброс драфта для нового матча
+    draftState.gameNumber = (draftState.gameNumber || 0) + 1;
+    resetDraft();
 
     navigate('matchPage');
     renderMatchPage();
@@ -2400,9 +2760,17 @@
         </div>
       `;
     }).join('') || '<p style="color:#888;text-align:center;padding:8px 0;font-size:13px;">Нет игроков</p>';
+
+    // Обновляем драфт UI
+    renderDraftUI();
   }
 
   function endMatch() {
+    if (!currentMatch) return;
+    if (!draftState.isComplete) {
+      showToast('info', 'Дождитесь драфта', 'Сначала завершите выбор раундов и карт');
+      return;
+    }
     if (!confirm('Завершить матч?')) return;
     currentMatch = null;
     navigate('matches');
@@ -2708,6 +3076,27 @@
     toast._t = setTimeout(() => toast.classList.remove('visible'), 4000);
   }
 
+  // ===== ОБРАБОТЧИКИ ДЛЯ БАНОВ =====
+  document.addEventListener('DOMContentLoaded', function() {
+    // Обработчики для бана раундов
+    document.getElementById('roundsBanContainer').addEventListener('click', function(e) {
+      const btn = e.target.closest('.ban-btn');
+      if (!btn) return;
+      if (btn.classList.contains('banned') || btn.classList.contains('selected')) return;
+      const value = btn.dataset.value;
+      handleRoundsBan(value);
+    });
+
+    // Обработчики для бана карт
+    document.getElementById('mapsBanContainer').addEventListener('click', function(e) {
+      const btn = e.target.closest('.ban-btn');
+      if (!btn) return;
+      if (btn.classList.contains('banned') || btn.classList.contains('selected')) return;
+      const value = btn.dataset.value;
+      handleMapsBan(value);
+    });
+  });
+
   // ===== ПРОВЕРКА АВТОРИЗАЦИИ =====
   function checkAuth() {
     const user = getCurrentUser();
@@ -2728,6 +3117,13 @@
       document.getElementById('authPage').style.display = 'flex';
       document.getElementById('mainSite').style.display = 'none';
     }
+  }
+
+  function handleLogout() {
+    if (!confirm('Выйти из аккаунта?')) return;
+    clearCurrentUser();
+    checkAuth();
+    showToast('info', 'Выход', 'Вы вышли из аккаунта');
   }
 
   // ===== ЗАПУСК =====
