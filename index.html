@@ -588,70 +588,161 @@
       font-weight: 600;
     }
 
-    /* Матч контейнер */
-    .match-container {
-      display: none;
-      margin-top: 16px;
-    }
-    .match-container h2 {
+    /* ===== МАТЧ (НОВЫЙ ДИЗАЙН) ===== */
+    .match-page .match-title {
+      font-size: 28px;
+      font-weight: 900;
       text-align: center;
       color: #ff7b00;
-      font-size: 24px;
-      font-weight: 800;
+      margin-bottom: 4px;
     }
-    .match-container .sub {
+    .match-page .match-sub {
       text-align: center;
-      color: #aaa;
+      color: #888;
       font-size: 14px;
-      margin: 4px 0 16px;
+      margin-bottom: 20px;
     }
+
     .match-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
+      gap: 20px;
+      margin-bottom: 20px;
     }
-    .team-card {
-      background: rgba(20,20,28,0.7);
+
+    .team-block {
+      background: rgba(20, 20, 28, 0.4);
       backdrop-filter: blur(8px);
-      border-radius: 16px;
-      padding: 12px 12px;
-      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 20px;
+      padding: 18px 16px 16px;
+      text-align: center;
+      transition: .3s;
     }
-    .team-card h3 {
-      font-size: 16px;
+    .team-block:hover {
+      transform: translateY(-2px);
+    }
+
+    .team-block.ct {
+      border: 1.5px solid rgba(81, 207, 102, 0.4);
+    }
+    .team-block.ct .team-name {
+      color: #51cf66;
+    }
+    .team-block.ct .captain-badge {
+      background: rgba(81, 207, 102, 0.15);
+      color: #51cf66;
+      border: 1px solid rgba(81, 207, 102, 0.3);
+    }
+
+    .team-block.terrorists {
+      border: 1.5px solid rgba(255, 123, 0, 0.4);
+    }
+    .team-block.terrorists .team-name {
+      color: #ff7b00;
+    }
+    .team-block.terrorists .captain-badge {
+      background: rgba(255, 123, 0, 0.15);
+      color: #ff7b00;
+      border: 1px solid rgba(255, 123, 0, 0.3);
+    }
+
+    .team-block .team-name {
+      font-size: 20px;
       font-weight: 800;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 8px;
-    }
-    .team-card.terrorists { border-left: 4px solid #ff6b6b; }
-    .team-card.ct { border-left: 4px solid #51cf66; }
-    .player {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 6px;
-      background: rgba(26,26,34,0.5);
-      border-radius: 8px;
+      letter-spacing: 0.5px;
       margin-bottom: 4px;
-      border: 1px solid rgba(255,255,255,0.04);
     }
-    .player .avatar {
-      width: 22px;
-      height: 22px;
+    .team-block .team-sub {
+      font-size: 12px;
+      color: #666;
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+
+    .team-players {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .player-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(26, 26, 34, 0.6);
+      border-radius: 12px;
+      padding: 8px 12px;
+      border: 1px solid rgba(255,255,255,0.04);
+      transition: .2s;
+    }
+    .player-card:hover {
+      border-color: rgba(255,255,255,0.08);
+    }
+    .player-card .avatar {
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
-      background: rgba(255,123,0,0.2);
+      background: linear-gradient(135deg, #ff7b00, #ffb347);
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 13px;
       font-weight: 700;
-      color: #ff7b00;
-      font-size: 11px;
+      color: #000;
+      flex-shrink: 0;
     }
-    .player .name { font-weight: 500; font-size: 12px; }
-    .player .status { margin-left: auto; font-size: 9px; color: #51cf66; }
-    .match-actions { text-align: center; margin-top: 16px; }
+    .player-card .info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .player-card .info .name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .player-card .info .status {
+      font-size: 10px;
+      color: #51cf66;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .player-card .captain-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 40px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .match-actions {
+      text-align: center;
+      margin-top: 10px;
+    }
+    .match-actions .btn-end {
+      background: #ff6b6b;
+      color: #fff;
+      padding: 10px 28px;
+      border-radius: 60px;
+      font-weight: 700;
+      font-size: 15px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(255,0,0,0.3);
+      transition: .2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .match-actions .btn-end:hover {
+      background: #ff4444;
+      transform: scale(1.03);
+    }
 
     /* ===== ДРУЗЬЯ ===== */
     .friends-page .friends-header {
@@ -1104,7 +1195,7 @@
       margin-top: -2px;
     }
 
-    /* ===== ПРОФИЛЬ (С ДВУМЯ КНОПКАМИ) ===== */
+    /* ===== ПРОФИЛЬ ===== */
     .profile-card {
       background: rgba(20,20,28,0.8);
       backdrop-filter: blur(8px);
@@ -1233,7 +1324,6 @@
       margin-top: 2px;
     }
 
-    /* Две кнопки над динамикой матчей */
     .profile-actions {
       display: flex;
       justify-content: space-between;
@@ -1541,6 +1631,8 @@
       .wallet-page .promo-block { flex-direction: column; align-items: stretch; }
       .profile-actions { flex-direction: column; align-items: stretch; }
       .profile-actions .btn-action { justify-content: center; }
+      .match-page .match-title { font-size: 22px; }
+      .team-block .team-name { font-size: 17px; }
     }
     @media (max-width: 480px) {
       .hero-title { font-size: 24px; }
@@ -1576,6 +1668,11 @@
       .wallet-page .wallet-balance .balance-item .rub-amount { font-size: 24px; }
       .wallet-page .wallet-actions .btn-wallet { font-size: 12px; padding: 8px 16px; }
       .wallet-page .promo-block input { font-size: 12px; }
+      .match-grid { grid-template-columns: 1fr; }
+      .match-page .match-title { font-size: 18px; }
+      .team-block { padding: 12px 10px; }
+      .team-block .team-name { font-size: 15px; }
+      .player-card .info .name { font-size: 12px; }
     }
   </style>
 </head>
@@ -1729,26 +1826,34 @@
           <i class="fas fa-info-circle"></i> Играйте вместе с друзьями в <strong>FACEIT</strong> — введите код друга, чтобы добавить его в пати
         </div>
       </div>
+    </div>
+  </div>
 
-      <div class="match-container" id="matchContainer">
-        <h2><i class="fas fa-swords"></i> Матч начался!</h2>
-        <p class="sub">Команды сформированы. Удачи!</p>
-        <div class="match-grid">
-          <div class="team-card terrorists">
-            <h3><span style="color:#ff6b6b;">🔴</span> Террористы</h3>
-            <div id="teamT"></div>
-          </div>
-          <div class="team-card ct">
-            <h3><span style="color:#51cf66;">🟢</span> Контр-террористы</h3>
-            <div id="teamCT"></div>
-          </div>
-        </div>
-        <div class="match-actions">
-          <button class="btn-hero" onclick="endMatch()" style="background:#ff6b6b; color:#fff; box-shadow:0 0 20px rgba(255,0,0,0.3); padding:8px 20px; font-size:14px;">
-            <i class="fas fa-times"></i> Закончить матч
-          </button>
-        </div>
+  <!-- ===== МАТЧ (НОВЫЙ ДИЗАЙН) ===== -->
+  <div class="page match-page" id="matchPage">
+    <div class="match-title"><i class="fas fa-swords"></i> Матч начался!</div>
+    <p class="match-sub">Команды сформированы. Удачи!</p>
+
+    <div class="match-grid" id="matchGrid">
+      <!-- CT (синяя обводка) -->
+      <div class="team-block ct" id="teamBlockCT">
+        <div class="team-name">🟢 Контр-террористы</div>
+        <div class="team-sub">Капитан: <span id="ctCaptain">—</span></div>
+        <div class="team-players" id="teamCTPlayers"></div>
       </div>
+
+      <!-- Террористы (оранжевая обводка) -->
+      <div class="team-block terrorists" id="teamBlockTerrorists">
+        <div class="team-name">🔴 Террористы</div>
+        <div class="team-sub">Капитан: <span id="tCaptain">—</span></div>
+        <div class="team-players" id="teamTPlayers"></div>
+      </div>
+    </div>
+
+    <div class="match-actions">
+      <button class="btn-end" onclick="endMatch()">
+        <i class="fas fa-times"></i> Закончить матч
+      </button>
     </div>
   </div>
 
@@ -1847,7 +1952,7 @@
     </div>
   </div>
 
-  <!-- ===== ПРОФИЛЬ (С ДВУМЯ КНОПКАМИ) ===== -->
+  <!-- ===== ПРОФИЛЬ ===== -->
   <div class="page" id="pageProfile">
     <div class="profile-card">
       <div class="profile-header">
@@ -1880,7 +1985,6 @@
         <div class="stat-item"><div class="value" id="pMvp">0</div><div class="label">MVP</div></div>
       </div>
 
-      <!-- Две кнопки -->
       <div class="profile-actions">
         <button class="btn-action edit" onclick="showToast('info', 'Редактирование', 'Функция редактирования профиля')">
           <i class="fas fa-edit"></i> Редактировать
@@ -2035,9 +2139,10 @@
     profile: 'pageProfile',
     shop: 'pageShop',
     friends: 'pageFriends',
-    matches: 'pageMatches',
+    matches: 'pageMatches', // поиск матча
     top: 'pageTop',
-    wallet: 'pageWallet'
+    wallet: 'pageWallet',
+    matchPage: 'matchPage'   // страница матча
   };
 
   function navigate(page) {
@@ -2050,6 +2155,7 @@
     if (page === 'home') updateHomeStats();
     if (page === 'friends') renderFriendsPage();
     if (page === 'top') renderTopPage();
+    if (page === 'matchPage') renderMatchPage();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -2224,7 +2330,7 @@
     }
   }
 
-  // ===== МАТЧ =====
+  // ===== МАТЧ (НОВЫЙ ДИЗАЙН) =====
   function startMatch() {
     const shuffled = [...queue];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -2241,33 +2347,59 @@
     document.getElementById('queueBtn').style.display = 'inline-flex';
     document.getElementById('cancelBtn').style.display = 'none';
 
-    navigate('matches');
-    document.getElementById('matchContainer').style.display = 'block';
-    document.querySelector('.search-main-block').style.display = 'none';
-    document.querySelector('.party-block').style.display = 'none';
-    renderMatch();
-    updateQueueUI();
+    // Переходим на страницу матча
+    navigate('matchPage');
+    renderMatchPage();
     showToast('success', 'Матч начался!', `${terrorists.length + ct.length} игроков в игре`);
   }
 
-  function renderMatch() {
+  function renderMatchPage() {
     if (!currentMatch) return;
-    const t = document.getElementById('teamT');
-    const ct = document.getElementById('teamCT');
-    t.innerHTML = currentMatch.terrorists.map(p => `
-      <div class="player"><div class="avatar">${p.username.charAt(0).toUpperCase()}</div><span class="name">${p.username}</span><span class="status"><i class="fas fa-circle"></i> онлайн</span></div>
-    `).join('') || '<p style="color:#888;text-align:center;padding:8px 0;">Нет игроков</p>';
-    ct.innerHTML = currentMatch.ct.map(p => `
-      <div class="player"><div class="avatar">${p.username.charAt(0).toUpperCase()}</div><span class="name">${p.username}</span><span class="status"><i class="fas fa-circle"></i> онлайн</span></div>
-    `).join('') || '<p style="color:#888;text-align:center;padding:8px 0;">Нет игроков</p>';
+
+    // Получаем случайных капитанов из каждой команды
+    const tCaptain = currentMatch.terrorists.length > 0 ? 
+      currentMatch.terrorists[Math.floor(Math.random() * currentMatch.terrorists.length)].username : '—';
+    const ctCaptain = currentMatch.ct.length > 0 ? 
+      currentMatch.ct[Math.floor(Math.random() * currentMatch.ct.length)].username : '—';
+
+    document.getElementById('tCaptain').textContent = tCaptain;
+    document.getElementById('ctCaptain').textContent = ctCaptain;
+
+    const tContainer = document.getElementById('teamTPlayers');
+    const ctContainer = document.getElementById('teamCTPlayers');
+
+    tContainer.innerHTML = currentMatch.terrorists.map(p => {
+      const isCaptain = p.username === tCaptain;
+      return `
+        <div class="player-card">
+          <div class="avatar">${p.username.charAt(0).toUpperCase()}</div>
+          <div class="info">
+            <span class="name">${p.username}${isCaptain ? ' 👑' : ''}</span>
+            <span class="status"><i class="fas fa-circle"></i> онлайн</span>
+          </div>
+          ${isCaptain ? `<span class="captain-badge"><i class="fas fa-crown"></i> КАПИТАН</span>` : ''}
+        </div>
+      `;
+    }).join('') || '<p style="color:#888;text-align:center;padding:8px 0;">Нет игроков</p>';
+
+    ctContainer.innerHTML = currentMatch.ct.map(p => {
+      const isCaptain = p.username === ctCaptain;
+      return `
+        <div class="player-card">
+          <div class="avatar">${p.username.charAt(0).toUpperCase()}</div>
+          <div class="info">
+            <span class="name">${p.username}${isCaptain ? ' 👑' : ''}</span>
+            <span class="status"><i class="fas fa-circle"></i> онлайн</span>
+          </div>
+          ${isCaptain ? `<span class="captain-badge"><i class="fas fa-crown"></i> КАПИТАН</span>` : ''}
+        </div>
+      `;
+    }).join('') || '<p style="color:#888;text-align:center;padding:8px 0;">Нет игроков</p>';
   }
 
   function endMatch() {
     if (!confirm('Завершить матч?')) return;
     currentMatch = null;
-    document.getElementById('matchContainer').style.display = 'none';
-    document.querySelector('.search-main-block').style.display = 'block';
-    document.querySelector('.party-block').style.display = 'block';
     navigate('matches');
     updateQueueUI();
     showToast('info', 'Матч завершён', 'Возврат в поиск');
@@ -2368,16 +2500,6 @@
         </div>
       `;
     }).join('');
-  }
-
-  function sendFriendRequest(id) {
-    const data = getFriendsData();
-    if (data.outgoing.includes(id)) return showToast('info', 'Уже отправлено', 'Запрос уже отправлен');
-    if (data.friends.includes(id)) return showToast('info', 'Уже друзья', 'Этот игрок уже в друзьях');
-    data.outgoing.push(id);
-    saveFriendsData(data);
-    showToast('success', 'Запрос отправлен', 'Запрос в друзья отправлен');
-    renderFriendsPage();
   }
 
   function acceptFriend(id) {
@@ -2592,11 +2714,8 @@
       updateQueueUI();
       updatePartyUI();
       if (currentMatch) {
-        document.getElementById('matchContainer').style.display = 'block';
-        document.querySelector('.search-main-block').style.display = 'none';
-        document.querySelector('.party-block').style.display = 'none';
-        renderMatch();
-        navigate('matches');
+        renderMatchPage();
+        navigate('matchPage');
       } else {
         navigate('home');
       }
