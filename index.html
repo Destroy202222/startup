@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест регистрации Supabase</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0b0b0f;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .box {
+            background: #1a1a24;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 400px;
+            width: 100%;
+            border: 1px solid #333;
+        }
+        .box h1 {
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        .box .sub {
+            text-align: center;
+            color: #888;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+        .box input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            background: #222;
+            border: 1px solid #333;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 16px;
+        }
+        .box input:focus {
+            outline: none;
+            border-color: #ffd700;
+        }
+        .box button {
+            width: 100%;
+            padding: 14px;
+            background: #ffd700;
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+        .box button:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+        .box button.secondary {
+            background: #444;
+            color: #fff;
+        }
+        .box .msg {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+            font-weight: 600;
+        }
+        .box .msg.show {
+            display: block;
+        }
+        .box .msg.success {
+            background: rgba(81, 207, 102, 0.15);
+            color: #51cf66;
+            border: 1px solid rgba(81, 207, 102, 0.2);
+        }
+        .box .msg.error {
+            background: rgba(255, 107, 107, 0.15);
+            color: #ff6b6b;
+            border: 1px solid rgba(255, 107, 107, 0.2);
+        }
+        .box .msg.info {
+            background: rgba(255, 215, 0, 0.1);
+            color: #ffd700;
+            border: 1px solid rgba(255, 215, 0, 0.15);
+        }
+        .box .links {
+            text-align: center;
+            margin-top: 15px;
+            color: #888;
+        }
+        .box .links a {
+            color: #ffd700;
+            cursor: pointer;
+        }
+        .box .links a:hover {
+            text-decoration: underline;
+        }
+        .hidden {
+            display: none !important;
+        }
+        #log {
+            margin-top: 20px;
+            padding: 15px;
+            background: #0a0a12;
+            border-radius: 10px;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            color: #0f0;
+            border: 1px solid #222;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .log-error {
+            color: #ff6b6b !important;
+        }
+        .log-success {
+            color: #51cf66 !important;
+        }
+        .log-info {
+            color: #ffd700 !important;
+        }
+        .log-entry {
+            padding: 2px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+        .welcome {
+            text-align: center;
+            padding: 20px 0;
+        }
+        .welcome .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            color: #000;
+            font-size: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-weight: 900;
+        }
+        .welcome h2 {
+            color: #fff;
+            margin-bottom: 5px;
+        }
+        .welcome p {
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="box" id="app">
+        <h1>⚡ Brawl Stars</h1>
+        <div class="sub">Тест регистрации</div>
+
+        <!-- Форма входа -->
+        <div id="loginBlock">
+            <h2 style="text-align:center;margin-bottom:15px;font-size:18px;">Вход</h2>
+            <input type="text" id="loginUsername" placeholder="Имя пользователя">
+            <input type="password" id="loginPassword" placeholder="Пароль">
+            <button id="loginBtn">Войти</button>
+            <div class="links">
+                <a id="showRegisterLink">Нет аккаунта? Зарегистрироваться</a>
+            </div>
+            <div class="msg" id="loginMsg"></div>
+        </div>
+
+        <!-- Форма регистрации -->
+        <div id="registerBlock" class="hidden">
+            <h2 style="text-align:center;margin-bottom:15px;font-size:18px;">Регистрация</h2>
+            <input type="text" id="regUsername" placeholder="Имя пользователя">
+            <input type="password" id="regPassword" placeholder="Пароль (мин. 8 символов)">
+            <input type="password" id="regPasswordConfirm" placeholder="Подтвердите пароль">
+            <button id="registerBtn">Зарегистрироваться</button>
+            <div class="links">
+                <a id="showLoginLink">Уже есть аккаунт? Войти</a>
+            </div>
+            <div class="msg" id="registerMsg"></div>
+        </div>
+
+        <!-- Блок успеха -->
+        <div id="welcomeBlock" class="hidden">
+            <div class="welcome">
+                <div class="avatar" id="userAvatar">?</div>
+                <h2 id="userName">Игрок</h2>
+                <p>Вы успешно вошли в систему!</p>
+                <button id="logoutBtn" style="background:#ff6b6b;color:#fff;margin-top:15px;">Выйти</button>
+            </div>
+        </div>
+
+        <!-- Лог -->
+        <div id="log">📋 Журнал операций:<br></div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  ТЕСТ РЕГИСТРАЦИИ SUPABASE
+        // ============================================================
+
+        console.log('🚀 СКРИПТ ЗАПУЩЕН!');
+
+        const log = document.getElementById('log');
+
+        function addLog(text, type = 'info') {
+            const time = new Date().toLocaleTimeString();
+            const div = document.createElement('div');
+            div.className = 'log-entry ' + (type === 'error' ? 'log-error' : type === 'success' ? 'log-success' :
+            'log-info');
+            div.textContent = '[' + time + '] ' + text;
+            log.appendChild(div);
+            log.scrollTop = log.scrollHeight;
+            console.log(text);
+        }
+
+        addLog('✅ Скрипт загружен', 'success');
+
+        // ===== SUPABASE =====
+        const supabaseUrl = 'https://txokbboyhytmiurijvyh.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4b2tiYm95aHl0bWl1cmlqdnloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwNzE4MjksImV4cCI6MjEwMDY0NzgyOX0.L5jASUIzGizBBo364mUqmsiWKUAHeVUUvLN4Yuttees';
+
+        addLog('📌 Создаём клиент Supabase...', 'info');
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        addLog('✅ Клиент создан', 'success');
+
+        // ===== ПЕРЕМЕННЫЕ =====
+        let currentUser = null;
+
+        // ============================================================
+        //  ПОКАЗ СООБЩЕНИЯ
+        // ============================================================
+        function showMessage(elementId, text, type) {
+            const el = document.getElementById(elementId);
+            el.textContent = text;
+            el.className = 'msg show ' + type;
+            addLog(text, type);
+        }
+
+        function hideMessage(elementId) {
+            const el = document.getElementById(elementId);
+            el.className = 'msg';
+            el.textContent = '';
+        }
+
+        // ============================================================
+        //  ПЕРЕКЛЮЧЕНИЕ ФОРМ
+        // ============================================================
+        function showRegisterForm() {
+            document.getElementById('loginBlock').classList.add('hidden');
+            document.getElementById('registerBlock').classList.remove('hidden');
+            hideMessage('loginMsg');
+            hideMessage('registerMsg');
+            addLog('🔄 Переключено на регистрацию', 'info');
+        }
+
+        function showLoginForm() {
+            document.getElementById('loginBlock').classList.remove('hidden');
+            document.getElementById('registerBlock').classList.add('hidden');
+            hideMessage('loginMsg');
+            hideMessage('registerMsg');
+            addLog('🔄 Переключено на вход', 'info');
+        }
+
+        // ============================================================
+        //  РЕГИСТРАЦИЯ
+        // ============================================================
+        async function registerUser() {
+            addLog('🔵 РЕГИСТРАЦИЯ: начата', 'info');
+
+            const username = document.getElementById('regUsername').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const confirm = document.getElementById('regPasswordConfirm').value;
+
+            addLog('📝 Имя: "' + username + '"', 'info');
+
+            if (!username || !password || !confirm) {
+                showMessage('registerMsg', '❌ Заполните все поля', 'error');
+                return;
+            }
+            if (password !== confirm) {
+                showMessage('registerMsg', '❌ Пароли не совпадают', 'error');
+                return;
+            }
+            if (password.length < 8) {
+                showMessage('registerMsg', '❌ Пароль минимум 8 символов', 'error');
+                return;
+            }
+
+            showMessage('registerMsg', '⏳ Проверяем данные...', 'info');
+
+            try {
+                // Проверяем, существует ли пользователь
+                addLog('🔍 Проверяем существование пользователя...', 'info');
+                const { data: existing, error: checkError } = await supabase
+                    .from('users')
+                    .select('username')
+                    .eq('username', username)
+                    .maybeSingle();
+
+                if (checkError) {
+                    addLog('❌ Ошибка проверки: ' + checkError.message, 'error');
+                    showMessage('registerMsg', '❌ Ошибка: ' + checkError.message, 'error');
+                    return;
+                }
+
+                if (existing) {
+                    addLog('❌ Пользователь "' + username + '" уже существует', 'error');
+                    showMessage('registerMsg', '❌ Имя пользователя уже занято', 'error');
+                    return;
+                }
+
+                // Создаём пользователя
+                addLog('👤 Создаём пользователя "' + username + '"...', 'info');
+                const { data, error } = await supabase
+                    .from('users')
+                    .insert([{
+                        username: username,
+                        password: password,
+                        reg_date: new Date().toLocaleDateString('ru-RU'),
+                        elo: 0,
+                        wins: 0,
+                        losses: 0,
+                        matches: 0,
+                        mvp: 0,
+                        party_code: 'TEST' + Math.random().toString(36).substring(2, 5).toUpperCase()
+                    }])
+                    .select()
+                    .single();
+
+                if (error) {
+                    addLog('❌ Ошибка создания: ' + error.message, 'error');
+                    showMessage('registerMsg', '❌ Ошибка: ' + error.message, 'error');
+                    return;
+                }
+
+                addLog('✅ УСПЕХ! Пользователь "' + data.username + '" создан!', 'success');
+                showMessage('registerMsg', '✅ Успешно! Добро пожаловать, ' + username, 'success');
+
+                currentUser = data;
+
+                // Показываем экран приветствия
+                setTimeout(function() {
+                    document.getElementById('loginBlock').classList.add('hidden');
+                    document.getElementById('registerBlock').classList.add('hidden');
+                    document.getElementById('welcomeBlock').classList.remove('hidden');
+                    document.getElementById('userName').textContent = currentUser.username;
+                    document.getElementById('userAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
+                    addLog('🎉 Показан экран приветствия', 'success');
+                }, 1500);
+
+            } catch (e) {
+                addLog('❌ Критическая ошибка: ' + e.message, 'error');
+                showMessage('registerMsg', '❌ Ошибка соединения с сервером', 'error');
+            }
+        }
+
+        // ============================================================
+        //  ВХОД
+        // ============================================================
+        async function loginUser() {
+            addLog('🔵 ВХОД: начат', 'info');
+
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            addLog('📝 Имя: "' + username + '"', 'info');
+
+            if (!username || !password) {
+                showMessage('loginMsg', '❌ Заполните все поля', 'error');
+                return;
+            }
+
+            showMessage('loginMsg', '⏳ Ищем пользователя...', 'info');
+
+            try {
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('username', username)
+                    .eq('password', password)
+                    .maybeSingle();
+
+                if (error) {
+                    addLog('❌ Ошибка входа: ' + error.message, 'error');
+                    showMessage('loginMsg', '❌ Ошибка: ' + error.message, 'error');
+                    return;
+                }
+
+                if (!data) {
+                    addLog('❌ Пользователь не найден', 'error');
+                    showMessage('loginMsg', '❌ Неверное имя или пароль', 'error');
+                    return;
+                }
+
+                addLog('✅ УСПЕХ! Найден пользователь: ' + data.username, 'success');
+                showMessage('loginMsg', '✅ Добро пожаловать, ' + username, 'success');
+
+                currentUser = data;
+
+                setTimeout(function() {
+                    document.getElementById('loginBlock').classList.add('hidden');
+                    document.getElementById('registerBlock').classList.add('hidden');
+                    document.getElementById('welcomeBlock').classList.remove('hidden');
+                    document.getElementById('userName').textContent = currentUser.username;
+                    document.getElementById('userAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
+                    addLog('🎉 Показан экран приветствия', 'success');
+                }, 1500);
+
+            } catch (e) {
+                addLog('❌ Критическая ошибка: ' + e.message, 'error');
+                showMessage('loginMsg', '❌ Ошибка соединения с сервером', 'error');
+            }
+        }
+
+        // ============================================================
+        //  ВЫХОД
+        // ============================================================
+        function logoutUser() {
+            addLog('🔴 Выход', 'info');
+            currentUser = null;
+            document.getElementById('loginBlock').classList.remove('hidden');
+            document.getElementById('registerBlock').classList.add('hidden');
+            document.getElementById('welcomeBlock').classList.add('hidden');
+            hideMessage('loginMsg');
+            hideMessage('registerMsg');
+            addLog('✅ Выход выполнен', 'success');
+        }
+
+        // ============================================================
+        //  ПОДКЛЮЧЕНИЕ ОБРАБОТЧИКОВ
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            addLog('📌 DOM загружен, подключаем обработчики...', 'info');
+
+            // Регистрация
+            const registerBtn = document.getElementById('registerBtn');
+            if (registerBtn) {
+                registerBtn.onclick = registerUser;
+                addLog('✅ Кнопка регистрации подключена', 'success');
+            } else {
+                addLog('❌ Кнопка registerBtn не найдена!', 'error');
+            }
+
+            // Вход
+            const loginBtn = document.getElementById('loginBtn');
+            if (loginBtn) {
+                loginBtn.onclick = loginUser;
+                addLog('✅ Кнопка входа подключена', 'success');
+            } else {
+                addLog('❌ Кнопка loginBtn не найдена!', 'error');
+            }
+
+            // Переключение на регистрацию
+            const showRegisterLink = document.getElementById('showRegisterLink');
+            if (showRegisterLink) {
+                showRegisterLink.onclick = function(e) {
+                    e.preventDefault();
+                    showRegisterForm();
+                };
+                addLog('✅ Ссылка на регистрацию подключена', 'success');
+            }
+
+            // Переключение на вход
+            const showLoginLink = document.getElementById('showLoginLink');
+            if (showLoginLink) {
+                showLoginLink.onclick = function(e) {
+                    e.preventDefault();
+                    showLoginForm();
+                };
+                addLog('✅ Ссылка на вход подключена', 'success');
+            }
+
+            // Выход
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.onclick = logoutUser;
+                addLog('✅ Кнопка выхода подключена', 'success');
+            }
+
+            addLog('✅ ВСЕ ОБРАБОТЧИКИ ПОДКЛЮЧЕНЫ!', 'success');
+            addLog('📌 Попробуйте зарегистрироваться!', 'info');
+        });
+    </script>
+
+</body>
+</html>
