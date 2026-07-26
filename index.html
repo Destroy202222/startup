@@ -832,6 +832,8 @@
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
+      min-height: 40px;
+      align-items: center;
     }
     .ban-btn {
       background: rgba(255,255,255,0.05);
@@ -849,6 +851,11 @@
       text-align: center;
       position: relative;
       overflow: hidden;
+      animation: btnAppear 0.3s ease;
+    }
+    @keyframes btnAppear {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
     }
     .ban-btn::before {
       content: '';
@@ -869,25 +876,20 @@
       color: #fff;
       transform: translateY(-1px);
     }
+
+    /* Кнопка исчезает при бане */
     .ban-btn.banned {
-      background: rgba(255, 60, 60, 0.12);
-      border-color: rgba(255, 60, 60, 0.25);
-      color: #ff6b6b;
-      text-decoration: line-through;
-      cursor: not-allowed;
-      opacity: 0.6;
+      display: none !important;
     }
-    .ban-btn.banned::after {
-      content: ' ✕';
-      color: #ff6b6b;
-      font-weight: 700;
-    }
+
     .ban-btn.selected {
       background: rgba(81, 207, 102, 0.12);
       border-color: rgba(81, 207, 102, 0.3);
       color: #51cf66;
       cursor: default;
       box-shadow: 0 0 20px rgba(81, 207, 102, 0.05);
+      flex: 1;
+      min-width: 60px;
     }
     .ban-btn.selected::after {
       content: ' ✓';
@@ -929,6 +931,15 @@
     }
     .ban-section.maps-section .ban-title i {
       color: #3498db;
+    }
+
+    /* Список забаненных (отображается, когда нет кнопок) */
+    .ban-empty {
+      color: #555;
+      font-size: 13px;
+      padding: 6px 0;
+      width: 100%;
+      text-align: center;
     }
 
     .match-actions {
@@ -2658,21 +2669,24 @@
     document.getElementById('matchSelectedMap').textContent = state.mapFinal || '—';
     document.getElementById('matchSelectedRounds').textContent = state.roundsFinal || '—';
 
-    // Раунды
+    // Раунды - обновляем кнопки (удаляем забаненные)
     const roundsContainer = document.getElementById('roundsBanContainer');
-    const roundsBtns = roundsContainer.querySelectorAll('.ban-btn');
-    roundsBtns.forEach(btn => {
+    // Оставляем только те кнопки, которые не забанены и не выбраны
+    const roundBtns = roundsContainer.querySelectorAll('.ban-btn');
+    roundBtns.forEach(btn => {
       const val = btn.dataset.value;
-      btn.classList.remove('banned', 'selected');
-      btn.disabled = false;
       if (state.roundsBanned.includes(val)) {
         btn.classList.add('banned');
-        btn.disabled = true;
+        btn.style.display = 'none';
       } else if (state.roundsFinal === val) {
         btn.classList.add('selected');
         btn.disabled = true;
       } else if (state.isComplete || state.turn !== 'rounds') {
         btn.disabled = true;
+      } else {
+        btn.classList.remove('banned', 'selected');
+        btn.style.display = '';
+        btn.disabled = false;
       }
     });
 
@@ -2692,21 +2706,23 @@
     }
     document.getElementById('roundsTurnName').textContent = state.turn === 'rounds' && !state.isComplete ? getCaptainName(state.currentCaptain) : '—';
 
-    // Карты
+    // Карты - обновляем кнопки (удаляем забаненные)
     const mapsContainer = document.getElementById('mapsBanContainer');
-    const mapsBtns = mapsContainer.querySelectorAll('.ban-btn');
-    mapsBtns.forEach(btn => {
+    const mapBtns = mapsContainer.querySelectorAll('.ban-btn');
+    mapBtns.forEach(btn => {
       const val = btn.dataset.value;
-      btn.classList.remove('banned', 'selected');
-      btn.disabled = false;
       if (state.mapBanned.includes(val)) {
         btn.classList.add('banned');
-        btn.disabled = true;
+        btn.style.display = 'none';
       } else if (state.mapFinal === val) {
         btn.classList.add('selected');
         btn.disabled = true;
       } else if (state.isComplete || state.turn !== 'maps') {
         btn.disabled = true;
+      } else {
+        btn.classList.remove('banned', 'selected');
+        btn.style.display = '';
+        btn.disabled = false;
       }
     });
 
