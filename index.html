@@ -635,101 +635,7 @@
       color: #ff7b00;
     }
 
-    /* БАНЫ */
-    .ban-section {
-      background: rgba(20, 20, 28, 0.6);
-      backdrop-filter: blur(8px);
-      border-radius: 14px;
-      padding: 14px 18px;
-      margin-bottom: 14px;
-      border: 1px solid rgba(255,255,255,0.04);
-    }
-    .ban-section .ban-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .ban-section .ban-title i {
-      color: #ff7b00;
-    }
-    .ban-section .ban-title .turn {
-      font-size: 12px;
-      font-weight: 400;
-      color: #888;
-      margin-left: auto;
-    }
-    .ban-section .ban-title .turn span {
-      color: #ff7b00;
-      font-weight: 600;
-    }
-    .ban-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .ban-btn {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: #ddd;
-      padding: 6px 18px;
-      border-radius: 30px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: inherit;
-    }
-    .ban-btn:hover:not(.banned):not(.selected) {
-      background: rgba(255,123,0,0.15);
-      border-color: rgba(255,123,0,0.3);
-      color: #fff;
-    }
-    .ban-btn.banned {
-      background: rgba(255, 60, 60, 0.15);
-      border-color: rgba(255, 60, 60, 0.3);
-      color: #ff6b6b;
-      text-decoration: line-through;
-      cursor: not-allowed;
-      opacity: 0.7;
-    }
-    .ban-btn.selected {
-      background: rgba(81, 207, 102, 0.15);
-      border-color: rgba(81, 207, 102, 0.3);
-      color: #51cf66;
-      cursor: default;
-    }
-    .ban-btn:disabled {
-      cursor: not-allowed;
-      opacity: 0.5;
-    }
-    .ban-btn:disabled:hover {
-      background: rgba(255,255,255,0.06);
-      border-color: rgba(255,255,255,0.08);
-      color: #ddd;
-    }
-
-    .ban-status {
-      font-size: 12px;
-      color: #888;
-      margin-top: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 4px;
-    }
-    .ban-status .left {
-      color: #aaa;
-    }
-    .ban-status .left span {
-      color: #ff7b00;
-      font-weight: 700;
-    }
-
+    /* КОМАНДЫ */
     .match-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -846,9 +752,191 @@
       flex-shrink: 0;
     }
 
+    /* ===== БАНЫ (КРАСИВЫЕ И СНИЗУ) ===== */
+    .bans-container {
+      max-width: 900px;
+      margin: 0 auto 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .ban-section {
+      background: rgba(20, 20, 28, 0.7);
+      backdrop-filter: blur(8px);
+      border-radius: 14px;
+      padding: 16px 18px 14px;
+      border: 1px solid rgba(255,255,255,0.06);
+      transition: all 0.3s ease;
+    }
+    .ban-section:hover {
+      border-color: rgba(255,123,0,0.15);
+    }
+
+    .ban-section .ban-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .ban-section .ban-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ban-section .ban-title i {
+      color: #ff7b00;
+      font-size: 16px;
+    }
+    .ban-section .ban-title .turn {
+      font-size: 11px;
+      font-weight: 400;
+      color: #888;
+    }
+    .ban-section .ban-title .turn span {
+      color: #ff7b00;
+      font-weight: 600;
+    }
+
+    .ban-section .ban-status {
+      font-size: 11px;
+      color: #888;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255,255,255,0.04);
+    }
+    .ban-section .ban-status .left {
+      color: #aaa;
+    }
+    .ban-section .ban-status .left span {
+      color: #ff7b00;
+      font-weight: 700;
+    }
+    .ban-section .ban-status .status-text {
+      color: #ff7b00;
+      font-weight: 600;
+    }
+    .ban-section .ban-status .status-text.done {
+      color: #51cf66;
+    }
+
+    .ban-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .ban-btn {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #ccc;
+      padding: 6px 16px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-family: inherit;
+      flex: 1;
+      min-width: 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .ban-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255,123,0,0.1), rgba(255,123,0,0));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .ban-btn:hover:not(.banned):not(.selected):not(:disabled)::before {
+      opacity: 1;
+    }
+    .ban-btn:hover:not(.banned):not(.selected):not(:disabled) {
+      border-color: rgba(255,123,0,0.3);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+    .ban-btn.banned {
+      background: rgba(255, 60, 60, 0.12);
+      border-color: rgba(255, 60, 60, 0.25);
+      color: #ff6b6b;
+      text-decoration: line-through;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+    .ban-btn.banned::after {
+      content: ' ✕';
+      color: #ff6b6b;
+      font-weight: 700;
+    }
+    .ban-btn.selected {
+      background: rgba(81, 207, 102, 0.12);
+      border-color: rgba(81, 207, 102, 0.3);
+      color: #51cf66;
+      cursor: default;
+      box-shadow: 0 0 20px rgba(81, 207, 102, 0.05);
+    }
+    .ban-btn.selected::after {
+      content: ' ✓';
+      color: #51cf66;
+      font-weight: 700;
+    }
+    .ban-btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.4;
+    }
+    .ban-btn:disabled:hover {
+      border-color: rgba(255,255,255,0.08);
+      color: #ccc;
+      transform: none;
+    }
+    .ban-btn:disabled:hover::before {
+      opacity: 0;
+    }
+
+    .ban-btn.round-btn {
+      background: rgba(255, 123, 0, 0.04);
+      border-color: rgba(255, 123, 0, 0.1);
+    }
+    .ban-btn.round-btn:hover:not(.banned):not(.selected):not(:disabled) {
+      background: rgba(255, 123, 0, 0.08);
+      border-color: rgba(255, 123, 0, 0.25);
+    }
+    .ban-btn.map-btn {
+      background: rgba(52, 152, 219, 0.04);
+      border-color: rgba(52, 152, 219, 0.1);
+    }
+    .ban-btn.map-btn:hover:not(.banned):not(.selected):not(:disabled) {
+      background: rgba(52, 152, 219, 0.08);
+      border-color: rgba(52, 152, 219, 0.25);
+    }
+
+    .ban-section.rounds-section .ban-title i {
+      color: #ff7b00;
+    }
+    .ban-section.maps-section .ban-title i {
+      color: #3498db;
+    }
+
     .match-actions {
       text-align: center;
       margin-top: 6px;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
     }
     .match-actions .btn-end {
       background: #ff6b6b;
@@ -865,11 +953,10 @@
       align-items: center;
       gap: 6px;
     }
-    .match-actions .btn-end:hover {
+    .match-actions .btn-end:hover:not(:disabled) {
       background: #ff4444;
       transform: scale(1.03);
     }
-
     .match-actions .btn-end:disabled {
       opacity: 0.5;
       cursor: not-allowed;
@@ -1742,6 +1829,7 @@
       .profile-info .details { justify-content: center; }
       .profile-stats { grid-template-columns: 1fr 1fr; }
       .match-grid { grid-template-columns: 1fr; }
+      .bans-container { grid-template-columns: 1fr; }
       .search-header-block { padding: 16px 18px; }
       .search-header-block .search-title { font-size: 24px; }
       .search-main-block { padding: 18px 14px; }
@@ -1803,12 +1891,15 @@
       .wallet-page .wallet-actions .btn-wallet { font-size: 12px; padding: 8px 16px; }
       .wallet-page .promo-block input { font-size: 12px; }
       .match-grid { grid-template-columns: 1fr; }
+      .bans-container { grid-template-columns: 1fr; }
       .match-page .match-title { font-size: 18px; }
       .team-block { padding: 10px 8px; }
       .team-block .team-name { font-size: 13px; }
       .player-card .info .name { font-size: 12px; }
       .match-info-bar { flex-direction: column; align-items: stretch; text-align: center; gap: 6px; }
       .match-info-bar .info-item { justify-content: center; font-size: 12px; }
+      .ban-section { padding: 12px 14px; }
+      .ban-btn { font-size: 11px; padding: 5px 12px; min-width: 50px; }
     }
   </style>
 </head>
@@ -1983,55 +2074,60 @@
       </div>
     </div>
 
-    <!-- Бан раундов -->
-    <div class="ban-section" id="roundsBanSection">
-      <div class="ban-title">
-        <i class="fas fa-hourglass-half"></i> Бан раундов
-        <span class="turn">Ход: <span id="roundsTurnName">Капитан 1</span></span>
-      </div>
-      <div class="ban-buttons" id="roundsBanContainer">
-        <button class="ban-btn" data-value="10">10 раундов</button>
-        <button class="ban-btn" data-value="13">13 раундов</button>
-        <button class="ban-btn" data-value="16">16 раундов</button>
-      </div>
-      <div class="ban-status">
-        <span class="left">Осталось: <span id="roundsLeft">3</span></span>
-        <span id="roundsStatus">Выберите раунды</span>
-      </div>
-    </div>
-
-    <!-- Бан карт -->
-    <div class="ban-section" id="mapsBanSection">
-      <div class="ban-title">
-        <i class="fas fa-map-marked-alt"></i> Бан карт
-        <span class="turn">Ход: <span id="mapsTurnName">Капитан 1</span></span>
-      </div>
-      <div class="ban-buttons" id="mapsBanContainer">
-        <button class="ban-btn" data-value="Dust II">Dust II</button>
-        <button class="ban-btn" data-value="Mirage">Mirage</button>
-        <button class="ban-btn" data-value="Inferno">Inferno</button>
-        <button class="ban-btn" data-value="Nuke">Nuke</button>
-        <button class="ban-btn" data-value="Overpass">Overpass</button>
-        <button class="ban-btn" data-value="Vertigo">Vertigo</button>
-        <button class="ban-btn" data-value="Ancient">Ancient</button>
-      </div>
-      <div class="ban-status">
-        <span class="left">Осталось: <span id="mapsLeft">7</span></span>
-        <span id="mapsStatus">Выберите карты</span>
-      </div>
-    </div>
-
+    <!-- КОМАНДЫ -->
     <div class="match-grid" id="matchGrid">
-      <!-- CT — синяя обводка и прозрачный синий фон -->
       <div class="team-block ct" id="teamBlockCT">
         <div class="team-name">COUNTER-TERRORIST</div>
         <div class="team-players" id="teamCTPlayers"></div>
       </div>
-
-      <!-- Террористы — оранжевая обводка и прозрачный оранжевый фон -->
       <div class="team-block terrorists" id="teamBlockTerrorists">
         <div class="team-name">TERRORIST</div>
         <div class="team-players" id="teamTPlayers"></div>
+      </div>
+    </div>
+
+    <!-- БАНЫ (СНИЗУ, КРАСИВЫЕ) -->
+    <div class="bans-container" id="bansContainer">
+      <!-- Бан раундов -->
+      <div class="ban-section rounds-section" id="roundsBanSection">
+        <div class="ban-header">
+          <div class="ban-title">
+            <i class="fas fa-hourglass-half"></i> Бан раундов
+            <span class="turn">Ход: <span id="roundsTurnName">Капитан 1</span></span>
+          </div>
+        </div>
+        <div class="ban-buttons" id="roundsBanContainer">
+          <button class="ban-btn round-btn" data-value="10">10</button>
+          <button class="ban-btn round-btn" data-value="13">13</button>
+          <button class="ban-btn round-btn" data-value="16">16</button>
+        </div>
+        <div class="ban-status">
+          <span class="left">Осталось: <span id="roundsLeft">3</span></span>
+          <span class="status-text" id="roundsStatus">Выберите раунды</span>
+        </div>
+      </div>
+
+      <!-- Бан карт -->
+      <div class="ban-section maps-section" id="mapsBanSection">
+        <div class="ban-header">
+          <div class="ban-title">
+            <i class="fas fa-map-marked-alt"></i> Бан карт
+            <span class="turn">Ход: <span id="mapsTurnName">Капитан 1</span></span>
+          </div>
+        </div>
+        <div class="ban-buttons" id="mapsBanContainer">
+          <button class="ban-btn map-btn" data-value="Dust II">Dust II</button>
+          <button class="ban-btn map-btn" data-value="Mirage">Mirage</button>
+          <button class="ban-btn map-btn" data-value="Inferno">Inferno</button>
+          <button class="ban-btn map-btn" data-value="Nuke">Nuke</button>
+          <button class="ban-btn map-btn" data-value="Overpass">Overpass</button>
+          <button class="ban-btn map-btn" data-value="Vertigo">Vertigo</button>
+          <button class="ban-btn map-btn" data-value="Ancient">Ancient</button>
+        </div>
+        <div class="ban-status">
+          <span class="left">Осталось: <span id="mapsLeft">7</span></span>
+          <span class="status-text" id="mapsStatus">Выберите карты</span>
+        </div>
       </div>
     </div>
 
@@ -2224,17 +2320,14 @@
   // Состояние драфта
   let draftState = {
     gameNumber: 1,
-    // Раунды
     roundsOptions: ['10', '13', '16'],
     roundsBanned: [],
     roundsFinal: null,
-    // Карты
     mapOptions: ['Dust II', 'Mirage', 'Inferno', 'Nuke', 'Overpass', 'Vertigo', 'Ancient'],
     mapBanned: [],
     mapFinal: null,
-    // Ходы
-    turn: 'rounds', // 'rounds' | 'maps'
-    currentCaptain: 0, // 0 - первый капитан, 1 - второй
+    turn: 'rounds',
+    currentCaptain: 0,
     isComplete: false
   };
 
@@ -2586,14 +2679,18 @@
     const availableRounds = state.roundsOptions.filter(v => !state.roundsBanned.includes(v) && v !== state.roundsFinal);
     document.getElementById('roundsLeft').textContent = availableRounds.length;
 
+    const roundsStatus = document.getElementById('roundsStatus');
     if (state.roundsFinal) {
-      document.getElementById('roundsStatus').textContent = '✅ Выбрано: ' + state.roundsFinal + ' раундов';
+      roundsStatus.textContent = '✅ ' + state.roundsFinal + ' раундов';
+      roundsStatus.className = 'status-text done';
     } else if (state.turn === 'rounds' && !state.isComplete) {
-      document.getElementById('roundsStatus').textContent = 'Ход: ' + getCaptainName(state.currentCaptain);
+      roundsStatus.textContent = 'Ход: ' + getCaptainName(state.currentCaptain);
+      roundsStatus.className = 'status-text';
     } else {
-      document.getElementById('roundsStatus').textContent = 'Ожидание...';
+      roundsStatus.textContent = 'Ожидание...';
+      roundsStatus.className = 'status-text';
     }
-    document.getElementById('roundsTurnName').textContent = state.turn === 'rounds' ? getCaptainName(state.currentCaptain) : '—';
+    document.getElementById('roundsTurnName').textContent = state.turn === 'rounds' && !state.isComplete ? getCaptainName(state.currentCaptain) : '—';
 
     // Карты
     const mapsContainer = document.getElementById('mapsBanContainer');
@@ -2616,27 +2713,28 @@
     const availableMaps = state.mapOptions.filter(v => !state.mapBanned.includes(v) && v !== state.mapFinal);
     document.getElementById('mapsLeft').textContent = availableMaps.length;
 
+    const mapsStatus = document.getElementById('mapsStatus');
     if (state.mapFinal) {
-      document.getElementById('mapsStatus').textContent = '✅ Выбрана: ' + state.mapFinal;
+      mapsStatus.textContent = '✅ ' + state.mapFinal;
+      mapsStatus.className = 'status-text done';
     } else if (state.turn === 'maps' && !state.isComplete) {
-      document.getElementById('mapsStatus').textContent = 'Ход: ' + getCaptainName(state.currentCaptain);
+      mapsStatus.textContent = 'Ход: ' + getCaptainName(state.currentCaptain);
+      mapsStatus.className = 'status-text';
     } else {
-      document.getElementById('mapsStatus').textContent = 'Ожидание...';
+      mapsStatus.textContent = 'Ожидание...';
+      mapsStatus.className = 'status-text';
     }
-    document.getElementById('mapsTurnName').textContent = state.turn === 'maps' ? getCaptainName(state.currentCaptain) : '—';
+    document.getElementById('mapsTurnName').textContent = state.turn === 'maps' && !state.isComplete ? getCaptainName(state.currentCaptain) : '—';
 
     // Кнопка завершения матча
     document.getElementById('endMatchBtn').disabled = !state.isComplete;
 
-    // Скрываем баны после завершения
-    const roundsSection = document.getElementById('roundsBanSection');
-    const mapsSection = document.getElementById('mapsBanSection');
+    // Скрываем/показываем баны
+    const bansContainer = document.getElementById('bansContainer');
     if (state.isComplete) {
-      roundsSection.style.display = 'none';
-      mapsSection.style.display = 'none';
+      bansContainer.style.display = 'none';
     } else {
-      roundsSection.style.display = 'block';
-      mapsSection.style.display = 'block';
+      bansContainer.style.display = 'grid';
     }
   }
 
@@ -2702,7 +2800,6 @@
     document.getElementById('queueBtn').style.display = 'inline-flex';
     document.getElementById('cancelBtn').style.display = 'none';
 
-    // Сброс драфта для нового матча
     draftState.gameNumber = (draftState.gameNumber || 0) + 1;
     resetDraft();
 
@@ -2714,13 +2811,11 @@
   function renderMatchPage() {
     if (!currentMatch) return;
 
-    // Определяем капитанов (первый игрок в каждой команде становится капитаном)
     const tCaptain = currentMatch.terrorists.length > 0 ? 
       currentMatch.terrorists[0].username : null;
     const ctCaptain = currentMatch.ct.length > 0 ? 
       currentMatch.ct[0].username : null;
 
-    // Сортируем игроков: капитан первый, остальные по порядку
     const sortedTerrorists = [...currentMatch.terrorists].sort((a, b) => {
       if (a.username === tCaptain) return -1;
       if (b.username === tCaptain) return 1;
@@ -2761,7 +2856,6 @@
       `;
     }).join('') || '<p style="color:#888;text-align:center;padding:8px 0;font-size:13px;">Нет игроков</p>';
 
-    // Обновляем драфт UI
     renderDraftUI();
   }
 
@@ -3078,7 +3172,6 @@
 
   // ===== ОБРАБОТЧИКИ ДЛЯ БАНОВ =====
   document.addEventListener('DOMContentLoaded', function() {
-    // Обработчики для бана раундов
     document.getElementById('roundsBanContainer').addEventListener('click', function(e) {
       const btn = e.target.closest('.ban-btn');
       if (!btn) return;
@@ -3087,7 +3180,6 @@
       handleRoundsBan(value);
     });
 
-    // Обработчики для бана карт
     document.getElementById('mapsBanContainer').addEventListener('click', function(e) {
       const btn = e.target.closest('.ban-btn');
       if (!btn) return;
