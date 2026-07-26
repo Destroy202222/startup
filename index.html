@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Brawl Stars 3v3</title>
+  <title>Brawl Stars</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
@@ -757,7 +757,7 @@
       max-width: 900px;
       margin: 0 auto 16px;
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 16px;
     }
 
@@ -908,14 +908,6 @@
       opacity: 0;
     }
 
-    .ban-btn.round-btn {
-      background: rgba(255, 215, 0, 0.04);
-      border-color: rgba(255, 215, 0, 0.1);
-    }
-    .ban-btn.round-btn:hover:not(.banned):not(.selected):not(:disabled) {
-      background: rgba(255, 215, 0, 0.08);
-      border-color: rgba(255, 215, 0, 0.25);
-    }
     .ban-btn.mode-btn {
       background: rgba(52, 152, 219, 0.04);
       border-color: rgba(52, 152, 219, 0.1);
@@ -925,9 +917,6 @@
       border-color: rgba(52, 152, 219, 0.25);
     }
 
-    .ban-section.rounds-section .ban-title i {
-      color: #ffd700;
-    }
     .ban-section.modes-section .ban-title i {
       color: #3498db;
     }
@@ -1920,7 +1909,7 @@
 <!-- ===== АВТОРИЗАЦИЯ ===== -->
 <div class="auth-page" id="authPage">
   <div class="auth-box">
-    <h1>⚡ Brawl Stars 3v3</h1>
+    <h1>⚡ Brawl Stars</h1>
     <div class="sub">Brawl Stars | Platform</div>
     <div id="loginForm">
       <h2>Вход</h2>
@@ -1944,7 +1933,7 @@
 <div class="main-wrapper" id="mainSite" style="display:none;">
   <header class="header" onclick="navigate('home')">
     <div class="logo">
-      <h1>⚡ Brawl Stars <span class="badge">3v3</span><span class="sub">✦ Matchmaking Brawl Stars ✦</span></h1>
+      <h1>⚡ Brawl Stars</h1>
     </div>
   </header>
 
@@ -2019,7 +2008,7 @@
             <i class="fas fa-times"></i> Отменить поиск
           </button>
         </div>
-        <div class="search-type">Одиночный поиск матча 3v3.</div>
+        <div class="search-type">Одиночный поиск матча.</div>
 
         <div class="search-counters" id="searchCounters">
           <div class="search-counter">
@@ -2074,10 +2063,6 @@
         <i class="fas fa-gamepad"></i>
         Режим: <span class="value" id="matchSelectedMode">—</span>
       </div>
-      <div class="info-item">
-        <i class="fas fa-clock"></i>
-        Кол-во раундов: <span class="value" id="matchSelectedRounds">—</span>
-      </div>
     </div>
 
     <!-- КОМАНДЫ -->
@@ -2094,25 +2079,6 @@
 
     <!-- БАНЫ (СНИЗУ, КРАСИВЫЕ) -->
     <div class="bans-container" id="bansContainer">
-      <!-- Бан раундов -->
-      <div class="ban-section rounds-section" id="roundsBanSection">
-        <div class="ban-header">
-          <div class="ban-title">
-            <i class="fas fa-hourglass-half"></i> Бан раундов
-            <span class="turn">Ход: <span id="roundsTurnName">Капитан 1</span></span>
-          </div>
-        </div>
-        <div class="ban-buttons" id="roundsBanContainer">
-          <button class="ban-btn round-btn" data-value="10">10</button>
-          <button class="ban-btn round-btn" data-value="13">13</button>
-          <button class="ban-btn round-btn" data-value="16">16</button>
-        </div>
-        <div class="ban-status">
-          <span class="left">Осталось: <span id="roundsLeft">3</span></span>
-          <span class="status-text" id="roundsStatus">Выберите раунды</span>
-        </div>
-      </div>
-
       <!-- Бан режимов (вместо карт) -->
       <div class="ban-section modes-section" id="modesBanSection">
         <div class="ban-header">
@@ -2328,13 +2294,9 @@
   // Состояние драфта
   let draftState = {
     gameNumber: 1,
-    roundsOptions: ['10', '13', '16'],
-    roundsBanned: [],
-    roundsFinal: null,
     modeOptions: ['Gem Grab', 'Brawl Ball', 'Knockout', 'Heist', 'Bounty', 'Hot Zone', 'Siege'],
     modeBanned: [],
     modeFinal: null,
-    turn: 'rounds',
     currentCaptain: 0,
     isComplete: false
   };
@@ -2633,13 +2595,9 @@
   function resetDraft() {
     draftState = {
       gameNumber: draftState.gameNumber + 1,
-      roundsOptions: ['10', '13', '16'],
-      roundsBanned: [],
-      roundsFinal: null,
       modeOptions: ['Gem Grab', 'Brawl Ball', 'Knockout', 'Heist', 'Bounty', 'Hot Zone', 'Siege'],
       modeBanned: [],
       modeFinal: null,
-      turn: 'rounds',
       currentCaptain: 0,
       isComplete: false
     };
@@ -2659,42 +2617,6 @@
 
     document.getElementById('matchGameNumber').textContent = '#' + state.gameNumber;
     document.getElementById('matchSelectedMode').textContent = state.modeFinal || '—';
-    document.getElementById('matchSelectedRounds').textContent = state.roundsFinal || '—';
-
-    const roundsContainer = document.getElementById('roundsBanContainer');
-    const roundBtns = roundsContainer.querySelectorAll('.ban-btn');
-    roundBtns.forEach(btn => {
-      const val = btn.dataset.value;
-      if (state.roundsBanned.includes(val)) {
-        btn.classList.add('banned');
-        btn.style.display = 'none';
-      } else if (state.roundsFinal === val) {
-        btn.classList.add('selected');
-        btn.disabled = true;
-      } else if (state.isComplete || state.turn !== 'rounds') {
-        btn.disabled = true;
-      } else {
-        btn.classList.remove('banned', 'selected');
-        btn.style.display = '';
-        btn.disabled = false;
-      }
-    });
-
-    const availableRounds = state.roundsOptions.filter(v => !state.roundsBanned.includes(v) && v !== state.roundsFinal);
-    document.getElementById('roundsLeft').textContent = availableRounds.length;
-
-    const roundsStatus = document.getElementById('roundsStatus');
-    if (state.roundsFinal) {
-      roundsStatus.textContent = '✅ ' + state.roundsFinal + ' раундов';
-      roundsStatus.className = 'status-text done';
-    } else if (state.turn === 'rounds' && !state.isComplete) {
-      roundsStatus.textContent = 'Ход: ' + getCaptainName(state.currentCaptain);
-      roundsStatus.className = 'status-text';
-    } else {
-      roundsStatus.textContent = 'Ожидание...';
-      roundsStatus.className = 'status-text';
-    }
-    document.getElementById('roundsTurnName').textContent = state.turn === 'rounds' && !state.isComplete ? getCaptainName(state.currentCaptain) : '—';
 
     const modesContainer = document.getElementById('modesBanContainer');
     const modeBtns = modesContainer.querySelectorAll('.ban-btn');
@@ -2706,7 +2628,7 @@
       } else if (state.modeFinal === val) {
         btn.classList.add('selected');
         btn.disabled = true;
-      } else if (state.isComplete || state.turn !== 'modes') {
+      } else if (state.isComplete) {
         btn.disabled = true;
       } else {
         btn.classList.remove('banned', 'selected');
@@ -2722,14 +2644,14 @@
     if (state.modeFinal) {
       modesStatus.textContent = '✅ ' + state.modeFinal;
       modesStatus.className = 'status-text done';
-    } else if (state.turn === 'modes' && !state.isComplete) {
+    } else if (!state.isComplete) {
       modesStatus.textContent = 'Ход: ' + getCaptainName(state.currentCaptain);
       modesStatus.className = 'status-text';
     } else {
       modesStatus.textContent = 'Ожидание...';
       modesStatus.className = 'status-text';
     }
-    document.getElementById('modesTurnName').textContent = state.turn === 'modes' && !state.isComplete ? getCaptainName(state.currentCaptain) : '—';
+    document.getElementById('modesTurnName').textContent = !state.isComplete ? getCaptainName(state.currentCaptain) : '—';
 
     document.getElementById('endMatchBtn').disabled = !state.isComplete;
 
@@ -2741,33 +2663,9 @@
     }
   }
 
-  function handleRoundsBan(value) {
-    const state = draftState;
-    if (state.isComplete) return;
-    if (state.turn !== 'rounds') return;
-    if (state.roundsBanned.includes(value)) return;
-    if (state.roundsFinal) return;
-
-    state.roundsBanned.push(value);
-
-    const available = state.roundsOptions.filter(v => !state.roundsBanned.includes(v));
-    if (available.length === 1) {
-      state.roundsFinal = available[0];
-      state.turn = 'modes';
-      state.currentCaptain = 0;
-      renderDraftUI();
-      showToast('info', 'Раунды выбраны!', 'Играем ' + state.roundsFinal + ' раундов');
-      return;
-    }
-
-    state.currentCaptain = state.currentCaptain === 0 ? 1 : 0;
-    renderDraftUI();
-  }
-
   function handleModesBan(value) {
     const state = draftState;
     if (state.isComplete) return;
-    if (state.turn !== 'modes') return;
     if (state.modeBanned.includes(value)) return;
     if (state.modeFinal) return;
 
@@ -2865,7 +2763,7 @@
   function endMatch() {
     if (!currentMatch) return;
     if (!draftState.isComplete) {
-      showToast('info', 'Дождитесь драфта', 'Сначала завершите выбор раундов и режима');
+      showToast('info', 'Дождитесь драфта', 'Сначала завершите выбор режима');
       return;
     }
     if (!confirm('Завершить матч?')) return;
@@ -3183,14 +3081,6 @@
 
   // ===== ОБРАБОТЧИКИ ДЛЯ БАНОВ =====
   document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('roundsBanContainer').addEventListener('click', function(e) {
-      const btn = e.target.closest('.ban-btn');
-      if (!btn) return;
-      if (btn.classList.contains('banned') || btn.classList.contains('selected')) return;
-      const value = btn.dataset.value;
-      handleRoundsBan(value);
-    });
-
     document.getElementById('modesBanContainer').addEventListener('click', function(e) {
       const btn = e.target.closest('.ban-btn');
       if (!btn) return;
@@ -3233,7 +3123,6 @@
   document.addEventListener('DOMContentLoaded', function() {
     let users = getUsers();
     if (users.length === 0) {
-      // Пустой массив пользователей - все счётчики по 0
       users = [];
       saveUsers(users);
     }
