@@ -1,656 +1,1270 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Brawl Stars</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-    </script>
-    <style>
-        /* ... ВЕСЬ ВАШ CSS КОД ... */
-        /* (оставьте ваш существующий CSS без изменений) */
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Brawl Stars</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+  </script>
+  <style>
+    /* ... ВЕСЬ ВАШ CSS КОД ОСТАЁТСЯ БЕЗ ИЗМЕНЕНИЙ ... */
+    /* (скопируйте ваш CSS сюда) */
+  </style>
 </head>
 <body>
 
-    <!-- ===== ТОСТ ===== -->
-    <div class="toast" id="toast">
-        <div class="ttl" id="toastTitle">Успешно</div>
-        <div class="txt" id="toastText">Действие выполнено</div>
+<!-- ===== ТОСТ ===== -->
+<div class="toast" id="toast">
+  <div class="ttl" id="toastTitle">Успешно</div>
+  <div class="txt" id="toastText">Действие выполнено</div>
+</div>
+
+<!-- ===== АВТОРИЗАЦИЯ ===== -->
+<div class="auth-page" id="authPage">
+  <div class="auth-box">
+    <h1>⚡ Brawl Stars</h1>
+    <div class="sub">Brawl Stars | Platform</div>
+    <div id="loginForm">
+      <h2>Вход</h2>
+      <div class="field"><label>Имя пользователя</label><input type="text" id="loginUsername" placeholder="Введите имя" /></div>
+      <div class="field"><label>Пароль</label><input type="password" id="loginPassword" placeholder="Введите пароль" /></div>
+      <button class="btn" id="loginBtn">Войти</button>
+      <div class="link"><a onclick="showAuthForm('register')">Нет аккаунта? Зарегистрироваться</a></div>
+    </div>
+    <div id="registerForm" style="display:none;">
+      <h2>Регистрация</h2>
+      <div class="field"><label>Имя пользователя <span style="color:#ff6b6b;">*</span></label><input type="text" id="regUsername" placeholder="Придумайте имя" /></div>
+      <div class="field"><label>ID Standoff 2 <span style="color:#ff6b6b;">*</span></label><input type="text" id="regStandoffId" placeholder="Введите ID Standoff 2" /></div>
+      <div class="field"><label>Пароль <span style="color:#ff6b6b;">*</span></label><input type="password" id="regPassword" placeholder="Минимум 8 символов" /></div>
+      <div class="field"><label>Подтверждение пароля <span style="color:#ff6b6b;">*</span></label><input type="password" id="regPasswordConfirm" placeholder="Повторите пароль" /></div>
+      <button class="btn" id="registerBtn">Зарегистрироваться</button>
+      <div class="link"><a onclick="showAuthForm('login')">Уже есть аккаунт? Войти</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ОСНОВНОЙ САЙТ ===== -->
+<div class="main-wrapper" id="mainSite" style="display:none;">
+  <header class="header" onclick="navigate('home')">
+    <div class="logo">
+      <h1>⚡ Brawl Stars</h1>
+    </div>
+  </header>
+
+  <!-- ===== ГЛАВНОЕ МЕНЮ ===== -->
+  <div class="page active" id="pageHome">
+    <div class="home-hero">
+      <div class="hero-badge">КИБЕРСПОРТИВНАЯ ПЛАТФОРМА BRAWL STARS</div>
+      <div class="hero-title">
+        Проверь свой <span>скилл</span>, поднимай <span>уровень</span> и играй против тех, кто тоже пришел <span>побеждать</span>.
+      </div>
+      <div class="hero-stats-row">
+        <div class="hero-stat">
+          <div class="number" id="activePlayersHome">0</div>
+          <div class="label">Активные игроки</div>
+        </div>
+        <div class="hero-stat">
+          <div class="number" id="totalMatchesHome">0</div>
+          <div class="label">Сыграно матчей</div>
+        </div>
+      </div>
+      <div class="hero-actions">
+        <button class="btn-hero" onclick="navigate('matches')">
+          <i class="fas fa-search"></i> Поиск матча
+        </button>
+        <button class="btn-hero outline" onclick="navigate('profile')">
+          <i class="fas fa-user"></i> Профиль
+        </button>
+      </div>
+      <div class="prize-block">
+        <div class="prize-title">🏆 Призовой фонд — 10 000 ₽</div>
+        <div class="prize-grid">
+          <div class="prize-item gold">
+            <div class="place">🥇 1 место</div>
+            <div class="reward">5 000 ₽</div>
+          </div>
+          <div class="prize-item silver">
+            <div class="place">🥈 2 место</div>
+            <div class="reward">3 000 ₽</div>
+          </div>
+          <div class="prize-item bronze">
+            <div class="place">🥉 3 место</div>
+            <div class="reward">2 000 ₽</div>
+          </div>
+        </div>
+        <div class="prize-premium">
+          <strong>4-15 место</strong> — Premium статус
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ПОИСК МАТЧА ===== -->
+  <div class="page" id="pageMatches">
+    <div class="search-page-wrapper">
+      <div class="search-header-block">
+        <div class="search-title">Поиск матча Brawl Stars</div>
+        <p class="search-sub">Играй соло или вместе с друзьями. Создай пати, поделись кодом и заходите в матч одной группой.</p>
+      </div>
+
+      <div class="search-main-block" id="searchMainBlock">
+        <div class="label">
+          <i class="fas fa-crosshairs"></i> Статус поиска
+        </div>
+        <div class="btn-row">
+          <button class="btn-queue" id="queueBtn" onclick="startSearch()">
+            <i class="fas fa-search"></i> Поиск матча
+          </button>
+          <button class="btn-queue cancel" id="cancelBtn" onclick="cancelSearch()" style="display:none;">
+            <i class="fas fa-times"></i> Отменить поиск
+          </button>
+        </div>
+        <div class="search-type">Одиночный поиск матча.</div>
+
+        <div class="search-counters" id="searchCounters">
+          <div class="search-counter">
+            <div class="num" id="matchCount">0</div>
+            <div class="lbl">Игроков в матче</div>
+          </div>
+          <div class="search-counter">
+            <div class="num" id="queueCount">0</div>
+            <div class="lbl">Игроков в очереди</div>
+          </div>
+        </div>
+
+        <div class="search-progress" id="searchProgress">
+          <div class="progress-text" id="progressText">0/6</div>
+          <div class="progress-timer">⏱️ <span id="searchTimer">00:00</span></div>
+        </div>
+      </div>
+
+      <div class="party-block">
+        <div class="party-title"><i class="fas fa-users"></i> Играть в пати</div>
+        <div class="party-sub">Играйте с друзьями в <strong>BRAWL STARS</strong> — создайте пати и приглашайте товарищей по коду</div>
+        <div class="party-code-display">
+          <span class="code-label">Ваш код:</span>
+          <span class="code-box" id="playerCode">—</span>
+          <button class="btn-copy" onclick="copyCode()"><i class="fas fa-copy"></i> Копировать</button>
+        </div>
+        <div class="party-add">
+          <input type="text" id="partyCodeInput" placeholder="Введите код" maxlength="6" />
+          <button class="btn-add" onclick="addFriendByCode()">
+            <i class="fas fa-user-plus"></i> Добавить
+          </button>
+        </div>
+        <div class="party-friends-list" id="friendsList">
+          <span class="empty">Нет друзей в пати</span>
+        </div>
+        <div class="party-feature">
+          <i class="fas fa-info-circle"></i> Играйте вместе с друзьями в <strong>BRAWL STARS</strong> — введите код друга, чтобы добавить его в пати
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== МАТЧ ===== -->
+  <div class="page match-page" id="matchPage">
+    <div class="match-info-bar" id="matchInfoBar">
+      <div class="info-item">
+        <i class="fas fa-hashtag"></i>
+        Номер игры: <span class="value highlight" id="matchGameNumber">#1</span>
+      </div>
+      <div class="info-item">
+        <i class="fas fa-gamepad"></i>
+        Режим: <span class="value" id="matchSelectedMode">—</span>
+      </div>
     </div>
 
-    <!-- ===== АВТОРИЗАЦИЯ ===== -->
-    <div class="auth-page" id="authPage">
-        <div class="auth-box">
-            <div class="auth-logo">
-                <span class="icon">⚡</span>
-                <h1>Brawl Stars</h1>
-                <div class="sub">Competitive Platform</div>
-            </div>
-
-            <div class="auth-tabs">
-                <button class="tab active" data-tab="login" onclick="switchAuthTab('login')">
-                    <i class="fas fa-sign-in-alt"></i> Вход
-                </button>
-                <button class="tab" data-tab="register" onclick="switchAuthTab('register')">
-                    <i class="fas fa-user-plus"></i> Регистрация
-                </button>
-            </div>
-
-            <!-- Вход -->
-            <div class="auth-form active" id="loginForm">
-                <div class="form-group">
-                    <label>Имя пользователя</label>
-                    <div class="input-wrap">
-                        <i class="fas fa-user"></i>
-                        <input type="text" id="loginUsername" placeholder="Введите имя" />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Пароль</label>
-                    <div class="input-wrap">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" id="loginPassword" placeholder="Введите пароль" />
-                    </div>
-                </div>
-                <button class="btn-auth" id="loginBtn">
-                    <i class="fas fa-sign-in-alt"></i> Войти
-                </button>
-                <div class="auth-message" id="loginMessage"></div>
-            </div>
-
-            <!-- Регистрация -->
-            <div class="auth-form" id="registerForm">
-                <div class="form-group">
-                    <label>Имя пользователя</label>
-                    <div class="input-wrap">
-                        <i class="fas fa-user"></i>
-                        <input type="text" id="regUsername" placeholder="Придумайте имя" />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>ID Standoff 2</label>
-                    <div class="input-wrap">
-                        <i class="fas fa-id-card"></i>
-                        <input type="text" id="regStandoffId" placeholder="Введите ID Standoff 2" />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Пароль</label>
-                    <div class="input-wrap">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" id="regPassword" placeholder="Минимум 8 символов" />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Подтверждение пароля</label>
-                    <div class="input-wrap">
-                        <i class="fas fa-check-circle"></i>
-                        <input type="password" id="regPasswordConfirm" placeholder="Повторите пароль" />
-                    </div>
-                </div>
-                <button class="btn-auth" id="registerBtn">
-                    <i class="fas fa-user-plus"></i> Создать аккаунт
-                </button>
-                <div class="auth-message" id="registerMessage"></div>
-            </div>
-        </div>
+    <div class="match-grid" id="matchGrid">
+      <div class="team-block blue" id="teamBlockBlue">
+        <div class="team-name">BLUE TEAM</div>
+        <div class="team-players" id="teamBluePlayers"></div>
+      </div>
+      <div class="team-block orange" id="teamBlockOrange">
+        <div class="team-name">ORANGE TEAM</div>
+        <div class="team-players" id="teamOrangePlayers"></div>
+      </div>
     </div>
 
-    <!-- ===== ОСНОВНОЙ САЙТ ===== -->
-    <div class="main-wrapper" id="mainSite">
-        <header class="header" onclick="navigate('home')">
-            <div class="logo">
-                <h1>⚡ Brawl Stars</h1>
-            </div>
-        </header>
-
-        <!-- Главная -->
-        <div class="page active" id="pageHome">
-            <div class="home-hero">
-                <div class="hero-badge">КИБЕРСПОРТИВНАЯ ПЛАТФОРМА BRAWL STARS</div>
-                <div class="hero-title">
-                    Проверь свой <span>скилл</span>, поднимай <span>уровень</span> и играй против тех, кто тоже пришел <span>побеждать</span>.
-                </div>
-                <div class="hero-stats-row">
-                    <div class="hero-stat">
-                        <div class="number" id="activePlayersHome">0</div>
-                        <div class="label">Активные игроки</div>
-                    </div>
-                    <div class="hero-stat">
-                        <div class="number" id="totalMatchesHome">0</div>
-                        <div class="label">Сыграно матчей</div>
-                    </div>
-                </div>
-                <div class="hero-actions">
-                    <button class="btn-hero" onclick="navigate('matches')">
-                        <i class="fas fa-search"></i> Поиск матча
-                    </button>
-                    <button class="btn-hero outline" onclick="navigate('profile')">
-                        <i class="fas fa-user"></i> Профиль
-                    </button>
-                </div>
-                <div class="prize-block">
-                    <div class="prize-title">🏆 Призовой фонд — 10 000 ₽</div>
-                    <div class="prize-grid">
-                        <div class="prize-item gold">
-                            <div class="place">🥇 1 место</div>
-                            <div class="reward">5 000 ₽</div>
-                        </div>
-                        <div class="prize-item silver">
-                            <div class="place">🥈 2 место</div>
-                            <div class="reward">3 000 ₽</div>
-                        </div>
-                        <div class="prize-item bronze">
-                            <div class="place">🥉 3 место</div>
-                            <div class="reward">2 000 ₽</div>
-                        </div>
-                    </div>
-                    <div class="prize-premium">
-                        <strong>4-15 место</strong> — Premium статус
-                    </div>
-                </div>
-            </div>
+    <div class="bans-container" id="bansContainer">
+      <div class="ban-section modes-section" id="modesBanSection">
+        <div class="ban-header">
+          <div class="ban-title">
+            <i class="fas fa-map-marked-alt"></i> Бан режимов
+            <span class="turn">Ход: <span id="modesTurnName">Капитан 1</span></span>
+          </div>
         </div>
-
-        <!-- Поиск матча -->
-        <div class="page" id="pageMatches">
-            <div class="search-page-wrapper">
-                <div class="search-header-block">
-                    <div class="search-title">Поиск матча Brawl Stars</div>
-                    <p class="search-sub">Играй соло или вместе с друзьями.</p>
-                </div>
-                <div class="search-main-block" id="searchMainBlock">
-                    <div class="label">
-                        <i class="fas fa-crosshairs"></i> Статус поиска
-                    </div>
-                    <div class="btn-row">
-                        <button class="btn-queue" id="queueBtn" onclick="startSearch()">
-                            <i class="fas fa-search"></i> Поиск матча
-                        </button>
-                        <button class="btn-queue cancel" id="cancelBtn" onclick="cancelSearch()" style="display:none;">
-                            <i class="fas fa-times"></i> Отменить поиск
-                        </button>
-                    </div>
-                    <div class="search-type">Одиночный поиск матча.</div>
-                    <div class="search-counters" id="searchCounters">
-                        <div class="search-counter">
-                            <div class="num" id="matchCount">0</div>
-                            <div class="lbl">Игроков в матче</div>
-                        </div>
-                        <div class="search-counter">
-                            <div class="num" id="queueCount">0</div>
-                            <div class="lbl">Игроков в очереди</div>
-                        </div>
-                    </div>
-                    <div class="search-progress" id="searchProgress">
-                        <div class="progress-text" id="progressText">0/6</div>
-                        <div class="progress-timer">⏱️ <span id="searchTimer">00:00</span></div>
-                    </div>
-                </div>
-            </div>
+        <div class="ban-buttons" id="modesBanContainer">
+          <button class="ban-btn mode-btn" data-value="Gem Grab">💎 Gem Grab</button>
+          <button class="ban-btn mode-btn" data-value="Brawl Ball">⚽ Brawl Ball</button>
+          <button class="ban-btn mode-btn" data-value="Knockout">🥊 Knockout</button>
+          <button class="ban-btn mode-btn" data-value="Heist">💰 Heist</button>
+          <button class="ban-btn mode-btn" data-value="Bounty">🎯 Bounty</button>
+          <button class="ban-btn mode-btn" data-value="Hot Zone">🔥 Hot Zone</button>
+          <button class="ban-btn mode-btn" data-value="Siege">🏰 Siege</button>
         </div>
-
-        <!-- Профиль -->
-        <div class="page" id="pageProfile">
-            <div class="profile-card">
-                <div class="profile-header">
-                    <div class="profile-avatar" id="avatar">?</div>
-                    <div class="profile-info">
-                        <div class="username" id="pName">Игрок</div>
-                        <div class="details">
-                            <span><i class="fas fa-id-card"></i> Standoff ID: <span id="pStandoffId">—</span></span>
-                            <span><i class="fas fa-calendar-alt"></i> Регистрация: <span id="pReg">—</span></span>
-                            <span id="pBanned" style="display:none;color:#ff6b6b;"><i class="fas fa-ban"></i> Забанен</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="profile-stats" id="profileStats">
-                    <div class="stat-item"><div class="value" id="pMatches">0</div><div class="label">Матчей</div></div>
-                    <div class="stat-item"><div class="value" id="pKills">0</div><div class="label">Убийств</div></div>
-                    <div class="stat-item"><div class="value" id="pDeaths">0</div><div class="label">Смертей</div></div>
-                    <div class="stat-item"><div class="value" id="pKD">0.00</div><div class="label">K/D</div></div>
-                </div>
-                <div class="profile-actions" id="profileActions">
-                    <button class="btn-action edit" onclick="showToast('info', 'Редактирование', 'Функция редактирования профиля')">
-                        <i class="fas fa-edit"></i> Редактировать
-                    </button>
-                    <button class="btn-action logout" onclick="handleLogout()">
-                        <i class="fas fa-sign-out-alt"></i> Выйти
-                    </button>
-                </div>
-            </div>
+        <div class="ban-status">
+          <span class="left">Осталось: <span id="modesLeft">7</span></span>
+          <span class="status-text" id="modesStatus">Выберите режимы</span>
         </div>
-
-        <!-- Заглушки -->
-        <div class="page" id="pageShop"><div class="placeholder"><i class="fas fa-store"></i><h2>Магазин</h2><p>Здесь будут товары и привилегии.</p></div></div>
-        <div class="page" id="pageFriends"><div class="placeholder"><i class="fas fa-user-friends"></i><h2>Друзья</h2><p>Скоро здесь будут ваши друзья.</p></div></div>
-        <div class="page" id="pageTop"><div class="placeholder"><i class="fas fa-trophy"></i><h2>Топ игроков</h2><p>Скоро здесь будет топ.</p></div></div>
-        <div class="page" id="pageWallet"><div class="placeholder"><i class="fas fa-wallet"></i><h2>Кошелёк</h2><p>Скоро здесь будет кошелёк.</p></div></div>
-        <div class="page" id="matchPage"><div class="placeholder"><i class="fas fa-swords"></i><h2>Матч</h2><p>Идёт поиск...</p></div></div>
-
-        <!-- Нижняя навигация -->
-        <nav class="bottom-nav">
-            <button class="item" data-page="profile" onclick="navigate('profile')"><i class="fas fa-user"></i><span>Профиль</span></button>
-            <button class="item" data-page="shop" onclick="navigate('shop')"><i class="fas fa-store"></i><span>Шоп</span></button>
-            <button class="item" data-page="friends" onclick="navigate('friends')"><i class="fas fa-user-friends"></i><span>Друзья</span></button>
-            <button class="item active" data-page="matches" onclick="navigate('matches')"><i class="fas fa-search"></i><span>Поиск</span></button>
-            <button class="item" data-page="top" onclick="navigate('top')"><i class="fas fa-trophy"></i><span>Топ</span></button>
-            <button class="item" data-page="wallet" onclick="navigate('wallet')"><i class="fas fa-wallet"></i><span>Кошелёк</span></button>
-        </nav>
+      </div>
     </div>
 
-    <script>
-        // ============================================================
-        //  ГЛАВНЫЙ СКРИПТ
-        // ============================================================
+    <div class="match-actions">
+      <button class="btn-end" id="endMatchBtn" onclick="endMatch()" disabled>
+        <i class="fas fa-times"></i> Закончить матч
+      </button>
+    </div>
+  </div>
 
-        console.log('🚀 СКРИПТ ЗАПУЩЕН!');
+  <!-- ===== ДРУЗЬЯ ===== -->
+  <div class="page friends-page" id="pageFriends">
+    <div class="friends-header">
+      <span class="title">Друзья</span>
+    </div>
 
-        // ===== SUPABASE (из первого index) =====
-        const supabaseUrl = 'https://dlprylagddsmtzpmzxqy.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRscHJ5bGFnZGRzbXR6cG16eHF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQzMDY5MjcsImV4cCI6MjA5OTg4MjkyN30.xyRO-nChHDfqFgtYkhsMOkM3F8BsZGOvacQ0zhjBuRI';
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    <div class="friends-stats">
+      <div class="stat-circle">
+        <div class="number" id="friendsStatFriends">0</div>
+        <div class="label">Друзья</div>
+      </div>
+      <div class="stat-circle">
+        <div class="number" id="friendsStatIncoming">0</div>
+        <div class="label">Входящие</div>
+      </div>
+      <div class="stat-circle">
+        <div class="number" id="friendsStatOutgoing">0</div>
+        <div class="label">Исходящие</div>
+      </div>
+    </div>
 
-        console.log('✅ Supabase инициализирован');
+    <div class="friends-search">
+      <input type="text" id="friendCodeInput" placeholder="Введите код друга" maxlength="6" />
+      <button class="btn-add" onclick="addFriendByCode2()">
+        <i class="fas fa-user-plus"></i> Добавить
+      </button>
+    </div>
 
-        // ===== ПЕРЕМЕННЫЕ =====
-        let currentUser = null;
-        let queue = [];
-        let isSearching = false;
-        let searchTimerInterval = null;
-        let searchSeconds = 0;
-        let botCounter = 0;
+    <div class="friends-tabs">
+      <button class="tab active" data-tab="friends" onclick="switchFriendsTab('friends')">
+        Друзья <span class="badge" id="friendsBadge">0</span>
+      </button>
+      <button class="tab" data-tab="incoming" onclick="switchFriendsTab('incoming')">
+        Входящие <span class="badge" id="incomingBadge">0</span>
+      </button>
+      <button class="tab" data-tab="outgoing" onclick="switchFriendsTab('outgoing')">
+        Исходящие <span class="badge" id="outgoingBadge">0</span>
+      </button>
+    </div>
 
-        // ============================================================
-        //  TOAST
-        // ============================================================
-        function showToast(type, title, text) {
-            const toast = document.getElementById('toast');
-            if (!toast) return;
-            const ttl = document.getElementById('toastTitle');
-            const txt = document.getElementById('toastText');
-            ttl.className = 'ttl ' + type;
-            ttl.textContent = title;
-            txt.textContent = text;
-            toast.classList.add('visible');
-            clearTimeout(toast._t);
-            toast._t = setTimeout(() => toast.classList.remove('visible'), 4000);
+    <div id="friendsListContainer">
+      <div class="friends-empty">
+        <i class="fas fa-user-friends"></i>
+        Друзей пока нет.
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ТОП ИГРОКОВ ===== -->
+  <div class="page top-page" id="pageTop">
+    <div class="top-header">
+      <div class="page-title">Топ игроков</div>
+      <div class="user-rank">Твоё место: <span id="userRank">#0</span></div>
+    </div>
+
+    <div class="top-list" id="topList">
+      <div class="friends-empty">
+        <i class="fas fa-trophy"></i>
+        Нет данных
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== КОШЕЛЁК ===== -->
+  <div class="page wallet-page" id="pageWallet">
+    <div class="wallet-balance">
+      <div class="balance-item">
+        <div class="amount">0 ⭐</div>
+        <div class="currency">Telegram Stars</div>
+      </div>
+      <div class="balance-item">
+        <div class="rub-amount">0 ₽</div>
+        <div class="rub-currency">Рубли</div>
+      </div>
+    </div>
+
+    <div class="wallet-actions">
+      <button class="btn-wallet stars" onclick="showToast('info', 'Пополнение', 'Пополнение Stars')">
+        <i class="fas fa-star"></i> Пополнить Stars
+      </button>
+      <button class="btn-wallet rub" onclick="showToast('info', 'Пополнение', 'Пополнение рублями')">
+        <i class="fas fa-credit-card"></i> Пополнить рублями
+      </button>
+    </div>
+
+    <div class="promo-block">
+      <span class="promo-label">Промокод</span>
+      <input type="text" placeholder="ПРОМОКОД" id="promoInput" />
+      <button class="btn-apply" onclick="applyPromo()">Применить</button>
+    </div>
+
+    <div class="history-title">ИСТОРИЯ ОПЕРАЦИЙ</div>
+    <div class="history-empty">
+      <i class="fas fa-history"></i>
+      Операций пока нет.
+    </div>
+  </div>
+
+  <!-- ===== ПРОФИЛЬ ===== -->
+  <div class="page" id="pageProfile">
+    <div class="profile-card">
+      <div class="profile-header">
+        <div class="profile-avatar" id="avatar">?</div>
+        <div class="profile-info">
+          <div class="username" id="pName">Игрок</div>
+          <div class="details">
+            <span><i class="fas fa-id-card"></i> Standoff ID: <span id="pStandoffId">—</span></span>
+            <span><i class="fas fa-calendar-alt"></i> Дата регистрации: <span id="pReg">—</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-stats">
+        <div class="stat-item"><div class="value" id="pMatches">0</div><div class="label">Матчей</div></div>
+        <div class="stat-item"><div class="value" id="pKills">0</div><div class="label">Убийств</div></div>
+        <div class="stat-item"><div class="value" id="pDeaths">0</div><div class="label">Смертей</div></div>
+        <div class="stat-item"><div class="value" id="pKD">0.00</div><div class="label">K/D</div></div>
+      </div>
+
+      <div class="profile-actions">
+        <button class="btn-action edit" onclick="showToast('info', 'Редактирование', 'Функция редактирования профиля')">
+          <i class="fas fa-edit"></i> Редактировать
+        </button>
+        <button class="btn-action logout" onclick="handleLogout()">
+          <i class="fas fa-sign-out-alt"></i> Выйти с аккаунта
+        </button>
+      </div>
+
+      <div class="match-history">
+        <div class="title"><i class="fas fa-history"></i> История матчей</div>
+        <div id="matchHistoryList">
+          <div style="color:#666; text-align:center; padding:8px 0;">Нет сыгранных матчей</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ЗАГЛУШКА ===== -->
+  <div class="page" id="pageShop"><div class="placeholder"><i class="fas fa-store"></i><h2>Магазин</h2><p>Здесь будут товары и привилегии.</p></div></div>
+
+  <!-- ===== НИЖНЯЯ НАВИГАЦИЯ ===== -->
+  <nav class="bottom-nav">
+    <button class="item" data-page="profile" onclick="navigate('profile')"><i class="fas fa-user"></i><span>Профиль</span></button>
+    <button class="item" data-page="shop" onclick="navigate('shop')"><i class="fas fa-store"></i><span>Шоп</span></button>
+    <button class="item" data-page="friends" onclick="navigate('friends')"><i class="fas fa-user-friends"></i><span>Друзья</span></button>
+    <button class="item active" data-page="matches" onclick="navigate('matches')"><i class="fas fa-search"></i><span>Поиск матча</span></button>
+    <button class="item" data-page="top" onclick="navigate('top')"><i class="fas fa-trophy"></i><span>Топ</span></button>
+    <button class="item" data-page="wallet" onclick="navigate('wallet')"><i class="fas fa-wallet"></i><span>Кошелёк</span></button>
+  </nav>
+</div>
+
+<script>
+  // ============================================================
+  //  ГЛАВНЫЙ СКРИПТ С SUPABASE
+  // ============================================================
+
+  console.log('🚀 СКРИПТ ЗАПУЩЕН!');
+
+  // ===== SUPABASE (из первого index) =====
+  const supabaseUrl = 'https://dlprylagddsmtzpmzxqy.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRscHJ5bGFnZGRzbXR6cG16eHF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQzMDY5MjcsImV4cCI6MjA5OTg4MjkyN30.xyRO-nChHDfqFgtYkhsMOkM3F8BsZGOvacQ0zhjBuRI';
+  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+  console.log('✅ Supabase инициализирован');
+
+  // ===== ПЕРЕМЕННЫЕ =====
+  let currentUser = null;
+  let queue = [];
+  let currentMatch = null;
+  let botCounter = 0;
+  let partyFriends = [];
+  let friendsTab = 'friends';
+  let isSearching = false;
+  let searchTimerInterval = null;
+  let searchSeconds = 0;
+
+  let draftState = {
+    gameNumber: 1,
+    modeOptions: ['Gem Grab', 'Brawl Ball', 'Knockout', 'Heist', 'Bounty', 'Hot Zone', 'Siege'],
+    modeBanned: [],
+    modeFinal: null,
+    currentCaptain: 0,
+    isComplete: false
+  };
+
+  // ============================================================
+  //  ГЕНЕРАЦИЯ КОДА
+  // ============================================================
+  function generateCode() {
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let code = '';
+    for (let i = 0; i < 6; i++) {
+      code += letters[Math.floor(Math.random() * letters.length)];
+    }
+    return code;
+  }
+
+  // ============================================================
+  //  TOAST
+  // ============================================================
+  function showToast(type, title, text) {
+    const toast = document.getElementById('toast');
+    const ttl = document.getElementById('toastTitle');
+    const txt = document.getElementById('toastText');
+    ttl.className = 'ttl ' + type;
+    ttl.textContent = title;
+    txt.textContent = text;
+    toast.classList.add('visible');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => toast.classList.remove('visible'), 4000);
+  }
+
+  // ============================================================
+  //  РЕГИСТРАЦИЯ (через Supabase)
+  // ============================================================
+  async function registerUser() {
+    console.log('🔵 РЕГИСТРАЦИЯ: начата');
+
+    const username = document.getElementById('regUsername').value.trim();
+    const standoffId = document.getElementById('regStandoffId').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const confirm = document.getElementById('regPasswordConfirm').value;
+
+    if (!username || !standoffId || !password || !confirm) {
+      return showToast('error', 'Ошибка', 'Заполните все поля');
+    }
+    if (password !== confirm) {
+      return showToast('error', 'Ошибка', 'Пароли не совпадают');
+    }
+    if (password.length < 8) {
+      return showToast('error', 'Ошибка', 'Пароль минимум 8 символов');
+    }
+    if (!/^\d+$/.test(standoffId)) {
+      return showToast('error', 'Ошибка', 'ID Standoff 2 должен содержать только цифры');
+    }
+
+    try {
+      const { data: existing } = await supabase
+        .from('users')
+        .select('username')
+        .eq('username', username)
+        .maybeSingle();
+
+      if (existing) {
+        return showToast('error', 'Ошибка', 'Имя пользователя уже занято');
+      }
+
+      const { data: existingId } = await supabase
+        .from('users')
+        .select('standoffId')
+        .eq('standoffId', standoffId)
+        .maybeSingle();
+
+      if (existingId) {
+        return showToast('error', 'Ошибка', 'Этот ID Standoff 2 уже используется');
+      }
+
+      const newUser = {
+        id: Date.now().toString(),
+        username: username,
+        standoffId: standoffId,
+        password: password,
+        email: username + '@nwoles.local',
+        matches: 0,
+        kills: 0,
+        deaths: 0,
+        serverMatches: 0,
+        kdHistory: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        registered: new Date().toISOString(),
+        lastLogin: new Date().toISOString(),
+        isBanned: false,
+        avatar_url: null,
+        createdserverscount: 0,
+        partyCode: generateCode()
+      };
+
+      const { data, error } = await supabase
+        .from('users')
+        .insert([newUser])
+        .select()
+        .single();
+
+      if (error) {
+        return showToast('error', 'Ошибка', error.message);
+      }
+
+      console.log('✅ Пользователь создан:', data);
+      currentUser = data;
+      showToast('success', 'Успешно!', 'Добро пожаловать, ' + username);
+      setTimeout(() => checkAuth(), 1000);
+
+    } catch (e) {
+      console.error('❌ Ошибка:', e);
+      showToast('error', 'Ошибка', 'Соединение с сервером');
+    }
+  }
+
+  // ============================================================
+  //  ВХОД (через Supabase)
+  // ============================================================
+  async function loginUser() {
+    console.log('🔵 ВХОД: начат');
+
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value;
+
+    if (!username || !password) {
+      return showToast('error', 'Ошибка', 'Заполните все поля');
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('username', username)
+        .eq('password', password)
+        .maybeSingle();
+
+      if (error) {
+        return showToast('error', 'Ошибка', 'Ошибка сервера');
+      }
+
+      if (!data) {
+        return showToast('error', 'Ошибка', 'Неверное имя или пароль');
+      }
+
+      if (data.isBanned) {
+        return showToast('error', 'Ошибка', '🚫 Ваш аккаунт забанен');
+      }
+
+      console.log('✅ Пользователь найден:', data);
+      currentUser = data;
+      showToast('success', 'Добро пожаловать!', username);
+      setTimeout(() => checkAuth(), 1000);
+
+    } catch (e) {
+      console.error('❌ Ошибка:', e);
+      showToast('error', 'Ошибка', 'Соединение с сервером');
+    }
+  }
+
+  // ============================================================
+  //  ПРОВЕРКА АВТОРИЗАЦИИ
+  // ============================================================
+  function checkAuth() {
+    if (currentUser) {
+      document.getElementById('authPage').style.display = 'none';
+      document.getElementById('mainSite').style.display = 'block';
+      
+      document.getElementById('pName').textContent = currentUser.username;
+      document.getElementById('pStandoffId').textContent = currentUser.standoffId || '—';
+      document.getElementById('avatar').textContent = currentUser.username.charAt(0).toUpperCase();
+      
+      const regDate = currentUser.registered ? new Date(currentUser.registered).toLocaleDateString('ru-RU') : '—';
+      document.getElementById('pReg').textContent = regDate;
+
+      updateProfile();
+      updateHomeStats();
+      updateQueueUI();
+      updatePartyUI();
+      
+      if (currentMatch) {
+        renderMatchPage();
+        navigate('matchPage');
+      } else {
+        navigate('home');
+      }
+    } else {
+      document.getElementById('authPage').style.display = 'flex';
+      document.getElementById('mainSite').style.display = 'none';
+    }
+  }
+
+  // ============================================================
+  //  ВЫХОД
+  // ============================================================
+  function handleLogout() {
+    if (!confirm('Выйти из аккаунта?')) return;
+    currentUser = null;
+    checkAuth();
+    showToast('info', 'Выход', 'Вы вышли из аккаунта');
+  }
+
+  // ============================================================
+  //  НАВИГАЦИЯ
+  // ============================================================
+  const pages = {
+    home: 'pageHome',
+    profile: 'pageProfile',
+    shop: 'pageShop',
+    friends: 'pageFriends',
+    matches: 'pageMatches',
+    top: 'pageTop',
+    wallet: 'pageWallet',
+    matchPage: 'matchPage'
+  };
+
+  function navigate(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(pages[page]).classList.add('active');
+    document.querySelectorAll('.bottom-nav .item').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.bottom-nav .item[data-page="${page}"]`)?.classList.add('active');
+    
+    if (page === 'matches') { updateQueueUI(); updatePartyUI(); }
+    if (page === 'profile') updateProfile();
+    if (page === 'home') updateHomeStats();
+    if (page === 'friends') renderFriendsPage();
+    if (page === 'top') renderTopPage();
+    if (page === 'matchPage') renderMatchPage();
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ============================================================
+  //  ПРОФИЛЬ
+  // ============================================================
+  function updateProfile() {
+    if (!currentUser) return;
+    
+    document.getElementById('pMatches').textContent = currentUser.matches || 0;
+    document.getElementById('pKills').textContent = currentUser.kills || 0;
+    document.getElementById('pDeaths').textContent = currentUser.deaths || 0;
+    
+    const kd = currentUser.deaths > 0 
+      ? (currentUser.kills / currentUser.deaths).toFixed(2) 
+      : (currentUser.kills > 0 ? currentUser.kills.toFixed(2) : '0.00');
+    document.getElementById('pKD').textContent = kd;
+
+    loadMatchHistory();
+  }
+
+  // ============================================================
+  //  ИСТОРИЯ МАТЧЕЙ (через Supabase)
+  // ============================================================
+  async function loadMatchHistory() {
+    if (!currentUser) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('match_history')
+        .select('*')
+        .eq('user_id', currentUser.id)
+        .order('match_date', { ascending: false })
+        .limit(20);
+
+      if (error) throw error;
+
+      const container = document.getElementById('matchHistoryList');
+      if (!data || data.length === 0) {
+        container.innerHTML = '<div style="color:#666; text-align:center; padding:8px 0;">Нет сыгранных матчей</div>';
+        return;
+      }
+
+      container.innerHTML = data.map(m => `
+        <div class="match-item">
+          <span class="map"><i class="fas fa-gamepad"></i> ${m.map || 'Неизвестная карта'}</span>
+          <span class="stats"><span>🔫 ${m.kills || 0}</span> <span>💀 ${m.deaths || 0}</span> <span>📊 ${m.kd ? m.kd.toFixed(2) : '0.00'}</span></span>
+          <span class="date">${new Date(m.match_date).toLocaleDateString('ru-RU')}</span>
+        </div>
+      `).join('');
+    } catch (e) {
+      console.error('Ошибка загрузки истории:', e);
+    }
+  }
+
+  // ============================================================
+  //  ПОИСК МАТЧА
+  // ============================================================
+  function startSearch() {
+    if (isSearching) return;
+    if (currentMatch) return showToast('info', 'Идёт матч', 'Дождитесь окончания');
+    if (!currentUser) return showToast('error', 'Ошибка', 'Авторизуйтесь');
+
+    queue = [{ id: currentUser.id, username: currentUser.username }];
+    isSearching = true;
+    searchSeconds = 0;
+
+    document.getElementById('searchMainBlock').classList.add('searching');
+    document.getElementById('queueBtn').style.display = 'none';
+    document.getElementById('cancelBtn').style.display = 'inline-flex';
+    document.getElementById('progressText').textContent = '1/6';
+
+    if (searchTimerInterval) clearInterval(searchTimerInterval);
+    searchTimerInterval = setInterval(() => {
+      searchSeconds++;
+      const mins = String(Math.floor(searchSeconds / 60)).padStart(2, '0');
+      const secs = String(searchSeconds % 60).padStart(2, '0');
+      document.getElementById('searchTimer').textContent = mins + ':' + secs;
+    }, 1000);
+
+    showToast('info', 'Поиск начат', 'Ищем игроков...');
+    simulateBotSearch();
+  }
+
+  function simulateBotSearch() {
+    if (!isSearching) return;
+    const maxBots = 5;
+    const currentBots = queue.length - 1;
+
+    if (currentBots < maxBots && isSearching) {
+      setTimeout(() => {
+        if (!isSearching) return;
+        const botName = 'Bot' + (botCounter + 1);
+        botCounter++;
+        queue.push({ id: 'bot_' + Date.now(), username: botName });
+        document.getElementById('progressText').textContent = queue.length + '/6';
+        showToast('info', 'Игрок найден', botName + ' присоединился (' + queue.length + '/6)');
+
+        if (queue.length >= 6) {
+          clearInterval(searchTimerInterval);
+          isSearching = false;
+          document.getElementById('searchMainBlock').classList.remove('searching');
+          document.getElementById('queueBtn').style.display = 'inline-flex';
+          document.getElementById('cancelBtn').style.display = 'none';
+          startMatch();
+        } else {
+          simulateBotSearch();
+        }
+      }, 1500 + Math.random() * 2000);
+    }
+  }
+
+  function cancelSearch() {
+    if (!isSearching) return;
+    isSearching = false;
+    clearInterval(searchTimerInterval);
+    queue = [];
+    document.getElementById('searchMainBlock').classList.remove('searching');
+    document.getElementById('queueBtn').style.display = 'inline-flex';
+    document.getElementById('cancelBtn').style.display = 'none';
+    document.getElementById('searchTimer').textContent = '00:00';
+    document.getElementById('progressText').textContent = '0/6';
+    updateQueueUI();
+    showToast('info', 'Поиск отменён', 'Вы отменили поиск');
+  }
+
+  function updateQueueUI() {
+    const count = queue.length;
+    document.getElementById('queueCount').textContent = count;
+    const matchPlayers = currentMatch ? (currentMatch.orange.length + currentMatch.blue.length) : 0;
+    document.getElementById('matchCount').textContent = matchPlayers;
+  }
+
+  // ============================================================
+  //  МАТЧ
+  // ============================================================
+  function startMatch() {
+    const shuffled = [...queue];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    const half = Math.floor(shuffled.length / 2);
+    const orange = shuffled.slice(0, half);
+    const blue = shuffled.slice(half);
+    currentMatch = { orange, blue };
+    queue = [];
+
+    document.getElementById('searchMainBlock').classList.remove('searching');
+    document.getElementById('queueBtn').style.display = 'inline-flex';
+    document.getElementById('cancelBtn').style.display = 'none';
+
+    draftState.gameNumber = (draftState.gameNumber || 0) + 1;
+    resetDraft();
+
+    navigate('matchPage');
+    renderMatchPage();
+    showToast('success', 'Матч начался!', `${orange.length + blue.length} игроков в игре`);
+  }
+
+  function renderMatchPage() {
+    if (!currentMatch) return;
+
+    const oCaptain = currentMatch.orange.length > 0 ? currentMatch.orange[0].username : null;
+    const bCaptain = currentMatch.blue.length > 0 ? currentMatch.blue[0].username : null;
+
+    const sortedOrange = [...currentMatch.orange].sort((a, b) => {
+      if (a.username === oCaptain) return -1;
+      if (b.username === oCaptain) return 1;
+      return 0;
+    });
+    const sortedBlue = [...currentMatch.blue].sort((a, b) => {
+      if (a.username === bCaptain) return -1;
+      if (b.username === bCaptain) return 1;
+      return 0;
+    });
+
+    const oContainer = document.getElementById('teamOrangePlayers');
+    const bContainer = document.getElementById('teamBluePlayers');
+
+    oContainer.innerHTML = sortedOrange.map(p => {
+      const isCaptain = p.username === oCaptain;
+      return `
+        <div class="player-card">
+          <div class="avatar">${p.username.charAt(0).toUpperCase()}</div>
+          <div class="info">
+            <span class="name">${p.username}</span>
+          </div>
+          ${isCaptain ? `<span class="captain-badge"><i class="fas fa-crown"></i> Капитан</span>` : ''}
+        </div>
+      `;
+    }).join('') || '<p style="color:#888;text-align:center;padding:8px 0;font-size:13px;">Нет игроков</p>';
+
+    bContainer.innerHTML = sortedBlue.map(p => {
+      const isCaptain = p.username === bCaptain;
+      return `
+        <div class="player-card">
+          <div class="avatar">${p.username.charAt(0).toUpperCase()}</div>
+          <div class="info">
+            <span class="name">${p.username}</span>
+          </div>
+          ${isCaptain ? `<span class="captain-badge"><i class="fas fa-crown"></i> Капитан</span>` : ''}
+        </div>
+      `;
+    }).join('') || '<p style="color:#888;text-align:center;padding:8px 0;font-size:13px;">Нет игроков</p>';
+
+    renderDraftUI();
+  }
+
+  function endMatch() {
+    if (!currentMatch) return;
+    if (!draftState.isComplete) {
+      return showToast('info', 'Дождитесь драфта', 'Сначала завершите выбор режима');
+    }
+    if (!confirm('Завершить матч?')) return;
+    
+    // Сохраняем статистику в Supabase
+    saveMatchStats();
+    
+    currentMatch = null;
+    navigate('matches');
+    updateQueueUI();
+    showToast('info', 'Матч завершён', 'Статистика сохранена!');
+  }
+
+  // ============================================================
+  //  СОХРАНЕНИЕ СТАТИСТИКИ В SUPABASE
+  // ============================================================
+  async function saveMatchStats() {
+    if (!currentMatch || !currentUser) return;
+
+    const map = draftState.modeFinal || 'Gem Grab';
+    const allPlayers = [...currentMatch.orange, ...currentMatch.blue];
+    const realPlayers = allPlayers.filter(p => !p.id.startsWith('bot_'));
+
+    for (const player of realPlayers) {
+      // Генерируем случайную статистику для матча
+      const kills = Math.floor(Math.random() * 15) + 3;
+      const deaths = Math.floor(Math.random() * 12) + 2;
+      const kd = deaths > 0 ? kills / deaths : kills;
+
+      try {
+        // Обновляем статистику игрока
+        const { data: userData } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', player.id)
+          .single();
+
+        if (userData) {
+          const newMatches = (userData.matches || 0) + 1;
+          const newKills = (userData.kills || 0) + kills;
+          const newDeaths = (userData.deaths || 0) + deaths;
+          const newServerMatches = (userData.serverMatches || 0) + 1;
+
+          let kdHistory = userData.kdHistory || [0,0,0,0,0,0,0,0,0,0];
+          kdHistory.push(kd);
+          if (kdHistory.length > 10) kdHistory = kdHistory.slice(-10);
+
+          await supabase
+            .from('users')
+            .update({
+              matches: newMatches,
+              kills: newKills,
+              deaths: newDeaths,
+              serverMatches: newServerMatches,
+              kdHistory: kdHistory,
+              lastLogin: new Date().toISOString()
+            })
+            .eq('id', player.id);
         }
 
-        // ============================================================
-        //  ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
-        // ============================================================
-        function switchAuthTab(tab) {
-            document.querySelectorAll('.auth-tabs .tab').forEach(t => t.classList.remove('active'));
-            document.querySelector(`.auth-tabs .tab[data-tab="${tab}"]`).classList.add('active');
+        // Сохраняем историю матча
+        await supabase
+          .from('match_history')
+          .insert([{
+            id: Date.now().toString() + '_' + Math.random().toString(36).substr(2, 4),
+            user_id: player.id,
+            username: player.username,
+            map: map,
+            kills: kills,
+            deaths: deaths,
+            kd: kd,
+            match_date: new Date().toISOString(),
+            server_name: 'Brawl Stars',
+            created_at: new Date().toISOString()
+          }]);
 
-            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
-            if (tab === 'login') {
-                document.getElementById('loginForm').classList.add('active');
-            } else {
-                document.getElementById('registerForm').classList.add('active');
-            }
+      } catch (e) {
+        console.error('Ошибка сохранения статистики для', player.username, e);
+      }
+    }
 
-            document.getElementById('loginMessage').className = 'auth-message';
-            document.getElementById('loginMessage').textContent = '';
-            document.getElementById('registerMessage').className = 'auth-message';
-            document.getElementById('registerMessage').textContent = '';
-        }
+    // Обновляем текущего пользователя
+    const { data: updatedUser } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', currentUser.id)
+      .single();
 
-        // ============================================================
-        //  РЕГИСТРАЦИЯ (ВЗЯТА ИЗ ПЕРВОГО INDEX)
-        // ============================================================
-        async function registerUser() {
-            console.log('🔵 РЕГИСТРАЦИЯ: начата');
+    if (updatedUser) {
+      currentUser = updatedUser;
+      updateProfile();
+    }
+  }
 
-            const username = document.getElementById('regUsername').value.trim();
-            const standoffId = document.getElementById('regStandoffId').value.trim();
-            const password = document.getElementById('regPassword').value;
-            const confirm = document.getElementById('regPasswordConfirm').value;
-            const messageEl = document.getElementById('registerMessage');
+  // ============================================================
+  //  ДРАФТ
+  // ============================================================
+  function resetDraft() {
+    draftState = {
+      gameNumber: draftState.gameNumber + 1,
+      modeOptions: ['Gem Grab', 'Brawl Ball', 'Knockout', 'Heist', 'Bounty', 'Hot Zone', 'Siege'],
+      modeBanned: [],
+      modeFinal: null,
+      currentCaptain: 0,
+      isComplete: false
+    };
+    renderDraftUI();
+  }
 
-            if (!username || !standoffId || !password || !confirm) {
-                messageEl.className = 'auth-message show error';
-                messageEl.textContent = '❌ Заполните все поля';
-                return;
-            }
-            if (password !== confirm) {
-                messageEl.className = 'auth-message show error';
-                messageEl.textContent = '❌ Пароли не совпадают';
-                return;
-            }
-            if (password.length < 8) {
-                messageEl.className = 'auth-message show error';
-                messageEl.textContent = '❌ Пароль минимум 8 символов';
-                return;
-            }
-            if (!/^\d+$/.test(standoffId)) {
-                messageEl.className = 'auth-message show error';
-                messageEl.textContent = '❌ ID Standoff 2 должен содержать только цифры';
-                return;
-            }
+  function getCaptainName(index) {
+    if (!currentMatch) return 'Капитан ' + (index + 1);
+    const captains = [];
+    if (currentMatch.orange.length > 0) captains.push(currentMatch.orange[0].username);
+    if (currentMatch.blue.length > 0) captains.push(currentMatch.blue[0].username);
+    return captains[index] || 'Капитан ' + (index + 1);
+  }
 
-            messageEl.className = 'auth-message show info';
-            messageEl.textContent = '⏳ Проверяем данные...';
+  function renderDraftUI() {
+    const state = draftState;
 
-            try {
-                const { data: existing } = await supabase
-                    .from('users')
-                    .select('username')
-                    .eq('username', username)
-                    .maybeSingle();
+    document.getElementById('matchGameNumber').textContent = '#' + state.gameNumber;
+    document.getElementById('matchSelectedMode').textContent = state.modeFinal || '—';
 
-                if (existing) {
-                    messageEl.className = 'auth-message show error';
-                    messageEl.textContent = '❌ Имя пользователя уже занято';
-                    return;
-                }
+    const modesContainer = document.getElementById('modesBanContainer');
+    const modeBtns = modesContainer.querySelectorAll('.ban-btn');
+    modeBtns.forEach(btn => {
+      const val = btn.dataset.value;
+      if (state.modeBanned.includes(val)) {
+        btn.classList.add('banned');
+        btn.style.display = 'none';
+      } else if (state.modeFinal === val) {
+        btn.classList.add('selected');
+        btn.disabled = true;
+      } else if (state.isComplete) {
+        btn.disabled = true;
+      } else {
+        btn.classList.remove('banned', 'selected');
+        btn.style.display = '';
+        btn.disabled = false;
+      }
+    });
 
-                const { data: existingId } = await supabase
-                    .from('users')
-                    .select('standoffId')
-                    .eq('standoffId', standoffId)
-                    .maybeSingle();
+    const availableModes = state.modeOptions.filter(v => !state.modeBanned.includes(v) && v !== state.modeFinal);
+    document.getElementById('modesLeft').textContent = availableModes.length;
 
-                if (existingId) {
-                    messageEl.className = 'auth-message show error';
-                    messageEl.textContent = '❌ Этот ID Standoff 2 уже используется';
-                    return;
-                }
+    const modesStatus = document.getElementById('modesStatus');
+    if (state.modeFinal) {
+      modesStatus.textContent = '✅ ' + state.modeFinal;
+      modesStatus.className = 'status-text done';
+    } else if (!state.isComplete) {
+      modesStatus.textContent = 'Ход: ' + getCaptainName(state.currentCaptain);
+      modesStatus.className = 'status-text';
+    } else {
+      modesStatus.textContent = 'Ожидание...';
+      modesStatus.className = 'status-text';
+    }
+    document.getElementById('modesTurnName').textContent = !state.isComplete ? getCaptainName(state.currentCaptain) : '—';
 
-                const newUser = {
-                    id: Date.now().toString(),
-                    username: username,
-                    standoffId: standoffId,
-                    password: password,
-                    email: username + '@nwoles.local',
-                    matches: 0,
-                    kills: 0,
-                    deaths: 0,
-                    serverMatches: 0,
-                    kdHistory: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    registered: new Date().toISOString(),
-                    lastLogin: new Date().toISOString(),
-                    isBanned: false,
-                    avatar_url: null,
-                    createdserverscount: 0
-                };
+    document.getElementById('endMatchBtn').disabled = !state.isComplete;
 
-                const { data, error } = await supabase
-                    .from('users')
-                    .insert([newUser])
-                    .select()
-                    .single();
+    const bansContainer = document.getElementById('bansContainer');
+    if (state.isComplete) {
+      bansContainer.style.display = 'none';
+    } else {
+      bansContainer.style.display = 'grid';
+    }
+  }
 
-                if (error) {
-                    messageEl.className = 'auth-message show error';
-                    messageEl.textContent = '❌ Ошибка: ' + error.message;
-                    return;
-                }
+  function handleModesBan(value) {
+    const state = draftState;
+    if (state.isComplete) return;
+    if (state.modeBanned.includes(value)) return;
+    if (state.modeFinal) return;
 
-                console.log('✅ Пользователь создан:', data);
-                currentUser = data;
-                messageEl.className = 'auth-message show success';
-                messageEl.textContent = '✅ Успешно! Добро пожаловать, ' + username;
+    state.modeBanned.push(value);
 
-                setTimeout(() => {
-                    checkAuth();
-                }, 1000);
+    const available = state.modeOptions.filter(v => !state.modeBanned.includes(v));
+    if (available.length === 1) {
+      state.modeFinal = available[0];
+      state.isComplete = true;
+      renderDraftUI();
+      showToast('success', 'Драфт завершён!', 'Играем режим ' + state.modeFinal);
+      return;
+    }
 
-            } catch (e) {
-                messageEl.className = 'auth-message show error';
-                messageEl.textContent = '❌ Ошибка соединения с сервером';
-                console.error('❌ Ошибка:', e);
-            }
-        }
+    state.currentCaptain = state.currentCaptain === 0 ? 1 : 0;
+    renderDraftUI();
+  }
 
-        // ============================================================
-        //  ВХОД (адаптирован под структуру первого index)
-        // ============================================================
-        async function loginUser() {
-            console.log('🔵 ВХОД: начат');
+  // ============================================================
+  //  СТАТИСТИКА ГЛАВНОЙ
+  // ============================================================
+  async function updateHomeStats() {
+    try {
+      const { data: users, error } = await supabase
+        .from('users')
+        .select('*');
 
-            const username = document.getElementById('loginUsername').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            const messageEl = document.getElementById('loginMessage');
+      if (error) return;
 
-            if (!username || !password) {
-                messageEl.className = 'auth-message show error';
-                messageEl.textContent = '❌ Заполните все поля';
-                return;
-            }
+      const totalMatches = users.reduce((sum, u) => sum + (u.matches || 0), 0);
+      const activePlayers = users.filter(u => (u.matches || 0) > 0).length;
+      
+      document.getElementById('totalMatchesHome').textContent = totalMatches;
+      document.getElementById('activePlayersHome').textContent = activePlayers;
+    } catch (e) {
+      console.error('updateHomeStats error:', e);
+    }
+  }
 
-            messageEl.className = 'auth-message show info';
-            messageEl.textContent = '⏳ Ищем пользователя...';
+  // ============================================================
+  //  ТОП ИГРОКОВ
+  // ============================================================
+  async function renderTopPage() {
+    try {
+      const { data: users, error } = await supabase
+        .from('users')
+        .select('*')
+        .order('serverMatches', { ascending: false })
+        .limit(10);
 
-            try {
-                const { data, error } = await supabase
-                    .from('users')
-                    .select('*')
-                    .eq('username', username)
-                    .eq('password', password)
-                    .maybeSingle();
+      if (error) throw error;
 
-                if (error) {
-                    messageEl.className = 'auth-message show error';
-                    messageEl.textContent = '❌ Ошибка сервера';
-                    return;
-                }
+      const container = document.getElementById('topList');
+      const userRank = currentUser ? users.findIndex(u => u.id === currentUser.id) + 1 : 0;
+      document.getElementById('userRank').textContent = '#' + (userRank || 0);
 
-                if (!data) {
-                    messageEl.className = 'auth-message show error';
-                    messageEl.textContent = '❌ Неверное имя или пароль';
-                    return;
-                }
+      if (!users || users.length === 0) {
+        container.innerHTML = `
+          <div class="friends-empty">
+            <i class="fas fa-trophy"></i>
+            Нет данных
+          </div>
+        `;
+        return;
+      }
 
-                if (data.isBanned) {
-                    messageEl.className = 'auth-message show error';
-                    messageEl.textContent = '🚫 Ваш аккаунт забанен';
-                    return;
-                }
+      container.innerHTML = users.map((u, i) => {
+        const initial = u.username.charAt(0).toUpperCase();
+        const rankNum = i + 1;
+        let rankClass = '';
+        if (rankNum === 1) rankClass = 'gold';
+        else if (rankNum === 2) rankClass = 'silver';
+        else if (rankNum === 3) rankClass = 'bronze';
 
-                console.log('✅ Пользователь найден:', data);
-                currentUser = data;
-                messageEl.className = 'auth-message show success';
-                messageEl.textContent = '✅ Добро пожаловать, ' + username;
+        const kd = u.deaths > 0 ? (u.kills / u.deaths).toFixed(2) : (u.kills > 0 ? u.kills.toFixed(2) : '0.00');
 
-                setTimeout(() => {
-                    checkAuth();
-                }, 1000);
+        return `
+          <div class="top-item">
+            <div class="rank ${rankClass}">#${rankNum}</div>
+            <div class="avatar">${initial}</div>
+            <div class="info">
+              <div class="name">${u.username}</div>
+              <div class="stats">${u.serverMatches || 0} матчей | K/D: ${kd}</div>
+            </div>
+            <div class="elo">
+              ${u.serverMatches || 0}
+              <span class="elo-label">Игр</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    } catch (e) {
+      console.error('renderTopPage error:', e);
+    }
+  }
 
-            } catch (e) {
-                messageEl.className = 'auth-message show error';
-                messageEl.textContent = '❌ Ошибка соединения с сервером';
-                console.error('❌ Ошибка:', e);
-            }
-        }
+  // ============================================================
+  //  ПАТИ
+  // ============================================================
+  function updatePartyUI() {
+    if (!currentUser) return;
+    if (!currentUser.partyCode) {
+      currentUser.partyCode = generateCode();
+      supabase
+        .from('users')
+        .update({ partyCode: currentUser.partyCode })
+        .eq('id', currentUser.id)
+        .then(() => {});
+    }
+    document.getElementById('playerCode').textContent = currentUser.partyCode || '—';
+    renderPartyFriends();
+  }
 
-        // ============================================================
-        //  ПРОВЕРКА АВТОРИЗАЦИИ
-        // ============================================================
-        function checkAuth() {
-            if (currentUser) {
-                document.getElementById('authPage').style.display = 'none';
-                document.getElementById('mainSite').style.display = 'block';
-                document.getElementById('pName').textContent = currentUser.username;
-                document.getElementById('pStandoffId').textContent = currentUser.standoffId || '—';
-                document.getElementById('avatar').textContent = currentUser.username.charAt(0).toUpperCase();
-                
-                const regDate = currentUser.registered ? new Date(currentUser.registered).toLocaleDateString('ru-RU') : '—';
-                document.getElementById('pReg').textContent = regDate;
+  function renderPartyFriends() {
+    const container = document.getElementById('friendsList');
+    if (partyFriends.length === 0) {
+      container.innerHTML = '<span class="empty">Нет друзей в пати</span>';
+      return;
+    }
+    container.innerHTML = partyFriends.map(f => `
+      <span class="friend-tag">
+        <i class="fas fa-circle"></i> ${f.username}
+        <span class="remove" onclick="removePartyFriend('${f.id}')">&times;</span>
+      </span>
+    `).join('');
+  }
 
-                // Обновляем статистику
-                document.getElementById('pMatches').textContent = currentUser.matches || 0;
-                document.getElementById('pKills').textContent = currentUser.kills || 0;
-                document.getElementById('pDeaths').textContent = currentUser.deaths || 0;
-                
-                const kd = currentUser.deaths > 0 
-                    ? (currentUser.kills / currentUser.deaths).toFixed(2) 
-                    : (currentUser.kills > 0 ? currentUser.kills.toFixed(2) : '0.00');
-                document.getElementById('pKD').textContent = kd;
+  function addFriendByCode() {
+    const code = document.getElementById('partyCodeInput').value.trim().toUpperCase();
+    if (!code) return showToast('error', 'Ошибка', 'Введите код');
+    if (code.length !== 6) return showToast('error', 'Ошибка', 'Код должен состоять из 6 букв');
+    if (!currentUser) return showToast('error', 'Ошибка', 'Авторизуйтесь');
+    if (partyFriends.some(f => f.partyCode === code)) {
+      return showToast('info', 'Уже в пати', 'Этот игрок уже в вашей пати');
+    }
+    partyFriends.push({ id: 'friend_' + Date.now(), username: 'Игрок_' + code, partyCode: code });
+    renderPartyFriends();
+    document.getElementById('partyCodeInput').value = '';
+    showToast('success', 'Добавлен!', 'Игрок добавлен в пати');
+  }
 
-                // Проверка на бан
-                if (currentUser.isBanned) {
-                    document.getElementById('pBanned').style.display = 'inline';
-                } else {
-                    document.getElementById('pBanned').style.display = 'none';
-                }
+  function removePartyFriend(id) {
+    partyFriends = partyFriends.filter(f => f.id !== id);
+    renderPartyFriends();
+    showToast('info', 'Удалён', 'Игрок удалён из пати');
+  }
 
-                navigate('home');
-                showToast('success', 'Добро пожаловать!', currentUser.username);
-                updateStats();
-            } else {
-                document.getElementById('authPage').style.display = 'flex';
-                document.getElementById('mainSite').style.display = 'none';
-            }
-        }
+  function copyCode() {
+    const code = document.getElementById('playerCode').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      showToast('success', 'Скопировано!', 'Код скопирован в буфер обмена');
+    }).catch(() => {
+      const input = document.createElement('input');
+      input.value = code;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand('copy');
+      document.body.removeChild(input);
+      showToast('success', 'Скопировано!', 'Код скопирован в буфер обмена');
+    });
+  }
 
-        // ============================================================
-        //  ВЫХОД
-        // ============================================================
-        function handleLogout() {
-            if (!confirm('Выйти из аккаунта?')) return;
-            currentUser = null;
-            checkAuth();
-            showToast('info', 'Выход', 'Вы вышли из аккаунта');
-        }
+  // ============================================================
+  //  ДРУЗЬЯ
+  // ============================================================
+  function switchFriendsTab(tab) {
+    friendsTab = tab;
+    document.querySelectorAll('.friends-tabs .tab').forEach(t => t.classList.remove('active'));
+    document.querySelector(`.friends-tabs .tab[data-tab="${tab}"]`)?.classList.add('active');
+    renderFriendsPage();
+  }
 
-        // ============================================================
-        //  НАВИГАЦИЯ
-        // ============================================================
-        const pages = {
-            home: 'pageHome',
-            profile: 'pageProfile',
-            shop: 'pageShop',
-            friends: 'pageFriends',
-            matches: 'pageMatches',
-            top: 'pageTop',
-            wallet: 'pageWallet',
-            matchPage: 'matchPage'
-        };
+  function addFriendByCode2() {
+    const code = document.getElementById('friendCodeInput').value.trim().toUpperCase();
+    if (!code) return showToast('error', 'Ошибка', 'Введите код');
+    if (code.length !== 6) return showToast('error', 'Ошибка', 'Код должен состоять из 6 букв');
+    showToast('success', 'Запрос отправлен', 'Запрос в друзья отправлен');
+    document.getElementById('friendCodeInput').value = '';
+    renderFriendsPage();
+  }
 
-        function navigate(page) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            const target = document.getElementById(pages[page]);
-            if (target) target.classList.add('active');
-            document.querySelectorAll('.bottom-nav .item').forEach(b => b.classList.remove('active'));
-            const navItem = document.querySelector(`.bottom-nav .item[data-page="${page}"]`);
-            if (navItem) navItem.classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+  function renderFriendsPage() {
+    const container = document.getElementById('friendsListContainer');
+    container.innerHTML = `
+      <div class="friends-empty">
+        <i class="fas fa-user-friends"></i>
+        Друзей пока нет.
+      </div>
+    `;
+    document.getElementById('friendsStatFriends').textContent = 0;
+    document.getElementById('friendsStatIncoming').textContent = 0;
+    document.getElementById('friendsStatOutgoing').textContent = 0;
+    document.getElementById('friendsBadge').textContent = 0;
+    document.getElementById('incomingBadge').textContent = 0;
+    document.getElementById('outgoingBadge').textContent = 0;
+  }
 
-        // ============================================================
-        //  СТАТИСТИКА
-        // ============================================================
-        async function updateStats() {
-            try {
-                const { data: users, error } = await supabase
-                    .from('users')
-                    .select('*');
+  // ============================================================
+  //  ПРОМОКОД
+  // ============================================================
+  function applyPromo() {
+    const input = document.getElementById('promoInput');
+    const code = input.value.trim().toUpperCase();
+    if (!code) return showToast('error', 'Ошибка', 'Введите промокод');
+    showToast('success', 'Промокод применён!', 'Промокод ' + code + ' активирован');
+    input.value = '';
+  }
 
-                if (error) return;
+  // ============================================================
+  //  АВТОРИЗАЦИЯ
+  // ============================================================
+  function showAuthForm(form) {
+    document.getElementById('loginForm').style.display = form === 'login' ? 'block' : 'none';
+    document.getElementById('registerForm').style.display = form === 'register' ? 'block' : 'none';
+  }
 
-                const totalMatches = users.reduce((sum, u) => sum + (u.matches || 0), 0);
-                document.getElementById('activePlayersHome').textContent = users.length;
-                document.getElementById('totalMatchesHome').textContent = totalMatches;
-                document.getElementById('matchCount').textContent = '0';
-                document.getElementById('queueCount').textContent = '0';
-            } catch (e) {
-                console.error('updateStats error:', e);
-            }
-        }
+  // ============================================================
+  //  ОБРАБОТЧИКИ
+  // ============================================================
+  document.getElementById('loginBtn').addEventListener('click', loginUser);
+  document.getElementById('registerBtn').addEventListener('click', registerUser);
 
-        // ============================================================
-        //  ПОИСК МАТЧА
-        // ============================================================
-        function startSearch() {
-            if (isSearching) return;
-            if (!currentUser) return showToast('error', 'Ошибка', 'Авторизуйтесь');
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      const loginForm = document.getElementById('loginForm');
+      const registerForm = document.getElementById('registerForm');
+      if (loginForm.style.display !== 'none') loginUser();
+      else if (registerForm.style.display !== 'none') registerUser();
+    }
+  });
 
-            queue = [{ id: currentUser.id, username: currentUser.username }];
-            isSearching = true;
-            searchSeconds = 0;
+  document.getElementById('modesBanContainer').addEventListener('click', function(e) {
+    const btn = e.target.closest('.ban-btn');
+    if (!btn) return;
+    if (btn.classList.contains('banned') || btn.classList.contains('selected')) return;
+    const value = btn.dataset.value;
+    handleModesBan(value);
+  });
 
-            document.getElementById('searchMainBlock').classList.add('searching');
-            document.getElementById('queueBtn').style.display = 'none';
-            document.getElementById('cancelBtn').style.display = 'inline-flex';
-            document.getElementById('searchProgress').style.display = 'block';
-            document.getElementById('progressText').textContent = '1/6';
-
-            if (searchTimerInterval) clearInterval(searchTimerInterval);
-            searchTimerInterval = setInterval(() => {
-                searchSeconds++;
-                const mins = String(Math.floor(searchSeconds / 60)).padStart(2, '0');
-                const secs = String(searchSeconds % 60).padStart(2, '0');
-                document.getElementById('searchTimer').textContent = mins + ':' + secs;
-            }, 1000);
-
-            showToast('info', 'Поиск начат', 'Ищем игроков...');
-            simulateBotSearch();
-        }
-
-        function simulateBotSearch() {
-            if (!isSearching) return;
-            const maxBots = 5;
-            const currentBots = queue.length - 1;
-
-            if (currentBots < maxBots && isSearching) {
-                setTimeout(() => {
-                    if (!isSearching) return;
-                    const botName = 'Bot' + (botCounter + 1);
-                    botCounter++;
-                    queue.push({ id: 'bot_' + Date.now(), username: botName });
-                    document.getElementById('progressText').textContent = queue.length + '/6';
-                    showToast('info', 'Игрок найден', botName + ' присоединился');
-
-                    if (queue.length >= 6) {
-                        clearInterval(searchTimerInterval);
-                        isSearching = false;
-                        document.getElementById('searchMainBlock').classList.remove('searching');
-                        document.getElementById('queueBtn').style.display = 'inline-flex';
-                        document.getElementById('cancelBtn').style.display = 'none';
-                        document.getElementById('searchProgress').style.display = 'none';
-                        showToast('success', 'Матч найден!', '6 игроков собрано');
-                        navigate('matchPage');
-                    } else {
-                        simulateBotSearch();
-                    }
-                }, 1500 + Math.random() * 2000);
-            }
-        }
-
-        function cancelSearch() {
-            if (!isSearching) return;
-            isSearching = false;
-            clearInterval(searchTimerInterval);
-            queue = [];
-            document.getElementById('searchMainBlock').classList.remove('searching');
-            document.getElementById('queueBtn').style.display = 'inline-flex';
-            document.getElementById('cancelBtn').style.display = 'none';
-            document.getElementById('searchProgress').style.display = 'none';
-            document.getElementById('searchTimer').textContent = '00:00';
-            showToast('info', 'Поиск отменён', 'Вы отменили поиск');
-        }
-
-        // ============================================================
-        //  ПОДКЛЮЧЕНИЕ ОБРАБОТЧИКОВ
-        // ============================================================
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('✅ DOM ЗАГРУЖЕН!');
-
-            document.getElementById('registerBtn').onclick = registerUser;
-            document.getElementById('loginBtn').onclick = loginUser;
-
-            console.log('✅ Регистрация и вход подключены');
-            checkAuth();
-            console.log('✅ ВСЕ ГОТОВО!');
-        });
-    </script>
-
+  // ============================================================
+  //  ЗАПУСК
+  // ============================================================
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('✅ DOM ЗАГРУЖЕН!');
+    checkAuth();
+    
+    setInterval(() => {
+      if (!currentMatch) updateQueueUI();
+      updateHomeStats();
+    }, 5000);
+  });
+</script>
 </body>
 </html>
