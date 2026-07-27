@@ -2173,25 +2173,33 @@
   //  РЕГИСТРАЦИЯ (Supabase)
   // ============================================================
   async function registerUser() {
+    console.log('🔵 РЕГИСТРАЦИЯ: начата');
+
     const username = document.getElementById('regUsername').value.trim();
     const standoffId = document.getElementById('regStandoffId').value.trim();
     const password = document.getElementById('regPassword').value;
     const confirm = document.getElementById('regPasswordConfirm').value;
 
+    // Проверки
     if (!username || !standoffId || !password || !confirm) {
-      return showToast('error', 'Ошибка', 'Заполните все поля');
+      showToast('error', 'Ошибка', 'Заполните все поля');
+      return;
     }
     if (password !== confirm) {
-      return showToast('error', 'Ошибка', 'Пароли не совпадают');
+      showToast('error', 'Ошибка', 'Пароли не совпадают');
+      return;
     }
     if (password.length < 8) {
-      return showToast('error', 'Ошибка', 'Пароль минимум 8 символов');
+      showToast('error', 'Ошибка', 'Пароль минимум 8 символов');
+      return;
     }
     if (!/^\d+$/.test(standoffId)) {
-      return showToast('error', 'Ошибка', 'ID Standoff 2 должен содержать только цифры');
+      showToast('error', 'Ошибка', 'ID Standoff 2 должен содержать только цифры');
+      return;
     }
 
     try {
+      // Проверяем, существует ли пользователь
       const { data: existing } = await supabase
         .from('users')
         .select('username')
@@ -2199,9 +2207,11 @@
         .maybeSingle();
 
       if (existing) {
-        return showToast('error', 'Ошибка', 'Имя пользователя уже занято');
+        showToast('error', 'Ошибка', 'Имя пользователя уже занято');
+        return;
       }
 
+      // Проверяем, существует ли ID Standoff 2
       const { data: existingId } = await supabase
         .from('users')
         .select('standoffId')
@@ -2209,9 +2219,11 @@
         .maybeSingle();
 
       if (existingId) {
-        return showToast('error', 'Ошибка', 'Этот ID Standoff 2 уже используется');
+        showToast('error', 'Ошибка', 'Этот ID Standoff 2 уже используется');
+        return;
       }
 
+      // Создаём нового пользователя
       const newUser = {
         id: Date.now().toString(),
         username: username,
@@ -2235,11 +2247,16 @@
         .single();
 
       if (error) {
-        return showToast('error', 'Ошибка', error.message);
+        console.error('❌ Ошибка Supabase:', error);
+        showToast('error', 'Ошибка', error.message);
+        return;
       }
 
+      console.log('✅ Пользователь создан:', data);
       currentUser = data;
       showToast('success', 'Успешно!', 'Добро пожаловать, ' + username);
+      
+      // Обновляем интерфейс
       setTimeout(() => checkAuth(), 1000);
 
     } catch (e) {
@@ -2252,11 +2269,14 @@
   //  ВХОД (Supabase)
   // ============================================================
   async function loginUser() {
+    console.log('🔵 ВХОД: начат');
+
     const username = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value;
 
     if (!username || !password) {
-      return showToast('error', 'Ошибка', 'Заполните все поля');
+      showToast('error', 'Ошибка', 'Заполните все поля');
+      return;
     }
 
     try {
@@ -2268,19 +2288,26 @@
         .maybeSingle();
 
       if (error) {
-        return showToast('error', 'Ошибка', 'Ошибка сервера');
+        console.error('❌ Ошибка Supabase:', error);
+        showToast('error', 'Ошибка', 'Ошибка сервера');
+        return;
       }
 
       if (!data) {
-        return showToast('error', 'Ошибка', 'Неверное имя или пароль');
+        showToast('error', 'Ошибка', 'Неверное имя или пароль');
+        return;
       }
 
       if (data.isBanned) {
-        return showToast('error', 'Ошибка', '🚫 Ваш аккаунт забанен');
+        showToast('error', 'Ошибка', '🚫 Ваш аккаунт забанен');
+        return;
       }
 
+      console.log('✅ Пользователь найден:', data);
       currentUser = data;
       showToast('success', 'Добро пожаловать!', username);
+      
+      // Обновляем интерфейс
       setTimeout(() => checkAuth(), 1000);
 
     } catch (e) {
@@ -2297,6 +2324,7 @@
       document.getElementById('authPage').style.display = 'none';
       document.getElementById('mainSite').style.display = 'block';
       
+      // Обновляем профиль
       document.getElementById('pName').textContent = currentUser.username;
       document.getElementById('pStandoffId').textContent = currentUser.standoffId || '—';
       document.getElementById('avatar').textContent = currentUser.username.charAt(0).toUpperCase();
@@ -2304,6 +2332,7 @@
       const regDate = currentUser.registered ? new Date(currentUser.registered).toLocaleDateString('ru-RU') : '—';
       document.getElementById('pReg').textContent = regDate;
 
+      // Обновляем всю статистику
       updateProfile();
       updateHomeStats();
       updateQueueUI();
