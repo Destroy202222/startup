@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Регистрация</title>
+    <title>Тест Supabase</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
     </script>
     <style>
@@ -22,10 +22,33 @@
             background: #1a1a2e;
             padding: 40px;
             border-radius: 20px;
-            max-width: 400px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 { color: #ffd700; }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            background: #222;
+        }
+        .ok { color: #51cf66; border: 1px solid #51cf66; }
+        .err { color: #ff6b6b; border: 1px solid #ff6b6b; }
+        .info { color: #ffd700; border: 1px solid #ffd700; }
+        button {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 10px;
+            background: #ffd700;
+            color: #000;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin: 5px;
             width: 100%;
         }
-        h1 { text-align: center; color: #ffd700; }
+        button:hover { background: #ffed4a; }
         input {
             width: 100%;
             padding: 12px;
@@ -37,119 +60,161 @@
             font-size: 14px;
             box-sizing: border-box;
         }
-        button {
-            width: 100%;
-            padding: 14px;
-            margin-top: 10px;
-            border: none;
-            border-radius: 10px;
-            background: #ffd700;
-            color: #000;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-        button:hover { background: #ffed4a; }
-        .msg {
+        .log {
+            text-align: left;
+            font-size: 12px;
+            color: #888;
+            background: #111;
             padding: 10px;
-            margin-top: 10px;
             border-radius: 8px;
-            display: none;
-            text-align: center;
+            margin-top: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
         }
-        .msg.show { display: block; }
-        .msg.ok { background: #1a3a1a; color: #51cf66; border: 1px solid #51cf66; }
-        .msg.err { background: #3a1a1a; color: #ff6b6b; border: 1px solid #ff6b6b; }
-        .msg.info { background: #1a2a3a; color: #ffd700; border: 1px solid #ffd700; }
     </style>
 </head>
 <body>
 <div class="box">
-    <h1>⚡ Регистрация</h1>
-    <input type="text" id="username" placeholder="Имя пользователя" />
-    <input type="text" id="standoffId" placeholder="ID Standoff 2" />
-    <input type="password" id="password" placeholder="Пароль" />
-    <input type="password" id="confirm" placeholder="Подтвердите пароль" />
-    <button id="btn">Зарегистрироваться</button>
-    <div class="msg" id="msg"></div>
+    <h1>⚡ Тест Supabase</h1>
+    
+    <div class="status info" id="status">⏳ Проверка Supabase...</div>
+
+    <input type="text" id="testUsername" placeholder="Тестовое имя" value="TestUser123" />
+    <input type="text" id="testStandoffId" placeholder="Тестовый ID" value="999999" />
+    <input type="password" id="testPassword" placeholder="Пароль" value="Test123456" />
+    <input type="password" id="testConfirm" placeholder="Подтвердите" value="Test123456" />
+    
+    <button id="testBtn">🔵 ТЕСТ РЕГИСТРАЦИИ</button>
+    
+    <div class="log" id="log">Жду действий...</div>
 </div>
 
 <script>
     // ============================================================
+    //  ЛОГИРОВАНИЕ
+    // ============================================================
+    function log(text, type) {
+        const logEl = document.getElementById('log');
+        const time = new Date().toLocaleTimeString();
+        const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+        logEl.textContent += `\n[${time}] ${prefix} ${text}`;
+        logEl.scrollTop = logEl.scrollHeight;
+        console.log(`[${time}] ${prefix} ${text}`);
+    }
+
+    function setStatus(text, type) {
+        const status = document.getElementById('status');
+        status.textContent = text;
+        status.className = 'status ' + type;
+    }
+
+    // ============================================================
     //  SUPABASE
     // ============================================================
-    console.log('🚀 СКРИПТ ЗАПУЩЕН');
+    log('Начинаем инициализацию Supabase...');
 
     const supabaseUrl = 'https://dlprylagddsmtzpmzxqy.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRscHJ5bGFnZGRzbXR6cG16eHF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQzMDY5MjcsImV4cCI6MjA5OTg4MjkyN30.xyRO-nChHDfqFgtYkhsMOkM3F8BsZGOvacQ0zhjBuRI';
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-    console.log('✅ Supabase создан');
+
+    log('URL: ' + supabaseUrl);
+    log('KEY: ' + supabaseKey.substring(0, 20) + '...');
+
+    try {
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        log('✅ Supabase создан!', 'success');
+        setStatus('✅ Supabase подключен', 'ok');
+        window.supabase = supabase;
+    } catch (e) {
+        log('❌ Ошибка создания Supabase: ' + e.message, 'error');
+        setStatus('❌ Ошибка: ' + e.message, 'err');
+    }
 
     // ============================================================
-    //  КНОПКА
+    //  ТЕСТ РЕГИСТРАЦИИ
     // ============================================================
-    document.getElementById('btn').addEventListener('click', async function() {
-        console.log('🔵 КНОПКА НАЖАТА');
+    document.getElementById('testBtn').addEventListener('click', async function() {
+        log('🔵 КНОПКА НАЖАТА!', 'info');
+        
+        const username = document.getElementById('testUsername').value.trim();
+        const standoffId = document.getElementById('testStandoffId').value.trim();
+        const password = document.getElementById('testPassword').value;
+        const confirm = document.getElementById('testConfirm').value;
 
-        const username = document.getElementById('username').value.trim();
-        const standoffId = document.getElementById('standoffId').value.trim();
-        const password = document.getElementById('password').value;
-        const confirm = document.getElementById('confirm').value;
-        const msg = document.getElementById('msg');
+        log('Имя: ' + username);
+        log('ID: ' + standoffId);
+        log('Пароль: ' + password.replace(/./g, '*'));
+        log('Подтверждение: ' + confirm.replace(/./g, '*'));
 
-        // Проверки
         if (!username || !standoffId || !password || !confirm) {
-            msg.className = 'msg show err';
-            msg.textContent = '❌ Заполните все поля';
-            return;
-        }
-        if (password !== confirm) {
-            msg.className = 'msg show err';
-            msg.textContent = '❌ Пароли не совпадают';
-            return;
-        }
-        if (password.length < 8) {
-            msg.className = 'msg show err';
-            msg.textContent = '❌ Пароль минимум 8 символов';
-            return;
-        }
-        if (!/^\d+$/.test(standoffId)) {
-            msg.className = 'msg show err';
-            msg.textContent = '❌ ID должен содержать только цифры';
+            log('❌ Заполните все поля', 'error');
+            setStatus('❌ Заполните все поля', 'err');
             return;
         }
 
-        msg.className = 'msg show info';
-        msg.textContent = '⏳ Проверка...';
+        if (password !== confirm) {
+            log('❌ Пароли не совпадают', 'error');
+            setStatus('❌ Пароли не совпадают', 'err');
+            return;
+        }
+
+        if (password.length < 8) {
+            log('❌ Пароль меньше 8 символов', 'error');
+            setStatus('❌ Пароль минимум 8 символов', 'err');
+            return;
+        }
+
+        if (!/^\d+$/.test(standoffId)) {
+            log('❌ ID содержит не цифры', 'error');
+            setStatus('❌ ID должен содержать только цифры', 'err');
+            return;
+        }
+
+        setStatus('⏳ Проверка...', 'info');
+        log('⏳ Отправка запроса в Supabase...', 'info');
 
         try {
+            const sb = window.supabase;
+            if (!sb) {
+                log('❌ Supabase не инициализирован!', 'error');
+                setStatus('❌ Supabase не инициализирован', 'err');
+                return;
+            }
+
             // Проверяем имя
-            const { data: existing } = await supabase
+            log('Проверка имени...');
+            const { data: existing } = await sb
                 .from('users')
                 .select('username')
                 .eq('username', username)
                 .maybeSingle();
 
             if (existing) {
-                msg.className = 'msg show err';
-                msg.textContent = '❌ Имя занято';
+                log('❌ Имя занято: ' + username, 'error');
+                setStatus('❌ Имя пользователя уже занято', 'err');
                 return;
             }
+            log('✅ Имя свободно', 'success');
 
             // Проверяем ID
-            const { data: existingId } = await supabase
+            log('Проверка ID...');
+            const { data: existingId } = await sb
                 .from('users')
                 .select('standoffId')
                 .eq('standoffId', standoffId)
                 .maybeSingle();
 
             if (existingId) {
-                msg.className = 'msg show err';
-                msg.textContent = '❌ ID уже используется';
+                log('❌ ID занят: ' + standoffId, 'error');
+                setStatus('❌ ID Standoff 2 уже используется', 'err');
                 return;
             }
+            log('✅ ID свободен', 'success');
 
             // Создаём
+            log('Создание пользователя...');
             const newUser = {
                 id: Date.now().toString(),
                 username: username,
@@ -165,31 +230,36 @@
                 isBanned: false
             };
 
-            const { data, error } = await supabase
+            log('Данные: ' + JSON.stringify(newUser, null, 2));
+
+            const { data, error } = await sb
                 .from('users')
                 .insert([newUser])
                 .select()
                 .single();
 
             if (error) {
-                msg.className = 'msg show err';
-                msg.textContent = '❌ ' + error.message;
-                console.error('Supabase error:', error);
+                log('❌ Ошибка Supabase: ' + error.message, 'error');
+                log('Код ошибки: ' + error.code, 'error');
+                log('Детали: ' + JSON.stringify(error), 'error');
+                setStatus('❌ ' + error.message, 'err');
                 return;
             }
 
-            msg.className = 'msg show ok';
-            msg.textContent = '✅ Успешно! Пользователь ' + username + ' создан!';
-            console.log('✅ Создан:', data);
+            log('✅ Успешно! Пользователь создан: ' + data.username, 'success');
+            log('✅ ID: ' + data.id, 'success');
+            log('✅ Данные: ' + JSON.stringify(data, null, 2), 'success');
+            setStatus('✅ Успешно! ' + username + ' создан!', 'ok');
 
         } catch (e) {
-            msg.className = 'msg show err';
-            msg.textContent = '❌ Ошибка: ' + e.message;
-            console.error('Error:', e);
+            log('❌ Исключение: ' + e.message, 'error');
+            log('❌ Стек: ' + e.stack, 'error');
+            setStatus('❌ Ошибка: ' + e.message, 'err');
         }
     });
 
-    console.log('✅ Всё готово, жду клика');
+    log('✅ Готово! Жду нажатия кнопки.', 'success');
+    console.log('✅ ТЕСТ ГОТОВ!');
 </script>
 </body>
 </html>
