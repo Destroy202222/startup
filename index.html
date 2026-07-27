@@ -20,6 +20,277 @@
       min-height: 100vh;
       line-height: 1.5;
     }
+
+    /* ===== АВТОРИЗАЦИЯ (СОВРЕМЕННЫЙ ДИЗАЙН) ===== */
+    .auth-page {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      background: radial-gradient(ellipse at 50% 0%, #1a1a2e, #0b0b0f 70%);
+      position: relative;
+      overflow: hidden;
+    }
+    .auth-page::before {
+      content: '';
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(255, 215, 0, 0.04), transparent 70%);
+      top: -200px;
+      right: -200px;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .auth-page::after {
+      content: '';
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(255, 215, 0, 0.02), transparent 70%);
+      bottom: -100px;
+      left: -100px;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .auth-box {
+      background: rgba(18, 18, 30, 0.92);
+      backdrop-filter: blur(20px);
+      border-radius: 32px;
+      padding: 40px 36px 36px;
+      max-width: 420px;
+      width: 100%;
+      border: 1px solid rgba(255, 215, 0, 0.08);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+      position: relative;
+      z-index: 1;
+      animation: fadeInUp 0.6s ease;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .auth-box .auth-logo {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .auth-box .auth-logo .icon {
+      font-size: 44px;
+      display: block;
+      margin-bottom: 4px;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    .auth-box .auth-logo h1 {
+      font-size: 28px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #ffd700, #ff8c00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .auth-box .auth-logo .sub {
+      color: #666;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 2px;
+      -webkit-text-fill-color: #666;
+    }
+
+    .auth-box .auth-tabs {
+      display: flex;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 60px;
+      padding: 4px;
+      margin-bottom: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .auth-box .auth-tabs .tab {
+      flex: 1;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 60px;
+      background: transparent;
+      color: #888;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: inherit;
+      text-align: center;
+    }
+    .auth-box .auth-tabs .tab.active {
+      background: linear-gradient(135deg, #ffd700, #ff8c00);
+      color: #000;
+      box-shadow: 0 4px 20px rgba(255, 215, 0, 0.25);
+    }
+    .auth-box .auth-tabs .tab:hover:not(.active) {
+      color: #fff;
+    }
+
+    .auth-box .auth-form {
+      display: none;
+      animation: slideDown 0.4s ease;
+    }
+    .auth-box .auth-form.active {
+      display: block;
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .auth-box .form-group {
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .auth-box .form-group label {
+      display: block;
+      color: #999;
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 5px;
+    }
+    .auth-box .form-group .input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 14px;
+      transition: all 0.3s ease;
+    }
+    .auth-box .form-group .input-wrap:focus-within {
+      border-color: #ffd700;
+      box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.06);
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .auth-box .form-group .input-wrap i {
+      color: #666;
+      font-size: 16px;
+      padding: 0 0 0 16px;
+      transition: color 0.3s ease;
+      min-width: 40px;
+    }
+    .auth-box .form-group .input-wrap:focus-within i {
+      color: #ffd700;
+    }
+    .auth-box .form-group .input-wrap input {
+      width: 100%;
+      padding: 14px 16px 14px 4px;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 500;
+      outline: none;
+      font-family: inherit;
+    }
+    .auth-box .form-group .input-wrap input::placeholder {
+      color: #555;
+      font-weight: 400;
+      font-size: 14px;
+    }
+    .auth-box .form-group .input-wrap .toggle-password {
+      background: none;
+      border: none;
+      color: #666;
+      cursor: pointer;
+      padding: 0 16px 0 0;
+      font-size: 16px;
+      transition: color 0.3s ease;
+    }
+    .auth-box .form-group .input-wrap .toggle-password:hover {
+      color: #ffd700;
+    }
+
+    .auth-box .btn-auth {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 60px;
+      background: linear-gradient(135deg, #ffd700, #ff8c00);
+      color: #000;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+    .auth-box .btn-auth:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3);
+    }
+    .auth-box .btn-auth:active {
+      transform: scale(0.98);
+    }
+    .auth-box .btn-auth i {
+      font-size: 18px;
+    }
+
+    .auth-box .auth-message {
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 12px;
+      display: none;
+      animation: slideDown 0.3s ease;
+    }
+    .auth-box .auth-message.show {
+      display: block;
+    }
+    .auth-box .auth-message.success {
+      background: rgba(81, 207, 102, 0.12);
+      border: 1px solid rgba(81, 207, 102, 0.2);
+      color: #51cf66;
+    }
+    .auth-box .auth-message.error {
+      background: rgba(255, 107, 107, 0.12);
+      border: 1px solid rgba(255, 107, 107, 0.2);
+      color: #ff6b6b;
+    }
+    .auth-box .auth-message.info {
+      background: rgba(255, 215, 0, 0.08);
+      border: 1px solid rgba(255, 215, 0, 0.15);
+      color: #ffd700;
+    }
+
+    .auth-box .auth-footer {
+      text-align: center;
+      margin-top: 16px;
+      color: #666;
+      font-size: 13px;
+    }
+    .auth-box .auth-footer a {
+      color: #ffd700;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    .auth-box .auth-footer a:hover {
+      color: #ff8c00;
+      text-decoration: underline;
+    }
+
+    /* Остальной CSS (весь ваш существующий) */
     .header {
       background: rgba(11, 11, 15, 0.85);
       backdrop-filter: blur(12px);
@@ -58,7 +329,6 @@
     .page.active { display: block; }
     @keyframes fade { 0% { opacity: 0; transform: translateY(12px); } 100% { opacity: 1; transform: translateY(0); } }
 
-    /* ===== ГЛАВНОЕ МЕНЮ ===== */
     .home-hero {
       text-align: center;
       max-width: 900px;
@@ -230,12 +500,11 @@
       font-weight: 700;
     }
 
-    /* ===== ПОИСК МАТЧА ===== */
+    /* Поиск матча */
     .search-page-wrapper {
       max-width: 700px;
       margin: 0 auto;
     }
-
     .search-header-block {
       background: rgba(255, 215, 0, 0.03);
       border: 1.5px solid rgba(255, 215, 0, 0.25);
@@ -390,7 +659,6 @@
       font-weight: 600;
     }
 
-    /* Блок "Играть в пати" */
     .party-block {
       background: rgba(20, 20, 28, 0.7);
       backdrop-filter: blur(8px);
@@ -573,7 +841,6 @@
       font-weight: 600;
     }
 
-    /* ===== МАТЧ (НОВЫЙ ДИЗАЙН) ===== */
     .match-page .match-title {
       font-size: 28px;
       font-weight: 900;
@@ -581,8 +848,6 @@
       color: #ffd700;
       margin-bottom: 4px;
     }
-
-    /* НОВЫЙ БЛОК СВЕРХУ */
     .match-info-bar {
       background: rgba(20, 20, 28, 0.8);
       backdrop-filter: blur(8px);
@@ -620,7 +885,6 @@
       color: #ffd700;
     }
 
-    /* КОМАНДЫ */
     .match-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -643,7 +907,6 @@
     .team-block:hover {
       transform: translateY(-2px);
     }
-
     .team-block.blue {
       border-color: rgba(52, 152, 219, 0.6);
       background: rgba(52, 152, 219, 0.08);
@@ -656,7 +919,6 @@
       color: #3498db;
       border: 1px solid rgba(52, 152, 219, 0.3);
     }
-
     .team-block.orange {
       border-color: rgba(255, 165, 0, 0.6);
       background: rgba(255, 165, 0, 0.08);
@@ -669,7 +931,6 @@
       color: #ffa500;
       border: 1px solid rgba(255, 165, 0, 0.3);
     }
-
     .team-block .team-name {
       font-size: 18px;
       font-weight: 800;
@@ -737,7 +998,6 @@
       flex-shrink: 0;
     }
 
-    /* ===== БАНЫ (КРАСИВЫЕ И СНИЗУ) ===== */
     .bans-container {
       max-width: 900px;
       margin: 0 auto 16px;
@@ -757,7 +1017,6 @@
     .ban-section:hover {
       border-color: rgba(255,215,0,0.15);
     }
-
     .ban-section .ban-header {
       display: flex;
       justify-content: space-between;
@@ -785,7 +1044,6 @@
       color: #ffd700;
       font-weight: 600;
     }
-
     .ban-section .ban-status {
       font-size: 11px;
       color: #888;
@@ -861,11 +1119,9 @@
       color: #fff;
       transform: translateY(-1px);
     }
-
     .ban-btn.banned {
       display: none !important;
     }
-
     .ban-btn.selected {
       background: rgba(81, 207, 102, 0.12);
       border-color: rgba(81, 207, 102, 0.3);
@@ -901,7 +1157,6 @@
       background: rgba(52, 152, 219, 0.08);
       border-color: rgba(52, 152, 219, 0.25);
     }
-
     .ban-section.modes-section .ban-title i {
       color: #3498db;
     }
@@ -938,7 +1193,6 @@
       transform: none;
     }
 
-    /* ===== ДРУЗЬЯ ===== */
     .friends-page .friends-header {
       display: flex;
       justify-content: space-between;
@@ -949,7 +1203,6 @@
       font-size: 22px;
       font-weight: 900;
     }
-
     .friends-page .friends-stats {
       display: flex;
       gap: 12px;
@@ -974,7 +1227,6 @@
       font-weight: 600;
       margin-top: 2px;
     }
-
     .friends-page .friends-search {
       display: flex;
       gap: 10px;
@@ -1026,7 +1278,6 @@
       background: rgba(255,215,0,0.25);
       box-shadow: 0 0 20px rgba(255,215,0,0.1);
     }
-
     .friends-page .friends-tabs {
       display: flex;
       gap: 16px;
@@ -1055,7 +1306,6 @@
       border-radius: 30px;
       margin-left: 4px;
     }
-
     .friends-page .friends-empty {
       text-align: center;
       padding: 30px 0;
@@ -1068,7 +1318,6 @@
       display: block;
       margin-bottom: 8px;
     }
-
     .friends-page .friend-item {
       display: flex;
       align-items: center;
@@ -1132,7 +1381,6 @@
       background: rgba(255,215,0,0.25);
     }
 
-    /* ===== КОШЕЛЁК ===== */
     .wallet-page .wallet-balance {
       display: flex;
       justify-content: space-between;
@@ -1296,7 +1544,6 @@
       margin-bottom: 6px;
     }
 
-    /* ===== ТОП ИГРОКОВ ===== */
     .top-page .top-header {
       display: flex;
       justify-content: space-between;
@@ -1346,7 +1593,6 @@
     .top-item .rank.gold { color: #ffd700; }
     .top-item .rank.silver { color: #c0c0c0; }
     .top-item .rank.bronze { color: #cd7f32; }
-
     .top-item .avatar {
       width: 32px;
       height: 32px;
@@ -1389,7 +1635,6 @@
       margin-top: -2px;
     }
 
-    /* ===== ПРОФИЛЬ ===== */
     .profile-card {
       background: rgba(20,20,28,0.8);
       backdrop-filter: blur(8px);
@@ -1534,7 +1779,6 @@
     .placeholder i { font-size: 34px; color: #ffd700; display: block; margin-bottom: 8px; }
     .placeholder h2 { font-size: 20px; font-weight: 800; color: #fff; }
 
-    /* ===== НИЖНЯЯ НАВИГАЦИЯ ===== */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -1614,69 +1858,48 @@
     .toast .ttl.info { color: #ffd700; }
     .toast .txt { color: #aaa; font-size: 14px; }
 
-    .auth-page {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-      background: radial-gradient(ellipse at center, #15151e, #0b0b0f);
+    /* Адаптив */
+    @media (max-width: 480px) {
+      .auth-box { padding: 28px 20px 24px; }
+      .auth-box .auth-logo h1 { font-size: 24px; }
+      .hero-title { font-size: 24px; }
+      .hero-stats-row { flex-direction: column; gap: 8px; }
+      .hero-stat { width: 100%; }
+      .hero-actions { flex-direction: column; align-items: center; }
+      .btn-hero { width: 100%; justify-content: center; }
+      .prize-block .prize-grid { grid-template-columns: 1fr; }
+      .profile-stats { grid-template-columns: 1fr 1fr; }
+      .profile-header { flex-direction: column; text-align: center; }
+      .match-grid { grid-template-columns: 1fr; }
+      .bans-container { grid-template-columns: 1fr; }
+      .top-item .elo { min-width: 50px; font-size: 14px; }
+      .wallet-page .wallet-balance { flex-direction: column; gap: 10px; }
+      .wallet-page .wallet-balance .balance-item .amount { font-size: 24px; }
+      .wallet-page .wallet-balance .balance-item .rub-amount { font-size: 24px; }
+      .friends-page .friends-stats { flex-direction: column; gap: 6px; }
+      .friends-page .friends-stats .stat-circle .number { font-size: 20px; }
+      .friends-page .friends-header { flex-direction: column; align-items: flex-start; gap: 4px; }
+      .search-header-block .search-title { font-size: 20px; }
+      .search-header-block .search-sub { font-size: 13px; }
+      .search-main-block .btn-queue { font-size: 13px; padding: 8px 16px; }
+      .search-counter .num { font-size: 18px; }
+      .search-progress .progress-text { font-size: 24px; }
+      .party-block .party-add input { width: 80px; }
+      .party-block .party-code-display .code-box { font-size: 14px; padding: 4px 10px; }
+      .match-page .match-title { font-size: 18px; }
+      .team-block .team-name { font-size: 13px; }
+      .player-card .info .name { font-size: 12px; }
+      .match-info-bar { flex-direction: column; align-items: stretch; text-align: center; gap: 6px; }
+      .match-info-bar .info-item { justify-content: center; font-size: 12px; }
+      .ban-section { padding: 12px 14px; }
+      .ban-btn { font-size: 11px; padding: 5px 12px; min-width: 50px; }
+      .top-page .page-title { font-size: 20px; }
+      .top-item { flex-wrap: wrap; gap: 4px; padding: 6px 10px; }
+      .top-item .info .name { font-size: 13px; }
+      .top-item .info .stats { font-size: 10px; }
+      .profile-actions { flex-direction: column; align-items: stretch; }
+      .profile-actions .btn-action { justify-content: center; }
     }
-    .auth-box {
-      background: rgba(20,20,28,0.8);
-      backdrop-filter: blur(12px);
-      border-radius: 24px;
-      padding: 30px 24px;
-      max-width: 380px;
-      width: 100%;
-      border: 1px solid rgba(255,255,255,0.04);
-    }
-    .auth-box h1 {
-      font-size: 26px;
-      font-weight: 900;
-      background: linear-gradient(135deg, #ffd700, #ff8c00);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-align: center;
-    }
-    .auth-box .sub {
-      color: #888;
-      text-align: center;
-      font-size: 13px;
-      margin-bottom: 20px;
-      -webkit-text-fill-color: #888;
-    }
-    .auth-box h2 { text-align: center; font-size: 20px; margin-bottom: 14px; }
-    .auth-box .field { margin-bottom: 12px; }
-    .auth-box .field label { display: block; color: #aaa; font-weight: 600; font-size: 13px; margin-bottom: 3px; }
-    .auth-box .field input {
-      width: 100%;
-      padding: 10px 12px;
-      background: rgba(26,26,34,0.6);
-      border: 1px solid rgba(255,255,255,0.04);
-      border-radius: 12px;
-      color: #fff;
-      font-size: 14px;
-      transition: .2s;
-    }
-    .auth-box .field input:focus { outline: none; border-color: #ffd700; }
-    .auth-box .btn {
-      background: linear-gradient(135deg, #ffd700, #ff8c00);
-      color: #000;
-      padding: 12px 30px;
-      border-radius: 60px;
-      font-weight: 800;
-      font-size: 15px;
-      border: none;
-      cursor: pointer;
-      width: 100%;
-      justify-content: center;
-      margin-top: 4px;
-    }
-    .auth-box .link { text-align: center; margin-top: 12px; }
-    .auth-box .link a { color: #ffd700; cursor: pointer; font-weight: 600; text-decoration: none; }
-    .auth-box .link a:hover { text-decoration: underline; }
-
     @media (max-width: 768px) {
       .hero-title { font-size: 30px; }
       .hero-stats-row { flex-direction: row; justify-content: center; gap: 12px; }
@@ -1711,47 +1934,6 @@
       .match-info-bar { flex-direction: column; align-items: stretch; text-align: center; gap: 6px; }
       .match-info-bar .info-item { justify-content: center; }
     }
-    @media (max-width: 480px) {
-      .hero-title { font-size: 24px; }
-      .hero-badge { font-size: 11px; padding: 5px 16px; }
-      .hero-stats-row { flex-direction: column; gap: 8px; }
-      .hero-stat { width: 100%; }
-      .hero-actions { flex-direction: column; align-items: center; }
-      .btn-hero { width: 100%; justify-content: center; }
-      .prize-block .prize-grid { grid-template-columns: 1fr; }
-      .profile-stats { grid-template-columns: 1fr 1fr; }
-      .search-header-block { padding: 12px 14px; }
-      .search-header-block .search-title { font-size: 20px; }
-      .search-header-block .search-sub { font-size: 13px; }
-      .search-main-block .btn-queue { font-size: 13px; padding: 8px 16px; }
-      .search-counter .num { font-size: 18px; }
-      .search-progress .progress-text { font-size: 24px; }
-      .party-block .party-add input { width: 80px; }
-      .party-block .party-code-display .code-box { font-size: 14px; padding: 4px 10px; }
-      .friends-page .friends-header { flex-direction: column; align-items: flex-start; gap: 4px; }
-      .friends-page .friends-stats { flex-direction: column; gap: 6px; }
-      .friends-page .friends-stats .stat-circle .number { font-size: 20px; }
-      .top-page .page-title { font-size: 20px; }
-      .top-item { flex-wrap: wrap; gap: 4px; padding: 6px 10px; }
-      .top-item .elo { min-width: 50px; font-size: 14px; }
-      .top-item .info .name { font-size: 13px; }
-      .top-item .info .stats { font-size: 10px; }
-      .wallet-page .wallet-balance { flex-direction: column; gap: 10px; }
-      .wallet-page .wallet-balance .balance-item .amount { font-size: 24px; }
-      .wallet-page .wallet-balance .balance-item .rub-amount { font-size: 24px; }
-      .wallet-page .wallet-actions .btn-wallet { font-size: 12px; padding: 8px 16px; }
-      .wallet-page .promo-block input { font-size: 12px; }
-      .match-grid { grid-template-columns: 1fr; }
-      .bans-container { grid-template-columns: 1fr; }
-      .match-page .match-title { font-size: 18px; }
-      .team-block { padding: 10px 8px; }
-      .team-block .team-name { font-size: 13px; }
-      .player-card .info .name { font-size: 12px; }
-      .match-info-bar { flex-direction: column; align-items: stretch; text-align: center; gap: 6px; }
-      .match-info-bar .info-item { justify-content: center; font-size: 12px; }
-      .ban-section { padding: 12px 14px; }
-      .ban-btn { font-size: 11px; padding: 5px 12px; min-width: 50px; }
-    }
   </style>
 </head>
 <body>
@@ -1762,31 +1944,100 @@
   <div class="txt" id="toastText">Действие выполнено</div>
 </div>
 
-<!-- ===== АВТОРИЗАЦИЯ ===== -->
+<!-- ===== АВТОРИЗАЦИЯ (СОВРЕМЕННЫЙ ДИЗАЙН) ===== -->
 <div class="auth-page" id="authPage">
   <div class="auth-box">
-    <h1>⚡ Brawl Stars</h1>
-    <div class="sub">Brawl Stars | Platform</div>
-    <div id="loginForm">
-      <h2>Вход</h2>
-      <div class="field"><label>Имя пользователя</label><input type="text" id="loginUsername" placeholder="Введите имя" /></div>
-      <div class="field"><label>Пароль</label><input type="password" id="loginPassword" placeholder="Введите пароль" /></div>
-      <button class="btn" id="loginBtn">Войти</button>
-      <div class="link"><a onclick="showAuthForm('register')">Нет аккаунта? Зарегистрироваться</a></div>
+    <div class="auth-logo">
+      <span class="icon">⚡</span>
+      <h1>Brawl Stars</h1>
+      <div class="sub">Competitive Platform</div>
     </div>
-    <div id="registerForm" style="display:none;">
-      <h2>Регистрация</h2>
-      <div class="field"><label>Имя пользователя <span style="color:#ff6b6b;">*</span></label><input type="text" id="regUsername" placeholder="Придумайте имя" /></div>
-      <div class="field"><label>ID Standoff 2 <span style="color:#ff6b6b;">*</span></label><input type="text" id="regStandoffId" placeholder="Введите ID Standoff 2" /></div>
-      <div class="field"><label>Пароль <span style="color:#ff6b6b;">*</span></label><input type="password" id="regPassword" placeholder="Минимум 8 символов" /></div>
-      <div class="field"><label>Подтверждение пароля <span style="color:#ff6b6b;">*</span></label><input type="password" id="regPasswordConfirm" placeholder="Повторите пароль" /></div>
-      <button class="btn" id="registerBtn">Зарегистрироваться</button>
-      <div class="link"><a onclick="showAuthForm('login')">Уже есть аккаунт? Войти</a></div>
+
+    <div class="auth-tabs">
+      <button class="tab active" data-tab="login" onclick="switchAuthTab('login')">
+        <i class="fas fa-sign-in-alt"></i> Вход
+      </button>
+      <button class="tab" data-tab="register" onclick="switchAuthTab('register')">
+        <i class="fas fa-user-plus"></i> Регистрация
+      </button>
+    </div>
+
+    <!-- Вход -->
+    <div class="auth-form active" id="loginForm">
+      <div class="form-group">
+        <label>Имя пользователя</label>
+        <div class="input-wrap">
+          <i class="fas fa-user"></i>
+          <input type="text" id="loginUsername" placeholder="Введите имя пользователя" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Пароль</label>
+        <div class="input-wrap">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="loginPassword" placeholder="Введите пароль" />
+          <button class="toggle-password" onclick="togglePassword('loginPassword', this)">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+      </div>
+      <button class="btn-auth" id="loginBtn">
+        <i class="fas fa-sign-in-alt"></i> Войти
+      </button>
+      <div class="auth-message" id="loginMessage"></div>
+      <div class="auth-footer">
+        Нет аккаунта? <a onclick="switchAuthTab('register')">Зарегистрироваться</a>
+      </div>
+    </div>
+
+    <!-- Регистрация -->
+    <div class="auth-form" id="registerForm">
+      <div class="form-group">
+        <label>Имя пользователя <span style="color:#ff6b6b;">*</span></label>
+        <div class="input-wrap">
+          <i class="fas fa-user"></i>
+          <input type="text" id="regUsername" placeholder="Придумайте имя" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>ID Standoff 2 <span style="color:#ff6b6b;">*</span></label>
+        <div class="input-wrap">
+          <i class="fas fa-id-card"></i>
+          <input type="text" id="regStandoffId" placeholder="Введите ID Standoff 2" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Пароль <span style="color:#ff6b6b;">*</span></label>
+        <div class="input-wrap">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="regPassword" placeholder="Минимум 8 символов" />
+          <button class="toggle-password" onclick="togglePassword('regPassword', this)">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Подтверждение пароля <span style="color:#ff6b6b;">*</span></label>
+        <div class="input-wrap">
+          <i class="fas fa-check-circle"></i>
+          <input type="password" id="regPasswordConfirm" placeholder="Повторите пароль" />
+          <button class="toggle-password" onclick="togglePassword('regPasswordConfirm', this)">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+      </div>
+      <button class="btn-auth" id="registerBtn">
+        <i class="fas fa-user-plus"></i> Создать аккаунт
+      </button>
+      <div class="auth-message" id="registerMessage"></div>
+      <div class="auth-footer">
+        Уже есть аккаунт? <a onclick="switchAuthTab('login')">Войти</a>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ===== ОСНОВНОЙ САЙТ ===== -->
+<!-- ===== ОСТАЛЬНОЙ HTML (ВЕСЬ ВАШ СУЩЕСТВУЮЩИЙ КОНТЕНТ) ===== -->
 <div class="main-wrapper" id="mainSite" style="display:none;">
   <header class="header" onclick="navigate('home')">
     <div class="logo">
@@ -2113,7 +2364,7 @@
 
 <script>
   // ============================================================
-  //  SUPABASE КОНФИГУРАЦИЯ (из первого index)
+  //  SUPABASE КОНФИГУРАЦИЯ
   // ============================================================
   const supabaseUrl = 'https://dlprylagddsmtzpmzxqy.supabase.co';
   const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRscHJ5bGFnZGRzbXR6cG16eHF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQzMDY5MjcsImV4cCI6MjA5OTg4MjkyN30.xyRO-nChHDfqFgtYkhsMOkM3F8BsZGOvacQ0zhjBuRI';
@@ -2143,7 +2394,7 @@
   };
 
   // ============================================================
-  //  ГЕНЕРАЦИЯ КОДА
+  //  ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
   // ============================================================
   function generateCode() {
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -2154,9 +2405,6 @@
     return code;
   }
 
-  // ============================================================
-  //  TOAST
-  // ============================================================
   function showToast(type, title, text) {
     const toast = document.getElementById('toast');
     const ttl = document.getElementById('toastTitle');
@@ -2170,6 +2418,40 @@
   }
 
   // ============================================================
+  //  ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК АВТОРИЗАЦИИ
+  // ============================================================
+  function switchAuthTab(tab) {
+    document.querySelectorAll('.auth-tabs .tab').forEach(t => t.classList.remove('active'));
+    document.querySelector(`.auth-tabs .tab[data-tab="${tab}"]`).classList.add('active');
+
+    document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+    if (tab === 'login') {
+      document.getElementById('loginForm').classList.add('active');
+    } else {
+      document.getElementById('registerForm').classList.add('active');
+    }
+
+    document.getElementById('loginMessage').className = 'auth-message';
+    document.getElementById('loginMessage').textContent = '';
+    document.getElementById('registerMessage').className = 'auth-message';
+    document.getElementById('registerMessage').textContent = '';
+  }
+
+  // ============================================================
+  //  ПОКАЗ/СКРЫТИЕ ПАРОЛЯ
+  // ============================================================
+  function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') {
+      input.type = 'text';
+      btn.innerHTML = '<i class="fas fa-eye-slash"></i>';
+    } else {
+      input.type = 'password';
+      btn.innerHTML = '<i class="fas fa-eye"></i>';
+    }
+  }
+
+  // ============================================================
   //  РЕГИСТРАЦИЯ (Supabase)
   // ============================================================
   async function registerUser() {
@@ -2179,24 +2461,32 @@
     const standoffId = document.getElementById('regStandoffId').value.trim();
     const password = document.getElementById('regPassword').value;
     const confirm = document.getElementById('regPasswordConfirm').value;
+    const messageEl = document.getElementById('registerMessage');
 
     // Проверки
     if (!username || !standoffId || !password || !confirm) {
-      showToast('error', 'Ошибка', 'Заполните все поля');
+      messageEl.className = 'auth-message show error';
+      messageEl.textContent = '❌ Заполните все поля';
       return;
     }
     if (password !== confirm) {
-      showToast('error', 'Ошибка', 'Пароли не совпадают');
+      messageEl.className = 'auth-message show error';
+      messageEl.textContent = '❌ Пароли не совпадают';
       return;
     }
     if (password.length < 8) {
-      showToast('error', 'Ошибка', 'Пароль минимум 8 символов');
+      messageEl.className = 'auth-message show error';
+      messageEl.textContent = '❌ Пароль минимум 8 символов';
       return;
     }
     if (!/^\d+$/.test(standoffId)) {
-      showToast('error', 'Ошибка', 'ID Standoff 2 должен содержать только цифры');
+      messageEl.className = 'auth-message show error';
+      messageEl.textContent = '❌ ID Standoff 2 должен содержать только цифры';
       return;
     }
+
+    messageEl.className = 'auth-message show info';
+    messageEl.textContent = '⏳ Проверяем данные...';
 
     try {
       // Проверяем, существует ли пользователь
@@ -2207,7 +2497,8 @@
         .maybeSingle();
 
       if (existing) {
-        showToast('error', 'Ошибка', 'Имя пользователя уже занято');
+        messageEl.className = 'auth-message show error';
+        messageEl.textContent = '❌ Имя пользователя уже занято';
         return;
       }
 
@@ -2219,7 +2510,8 @@
         .maybeSingle();
 
       if (existingId) {
-        showToast('error', 'Ошибка', 'Этот ID Standoff 2 уже используется');
+        messageEl.className = 'auth-message show error';
+        messageEl.textContent = '❌ Этот ID Standoff 2 уже используется';
         return;
       }
 
@@ -2240,6 +2532,8 @@
         partyCode: generateCode()
       };
 
+      console.log('📤 Отправка в Supabase:', newUser);
+
       const { data, error } = await supabase
         .from('users')
         .insert([newUser])
@@ -2248,20 +2542,22 @@
 
       if (error) {
         console.error('❌ Ошибка Supabase:', error);
-        showToast('error', 'Ошибка', error.message);
+        messageEl.className = 'auth-message show error';
+        messageEl.textContent = '❌ ' + error.message;
         return;
       }
 
       console.log('✅ Пользователь создан:', data);
       currentUser = data;
-      showToast('success', 'Успешно!', 'Добро пожаловать, ' + username);
+      messageEl.className = 'auth-message show success';
+      messageEl.textContent = '✅ Успешно! Добро пожаловать, ' + username;
       
-      // Обновляем интерфейс
       setTimeout(() => checkAuth(), 1000);
 
     } catch (e) {
       console.error('❌ Ошибка:', e);
-      showToast('error', 'Ошибка', 'Соединение с сервером');
+      messageEl.className = 'auth-message show error';
+      messageEl.textContent = '❌ Ошибка соединения с сервером';
     }
   }
 
@@ -2273,11 +2569,16 @@
 
     const username = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value;
+    const messageEl = document.getElementById('loginMessage');
 
     if (!username || !password) {
-      showToast('error', 'Ошибка', 'Заполните все поля');
+      messageEl.className = 'auth-message show error';
+      messageEl.textContent = '❌ Заполните все поля';
       return;
     }
+
+    messageEl.className = 'auth-message show info';
+    messageEl.textContent = '⏳ Ищем пользователя...';
 
     try {
       const { data, error } = await supabase
@@ -2288,31 +2589,34 @@
         .maybeSingle();
 
       if (error) {
-        console.error('❌ Ошибка Supabase:', error);
-        showToast('error', 'Ошибка', 'Ошибка сервера');
+        messageEl.className = 'auth-message show error';
+        messageEl.textContent = '❌ Ошибка сервера';
         return;
       }
 
       if (!data) {
-        showToast('error', 'Ошибка', 'Неверное имя или пароль');
+        messageEl.className = 'auth-message show error';
+        messageEl.textContent = '❌ Неверное имя или пароль';
         return;
       }
 
       if (data.isBanned) {
-        showToast('error', 'Ошибка', '🚫 Ваш аккаунт забанен');
+        messageEl.className = 'auth-message show error';
+        messageEl.textContent = '🚫 Ваш аккаунт забанен';
         return;
       }
 
       console.log('✅ Пользователь найден:', data);
       currentUser = data;
-      showToast('success', 'Добро пожаловать!', username);
+      messageEl.className = 'auth-message show success';
+      messageEl.textContent = '✅ Добро пожаловать, ' + username;
       
-      // Обновляем интерфейс
       setTimeout(() => checkAuth(), 1000);
 
     } catch (e) {
       console.error('❌ Ошибка:', e);
-      showToast('error', 'Ошибка', 'Соединение с сервером');
+      messageEl.className = 'auth-message show error';
+      messageEl.textContent = '❌ Ошибка соединения с сервером';
     }
   }
 
@@ -2324,7 +2628,6 @@
       document.getElementById('authPage').style.display = 'none';
       document.getElementById('mainSite').style.display = 'block';
       
-      // Обновляем профиль
       document.getElementById('pName').textContent = currentUser.username;
       document.getElementById('pStandoffId').textContent = currentUser.standoffId || '—';
       document.getElementById('avatar').textContent = currentUser.username.charAt(0).toUpperCase();
@@ -2332,7 +2635,6 @@
       const regDate = currentUser.registered ? new Date(currentUser.registered).toLocaleDateString('ru-RU') : '—';
       document.getElementById('pReg').textContent = regDate;
 
-      // Обновляем всю статистику
       updateProfile();
       updateHomeStats();
       updateQueueUI();
@@ -2971,14 +3273,6 @@
   }
 
   // ============================================================
-  //  АВТОРИЗАЦИЯ
-  // ============================================================
-  function showAuthForm(form) {
-    document.getElementById('loginForm').style.display = form === 'login' ? 'block' : 'none';
-    document.getElementById('registerForm').style.display = form === 'register' ? 'block' : 'none';
-  }
-
-  // ============================================================
   //  ОБРАБОТЧИКИ
   // ============================================================
   document.getElementById('loginBtn').addEventListener('click', loginUser);
@@ -2988,8 +3282,8 @@
     if (e.key === 'Enter') {
       const loginForm = document.getElementById('loginForm');
       const registerForm = document.getElementById('registerForm');
-      if (loginForm.style.display !== 'none') loginUser();
-      else if (registerForm.style.display !== 'none') registerUser();
+      if (loginForm.classList.contains('active')) loginUser();
+      else if (registerForm.classList.contains('active')) registerUser();
     }
   });
 
