@@ -218,7 +218,7 @@
       text-decoration: underline;
     }
 
-    /* ===== ОСТАЛЬНЫЕ СТИЛИ (ваш существующий CSS) ===== */
+    /* ===== ОСТАЛЬНЫЕ СТИЛИ ===== */
     .header {
       background: rgba(11, 11, 15, 0.85);
       backdrop-filter: blur(12px);
@@ -428,7 +428,6 @@
       font-weight: 700;
     }
 
-    /* ===== ПОИСК МАТЧА ===== */
     .search-page-wrapper { max-width: 700px; margin: 0 auto; }
     .search-header-block {
       background: rgba(255, 215, 0, 0.03);
@@ -1784,10 +1783,10 @@
     </div>
 
     <div class="auth-tabs">
-      <button class="tab active" data-tab="login" onclick="switchAuthTab('login')">
+      <button class="tab active" onclick="switchAuthTab('login')" data-tab="login">
         <i class="fas fa-sign-in-alt"></i> Вход
       </button>
-      <button class="tab" data-tab="register" onclick="switchAuthTab('register')">
+      <button class="tab" onclick="switchAuthTab('register')" data-tab="register">
         <i class="fas fa-user-plus"></i> Регистрация
       </button>
     </div>
@@ -2151,17 +2150,15 @@
   }
 
   // ============================================================
-  //  ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
+  //  ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК (ГЛОБАЛЬНАЯ)
   // ============================================================
-  function switchAuthTab(tab) {
+  window.switchAuthTab = function(tab) {
     console.log('🔄 Переключение на:', tab);
     
-    // Обновляем табы
     document.querySelectorAll('.auth-tabs .tab').forEach(t => t.classList.remove('active'));
     const activeTab = document.querySelector(`.auth-tabs .tab[data-tab="${tab}"]`);
     if (activeTab) activeTab.classList.add('active');
 
-    // Обновляем формы
     document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
     if (tab === 'login') {
       document.getElementById('loginForm').classList.add('active');
@@ -2169,7 +2166,6 @@
       document.getElementById('registerForm').classList.add('active');
     }
 
-    // Очищаем сообщения
     document.getElementById('loginMessage').className = 'auth-message';
     document.getElementById('loginMessage').textContent = '';
     document.getElementById('registerMessage').className = 'auth-message';
@@ -2179,7 +2175,7 @@
   // ============================================================
   //  РЕГИСТРАЦИЯ (Supabase)
   // ============================================================
-  async function registerUser() {
+  window.registerUser = async function() {
     console.log('🔵 РЕГИСТРАЦИЯ: начата');
 
     const username = document.getElementById('regUsername').value.trim();
@@ -2188,7 +2184,6 @@
     const confirm = document.getElementById('regPasswordConfirm').value;
     const messageEl = document.getElementById('registerMessage');
 
-    // Проверки
     if (!username || !standoffId || !password || !confirm) {
       messageEl.className = 'auth-message show error';
       messageEl.textContent = '❌ Заполните все поля';
@@ -2214,7 +2209,6 @@
     messageEl.textContent = '⏳ Проверяем данные...';
 
     try {
-      // Проверяем, существует ли пользователь
       const { data: existing } = await supabase
         .from('users')
         .select('username')
@@ -2227,7 +2221,6 @@
         return;
       }
 
-      // Проверяем, существует ли ID Standoff 2
       const { data: existingId } = await supabase
         .from('users')
         .select('standoffId')
@@ -2240,7 +2233,6 @@
         return;
       }
 
-      // Создаём нового пользователя
       const newUser = {
         id: Date.now().toString(),
         username: username,
@@ -2289,7 +2281,7 @@
   // ============================================================
   //  ВХОД (Supabase)
   // ============================================================
-  async function loginUser() {
+  window.loginUser = async function() {
     console.log('🔵 ВХОД: начат');
 
     const username = document.getElementById('loginUsername').value.trim();
@@ -2314,7 +2306,6 @@
         .maybeSingle();
 
       if (error) {
-        console.error('❌ Ошибка Supabase:', error);
         messageEl.className = 'auth-message show error';
         messageEl.textContent = '❌ Ошибка сервера';
         return;
@@ -2381,7 +2372,7 @@
   // ============================================================
   //  ВЫХОД
   // ============================================================
-  function handleLogout() {
+  window.handleLogout = function() {
     if (!confirm('Выйти из аккаунта?')) return;
     currentUser = null;
     checkAuth();
@@ -2402,7 +2393,7 @@
     matchPage: 'matchPage'
   };
 
-  function navigate(page) {
+  window.navigate = function(page) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(pages[page]).classList.add('active');
     document.querySelectorAll('.bottom-nav .item').forEach(b => b.classList.remove('active'));
@@ -2571,7 +2562,7 @@
     `).join('');
   }
 
-  function addFriendByCode() {
+  window.addFriendByCode = function() {
     const code = document.getElementById('partyCodeInput').value.trim().toUpperCase();
     if (!code) return showToast('error', 'Ошибка', 'Введите код');
     if (code.length !== 6) return showToast('error', 'Ошибка', 'Код должен состоять из 6 букв');
@@ -2585,13 +2576,13 @@
     showToast('success', 'Добавлен!', 'Игрок добавлен в пати');
   }
 
-  function removePartyFriend(id) {
+  window.removePartyFriend = function(id) {
     partyFriends = partyFriends.filter(f => f.id !== id);
     renderPartyFriends();
     showToast('info', 'Удалён', 'Игрок удалён из пати');
   }
 
-  function copyCode() {
+  window.copyCode = function() {
     const code = document.getElementById('playerCode').textContent;
     navigator.clipboard.writeText(code).then(() => {
       showToast('success', 'Скопировано!', 'Код скопирован в буфер обмена');
@@ -2609,14 +2600,14 @@
   // ============================================================
   //  ДРУЗЬЯ
   // ============================================================
-  function switchFriendsTab(tab) {
+  window.switchFriendsTab = function(tab) {
     friendsTab = tab;
     document.querySelectorAll('.friends-tabs .tab').forEach(t => t.classList.remove('active'));
     document.querySelector(`.friends-tabs .tab[data-tab="${tab}"]`)?.classList.add('active');
     renderFriendsPage();
   }
 
-  function addFriendByCode2() {
+  window.addFriendByCode2 = function() {
     const code = document.getElementById('friendCodeInput').value.trim().toUpperCase();
     if (!code) return showToast('error', 'Ошибка', 'Введите код');
     if (code.length !== 6) return showToast('error', 'Ошибка', 'Код должен состоять из 6 букв');
@@ -2639,7 +2630,7 @@
   // ============================================================
   //  ПОИСК МАТЧА
   // ============================================================
-  function startSearch() {
+  window.startSearch = function() {
     if (isSearching) return;
     if (currentMatch) return showToast('info', 'Идёт матч', 'Дождитесь окончания');
     if (!currentUser) return showToast('error', 'Ошибка', 'Авторизуйтесь');
@@ -2693,7 +2684,7 @@
     }
   }
 
-  function cancelSearch() {
+  window.cancelSearch = function() {
     if (!isSearching) return;
     isSearching = false;
     clearInterval(searchTimerInterval);
@@ -2783,7 +2774,7 @@
     renderDraftUI();
   }
 
-  function endMatch() {
+  window.endMatch = function() {
     if (!currentMatch) return;
     if (!draftState.isComplete) {
       return showToast('info', 'Дождитесь драфта', 'Сначала завершите выбор режима');
@@ -2949,7 +2940,7 @@
     }
   }
 
-  function handleModesBan(value) {
+  window.handleModesBan = function(value) {
     const state = draftState;
     if (state.isComplete) return;
     if (state.modeBanned.includes(value)) return;
@@ -2973,7 +2964,7 @@
   // ============================================================
   //  ПРОМОКОД
   // ============================================================
-  function applyPromo() {
+  window.applyPromo = function() {
     const input = document.getElementById('promoInput');
     const code = input.value.trim().toUpperCase();
     if (!code) return showToast('error', 'Ошибка', 'Введите промокод');
@@ -2984,31 +2975,29 @@
   // ============================================================
   //  ОБРАБОТЧИКИ
   // ============================================================
-  document.getElementById('loginBtn').addEventListener('click', loginUser);
-  document.getElementById('registerBtn').addEventListener('click', registerUser);
-
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-      const loginForm = document.getElementById('loginForm');
-      const registerForm = document.getElementById('registerForm');
-      if (loginForm.classList.contains('active')) loginUser();
-      else if (registerForm.classList.contains('active')) registerUser();
-    }
-  });
-
-  document.getElementById('modesBanContainer').addEventListener('click', function(e) {
-    const btn = e.target.closest('.ban-btn');
-    if (!btn) return;
-    if (btn.classList.contains('banned') || btn.classList.contains('selected')) return;
-    const value = btn.dataset.value;
-    handleModesBan(value);
-  });
-
-  // ============================================================
-  //  ЗАПУСК
-  // ============================================================
   document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ DOM ЗАГРУЖЕН!');
+    
+    document.getElementById('loginBtn').addEventListener('click', window.loginUser);
+    document.getElementById('registerBtn').addEventListener('click', window.registerUser);
+    
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        if (loginForm.classList.contains('active')) window.loginUser();
+        else if (registerForm.classList.contains('active')) window.registerUser();
+      }
+    });
+
+    document.getElementById('modesBanContainer').addEventListener('click', function(e) {
+      const btn = e.target.closest('.ban-btn');
+      if (!btn) return;
+      if (btn.classList.contains('banned') || btn.classList.contains('selected')) return;
+      const value = btn.dataset.value;
+      window.handleModesBan(value);
+    });
+    
     checkAuth();
     
     setInterval(() => {
