@@ -587,7 +587,7 @@
         }
         .profile-stats {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 6px;
             margin: 14px 0 16px;
         }
@@ -599,7 +599,7 @@
             border: 1px solid rgba(255, 255, 255, 0.04);
         }
         .stat-item .value {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 900;
             color: #ffd700;
         }
@@ -615,6 +615,7 @@
             justify-content: space-between;
             gap: 12px;
             margin: 16px 0 14px;
+            flex-wrap: wrap;
         }
         .profile-actions .btn-action {
             padding: 8px 20px;
@@ -627,6 +628,8 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            flex: 1;
+            justify-content: center;
         }
         .profile-actions .btn-action.edit {
             background: rgba(255, 215, 0, 0.15);
@@ -637,6 +640,11 @@
             background: rgba(255, 107, 107, 0.12);
             border: 1px solid rgba(255, 107, 107, 0.3);
             color: #ff6b6b;
+        }
+        .profile-actions .btn-action.ban {
+            background: rgba(255, 0, 0, 0.15);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            color: #ff4444;
         }
 
         /* Поиск матча */
@@ -888,6 +896,12 @@
 </head>
 <body>
 
+    <!-- ===== ТОСТ ===== -->
+    <div class="toast" id="toast">
+        <div class="ttl" id="toastTitle">Успешно</div>
+        <div class="txt" id="toastText">Действие выполнено</div>
+    </div>
+
     <!-- ===== АВТОРИЗАЦИЯ ===== -->
     <div class="auth-page" id="authPage">
         <div class="auth-box">
@@ -935,6 +949,13 @@
                     <div class="input-wrap">
                         <i class="fas fa-user"></i>
                         <input type="text" id="regUsername" placeholder="Придумайте имя" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>ID Standoff 2</label>
+                    <div class="input-wrap">
+                        <i class="fas fa-id-card"></i>
+                        <input type="text" id="regStandoffId" placeholder="Введите ID Standoff 2" />
                     </div>
                 </div>
                 <div class="form-group">
@@ -1061,21 +1082,24 @@
                     <div class="profile-info">
                         <div class="username" id="pName">Игрок</div>
                         <div class="details">
-                            <span><i class="fas fa-calendar-alt"></i> Дата регистрации: <span id="pReg">—</span></span>
+                            <span><i class="fas fa-id-card"></i> Standoff ID: <span id="pStandoffId">—</span></span>
+                            <span><i class="fas fa-calendar-alt"></i> Регистрация: <span id="pReg">—</span></span>
+                            <span><i class="fas fa-ban" style="color:#ff6b6b;" id="pBanned" style="display:none;"></i></span>
                         </div>
                     </div>
                 </div>
-                <div class="profile-stats">
-                    <div class="stat-item"><div class="value" id="pWr">0%</div><div class="label">Винрейт</div></div>
+                <div class="profile-stats" id="profileStats">
                     <div class="stat-item"><div class="value" id="pMatches">0</div><div class="label">Матчей</div></div>
-                    <div class="stat-item"><div class="value" id="pMvp">0</div><div class="label">MVP</div></div>
+                    <div class="stat-item"><div class="value" id="pKills">0</div><div class="label">Убийств</div></div>
+                    <div class="stat-item"><div class="value" id="pDeaths">0</div><div class="label">Смертей</div></div>
+                    <div class="stat-item"><div class="value" id="pKD">0.00</div><div class="label">K/D</div></div>
                 </div>
-                <div class="profile-actions">
+                <div class="profile-actions" id="profileActions">
                     <button class="btn-action edit" onclick="showToast('info', 'Редактирование', 'Функция редактирования профиля')">
                         <i class="fas fa-edit"></i> Редактировать
                     </button>
                     <button class="btn-action logout" onclick="handleLogout()">
-                        <i class="fas fa-sign-out-alt"></i> Выйти с аккаунта
+                        <i class="fas fa-sign-out-alt"></i> Выйти
                     </button>
                 </div>
             </div>
@@ -1106,9 +1130,9 @@
 
         console.log('🚀 СКРИПТ ЗАПУЩЕН!');
 
-        // ===== SUPABASE =====
-        const supabaseUrl = 'https://txokbboyhytmiurijvyh.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4b2tiYm95aHl0bWl1cmlqdnloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwNzE4MjksImV4cCI6MjEwMDY0NzgyOX0.L5jASUIzGizBBo364mUqmsiWKUAHeVUUvLN4Yuttees';
+        // ===== SUPABASE (из первого index) =====
+        const supabaseUrl = 'https://dlprylagddsmtzpmzxqy.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRscHJ5bGFnZGRzbXR6cG16eHF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQzMDY5MjcsImV4cCI6MjA5OTg4MjkyN30.xyRO-nChHDfqFgtYkhsMOkM3F8BsZGOvacQ0zhjBuRI';
         const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
         console.log('✅ Supabase инициализирован');
@@ -1138,18 +1162,6 @@
         }
 
         // ============================================================
-        //  ГЕНЕРАЦИЯ КОДА
-        // ============================================================
-        function generateCode() {
-            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            let code = '';
-            for (let i = 0; i < 6; i++) {
-                code += letters[Math.floor(Math.random() * letters.length)];
-            }
-            return code;
-        }
-
-        // ============================================================
         //  ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
         // ============================================================
         function switchAuthTab(tab) {
@@ -1170,17 +1182,18 @@
         }
 
         // ============================================================
-        //  РЕГИСТРАЦИЯ
+        //  РЕГИСТРАЦИЯ (адаптирована под структуру первого index)
         // ============================================================
         async function registerUser() {
             console.log('🔵 РЕГИСТРАЦИЯ: начата');
 
             const username = document.getElementById('regUsername').value.trim();
+            const standoffId = document.getElementById('regStandoffId').value.trim();
             const password = document.getElementById('regPassword').value;
             const confirm = document.getElementById('regPasswordConfirm').value;
             const messageEl = document.getElementById('registerMessage');
 
-            if (!username || !password || !confirm) {
+            if (!username || !standoffId || !password || !confirm) {
                 messageEl.className = 'auth-message show error';
                 messageEl.textContent = '❌ Заполните все поля';
                 return;
@@ -1193,6 +1206,11 @@
             if (password.length < 8) {
                 messageEl.className = 'auth-message show error';
                 messageEl.textContent = '❌ Пароль минимум 8 символов';
+                return;
+            }
+            if (!/^\d+$/.test(standoffId)) {
+                messageEl.className = 'auth-message show error';
+                messageEl.textContent = '❌ ID Standoff 2 должен содержать только цифры';
                 return;
             }
 
@@ -1212,19 +1230,39 @@
                     return;
                 }
 
+                const { data: existingId } = await supabase
+                    .from('users')
+                    .select('standoffId')
+                    .eq('standoffId', standoffId)
+                    .maybeSingle();
+
+                if (existingId) {
+                    messageEl.className = 'auth-message show error';
+                    messageEl.textContent = '❌ Этот ID Standoff 2 уже используется';
+                    return;
+                }
+
+                const newUser = {
+                    id: Date.now().toString(),
+                    username: username,
+                    standoffId: standoffId,
+                    password: password,
+                    email: username + '@nwoles.local',
+                    matches: 0,
+                    kills: 0,
+                    deaths: 0,
+                    serverMatches: 0,
+                    kdHistory: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    registered: new Date().toISOString(),
+                    lastLogin: new Date().toISOString(),
+                    isBanned: false,
+                    avatar_url: null,
+                    createdserverscount: 0
+                };
+
                 const { data, error } = await supabase
                     .from('users')
-                    .insert([{
-                        username: username,
-                        password: password,
-                        reg_date: new Date().toLocaleDateString('ru-RU'),
-                        elo: 0,
-                        wins: 0,
-                        losses: 0,
-                        matches: 0,
-                        mvp: 0,
-                        party_code: generateCode()
-                    }])
+                    .insert([newUser])
                     .select()
                     .single();
 
@@ -1251,7 +1289,7 @@
         }
 
         // ============================================================
-        //  ВХОД
+        //  ВХОД (адаптирован под структуру первого index)
         // ============================================================
         async function loginUser() {
             console.log('🔵 ВХОД: начат');
@@ -1289,6 +1327,12 @@
                     return;
                 }
 
+                if (data.isBanned) {
+                    messageEl.className = 'auth-message show error';
+                    messageEl.textContent = '🚫 Ваш аккаунт забанен';
+                    return;
+                }
+
                 console.log('✅ Пользователь найден:', data);
                 currentUser = data;
                 messageEl.className = 'auth-message show success';
@@ -1313,10 +1357,33 @@
                 document.getElementById('authPage').style.display = 'none';
                 document.getElementById('mainSite').style.display = 'block';
                 document.getElementById('pName').textContent = currentUser.username;
+                document.getElementById('pStandoffId').textContent = currentUser.standoffId || '—';
                 document.getElementById('avatar').textContent = currentUser.username.charAt(0).toUpperCase();
-                document.getElementById('pReg').textContent = currentUser.reg_date || '—';
+                
+                const regDate = currentUser.registered ? new Date(currentUser.registered).toLocaleDateString('ru-RU') : '—';
+                document.getElementById('pReg').textContent = regDate;
+
+                // Обновляем статистику
+                document.getElementById('pMatches').textContent = currentUser.matches || 0;
+                document.getElementById('pKills').textContent = currentUser.kills || 0;
+                document.getElementById('pDeaths').textContent = currentUser.deaths || 0;
+                
+                const kd = currentUser.deaths > 0 
+                    ? (currentUser.kills / currentUser.deaths).toFixed(2) 
+                    : (currentUser.kills > 0 ? currentUser.kills.toFixed(2) : '0.00');
+                document.getElementById('pKD').textContent = kd;
+
+                // Проверка на бан
+                if (currentUser.isBanned) {
+                    document.getElementById('pBanned').style.display = 'inline';
+                    document.getElementById('pBanned').textContent = '🚫 Забанен';
+                } else {
+                    document.getElementById('pBanned').style.display = 'none';
+                }
+
                 navigate('home');
                 showToast('success', 'Добро пожаловать!', currentUser.username);
+                updateStats();
             } else {
                 document.getElementById('authPage').style.display = 'flex';
                 document.getElementById('mainSite').style.display = 'none';
@@ -1355,6 +1422,27 @@
             const navItem = document.querySelector(`.bottom-nav .item[data-page="${page}"]`);
             if (navItem) navItem.classList.add('active');
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ============================================================
+        //  СТАТИСТИКА
+        // ============================================================
+        async function updateStats() {
+            try {
+                const { data: users, error } = await supabase
+                    .from('users')
+                    .select('*');
+
+                if (error) return;
+
+                const totalMatches = users.reduce((sum, u) => sum + (u.matches || 0), 0);
+                document.getElementById('activePlayersHome').textContent = users.length;
+                document.getElementById('totalMatchesHome').textContent = totalMatches;
+                document.getElementById('matchCount').textContent = '0';
+                document.getElementById('queueCount').textContent = '0';
+            } catch (e) {
+                console.error('updateStats error:', e);
+            }
         }
 
         // ============================================================
