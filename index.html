@@ -21,7 +21,7 @@
       line-height: 1.5;
     }
 
-    /* ===== АВТОРИЗАЦИЯ (СОВРЕМЕННЫЙ ДИЗАЙН) ===== */
+    /* ===== АВТОРИЗАЦИЯ ===== */
     .auth-page {
       display: flex;
       justify-content: center;
@@ -29,34 +29,10 @@
       min-height: 100vh;
       padding: 20px;
       background: radial-gradient(ellipse at 50% 0%, #1a1a2e, #0b0b0f 70%);
-      position: relative;
-      overflow: hidden;
-    }
-    .auth-page::before {
-      content: '';
-      position: absolute;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(255, 215, 0, 0.04), transparent 70%);
-      top: -200px;
-      right: -200px;
-      border-radius: 50%;
-      pointer-events: none;
-    }
-    .auth-page::after {
-      content: '';
-      position: absolute;
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(255, 215, 0, 0.02), transparent 70%);
-      bottom: -100px;
-      left: -100px;
-      border-radius: 50%;
-      pointer-events: none;
     }
 
     .auth-box {
-      background: rgba(18, 18, 30, 0.92);
+      background: rgba(18, 18, 30, 0.95);
       backdrop-filter: blur(20px);
       border-radius: 32px;
       padding: 40px 36px 36px;
@@ -64,13 +40,6 @@
       width: 100%;
       border: 1px solid rgba(255, 215, 0, 0.08);
       box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
-      position: relative;
-      z-index: 1;
-      animation: fadeInUp 0.6s ease;
-    }
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
     }
 
     .auth-box .auth-logo {
@@ -80,12 +49,6 @@
     .auth-box .auth-logo .icon {
       font-size: 44px;
       display: block;
-      margin-bottom: 4px;
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
     }
     .auth-box .auth-logo h1 {
       font-size: 28px;
@@ -137,19 +100,13 @@
 
     .auth-box .auth-form {
       display: none;
-      animation: slideDown 0.4s ease;
     }
     .auth-box .auth-form.active {
       display: block;
     }
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
 
     .auth-box .form-group {
       margin-bottom: 16px;
-      position: relative;
     }
     .auth-box .form-group label {
       display: block;
@@ -161,7 +118,6 @@
       margin-bottom: 5px;
     }
     .auth-box .form-group .input-wrap {
-      position: relative;
       display: flex;
       align-items: center;
       background: rgba(255, 255, 255, 0.04);
@@ -172,17 +128,12 @@
     .auth-box .form-group .input-wrap:focus-within {
       border-color: #ffd700;
       box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.06);
-      background: rgba(255, 255, 255, 0.06);
     }
     .auth-box .form-group .input-wrap i {
       color: #666;
       font-size: 16px;
       padding: 0 0 0 16px;
-      transition: color 0.3s ease;
       min-width: 40px;
-    }
-    .auth-box .form-group .input-wrap:focus-within i {
-      color: #ffd700;
     }
     .auth-box .form-group .input-wrap input {
       width: 100%;
@@ -199,18 +150,6 @@
       color: #555;
       font-weight: 400;
       font-size: 14px;
-    }
-    .auth-box .form-group .input-wrap .toggle-password {
-      background: none;
-      border: none;
-      color: #666;
-      cursor: pointer;
-      padding: 0 16px 0 0;
-      font-size: 16px;
-      transition: color 0.3s ease;
-    }
-    .auth-box .form-group .input-wrap .toggle-password:hover {
-      color: #ffd700;
     }
 
     .auth-box .btn-auth {
@@ -230,18 +169,10 @@
       justify-content: center;
       gap: 10px;
       margin-top: 4px;
-      position: relative;
-      overflow: hidden;
     }
     .auth-box .btn-auth:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3);
-    }
-    .auth-box .btn-auth:active {
-      transform: scale(0.98);
-    }
-    .auth-box .btn-auth i {
-      font-size: 18px;
     }
 
     .auth-box .auth-message {
@@ -251,7 +182,6 @@
       font-weight: 600;
       margin-top: 12px;
       display: none;
-      animation: slideDown 0.3s ease;
     }
     .auth-box .auth-message.show {
       display: block;
@@ -283,14 +213,12 @@
       cursor: pointer;
       font-weight: 600;
       text-decoration: none;
-      transition: color 0.3s ease;
     }
     .auth-box .auth-footer a:hover {
-      color: #ff8c00;
       text-decoration: underline;
     }
 
-    /* Остальной CSS (весь ваш существующий) */
+    /* ===== ОСТАЛЬНЫЕ СТИЛИ (ваш существующий CSS) ===== */
     .header {
       background: rgba(11, 11, 15, 0.85);
       backdrop-filter: blur(12px);
@@ -500,11 +428,8 @@
       font-weight: 700;
     }
 
-    /* Поиск матча */
-    .search-page-wrapper {
-      max-width: 700px;
-      margin: 0 auto;
-    }
+    /* ===== ПОИСК МАТЧА ===== */
+    .search-page-wrapper { max-width: 700px; margin: 0 auto; }
     .search-header-block {
       background: rgba(255, 215, 0, 0.03);
       border: 1.5px solid rgba(255, 215, 0, 0.25);
@@ -552,10 +477,7 @@
       justify-content: center;
       gap: 8px;
     }
-    .search-main-block .label i {
-      color: #ffd700;
-      font-size: 20px;
-    }
+    .search-main-block .label i { color: #ffd700; font-size: 20px; }
     .search-main-block .btn-row {
       display: flex;
       gap: 10px;
@@ -587,9 +509,7 @@
       color: #fff;
       box-shadow: 0 0 20px rgba(255,0,0,0.3);
     }
-    .search-main-block .btn-queue.cancel:hover {
-      background: #ff4444;
-    }
+    .search-main-block .btn-queue.cancel:hover { background: #ff4444; }
     .search-main-block .search-type {
       color: #888;
       font-size: 13px;
@@ -613,9 +533,7 @@
       text-align: center;
       transition: .3s;
     }
-    .search-counter:hover {
-      border-color: rgba(255,215,0,0.2);
-    }
+    .search-counter:hover { border-color: rgba(255,215,0,0.2); }
     .search-counter .num {
       font-size: 24px;
       font-weight: 900;
@@ -678,20 +596,14 @@
       justify-content: center;
       gap: 8px;
     }
-    .party-block .party-title i {
-      color: #ffd700;
-      font-size: 20px;
-    }
+    .party-block .party-title i { color: #ffd700; font-size: 20px; }
     .party-block .party-sub {
       color: #888;
       font-size: 12px;
       margin-bottom: 14px;
       font-weight: 400;
     }
-    .party-block .party-sub strong {
-      color: #ffd700;
-      font-weight: 600;
-    }
+    .party-block .party-sub strong { color: #ffd700; font-weight: 600; }
     .party-block .party-code-display {
       display: flex;
       align-items: center;
@@ -804,19 +716,14 @@
       font-weight: 500;
       color: #ccc;
     }
-    .party-block .party-friends-list .friend-tag i {
-      color: #51cf66;
-      font-size: 9px;
-    }
+    .party-block .party-friends-list .friend-tag i { color: #51cf66; font-size: 9px; }
     .party-block .party-friends-list .friend-tag .remove {
       color: #666;
       cursor: pointer;
       font-size: 11px;
       transition: .2s;
     }
-    .party-block .party-friends-list .friend-tag .remove:hover {
-      color: #ff6b6b;
-    }
+    .party-block .party-friends-list .friend-tag .remove:hover { color: #ff6b6b; }
     .party-block .party-friends-list .empty {
       color: #555;
       font-size: 12px;
@@ -832,14 +739,8 @@
       font-size: 12px;
       color: #888;
     }
-    .party-block .party-feature i {
-      color: #ffd700;
-      margin-right: 4px;
-    }
-    .party-block .party-feature strong {
-      color: #fff;
-      font-weight: 600;
-    }
+    .party-block .party-feature i { color: #ffd700; margin-right: 4px; }
+    .party-block .party-feature strong { color: #fff; font-weight: 600; }
 
     .match-page .match-title {
       font-size: 28px;
@@ -869,10 +770,7 @@
       font-weight: 600;
       color: #ccc;
     }
-    .match-info-bar .info-item i {
-      color: #ffd700;
-      font-size: 16px;
-    }
+    .match-info-bar .info-item i { color: #ffd700; font-size: 16px; }
     .match-info-bar .info-item .value {
       color: #fff;
       font-weight: 700;
@@ -894,7 +792,6 @@
       margin-left: auto;
       margin-right: auto;
     }
-
     .team-block {
       backdrop-filter: blur(8px);
       border-radius: 16px;
@@ -904,16 +801,12 @@
       min-width: 0;
       border: 2px solid transparent;
     }
-    .team-block:hover {
-      transform: translateY(-2px);
-    }
+    .team-block:hover { transform: translateY(-2px); }
     .team-block.blue {
       border-color: rgba(52, 152, 219, 0.6);
       background: rgba(52, 152, 219, 0.08);
     }
-    .team-block.blue .team-name {
-      color: #3498db;
-    }
+    .team-block.blue .team-name { color: #3498db; }
     .team-block.blue .captain-badge {
       background: rgba(52, 152, 219, 0.15);
       color: #3498db;
@@ -923,9 +816,7 @@
       border-color: rgba(255, 165, 0, 0.6);
       background: rgba(255, 165, 0, 0.08);
     }
-    .team-block.orange .team-name {
-      color: #ffa500;
-    }
+    .team-block.orange .team-name { color: #ffa500; }
     .team-block.orange .captain-badge {
       background: rgba(255, 165, 0, 0.15);
       color: #ffa500;
@@ -938,12 +829,7 @@
       margin-bottom: 2px;
       text-transform: uppercase;
     }
-
-    .team-players {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
+    .team-players { display: flex; flex-direction: column; gap: 5px; }
 
     .player-card {
       display: flex;
@@ -955,9 +841,7 @@
       border: 1px solid rgba(255,255,255,0.04);
       transition: .2s;
     }
-    .player-card:hover {
-      border-color: rgba(255,255,255,0.08);
-    }
+    .player-card:hover { border-color: rgba(255,255,255,0.08); }
     .player-card .avatar {
       width: 28px;
       height: 28px;
@@ -1005,7 +889,6 @@
       grid-template-columns: 1fr;
       gap: 16px;
     }
-
     .ban-section {
       background: rgba(20, 20, 28, 0.7);
       backdrop-filter: blur(8px);
@@ -1014,9 +897,7 @@
       border: 1px solid rgba(255,255,255,0.06);
       transition: all 0.3s ease;
     }
-    .ban-section:hover {
-      border-color: rgba(255,215,0,0.15);
-    }
+    .ban-section:hover { border-color: rgba(255,215,0,0.15); }
     .ban-section .ban-header {
       display: flex;
       justify-content: space-between;
@@ -1031,19 +912,13 @@
       align-items: center;
       gap: 8px;
     }
-    .ban-section .ban-title i {
-      color: #ffd700;
-      font-size: 16px;
-    }
+    .ban-section .ban-title i { color: #ffd700; font-size: 16px; }
     .ban-section .ban-title .turn {
       font-size: 11px;
       font-weight: 400;
       color: #888;
     }
-    .ban-section .ban-title .turn span {
-      color: #ffd700;
-      font-weight: 600;
-    }
+    .ban-section .ban-title .turn span { color: #ffd700; font-weight: 600; }
     .ban-section .ban-status {
       font-size: 11px;
       color: #888;
@@ -1056,20 +931,10 @@
       padding-top: 8px;
       border-top: 1px solid rgba(255,255,255,0.04);
     }
-    .ban-section .ban-status .left {
-      color: #aaa;
-    }
-    .ban-section .ban-status .left span {
-      color: #ffd700;
-      font-weight: 700;
-    }
-    .ban-section .ban-status .status-text {
-      color: #ffd700;
-      font-weight: 600;
-    }
-    .ban-section .ban-status .status-text.done {
-      color: #51cf66;
-    }
+    .ban-section .ban-status .left { color: #aaa; }
+    .ban-section .ban-status .left span { color: #ffd700; font-weight: 700; }
+    .ban-section .ban-status .status-text { color: #ffd700; font-weight: 600; }
+    .ban-section .ban-status .status-text.done { color: #51cf66; }
 
     .ban-buttons {
       display: flex;
@@ -1119,9 +984,7 @@
       color: #fff;
       transform: translateY(-1px);
     }
-    .ban-btn.banned {
-      display: none !important;
-    }
+    .ban-btn.banned { display: none !important; }
     .ban-btn.selected {
       background: rgba(81, 207, 102, 0.12);
       border-color: rgba(81, 207, 102, 0.3);
@@ -1145,10 +1008,7 @@
       color: #ccc;
       transform: none;
     }
-    .ban-btn:disabled:hover::before {
-      opacity: 0;
-    }
-
+    .ban-btn:disabled:hover::before { opacity: 0; }
     .ban-btn.mode-btn {
       background: rgba(52, 152, 219, 0.04);
       border-color: rgba(52, 152, 219, 0.1);
@@ -1157,9 +1017,7 @@
       background: rgba(52, 152, 219, 0.08);
       border-color: rgba(52, 152, 219, 0.25);
     }
-    .ban-section.modes-section .ban-title i {
-      color: #3498db;
-    }
+    .ban-section.modes-section .ban-title i { color: #3498db; }
 
     .match-actions {
       text-align: center;
@@ -1199,10 +1057,7 @@
       align-items: center;
       padding: 10px 4px 16px 4px;
     }
-    .friends-page .friends-header .title {
-      font-size: 22px;
-      font-weight: 900;
-    }
+    .friends-page .friends-header .title { font-size: 22px; font-weight: 900; }
     .friends-page .friends-stats {
       display: flex;
       gap: 12px;
@@ -1295,9 +1150,7 @@
       border: none;
       padding: 0 4px;
     }
-    .friends-page .friends-tabs .tab.active {
-      color: #ffd700;
-    }
+    .friends-page .friends-tabs .tab.active { color: #ffd700; }
     .friends-page .friends-tabs .tab .badge {
       background: rgba(255,215,0,0.15);
       color: #ffd700;
@@ -1341,9 +1194,7 @@
       color: #000;
       flex-shrink: 0;
     }
-    .friends-page .friend-item .info {
-      flex: 1;
-    }
+    .friends-page .friend-item .info { flex: 1; }
     .friends-page .friend-item .info .name {
       font-weight: 600;
       font-size: 14px;
@@ -1455,15 +1306,9 @@
       border-color: rgba(255,215,0,0.2);
       color: #ffd700;
     }
-    .wallet-page .wallet-actions .btn-wallet i {
-      font-size: 16px;
-    }
-    .wallet-page .wallet-actions .btn-wallet.stars i {
-      color: #ffd700;
-    }
-    .wallet-page .wallet-actions .btn-wallet.rub i {
-      color: #51cf66;
-    }
+    .wallet-page .wallet-actions .btn-wallet i { font-size: 16px; }
+    .wallet-page .wallet-actions .btn-wallet.stars i { color: #ffd700; }
+    .wallet-page .wallet-actions .btn-wallet.rub i { color: #51cf66; }
 
     .wallet-page .promo-block {
       background: rgba(26,26,34,0.6);
@@ -1552,18 +1397,13 @@
       flex-wrap: wrap;
       gap: 8px;
     }
-    .top-page .page-title {
-      font-size: 26px;
-      font-weight: 900;
-    }
+    .top-page .page-title { font-size: 26px; font-weight: 900; }
     .top-page .user-rank {
       font-size: 14px;
       font-weight: 600;
       color: #666;
     }
-    .top-page .user-rank span {
-      color: #ffd700;
-    }
+    .top-page .user-rank span { color: #ffd700; }
 
     .top-list {
       display: flex;
@@ -1580,9 +1420,7 @@
       border: 1px solid rgba(255,255,255,0.03);
       transition: .2s;
     }
-    .top-item:hover {
-      border-color: rgba(255,215,0,0.15);
-    }
+    .top-item:hover { border-color: rgba(255,215,0,0.15); }
     .top-item .rank {
       font-size: 14px;
       font-weight: 700;
@@ -1813,16 +1651,9 @@
       margin-bottom: 1px;
       transition: .2s;
     }
-    .bottom-nav .item span {
-      font-size: 10px;
-      line-height: 1.2;
-    }
-    .bottom-nav .item.active {
-      color: #ffd700;
-    }
-    .bottom-nav .item.active i {
-      text-shadow: 0 0 12px rgba(255,215,0,0.3);
-    }
+    .bottom-nav .item span { font-size: 10px; line-height: 1.2; }
+    .bottom-nav .item.active { color: #ffd700; }
+    .bottom-nav .item.active i { text-shadow: 0 0 12px rgba(255,215,0,0.3); }
     .bottom-nav .item.active::after {
       content: '';
       position: absolute;
@@ -1858,7 +1689,6 @@
     .toast .ttl.info { color: #ffd700; }
     .toast .txt { color: #aaa; font-size: 14px; }
 
-    /* Адаптив */
     @media (max-width: 480px) {
       .auth-box { padding: 28px 20px 24px; }
       .auth-box .auth-logo h1 { font-size: 24px; }
@@ -1944,7 +1774,7 @@
   <div class="txt" id="toastText">Действие выполнено</div>
 </div>
 
-<!-- ===== АВТОРИЗАЦИЯ (СОВРЕМЕННЫЙ ДИЗАЙН) ===== -->
+<!-- ===== АВТОРИЗАЦИЯ ===== -->
 <div class="auth-page" id="authPage">
   <div class="auth-box">
     <div class="auth-logo">
@@ -1976,9 +1806,6 @@
         <div class="input-wrap">
           <i class="fas fa-lock"></i>
           <input type="password" id="loginPassword" placeholder="Введите пароль" />
-          <button class="toggle-password" onclick="togglePassword('loginPassword', this)">
-            <i class="fas fa-eye"></i>
-          </button>
         </div>
       </div>
       <button class="btn-auth" id="loginBtn">
@@ -2011,9 +1838,6 @@
         <div class="input-wrap">
           <i class="fas fa-lock"></i>
           <input type="password" id="regPassword" placeholder="Минимум 8 символов" />
-          <button class="toggle-password" onclick="togglePassword('regPassword', this)">
-            <i class="fas fa-eye"></i>
-          </button>
         </div>
       </div>
       <div class="form-group">
@@ -2021,9 +1845,6 @@
         <div class="input-wrap">
           <i class="fas fa-check-circle"></i>
           <input type="password" id="regPasswordConfirm" placeholder="Повторите пароль" />
-          <button class="toggle-password" onclick="togglePassword('regPasswordConfirm', this)">
-            <i class="fas fa-eye"></i>
-          </button>
         </div>
       </div>
       <button class="btn-auth" id="registerBtn">
@@ -2037,7 +1858,7 @@
   </div>
 </div>
 
-<!-- ===== ОСТАЛЬНОЙ HTML (ВЕСЬ ВАШ СУЩЕСТВУЮЩИЙ КОНТЕНТ) ===== -->
+<!-- ===== ОСНОВНОЙ КОНТЕНТ ===== -->
 <div class="main-wrapper" id="mainSite" style="display:none;">
   <header class="header" onclick="navigate('home')">
     <div class="logo">
@@ -2045,7 +1866,7 @@
     </div>
   </header>
 
-  <!-- ===== ГЛАВНОЕ МЕНЮ ===== -->
+  <!-- Главная -->
   <div class="page active" id="pageHome">
     <div class="home-hero">
       <div class="hero-badge">КИБЕРСПОРТИВНАЯ ПЛАТФОРМА BRAWL STARS</div>
@@ -2073,27 +1894,16 @@
       <div class="prize-block">
         <div class="prize-title">🏆 Призовой фонд — 10 000 ₽</div>
         <div class="prize-grid">
-          <div class="prize-item gold">
-            <div class="place">🥇 1 место</div>
-            <div class="reward">5 000 ₽</div>
-          </div>
-          <div class="prize-item silver">
-            <div class="place">🥈 2 место</div>
-            <div class="reward">3 000 ₽</div>
-          </div>
-          <div class="prize-item bronze">
-            <div class="place">🥉 3 место</div>
-            <div class="reward">2 000 ₽</div>
-          </div>
+          <div class="prize-item gold"><div class="place">🥇 1 место</div><div class="reward">5 000 ₽</div></div>
+          <div class="prize-item silver"><div class="place">🥈 2 место</div><div class="reward">3 000 ₽</div></div>
+          <div class="prize-item bronze"><div class="place">🥉 3 место</div><div class="reward">2 000 ₽</div></div>
         </div>
-        <div class="prize-premium">
-          <strong>4-15 место</strong> — Premium статус
-        </div>
+        <div class="prize-premium"><strong>4-15 место</strong> — Premium статус</div>
       </div>
     </div>
   </div>
 
-  <!-- ===== ПОИСК МАТЧА ===== -->
+  <!-- Поиск матча -->
   <div class="page" id="pageMatches">
     <div class="search-page-wrapper">
       <div class="search-header-block">
@@ -2102,9 +1912,7 @@
       </div>
 
       <div class="search-main-block" id="searchMainBlock">
-        <div class="label">
-          <i class="fas fa-crosshairs"></i> Статус поиска
-        </div>
+        <div class="label"><i class="fas fa-crosshairs"></i> Статус поиска</div>
         <div class="btn-row">
           <button class="btn-queue" id="queueBtn" onclick="startSearch()">
             <i class="fas fa-search"></i> Поиск матча
@@ -2114,18 +1922,10 @@
           </button>
         </div>
         <div class="search-type">Одиночный поиск матча.</div>
-
         <div class="search-counters" id="searchCounters">
-          <div class="search-counter">
-            <div class="num" id="matchCount">0</div>
-            <div class="lbl">Игроков в матче</div>
-          </div>
-          <div class="search-counter">
-            <div class="num" id="queueCount">0</div>
-            <div class="lbl">Игроков в очереди</div>
-          </div>
+          <div class="search-counter"><div class="num" id="matchCount">0</div><div class="lbl">Игроков в матче</div></div>
+          <div class="search-counter"><div class="num" id="queueCount">0</div><div class="lbl">Игроков в очереди</div></div>
         </div>
-
         <div class="search-progress" id="searchProgress">
           <div class="progress-text" id="progressText">0/6</div>
           <div class="progress-timer">⏱️ <span id="searchTimer">00:00</span></div>
@@ -2142,31 +1942,19 @@
         </div>
         <div class="party-add">
           <input type="text" id="partyCodeInput" placeholder="Введите код" maxlength="6" />
-          <button class="btn-add" onclick="addFriendByCode()">
-            <i class="fas fa-user-plus"></i> Добавить
-          </button>
+          <button class="btn-add" onclick="addFriendByCode()"><i class="fas fa-user-plus"></i> Добавить</button>
         </div>
-        <div class="party-friends-list" id="friendsList">
-          <span class="empty">Нет друзей в пати</span>
-        </div>
-        <div class="party-feature">
-          <i class="fas fa-info-circle"></i> Играйте вместе с друзьями в <strong>BRAWL STARS</strong> — введите код друга, чтобы добавить его в пати
-        </div>
+        <div class="party-friends-list" id="friendsList"><span class="empty">Нет друзей в пати</span></div>
+        <div class="party-feature"><i class="fas fa-info-circle"></i> Играйте вместе с друзьями в <strong>BRAWL STARS</strong> — введите код друга, чтобы добавить его в пати</div>
       </div>
     </div>
   </div>
 
-  <!-- ===== МАТЧ ===== -->
+  <!-- Матч -->
   <div class="page match-page" id="matchPage">
     <div class="match-info-bar" id="matchInfoBar">
-      <div class="info-item">
-        <i class="fas fa-hashtag"></i>
-        Номер игры: <span class="value highlight" id="matchGameNumber">#1</span>
-      </div>
-      <div class="info-item">
-        <i class="fas fa-gamepad"></i>
-        Режим: <span class="value" id="matchSelectedMode">—</span>
-      </div>
+      <div class="info-item"><i class="fas fa-hashtag"></i> Номер игры: <span class="value highlight" id="matchGameNumber">#1</span></div>
+      <div class="info-item"><i class="fas fa-gamepad"></i> Режим: <span class="value" id="matchSelectedMode">—</span></div>
     </div>
 
     <div class="match-grid" id="matchGrid">
@@ -2211,105 +1999,59 @@
     </div>
   </div>
 
-  <!-- ===== ДРУЗЬЯ ===== -->
+  <!-- Друзья -->
   <div class="page friends-page" id="pageFriends">
-    <div class="friends-header">
-      <span class="title">Друзья</span>
-    </div>
-
+    <div class="friends-header"><span class="title">Друзья</span></div>
     <div class="friends-stats">
-      <div class="stat-circle">
-        <div class="number" id="friendsStatFriends">0</div>
-        <div class="label">Друзья</div>
-      </div>
-      <div class="stat-circle">
-        <div class="number" id="friendsStatIncoming">0</div>
-        <div class="label">Входящие</div>
-      </div>
-      <div class="stat-circle">
-        <div class="number" id="friendsStatOutgoing">0</div>
-        <div class="label">Исходящие</div>
-      </div>
+      <div class="stat-circle"><div class="number" id="friendsStatFriends">0</div><div class="label">Друзья</div></div>
+      <div class="stat-circle"><div class="number" id="friendsStatIncoming">0</div><div class="label">Входящие</div></div>
+      <div class="stat-circle"><div class="number" id="friendsStatOutgoing">0</div><div class="label">Исходящие</div></div>
     </div>
-
     <div class="friends-search">
       <input type="text" id="friendCodeInput" placeholder="Введите код друга" maxlength="6" />
-      <button class="btn-add" onclick="addFriendByCode2()">
-        <i class="fas fa-user-plus"></i> Добавить
-      </button>
+      <button class="btn-add" onclick="addFriendByCode2()"><i class="fas fa-user-plus"></i> Добавить</button>
     </div>
-
     <div class="friends-tabs">
-      <button class="tab active" data-tab="friends" onclick="switchFriendsTab('friends')">
-        Друзья <span class="badge" id="friendsBadge">0</span>
-      </button>
-      <button class="tab" data-tab="incoming" onclick="switchFriendsTab('incoming')">
-        Входящие <span class="badge" id="incomingBadge">0</span>
-      </button>
-      <button class="tab" data-tab="outgoing" onclick="switchFriendsTab('outgoing')">
-        Исходящие <span class="badge" id="outgoingBadge">0</span>
-      </button>
+      <button class="tab active" data-tab="friends" onclick="switchFriendsTab('friends')">Друзья <span class="badge" id="friendsBadge">0</span></button>
+      <button class="tab" data-tab="incoming" onclick="switchFriendsTab('incoming')">Входящие <span class="badge" id="incomingBadge">0</span></button>
+      <button class="tab" data-tab="outgoing" onclick="switchFriendsTab('outgoing')">Исходящие <span class="badge" id="outgoingBadge">0</span></button>
     </div>
-
     <div id="friendsListContainer">
-      <div class="friends-empty">
-        <i class="fas fa-user-friends"></i>
-        Друзей пока нет.
-      </div>
+      <div class="friends-empty"><i class="fas fa-user-friends"></i> Друзей пока нет.</div>
     </div>
   </div>
 
-  <!-- ===== ТОП ИГРОКОВ ===== -->
+  <!-- Топ игроков -->
   <div class="page top-page" id="pageTop">
     <div class="top-header">
       <div class="page-title">Топ игроков</div>
       <div class="user-rank">Твоё место: <span id="userRank">#0</span></div>
     </div>
-
     <div class="top-list" id="topList">
-      <div class="friends-empty">
-        <i class="fas fa-trophy"></i>
-        Нет данных
-      </div>
+      <div class="friends-empty"><i class="fas fa-trophy"></i> Нет данных</div>
     </div>
   </div>
 
-  <!-- ===== КОШЕЛЁК ===== -->
+  <!-- Кошелёк -->
   <div class="page wallet-page" id="pageWallet">
     <div class="wallet-balance">
-      <div class="balance-item">
-        <div class="amount">0 ⭐</div>
-        <div class="currency">Telegram Stars</div>
-      </div>
-      <div class="balance-item">
-        <div class="rub-amount">0 ₽</div>
-        <div class="rub-currency">Рубли</div>
-      </div>
+      <div class="balance-item"><div class="amount">0 ⭐</div><div class="currency">Telegram Stars</div></div>
+      <div class="balance-item"><div class="rub-amount">0 ₽</div><div class="rub-currency">Рубли</div></div>
     </div>
-
     <div class="wallet-actions">
-      <button class="btn-wallet stars" onclick="showToast('info', 'Пополнение', 'Пополнение Stars')">
-        <i class="fas fa-star"></i> Пополнить Stars
-      </button>
-      <button class="btn-wallet rub" onclick="showToast('info', 'Пополнение', 'Пополнение рублями')">
-        <i class="fas fa-credit-card"></i> Пополнить рублями
-      </button>
+      <button class="btn-wallet stars" onclick="showToast('info', 'Пополнение', 'Пополнение Stars')"><i class="fas fa-star"></i> Пополнить Stars</button>
+      <button class="btn-wallet rub" onclick="showToast('info', 'Пополнение', 'Пополнение рублями')"><i class="fas fa-credit-card"></i> Пополнить рублями</button>
     </div>
-
     <div class="promo-block">
       <span class="promo-label">Промокод</span>
       <input type="text" placeholder="ПРОМОКОД" id="promoInput" />
       <button class="btn-apply" onclick="applyPromo()">Применить</button>
     </div>
-
     <div class="history-title">ИСТОРИЯ ОПЕРАЦИЙ</div>
-    <div class="history-empty">
-      <i class="fas fa-history"></i>
-      Операций пока нет.
-    </div>
+    <div class="history-empty"><i class="fas fa-history"></i> Операций пока нет.</div>
   </div>
 
-  <!-- ===== ПРОФИЛЬ ===== -->
+  <!-- Профиль -->
   <div class="page" id="pageProfile">
     <div class="profile-card">
       <div class="profile-header">
@@ -2322,36 +2064,27 @@
           </div>
         </div>
       </div>
-
       <div class="profile-stats">
         <div class="stat-item"><div class="value" id="pMatches">0</div><div class="label">Матчей</div></div>
         <div class="stat-item"><div class="value" id="pKills">0</div><div class="label">Убийств</div></div>
         <div class="stat-item"><div class="value" id="pDeaths">0</div><div class="label">Смертей</div></div>
         <div class="stat-item"><div class="value" id="pKD">0.00</div><div class="label">K/D</div></div>
       </div>
-
       <div class="profile-actions">
-        <button class="btn-action edit" onclick="showToast('info', 'Редактирование', 'Функция редактирования профиля')">
-          <i class="fas fa-edit"></i> Редактировать
-        </button>
-        <button class="btn-action logout" onclick="handleLogout()">
-          <i class="fas fa-sign-out-alt"></i> Выйти с аккаунта
-        </button>
+        <button class="btn-action edit" onclick="showToast('info', 'Редактирование', 'Функция редактирования профиля')"><i class="fas fa-edit"></i> Редактировать</button>
+        <button class="btn-action logout" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Выйти с аккаунта</button>
       </div>
-
       <div class="match-history">
         <div class="title"><i class="fas fa-history"></i> История матчей</div>
-        <div id="matchHistoryList">
-          <div style="color:#666; text-align:center; padding:8px 0;">Нет сыгранных матчей</div>
-        </div>
+        <div id="matchHistoryList"><div style="color:#666; text-align:center; padding:8px 0;">Нет сыгранных матчей</div></div>
       </div>
     </div>
   </div>
 
-  <!-- ===== ЗАГЛУШКА ===== -->
+  <!-- Заглушка -->
   <div class="page" id="pageShop"><div class="placeholder"><i class="fas fa-store"></i><h2>Магазин</h2><p>Здесь будут товары и привилегии.</p></div></div>
 
-  <!-- ===== НИЖНЯЯ НАВИГАЦИЯ ===== -->
+  <!-- Нижняя навигация -->
   <nav class="bottom-nav">
     <button class="item" data-page="profile" onclick="navigate('profile')"><i class="fas fa-user"></i><span>Профиль</span></button>
     <button class="item" data-page="shop" onclick="navigate('shop')"><i class="fas fa-store"></i><span>Шоп</span></button>
@@ -2418,12 +2151,17 @@
   }
 
   // ============================================================
-  //  ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК АВТОРИЗАЦИИ
+  //  ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
   // ============================================================
   function switchAuthTab(tab) {
+    console.log('🔄 Переключение на:', tab);
+    
+    // Обновляем табы
     document.querySelectorAll('.auth-tabs .tab').forEach(t => t.classList.remove('active'));
-    document.querySelector(`.auth-tabs .tab[data-tab="${tab}"]`).classList.add('active');
+    const activeTab = document.querySelector(`.auth-tabs .tab[data-tab="${tab}"]`);
+    if (activeTab) activeTab.classList.add('active');
 
+    // Обновляем формы
     document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
     if (tab === 'login') {
       document.getElementById('loginForm').classList.add('active');
@@ -2431,24 +2169,11 @@
       document.getElementById('registerForm').classList.add('active');
     }
 
+    // Очищаем сообщения
     document.getElementById('loginMessage').className = 'auth-message';
     document.getElementById('loginMessage').textContent = '';
     document.getElementById('registerMessage').className = 'auth-message';
     document.getElementById('registerMessage').textContent = '';
-  }
-
-  // ============================================================
-  //  ПОКАЗ/СКРЫТИЕ ПАРОЛЯ
-  // ============================================================
-  function togglePassword(inputId, btn) {
-    const input = document.getElementById(inputId);
-    if (input.type === 'password') {
-      input.type = 'text';
-      btn.innerHTML = '<i class="fas fa-eye-slash"></i>';
-    } else {
-      input.type = 'password';
-      btn.innerHTML = '<i class="fas fa-eye"></i>';
-    }
   }
 
   // ============================================================
@@ -2589,6 +2314,7 @@
         .maybeSingle();
 
       if (error) {
+        console.error('❌ Ошибка Supabase:', error);
         messageEl.className = 'auth-message show error';
         messageEl.textContent = '❌ Ошибка сервера';
         return;
@@ -2783,12 +2509,7 @@
       document.getElementById('userRank').textContent = '#' + (userRank || 0);
 
       if (!users || users.length === 0) {
-        container.innerHTML = `
-          <div class="friends-empty">
-            <i class="fas fa-trophy"></i>
-            Нет данных
-          </div>
-        `;
+        container.innerHTML = `<div class="friends-empty"><i class="fas fa-trophy"></i> Нет данных</div>`;
         return;
       }
 
@@ -2810,10 +2531,7 @@
               <div class="name">${u.username}</div>
               <div class="stats">${u.serverMatches || 0} матчей | K/D: ${kd}</div>
             </div>
-            <div class="elo">
-              ${u.serverMatches || 0}
-              <span class="elo-label">Игр</span>
-            </div>
+            <div class="elo">${u.serverMatches || 0}<span class="elo-label">Игр</span></div>
           </div>
         `;
       }).join('');
@@ -2909,12 +2627,7 @@
 
   function renderFriendsPage() {
     const container = document.getElementById('friendsListContainer');
-    container.innerHTML = `
-      <div class="friends-empty">
-        <i class="fas fa-user-friends"></i>
-        Друзей пока нет.
-      </div>
-    `;
+    container.innerHTML = `<div class="friends-empty"><i class="fas fa-user-friends"></i> Друзей пока нет.</div>`;
     document.getElementById('friendsStatFriends').textContent = 0;
     document.getElementById('friendsStatIncoming').textContent = 0;
     document.getElementById('friendsStatOutgoing').textContent = 0;
@@ -3050,9 +2763,7 @@
       return `
         <div class="player-card">
           <div class="avatar">${p.username.charAt(0).toUpperCase()}</div>
-          <div class="info">
-            <span class="name">${p.username}</span>
-          </div>
+          <div class="info"><span class="name">${p.username}</span></div>
           ${isCaptain ? `<span class="captain-badge"><i class="fas fa-crown"></i> Капитан</span>` : ''}
         </div>
       `;
@@ -3063,9 +2774,7 @@
       return `
         <div class="player-card">
           <div class="avatar">${p.username.charAt(0).toUpperCase()}</div>
-          <div class="info">
-            <span class="name">${p.username}</span>
-          </div>
+          <div class="info"><span class="name">${p.username}</span></div>
           ${isCaptain ? `<span class="captain-badge"><i class="fas fa-crown"></i> Капитан</span>` : ''}
         </div>
       `;
