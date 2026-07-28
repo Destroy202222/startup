@@ -1890,6 +1890,141 @@
         .result.win { background: rgba(81, 207, 102, 0.15); color: #51cf66; }
         .result.loss { background: rgba(255, 107, 107, 0.15); color: #ff6b6b; }
 
+        /* ===== УПРАВЛЕНИЕ МАТЧАМИ (АДМИН) ===== */
+        .matches-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .match-card {
+            background: rgba(26, 26, 34, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 12px 14px;
+            transition: .3s;
+            position: relative;
+        }
+        .match-card:hover {
+            border-color: rgba(255, 215, 0, 0.2);
+            background: rgba(26, 26, 34, 0.8);
+        }
+        .match-card .match-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+        .match-card .match-id {
+            font-size: 12px;
+            font-weight: 600;
+            color: #ffd700;
+            font-family: 'Courier New', monospace;
+        }
+        .match-card .match-date {
+            font-size: 11px;
+            color: #666;
+        }
+        .match-card .match-teams {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-size: 13px;
+        }
+        .match-card .match-teams .team {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 500;
+            flex-wrap: wrap;
+        }
+        .match-card .match-teams .team.blue {
+            background: rgba(52, 152, 219, 0.15);
+            border: 1px solid rgba(52, 152, 219, 0.2);
+            color: #3498db;
+        }
+        .match-card .match-teams .team.orange {
+            background: rgba(255, 165, 0, 0.15);
+            border: 1px solid rgba(255, 165, 0, 0.2);
+            color: #ffa500;
+        }
+        .match-card .match-teams .team .player-tag {
+            background: rgba(255,255,255,0.05);
+            border-radius: 30px;
+            padding: 0 8px;
+            font-size: 11px;
+            font-weight: 400;
+        }
+        .match-card .match-teams .team .count-badge {
+            background: rgba(255,255,255,0.05);
+            border-radius: 30px;
+            padding: 0 8px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .match-card .match-actions-admin {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .match-card .match-actions-admin .btn-sm {
+            padding: 4px 12px;
+            border: none;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: .2s;
+        }
+        .match-card .match-actions-admin .btn-sm.view {
+            background: rgba(52, 152, 219, 0.15);
+            color: #3498db;
+            border: 1px solid rgba(52, 152, 219, 0.2);
+        }
+        .match-card .match-actions-admin .btn-sm.view:hover {
+            background: rgba(52, 152, 219, 0.25);
+        }
+        .match-card .match-actions-admin .btn-sm.delete {
+            background: rgba(255, 107, 107, 0.15);
+            color: #ff6b6b;
+            border: 1px solid rgba(255, 107, 107, 0.2);
+        }
+        .match-card .match-actions-admin .btn-sm.delete:hover {
+            background: rgba(255, 107, 107, 0.25);
+        }
+        .match-card .match-status {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 30px;
+        }
+        .match-card .match-status.active {
+            background: rgba(81, 207, 102, 0.15);
+            color: #51cf66;
+        }
+        .match-card .match-status.complete {
+            background: rgba(255, 215, 0, 0.1);
+            color: #ffd700;
+        }
+        .match-card .match-status.waiting {
+            background: rgba(255, 165, 0, 0.1);
+            color: #ffa500;
+        }
+        .match-card .match-map {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
+        .match-card .match-map strong { color: #fff; }
+
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -2003,6 +2138,8 @@
             .screenshot-section .screenshot-input-group { flex-direction: column; align-items: stretch; }
             .match-actions .btn-end { font-size: 12px; padding: 6px 16px; }
             .promo-section .promo-input-group { flex-direction: column; align-items: stretch; }
+            .matches-grid { grid-template-columns: 1fr; }
+            .match-card .match-teams { flex-direction: column; gap: 6px; }
         }
         @media (max-width: 768px) {
             .hero-title { font-size: 30px; }
@@ -2041,6 +2178,8 @@
             .match-result-section .result-btn { min-width: 100%; }
             .match-actions .btn-end { font-size: 13px; padding: 8px 20px; }
             .promo-section .promo-input-group { flex-direction: column; align-items: stretch; }
+            .matches-grid { grid-template-columns: 1fr; }
+            .match-card .match-teams { flex-direction: column; gap: 6px; }
         }
     </style>
 </head>
@@ -2411,6 +2550,25 @@
                         <div class="admin-empty">Нет промокодов</div>
                     </div>
                 </div>
+
+                <!-- ===== УПРАВЛЕНИЕ МАТЧАМИ (АДМИН) ===== -->
+                <div class="admin-section">
+                    <div class="section-title">🎮 Управление активными матчами</div>
+                    <div style="margin-bottom: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button class="admin-btn" onclick="loadAllMatches()" style="background: #3498db; color: #fff;">
+                            <i class="fas fa-sync"></i> Обновить
+                        </button>
+                        <button class="admin-btn danger" onclick="clearAllMatches()" style="background: #ff4444; color: #fff;">
+                            <i class="fas fa-trash"></i> Очистить все
+                        </button>
+                        <span style="color: #666; font-size: 12px; display: flex; align-items: center; margin-left: auto;">
+                            <i class="fas fa-users"></i> <span id="totalMatchesCount">0</span> матчей
+                        </span>
+                    </div>
+                    <div id="matchesListContainer" style="max-height: 400px; overflow-y: auto;">
+                        <div class="admin-empty">⏳ Загрузка матчей...</div>
+                    </div>
+                </div>
             </div>
 
             <!-- ===== ДИНАМИКА МАТЧЕЙ ===== -->
@@ -2460,9 +2618,7 @@
     //  ПЕРЕМЕННЫЕ
     // ============================================================
     let currentUser = null;
-    let queue = [];
     let currentMatch = null;
-    let botCounter = 0;
     let partyFriends = [];
     let friendsTab = 'friends';
     let isSearching = false;
@@ -2472,6 +2628,8 @@
     let isPlayerInMatch = false;
     let activeMatchId = null;
     let matchRestored = false;
+    let isCaptain = false;
+    let isAdmin = false;
 
     let draftState = {
         gameNumber: 1,
@@ -2479,7 +2637,9 @@
         modeBanned: [],
         modeFinal: null,
         currentCaptain: 0,
-        isComplete: false
+        isComplete: false,
+        captain1: null,
+        captain2: null
     };
 
     // ============================================================
@@ -2602,6 +2762,12 @@
                 
                 matchRestored = true;
                 console.log('✅ Матч загружен из Supabase');
+                
+                // Определяем, является ли игрок капитаном
+                const isOrangeCaptain = currentMatch.orange.length > 0 && currentMatch.orange[0].id === currentUser.id;
+                const isBlueCaptain = currentMatch.blue.length > 0 && currentMatch.blue[0].id === currentUser.id;
+                isCaptain = isOrangeCaptain || isBlueCaptain;
+                isAdmin = currentUser.username === 'Destro';
                 
                 // Обновляем UI
                 renderMatchPage();
@@ -2845,20 +3011,21 @@
             updateWalletUI();
 
             // ===== АДМИН-ПАНЕЛЬ =====
-            const isDestro = currentUser.username === 'Destro';
+            isAdmin = currentUser.username === 'Destro';
             
             const adminBadge = document.getElementById('adminBadge');
-            if (isDestro) {
+            if (isAdmin) {
                 adminBadge.classList.add('visible');
             } else {
                 adminBadge.classList.remove('visible');
             }
             
             const adminPanel = document.getElementById('profileAdminPanel');
-            if (isDestro) {
+            if (isAdmin) {
                 adminPanel.classList.add('visible');
                 await renderAdminList();
                 await renderPromoList();
+                await loadAllMatches();
                 showToast('success', '👑 Администратор', 'Добро пожаловать в админ-панель!');
             } else {
                 adminPanel.classList.remove('visible');
@@ -2931,7 +3098,7 @@
     }
 
     // ============================================================
-    //  ПОИСК МАТЧА
+    //  ПОИСК МАТЧА (ТОЛЬКО РЕАЛЬНЫЕ ИГРОКИ, БЕЗ БОТОВ)
     // ============================================================
     function startSearch() {
         if (isSearching) return;
@@ -2941,72 +3108,152 @@
         }
         if (!currentUser) return showToast('error', 'Ошибка', 'Авторизуйтесь');
 
-        queue = [{ id: currentUser.id, username: currentUser.username }];
-        isSearching = true;
-        searchSeconds = 0;
-
-        document.getElementById('searchMainBlock').classList.add('searching');
-        document.getElementById('queueBtn').style.display = 'none';
-        document.getElementById('cancelBtn').style.display = 'inline-flex';
-        document.getElementById('progressText').textContent = '1/6';
-
-        if (searchTimerInterval) clearInterval(searchTimerInterval);
-        searchTimerInterval = setInterval(() => {
-            searchSeconds++;
-            const mins = String(Math.floor(searchSeconds / 60)).padStart(2, '0');
-            const secs = String(searchSeconds % 60).padStart(2, '0');
-            document.getElementById('searchTimer').textContent = mins + ':' + secs;
-        }, 1000);
-
-        showToast('info', 'Поиск начат', 'Ищем игроков...');
-        simulateBotSearch();
+        // Проверяем, есть ли уже активные матчи с этим игроком
+        supabaseClient
+            .from('active_matches')
+            .select('*')
+            .then(({ data }) => {
+                if (data && data.length > 0) {
+                    for (const match of data) {
+                        try {
+                            const orange = JSON.parse(match.orange);
+                            const blue = JSON.parse(match.blue);
+                            const allPlayers = [...orange, ...blue];
+                            if (allPlayers.some(p => p.id === currentUser.id)) {
+                                showToast('error', 'Ошибка', 'Вы уже в другом матче!');
+                                return;
+                            }
+                        } catch(e) {}
+                    }
+                }
+                
+                // Начинаем поиск
+                doStartSearch();
+            });
     }
 
-    function simulateBotSearch() {
-        if (!isSearching) return;
-        const maxBots = 5;
-        const currentBots = queue.length - 1;
+    function doStartSearch() {
+        // Проверяем, есть ли другие игроки в очереди
+        supabaseClient
+            .from('match_queue')
+            .select('*')
+            .eq('status', 'waiting')
+            .then(({ data }) => {
+                const waitingPlayers = data || [];
+                
+                // Добавляем себя в очередь
+                supabaseClient
+                    .from('match_queue')
+                    .insert([{
+                        user_id: currentUser.id,
+                        username: currentUser.username,
+                        status: 'waiting',
+                        created_at: new Date().toISOString()
+                    }])
+                    .then(() => {
+                        isSearching = true;
+                        searchSeconds = 0;
 
-        if (currentBots < maxBots && isSearching) {
-            setTimeout(() => {
-                if (!isSearching) return;
-                const botName = 'Bot' + (botCounter + 1);
-                botCounter++;
-                queue.push({ id: 'bot_' + Date.now(), username: botName });
-                document.getElementById('progressText').textContent = queue.length + '/6';
-                showToast('info', 'Игрок найден', botName + ' присоединился (' + queue.length + '/6)');
+                        document.getElementById('searchMainBlock').classList.add('searching');
+                        document.getElementById('queueBtn').style.display = 'none';
+                        document.getElementById('cancelBtn').style.display = 'inline-flex';
+                        document.getElementById('progressText').textContent = '1/6';
 
-                if (queue.length >= 6) {
-                    clearInterval(searchTimerInterval);
-                    isSearching = false;
-                    document.getElementById('searchMainBlock').classList.remove('searching');
-                    document.getElementById('queueBtn').style.display = 'inline-flex';
-                    document.getElementById('cancelBtn').style.display = 'none';
-                    startMatch();
-                } else {
-                    simulateBotSearch();
-                }
-            }, 1500 + Math.random() * 2000);
-        }
+                        if (searchTimerInterval) clearInterval(searchTimerInterval);
+                        searchTimerInterval = setInterval(() => {
+                            searchSeconds++;
+                            const mins = String(Math.floor(searchSeconds / 60)).padStart(2, '0');
+                            const secs = String(searchSeconds % 60).padStart(2, '0');
+                            document.getElementById('searchTimer').textContent = mins + ':' + secs;
+                        }, 1000);
+
+                        showToast('info', 'Поиск начат', 'Ожидаем игроков...');
+                        
+                        // Проверяем очередь каждые 3 секунды
+                        checkQueue();
+                    });
+            });
+    }
+
+    let queueCheckInterval = null;
+
+    function checkQueue() {
+        if (queueCheckInterval) clearInterval(queueCheckInterval);
+        
+        queueCheckInterval = setInterval(() => {
+            if (!isSearching) {
+                clearInterval(queueCheckInterval);
+                return;
+            }
+            
+            supabaseClient
+                .from('match_queue')
+                .select('*')
+                .eq('status', 'waiting')
+                .then(({ data }) => {
+                    const players = data || [];
+                    const count = players.length;
+                    
+                    document.getElementById('progressText').textContent = count + '/6';
+                    
+                    if (count >= 6) {
+                        // Начинаем матч
+                        clearInterval(queueCheckInterval);
+                        isSearching = false;
+                        document.getElementById('searchMainBlock').classList.remove('searching');
+                        document.getElementById('queueBtn').style.display = 'inline-flex';
+                        document.getElementById('cancelBtn').style.display = 'none';
+                        
+                        // Собираем игроков
+                        const playersList = players.map(p => ({
+                            id: p.user_id,
+                            username: p.username
+                        }));
+                        
+                        // Очищаем очередь
+                        supabaseClient
+                            .from('match_queue')
+                            .delete()
+                            .eq('status', 'waiting')
+                            .then(() => {
+                                startMatch(playersList);
+                            });
+                    }
+                });
+        }, 3000);
     }
 
     function cancelSearch() {
         if (!isSearching) return;
         isSearching = false;
+        clearInterval(queueCheckInterval);
         clearInterval(searchTimerInterval);
-        queue = [];
-        document.getElementById('searchMainBlock').classList.remove('searching');
-        document.getElementById('queueBtn').style.display = 'inline-flex';
-        document.getElementById('cancelBtn').style.display = 'none';
-        document.getElementById('searchTimer').textContent = '00:00';
-        document.getElementById('progressText').textContent = '0/6';
-        updateQueueUI();
-        showToast('info', 'Поиск отменён', 'Вы отменили поиск');
+        
+        // Удаляем себя из очереди
+        supabaseClient
+            .from('match_queue')
+            .delete()
+            .eq('user_id', currentUser.id)
+            .then(() => {
+                document.getElementById('searchMainBlock').classList.remove('searching');
+                document.getElementById('queueBtn').style.display = 'inline-flex';
+                document.getElementById('cancelBtn').style.display = 'none';
+                document.getElementById('searchTimer').textContent = '00:00';
+                document.getElementById('progressText').textContent = '0/6';
+                updateQueueUI();
+                showToast('info', 'Поиск отменён', 'Вы отменили поиск');
+            });
     }
 
     function updateQueueUI() {
-        const count = queue.length;
-        document.getElementById('queueCount').textContent = count;
+        supabaseClient
+            .from('match_queue')
+            .select('*')
+            .eq('status', 'waiting')
+            .then(({ data }) => {
+                document.getElementById('queueCount').textContent = (data || []).length;
+            });
+            
         const matchPlayers = currentMatch ? (currentMatch.orange.length + currentMatch.blue.length) : 0;
         document.getElementById('matchCount').textContent = matchPlayers;
     }
@@ -3014,8 +3261,8 @@
     // ============================================================
     //  МАТЧ
     // ============================================================
-    function startMatch() {
-        const shuffled = [...queue];
+    function startMatch(players) {
+        const shuffled = [...players];
         for (let i = shuffled.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
@@ -3023,12 +3270,21 @@
         const half = Math.floor(shuffled.length / 2);
         const orange = shuffled.slice(0, half);
         const blue = shuffled.slice(half);
+        
+        // Назначаем капитанов (первые в каждой команде)
+        if (orange.length > 0) draftState.captain1 = orange[0].id;
+        if (blue.length > 0) draftState.captain2 = blue[0].id;
+        draftState.currentCaptain = 0;
+        
         currentMatch = { orange, blue };
         isPlayerInMatch = true;
         
-        saveMatchToSupabase();
+        // Определяем, является ли игрок капитаном
+        const isOrangeCaptain = currentMatch.orange.length > 0 && currentMatch.orange[0].id === currentUser.id;
+        const isBlueCaptain = currentMatch.blue.length > 0 && currentMatch.blue[0].id === currentUser.id;
+        isCaptain = isOrangeCaptain || isBlueCaptain;
         
-        queue = [];
+        saveMatchToSupabase();
 
         document.getElementById('searchMainBlock').classList.remove('searching');
         document.getElementById('queueBtn').style.display = 'inline-flex';
@@ -3052,7 +3308,6 @@
     }
 
     function checkMatchResultVisibility() {
-        const isAdmin = currentUser?.username === 'Destro';
         const isPlayer = isPlayerInMatch;
         
         if (draftState.isComplete && isPlayer) {
@@ -3090,23 +3345,23 @@
         });
 
         document.getElementById('teamOrangePlayers').innerHTML = sortedOrange.map(p => {
-            const isCaptain = p.username === oCaptain;
+            const isCaptain2 = p.username === oCaptain;
             return `
                 <div class="player-card">
                     <div class="avatar">${p.username.charAt(0).toUpperCase()}</div>
                     <div class="info"><span class="name">${p.username}</span></div>
-                    ${isCaptain ? `<span class="captain-badge"><i class="fas fa-crown"></i> Капитан</span>` : ''}
+                    ${isCaptain2 ? `<span class="captain-badge"><i class="fas fa-crown"></i> Капитан</span>` : ''}
                 </div>
             `;
         }).join('') || '<p style="color:#888;text-align:center;padding:8px 0;font-size:13px;">Нет игроков</p>';
 
         document.getElementById('teamBluePlayers').innerHTML = sortedBlue.map(p => {
-            const isCaptain = p.username === bCaptain;
+            const isCaptain2 = p.username === bCaptain;
             return `
                 <div class="player-card">
                     <div class="avatar">${p.username.charAt(0).toUpperCase()}</div>
                     <div class="info"><span class="name">${p.username}</span></div>
-                    ${isCaptain ? `<span class="captain-badge"><i class="fas fa-crown"></i> Капитан</span>` : ''}
+                    ${isCaptain2 ? `<span class="captain-badge"><i class="fas fa-crown"></i> Капитан</span>` : ''}
                 </div>
             `;
         }).join('') || '<p style="color:#888;text-align:center;padding:8px 0;font-size:13px;">Нет игроков</p>';
@@ -3155,14 +3410,14 @@
     });
 
     // ============================================================
-    //  ЗАСЧИТЫВАНИЕ МАТЧА (ТОЛЬКО ДЛЯ DESTRO)
+    //  ЗАСЧИТЫВАНИЕ МАТЧА (ТОЛЬКО ДЛЯ АДМИНА)
     // ============================================================
     document.getElementById('blueWinBtn').addEventListener('click', function() {
         if (!currentMatch || !draftState.isComplete) {
             return showToast('error', 'Ошибка', 'Дождитесь завершения драфта');
         }
-        if (currentUser?.username !== 'Destro') {
-            return showToast('error', 'Доступ запрещён', 'Только Destro может засчитывать матчи');
+        if (!isAdmin) {
+            return showToast('error', 'Доступ запрещён', 'Только администратор может засчитывать матчи');
         }
         finishMatch('blue');
     });
@@ -3171,16 +3426,16 @@
         if (!currentMatch || !draftState.isComplete) {
             return showToast('error', 'Ошибка', 'Дождитесь завершения драфта');
         }
-        if (currentUser?.username !== 'Destro') {
-            return showToast('error', 'Доступ запрещён', 'Только Destro может засчитывать матчи');
+        if (!isAdmin) {
+            return showToast('error', 'Доступ запрещён', 'Только администратор может засчитывать матчи');
         }
         finishMatch('orange');
     });
 
     async function finishMatch(winner) {
         if (!currentMatch || !currentUser) return;
-        if (currentUser?.username !== 'Destro') {
-            return showToast('error', 'Доступ запрещён', 'Только Destro может засчитывать матчи');
+        if (!isAdmin) {
+            return showToast('error', 'Доступ запрещён', 'Только администратор может засчитывать матчи');
         }
 
         const map = draftState.modeFinal || 'Gem Grab';
@@ -3302,6 +3557,7 @@
         showToast('info', 'Матч завершён', 'Статистика сохранена!');
         await renderTopPlayers();
         await updateProfile();
+        await loadAllMatches();
     }
 
     function endMatch() {
@@ -3309,8 +3565,8 @@
         if (!draftState.isComplete) {
             return showToast('info', 'Дождитесь драфта', 'Сначала завершите выбор режима');
         }
-        if (currentUser?.username !== 'Destro') {
-            return showToast('error', 'Доступ запрещён', 'Только Destro может завершить матч');
+        if (!isAdmin) {
+            return showToast('error', 'Доступ запрещён', 'Только администратор может завершить матч');
         }
         if (!confirm('Завершить матч без засчитывания?')) return;
         
@@ -3328,10 +3584,11 @@
         navigate('matches');
         updateQueueUI();
         showToast('info', 'Матч завершён', 'Матч отменён');
+        loadAllMatches();
     }
 
     // ============================================================
-    //  ДРАФТ
+    //  ДРАФТ (БАНЯТ ТОЛЬКО КАПИТАНЫ ПО ОЧЕРЕДИ)
     // ============================================================
     function resetDraft() {
         draftState = {
@@ -3340,7 +3597,9 @@
             modeBanned: [],
             modeFinal: null,
             currentCaptain: 0,
-            isComplete: false
+            isComplete: false,
+            captain1: draftState.captain1 || null,
+            captain2: draftState.captain2 || null
         };
         saveMatchToSupabase();
         renderDraftUI();
@@ -3354,6 +3613,14 @@
         return captains[index] || 'Капитан ' + (index + 1);
     }
 
+    function isCurrentCaptain() {
+        if (!currentMatch || !currentUser) return false;
+        const captains = [];
+        if (currentMatch.orange.length > 0) captains.push(currentMatch.orange[0].id);
+        if (currentMatch.blue.length > 0) captains.push(currentMatch.blue[0].id);
+        return captains[draftState.currentCaptain] === currentUser.id;
+    }
+
     function renderDraftUI() {
         const state = draftState;
 
@@ -3362,6 +3629,9 @@
 
         const modesContainer = document.getElementById('modesBanContainer');
         const modeBtns = modesContainer.querySelectorAll('.ban-btn');
+        
+        const canBan = isCurrentCaptain() && !state.isComplete;
+        
         modeBtns.forEach(btn => {
             const val = btn.dataset.value;
             if (state.modeBanned.includes(val)) {
@@ -3375,7 +3645,7 @@
             } else {
                 btn.classList.remove('banned', 'selected');
                 btn.style.display = '';
-                btn.disabled = false;
+                btn.disabled = !canBan;
             }
         });
 
@@ -3387,8 +3657,15 @@
             modesStatus.textContent = '✅ ' + state.modeFinal;
             modesStatus.className = 'status-text done';
         } else if (!state.isComplete) {
-            modesStatus.textContent = 'Ход: ' + getCaptainName(state.currentCaptain);
+            const captainName = getCaptainName(state.currentCaptain);
+            modesStatus.textContent = 'Ход: ' + captainName;
             modesStatus.className = 'status-text';
+            if (isCurrentCaptain()) {
+                modesStatus.textContent += ' (👈 Ваш ход!)';
+                modesStatus.style.color = '#51cf66';
+            } else {
+                modesStatus.style.color = '#ffd700';
+            }
         } else {
             modesStatus.textContent = 'Ожидание...';
             modesStatus.className = 'status-text';
@@ -3411,6 +3688,12 @@
         if (state.isComplete) return;
         if (state.modeBanned.includes(value)) return;
         if (state.modeFinal) return;
+        
+        // Проверяем, может ли текущий игрок банить
+        if (!isCurrentCaptain()) {
+            showToast('error', 'Не ваш ход!', 'Сейчас банит другой капитан');
+            return;
+        }
 
         state.modeBanned.push(value);
 
@@ -3424,8 +3707,177 @@
             return;
         }
 
+        // Передаём ход другому капитану
         state.currentCaptain = state.currentCaptain === 0 ? 1 : 0;
         renderDraftUI();
+        showToast('info', 'Ход передан', 'Теперь банит ' + getCaptainName(state.currentCaptain));
+    }
+
+    // ============================================================
+    //  УПРАВЛЕНИЕ МАТЧАМИ (АДМИН)
+    // ============================================================
+    async function loadAllMatches() {
+        const container = document.getElementById('matchesListContainer');
+        if (!container) return;
+        
+        container.innerHTML = '<div class="admin-empty">⏳ Загрузка...</div>';
+        
+        try {
+            const { data, error } = await supabaseClient
+                .from('active_matches')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+
+            document.getElementById('totalMatchesCount').textContent = data?.length || 0;
+
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="admin-empty"><i class="fas fa-inbox"></i> Нет активных матчей</div>';
+                return;
+            }
+
+            container.innerHTML = `
+                <div style="margin-bottom: 8px; color: #888; font-size: 12px;">
+                    <i class="fas fa-info-circle"></i> Всего: ${data.length} матчей
+                </div>
+                <div class="matches-grid">
+                    ${data.map(match => {
+                        let orange = [], blue = [];
+                        try {
+                            orange = JSON.parse(match.orange || '[]');
+                            blue = JSON.parse(match.blue || '[]');
+                        } catch(e) {}
+                        
+                        const totalPlayers = orange.length + blue.length;
+                        const date = new Date(match.created_at).toLocaleString('ru-RU');
+                        let status = 'active';
+                        let mapName = '—';
+                        try {
+                            if (match.draft_state) {
+                                const ds = JSON.parse(match.draft_state);
+                                status = ds.isComplete ? 'complete' : 'active';
+                                mapName = ds.modeFinal || '—';
+                            }
+                        } catch(e) {}
+                        
+                        const statusLabels = {
+                            'active': '🟢 В процессе',
+                            'complete': '✅ Завершён',
+                            'waiting': '🟡 Ожидание'
+                        };
+                        
+                        return `
+                            <div class="match-card">
+                                <span class="match-status ${status}">${statusLabels[status] || '🟢 Активен'}</span>
+                                <div class="match-header">
+                                    <span class="match-id">#${match.id.substring(0, 8)}</span>
+                                    <span class="match-date">📅 ${date}</span>
+                                </div>
+                                <div class="match-map">🎮 Режим: <strong>${mapName}</strong></div>
+                                <div class="match-teams">
+                                    <span class="team blue">
+                                        🔵 BLUE (${blue.length})
+                                        ${blue.map(p => `<span class="player-tag">${p.username}</span>`).join('')}
+                                    </span>
+                                    <span class="team orange">
+                                        🟠 ORANGE (${orange.length})
+                                        ${orange.map(p => `<span class="player-tag">${p.username}</span>`).join('')}
+                                    </span>
+                                </div>
+                                <div class="match-actions-admin">
+                                    <button class="btn-sm view" onclick="viewMatch('${match.id}')">
+                                        <i class="fas fa-eye"></i> Посмотреть
+                                    </button>
+                                    <button class="btn-sm delete" onclick="deleteMatch('${match.id}')">
+                                        <i class="fas fa-trash"></i> Удалить
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        } catch (e) {
+            console.error('Ошибка загрузки матчей:', e);
+            container.innerHTML = '<div class="admin-empty">❌ Ошибка загрузки</div>';
+        }
+    }
+
+    async function viewMatch(matchId) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('active_matches')
+                .select('*')
+                .eq('id', matchId)
+                .single();
+
+            if (error || !data) {
+                showToast('error', 'Ошибка', 'Матч не найден');
+                return;
+            }
+
+            let orange = [], blue = [];
+            try {
+                orange = JSON.parse(data.orange || '[]');
+                blue = JSON.parse(data.blue || '[]');
+            } catch(e) {}
+
+            const allPlayers = [...orange, ...blue];
+            const playerNames = allPlayers.map(p => p.username).join(', ');
+            
+            showToast('info', '📋 Информация о матче', 
+                `Игроки: ${playerNames || 'Нет игроков'}\n` +
+                `Режим: ${data.draft_state ? JSON.parse(data.draft_state).modeFinal || '—' : '—'}\n` +
+                `Создан: ${new Date(data.created_at).toLocaleString('ru-RU')}`
+            );
+        } catch (e) {
+            showToast('error', 'Ошибка', e.message);
+        }
+    }
+
+    async function deleteMatch(matchId) {
+        if (!confirm('Удалить этот матч?')) return;
+        
+        try {
+            await supabaseClient
+                .from('active_matches')
+                .delete()
+                .eq('id', matchId);
+            
+            showToast('success', 'Готово', 'Матч удалён');
+            await loadAllMatches();
+            
+            // Если это текущий матч игрока
+            if (activeMatchId === matchId) {
+                currentMatch = null;
+                isPlayerInMatch = false;
+                matchRestored = false;
+                navigate('matches');
+            }
+        } catch (e) {
+            showToast('error', 'Ошибка', e.message);
+        }
+    }
+
+    async function clearAllMatches() {
+        if (!confirm('⚠️ Удалить ВСЕ активные матчи? Это действие необратимо!')) return;
+        
+        try {
+            await supabaseClient
+                .from('active_matches')
+                .delete()
+                .neq('id', '0');
+            
+            showToast('success', 'Готово', 'Все матчи удалены');
+            currentMatch = null;
+            isPlayerInMatch = false;
+            matchRestored = false;
+            await loadAllMatches();
+            navigate('matches');
+        } catch (e) {
+            showToast('error', 'Ошибка', e.message);
+        }
     }
 
     // ============================================================
@@ -3434,7 +3886,6 @@
     async function updateProfile() {
         if (!currentUser) return;
         
-        // Обновляем данные из currentUser
         const matches = currentUser.matches || 0;
         const wins = currentUser.wins || 0;
         const winrate = matches > 0 ? Math.round((wins / matches) * 100) : 0;
@@ -3444,11 +3895,8 @@
         document.getElementById('pMvp').textContent = currentUser.mvp || 0;
         document.getElementById('pElo').textContent = currentUser.elo || 1000;
 
-        // Загружаем историю и график
         await loadMatchHistory();
         await renderChart();
-        
-        // Обновляем кошелёк
         updateWalletUI();
     }
 
@@ -3558,7 +4006,6 @@
                 return;
             }
 
-            // Находим место текущего игрока
             let userRank = 0;
             if (currentUser) {
                 const allUsers = await supabaseClient
@@ -3598,7 +4045,7 @@
     }
 
     // ============================================================
-    //  АДМИН-ПАНЕЛЬ
+    //  АДМИН-ПАНЕЛЬ (ПРОМОКОДЫ И АДМИНЫ)
     // ============================================================
     async function renderAdminList() {
         try {
@@ -3618,7 +4065,7 @@
             container.innerHTML = admins.map(admin => `
                 <span class="admin-tag">
                     ${admin.username}
-                    ${admin.username !== 'Destro' && currentUser?.username === 'Destro' ? 
+                    ${admin.username !== 'Destro' && isAdmin ? 
                         `<span class="remove" onclick="removeAdmin('${admin.id}')">&times;</span>` : 
                         '<span style="color:#ffd700;font-size:10px;">👑</span>'
                     }
@@ -3630,7 +4077,7 @@
     }
 
     async function addAdmin() {
-        if (currentUser?.username !== 'Destro') {
+        if (!isAdmin) {
             showToast('error', 'Доступ запрещён', 'Только Destro может управлять админами');
             return;
         }
@@ -3686,7 +4133,7 @@
     }
 
     async function removeAdmin(userId) {
-        if (currentUser?.username !== 'Destro') {
+        if (!isAdmin) {
             showToast('error', 'Доступ запрещён', 'Только Destro может управлять админами');
             return;
         }
@@ -3734,7 +4181,7 @@
                 <span class="admin-tag" style="${p.used_count >= p.max_uses ? 'opacity:0.5;' : ''}">
                     ${p.code} — ${p.amount} ₽ (${p.used_count}/${p.max_uses})
                     ${p.used_count >= p.max_uses ? '✅ Использован' : '🟢 Активен'}
-                    ${p.used_count < p.max_uses && currentUser?.username === 'Destro' ? 
+                    ${p.used_count < p.max_uses && isAdmin ? 
                         `<span class="remove" onclick="deletePromo('${p.id}')">&times;</span>` : ''
                     }
                 </span>
@@ -3745,7 +4192,7 @@
     }
 
     async function createPromo() {
-        if (currentUser?.username !== 'Destro') {
+        if (!isAdmin) {
             showToast('error', 'Доступ запрещён', 'Только Destro может создавать промокоды');
             return;
         }
@@ -3830,7 +4277,7 @@
     }
 
     // ============================================================
-    //  ПРОМОКОД В КОШЕЛЬКЕ (С ЗАПРЕТОМ НА ПОВТОР)
+    //  ПРОМОКОД В КОШЕЛЬКЕ
     // ============================================================
     async function applyPromo() {
         const input = document.getElementById('promoInput');
@@ -3841,7 +4288,6 @@
             return;
         }
 
-        // 🔒 Проверяем использованные промокоды
         const usedPromoCodes = JSON.parse(localStorage.getItem('usedPromoCodes')) || [];
         if (usedPromoCodes.includes(code)) {
             showToast('error', 'Ошибка', 'Вы уже использовали этот промокод!');
@@ -3849,7 +4295,6 @@
         }
 
         try {
-            // Проверяем существование промокода
             const { data, error } = await supabaseClient
                 .from('promocodes')
                 .select('*')
@@ -3861,13 +4306,11 @@
                 return;
             }
 
-            // Проверяем лимит использований
             if (data.used_count >= data.max_uses) {
                 showToast('error', 'Ошибка', 'Промокод уже использован максимальное количество раз');
                 return;
             }
 
-            // ✅ Обновляем баланс пользователя
             if (!currentUser) {
                 showToast('error', 'Ошибка', 'Авторизуйтесь');
                 return;
@@ -3885,24 +4328,20 @@
                 return;
             }
 
-            // Увеличиваем счётчик использований
             await supabaseClient
                 .from('promocodes')
                 .update({ used_count: data.used_count + 1 })
                 .eq('id', data.id);
 
-            // 💾 Сохраняем использованный промокод
             usedPromoCodes.push(code);
             localStorage.setItem('usedPromoCodes', JSON.stringify(usedPromoCodes));
 
-            // Обновляем данные пользователя
             currentUser.balance = newBalance;
             saveSession(currentUser);
 
             showToast('success', 'Промокод применён!', `+${data.amount} ₽ добавлено на баланс!`);
             input.value = '';
             
-            // Обновляем UI
             updateWalletUI();
             renderPromoList();
 
@@ -4053,12 +4492,10 @@
             handleModesBan(value);
         });
 
-        // Промокод в кошельке (Enter)
         document.getElementById('promoInput')?.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') applyPromo();
         });
 
-        // Восстановление сессии
         const session = getSession();
         if (session) {
             try {
@@ -4075,6 +4512,9 @@
                 }
             } catch (e) {}
         }
+
+        // Обновляем очередь каждые 5 секунд
+        setInterval(updateQueueUI, 5000);
 
         await checkAuth();
     });
