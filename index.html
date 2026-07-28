@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест Supabase</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    </script>
+    <style>
+        body {
+            background: #0b0b0f;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .box {
+            background: #1a1a2e;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 { color: #ffd700; }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            background: #222;
+        }
+        .ok { color: #51cf66; border: 1px solid #51cf66; }
+        .err { color: #ff6b6b; border: 1px solid #ff6b6b; }
+        .info { color: #ffd700; border: 1px solid #ffd700; }
+        button {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 10px;
+            background: #ffd700;
+            color: #000;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin: 5px;
+            width: 100%;
+        }
+        button:hover { background: #ffed4a; }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 10px;
+            border: 1px solid #333;
+            background: #222;
+            color: #fff;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .log {
+            text-align: left;
+            font-size: 12px;
+            color: #888;
+            background: #111;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+<div class="box">
+    <h1>⚡ Тест Supabase</h1>
+    
+    <div class="status info" id="status">⏳ Проверка Supabase...</div>
+
+    <input type="text" id="testUsername" placeholder="Тестовое имя" value="TestUser123" />
+    <input type="text" id="testStandoffId" placeholder="Тестовый ID" value="999999" />
+    <input type="password" id="testPassword" placeholder="Пароль" value="Test123456" />
+    <input type="password" id="testConfirm" placeholder="Подтвердите" value="Test123456" />
+    
+    <button id="testBtn">🔵 ТЕСТ РЕГИСТРАЦИИ</button>
+    
+    <div class="log" id="log">Жду действий...</div>
+</div>
+
+<script>
+    // ============================================================
+    //  ЛОГИРОВАНИЕ
+    // ============================================================
+    function log(text, type) {
+        const logEl = document.getElementById('log');
+        const time = new Date().toLocaleTimeString();
+        const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+        logEl.textContent += `\n[${time}] ${prefix} ${text}`;
+        logEl.scrollTop = logEl.scrollHeight;
+        console.log(`[${time}] ${prefix} ${text}`);
+    }
+
+    function setStatus(text, type) {
+        const status = document.getElementById('status');
+        status.textContent = text;
+        status.className = 'status ' + type;
+    }
+
+    // ============================================================
+    //  SUPABASE
+    // ============================================================
+    log('Начинаем инициализацию Supabase...');
+
+    const supabaseUrl = 'https://dlprylagddsmtzpmzxqy.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRscHJ5bGFnZGRzbXR6cG16eHF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQzMDY5MjcsImV4cCI6MjA5OTg4MjkyN30.xyRO-nChHDfqFgtYkhsMOkM3F8BsZGOvacQ0zhjBuRI';
+
+    log('URL: ' + supabaseUrl);
+    log('KEY: ' + supabaseKey.substring(0, 20) + '...');
+
+    try {
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        log('✅ Supabase создан!', 'success');
+        setStatus('✅ Supabase подключен', 'ok');
+        window.supabase = supabase;
+    } catch (e) {
+        log('❌ Ошибка создания Supabase: ' + e.message, 'error');
+        setStatus('❌ Ошибка: ' + e.message, 'err');
+    }
+
+    // ============================================================
+    //  ТЕСТ РЕГИСТРАЦИИ
+    // ============================================================
+    document.getElementById('testBtn').addEventListener('click', async function() {
+        log('🔵 КНОПКА НАЖАТА!', 'info');
+        
+        const username = document.getElementById('testUsername').value.trim();
+        const standoffId = document.getElementById('testStandoffId').value.trim();
+        const password = document.getElementById('testPassword').value;
+        const confirm = document.getElementById('testConfirm').value;
+
+        log('Имя: ' + username);
+        log('ID: ' + standoffId);
+        log('Пароль: ' + password.replace(/./g, '*'));
+        log('Подтверждение: ' + confirm.replace(/./g, '*'));
+
+        if (!username || !standoffId || !password || !confirm) {
+            log('❌ Заполните все поля', 'error');
+            setStatus('❌ Заполните все поля', 'err');
+            return;
+        }
+
+        if (password !== confirm) {
+            log('❌ Пароли не совпадают', 'error');
+            setStatus('❌ Пароли не совпадают', 'err');
+            return;
+        }
+
+        if (password.length < 8) {
+            log('❌ Пароль меньше 8 символов', 'error');
+            setStatus('❌ Пароль минимум 8 символов', 'err');
+            return;
+        }
+
+        if (!/^\d+$/.test(standoffId)) {
+            log('❌ ID содержит не цифры', 'error');
+            setStatus('❌ ID должен содержать только цифры', 'err');
+            return;
+        }
+
+        setStatus('⏳ Проверка...', 'info');
+        log('⏳ Отправка запроса в Supabase...', 'info');
+
+        try {
+            const sb = window.supabase;
+            if (!sb) {
+                log('❌ Supabase не инициализирован!', 'error');
+                setStatus('❌ Supabase не инициализирован', 'err');
+                return;
+            }
+
+            // Проверяем имя
+            log('Проверка имени...');
+            const { data: existing } = await sb
+                .from('users')
+                .select('username')
+                .eq('username', username)
+                .maybeSingle();
+
+            if (existing) {
+                log('❌ Имя занято: ' + username, 'error');
+                setStatus('❌ Имя пользователя уже занято', 'err');
+                return;
+            }
+            log('✅ Имя свободно', 'success');
+
+            // Проверяем ID
+            log('Проверка ID...');
+            const { data: existingId } = await sb
+                .from('users')
+                .select('standoffId')
+                .eq('standoffId', standoffId)
+                .maybeSingle();
+
+            if (existingId) {
+                log('❌ ID занят: ' + standoffId, 'error');
+                setStatus('❌ ID Standoff 2 уже используется', 'err');
+                return;
+            }
+            log('✅ ID свободен', 'success');
+
+            // Создаём
+            log('Создание пользователя...');
+            const newUser = {
+                id: Date.now().toString(),
+                username: username,
+                standoffId: standoffId,
+                password: password,
+                matches: 0,
+                kills: 0,
+                deaths: 0,
+                serverMatches: 0,
+                kdHistory: [0,0,0,0,0,0,0,0,0,0],
+                registered: new Date().toISOString(),
+                lastLogin: new Date().toISOString(),
+                isBanned: false
+            };
+
+            log('Данные: ' + JSON.stringify(newUser, null, 2));
+
+            const { data, error } = await sb
+                .from('users')
+                .insert([newUser])
+                .select()
+                .single();
+
+            if (error) {
+                log('❌ Ошибка Supabase: ' + error.message, 'error');
+                log('Код ошибки: ' + error.code, 'error');
+                log('Детали: ' + JSON.stringify(error), 'error');
+                setStatus('❌ ' + error.message, 'err');
+                return;
+            }
+
+            log('✅ Успешно! Пользователь создан: ' + data.username, 'success');
+            log('✅ ID: ' + data.id, 'success');
+            log('✅ Данные: ' + JSON.stringify(data, null, 2), 'success');
+            setStatus('✅ Успешно! ' + username + ' создан!', 'ok');
+
+        } catch (e) {
+            log('❌ Исключение: ' + e.message, 'error');
+            log('❌ Стек: ' + e.stack, 'error');
+            setStatus('❌ Ошибка: ' + e.message, 'err');
+        }
+    });
+
+    log('✅ Готово! Жду нажатия кнопки.', 'success');
+    console.log('✅ ТЕСТ ГОТОВ!');
+</script>
+</body>
+</html>
