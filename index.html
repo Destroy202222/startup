@@ -12,7 +12,6 @@
     </script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        /* Запрещаем масштабирование */
         html, body {
             touch-action: pan-y pinch-zoom;
             -webkit-text-size-adjust: 100%;
@@ -20,7 +19,6 @@
             -ms-text-size-adjust: 100%;
             text-size-adjust: 100%;
         }
-        /* Блокируем зум через CSS */
         body {
             max-width: 100vw;
             overflow-x: hidden;
@@ -35,13 +33,12 @@
             -ms-user-select: none;
             user-select: none;
         }
-        /* Запрещаем увеличение через двойной тап */
         button, input, select, textarea {
             touch-action: manipulation;
             font-size: 16px;
         }
 
-        /* ===== ОСТАЛЬНЫЕ СТИЛИ (БЕЗ ИЗМЕНЕНИЙ) ===== */
+        /* ===== АВТОРИЗАЦИЯ ===== */
         .auth-page {
             display: flex;
             justify-content: center;
@@ -576,7 +573,6 @@
             font-weight: 600;
         }
 
-        /* ===== ПАТИ (НЕ МЕНЯЕТСЯ) ===== */
         .party-block {
             background: rgba(20, 20, 28, 0.7);
             backdrop-filter: blur(8px);
@@ -742,7 +738,6 @@
         .party-block .party-feature i { color: #ffd700; margin-right: 4px; }
         .party-block .party-feature strong { color: #fff; font-weight: 600; }
 
-        /* ===== МАТЧ ===== */
         .match-page .match-title {
             font-size: 28px;
             font-weight: 900;
@@ -1020,7 +1015,6 @@
         }
         .ban-section.modes-section .ban-title i { color: #3498db; }
 
-        /* ===== КНОПКИ ТОЛЬКО ДЛЯ АДМИНОВ ===== */
         .match-actions {
             text-align: center;
             margin-top: 6px;
@@ -1030,7 +1024,6 @@
             display: none;
         }
         .match-actions.admin-visible { display: block; }
-
         .match-actions .btn-end {
             background: #ff6b6b;
             color: #fff;
@@ -1056,7 +1049,6 @@
             transform: none;
         }
 
-        /* ===== КНОПКИ ЗАСЧИТЫВАНИЯ (ТОЛЬКО ДЛЯ АДМИНОВ) ===== */
         .match-result-section {
             background: rgba(20, 20, 28, 0.8);
             backdrop-filter: blur(8px);
@@ -1117,7 +1109,6 @@
             transform: scale(1.02);
         }
 
-        /* ===== ЗАГРУЗКА СКРИНШОТА (ТОЛЬКО ДЛЯ УЧАСТНИКОВ МАТЧА) ===== */
         .screenshot-section {
             background: rgba(20, 20, 28, 0.6);
             border-radius: 12px;
@@ -2478,7 +2469,7 @@
 
     <!-- ===== АДМИН-ПАНЕЛЬ ===== -->
     <div class="page" id="pageAdmin">
-        <div class="admin-panel visible" id="adminPanel">
+        <div class="admin-panel" id="adminPanel">
             <div class="admin-title"><i class="fas fa-user-shield"></i> Админ-панель</div>
 
             <div class="admin-section">
@@ -2832,8 +2823,10 @@
             // Показываем админ-меню если isAdmin = true
             if (currentUser.isAdmin) {
                 document.getElementById('adminNavBtn').style.display = 'flex';
+                document.getElementById('adminPanel').classList.add('visible');
             } else {
                 document.getElementById('adminNavBtn').style.display = 'none';
+                document.getElementById('adminPanel').classList.remove('visible');
             }
 
             // Обновляем статистику
@@ -2872,6 +2865,14 @@
                 if (isInMatch) {
                     currentMatch = matchData;
                     isPlayerInMatch = true;
+                    // Восстанавливаем draftState
+                    const savedDraft = localStorage.getItem('brawl_draft_state');
+                    if (savedDraft) {
+                        try {
+                            const draft = JSON.parse(savedDraft);
+                            draftState = draft;
+                        } catch (e) {}
+                    }
                     // Меняем кнопку навигации
                     document.getElementById('matchNavLabel').textContent = 'Матч';
                     document.querySelector('#matchNavBtn i').className = 'fas fa-gamepad';
@@ -2880,9 +2881,11 @@
                 } else {
                     // Если пользователь не в матче, очищаем
                     localStorage.removeItem('brawl_active_match');
+                    localStorage.removeItem('brawl_draft_state');
                 }
             } catch (e) {
                 localStorage.removeItem('brawl_active_match');
+                localStorage.removeItem('brawl_draft_state');
             }
         }
         isPlayerInMatch = false;
@@ -3222,7 +3225,6 @@
     function startSearch() {
         if (isSearching) return;
         if (currentMatch) {
-            // Если есть матч, просто переходим на страницу матча
             navigate('matchPage');
             return showToast('info', 'Активный матч', 'Вы уже в матче!');
         }
@@ -3578,6 +3580,7 @@
         document.getElementById('matchNavLabel').textContent = 'Поиск';
         document.querySelector('#matchNavBtn i').className = 'fas fa-search';
         localStorage.removeItem('brawl_active_match');
+        localStorage.removeItem('brawl_draft_state');
 
         await updateHomeStats();
         await renderTopPage();
@@ -3604,6 +3607,7 @@
         document.getElementById('matchActions').classList.remove('admin-visible');
         document.getElementById('endMatchBtn').disabled = true;
         localStorage.removeItem('brawl_active_match');
+        localStorage.removeItem('brawl_draft_state');
         
         // Меняем кнопку навигации обратно
         document.getElementById('matchNavLabel').textContent = 'Поиск';
@@ -3627,6 +3631,8 @@
             currentCaptain: 0,
             isComplete: false
         };
+        // Сохраняем состояние драфта
+        localStorage.setItem('brawl_draft_state', JSON.stringify(draftState));
         renderDraftUI();
     }
 
@@ -3685,6 +3691,9 @@
         } else {
             bansContainer.style.display = 'grid';
         }
+
+        // Сохраняем состояние драфта
+        localStorage.setItem('brawl_draft_state', JSON.stringify(state));
 
         checkMatchResultVisibility();
     }
