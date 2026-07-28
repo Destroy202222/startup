@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>Brawl Stars</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -12,15 +12,36 @@
     </script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* Запрещаем масштабирование */
+        html, body {
+            touch-action: pan-y pinch-zoom;
+            -webkit-text-size-adjust: 100%;
+            -moz-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+        /* Блокируем зум через CSS */
         body {
+            max-width: 100vw;
+            overflow-x: hidden;
             background: #0b0b0f;
             color: #fff;
             font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
             padding-bottom: 70px;
             min-height: 100vh;
             line-height: 1.5;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        /* Запрещаем увеличение через двойной тап */
+        button, input, select, textarea {
+            touch-action: manipulation;
+            font-size: 16px;
         }
 
+        /* ===== ОСТАЛЬНЫЕ СТИЛИ (БЕЗ ИЗМЕНЕНИЙ) ===== */
         .auth-page {
             display: flex;
             justify-content: center;
@@ -555,6 +576,7 @@
             font-weight: 600;
         }
 
+        /* ===== ПАТИ (НЕ МЕНЯЕТСЯ) ===== */
         .party-block {
             background: rgba(20, 20, 28, 0.7);
             backdrop-filter: blur(8px);
@@ -720,6 +742,7 @@
         .party-block .party-feature i { color: #ffd700; margin-right: 4px; }
         .party-block .party-feature strong { color: #fff; font-weight: 600; }
 
+        /* ===== МАТЧ ===== */
         .match-page .match-title {
             font-size: 28px;
             font-weight: 900;
@@ -997,13 +1020,17 @@
         }
         .ban-section.modes-section .ban-title i { color: #3498db; }
 
+        /* ===== КНОПКИ ТОЛЬКО ДЛЯ АДМИНОВ ===== */
         .match-actions {
             text-align: center;
             margin-top: 6px;
             max-width: 900px;
             margin-left: auto;
             margin-right: auto;
+            display: none;
         }
+        .match-actions.admin-visible { display: block; }
+
         .match-actions .btn-end {
             background: #ff6b6b;
             color: #fff;
@@ -1027,6 +1054,145 @@
             opacity: 0.5;
             cursor: not-allowed;
             transform: none;
+        }
+
+        /* ===== КНОПКИ ЗАСЧИТЫВАНИЯ (ТОЛЬКО ДЛЯ АДМИНОВ) ===== */
+        .match-result-section {
+            background: rgba(20, 20, 28, 0.8);
+            backdrop-filter: blur(8px);
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin-top: 16px;
+            border: 1px solid rgba(255,215,0,0.15);
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            display: none;
+        }
+        .match-result-section.admin-visible { display: block; }
+        .match-result-section .result-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffd700;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .match-result-section .result-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .match-result-section .result-btn {
+            padding: 12px 32px;
+            border: none;
+            border-radius: 60px;
+            font-weight: 800;
+            font-size: 16px;
+            cursor: pointer;
+            transition: .3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 140px;
+            justify-content: center;
+        }
+        .match-result-section .result-btn.blue-win {
+            background: rgba(52, 152, 219, 0.2);
+            border: 2px solid #3498db;
+            color: #3498db;
+        }
+        .match-result-section .result-btn.blue-win:hover {
+            background: rgba(52, 152, 219, 0.4);
+            transform: scale(1.02);
+        }
+        .match-result-section .result-btn.orange-win {
+            background: rgba(255, 165, 0, 0.2);
+            border: 2px solid #ffa500;
+            color: #ffa500;
+        }
+        .match-result-section .result-btn.orange-win:hover {
+            background: rgba(255, 165, 0, 0.4);
+            transform: scale(1.02);
+        }
+
+        /* ===== ЗАГРУЗКА СКРИНШОТА (ТОЛЬКО ДЛЯ УЧАСТНИКОВ МАТЧА) ===== */
+        .screenshot-section {
+            background: rgba(20, 20, 28, 0.6);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-top: 10px;
+            border: 1px solid rgba(255,255,255,0.04);
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            display: none;
+        }
+        .screenshot-section.visible { display: block; }
+        .screenshot-section .screenshot-title {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+        .screenshot-section .screenshot-input-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .screenshot-section .screenshot-input-group input[type="file"] {
+            flex: 1;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.04);
+            color: #fff;
+            font-size: 13px;
+            cursor: pointer;
+            min-width: 150px;
+        }
+        .screenshot-section .screenshot-input-group input[type="file"]::-webkit-file-upload-button {
+            background: rgba(255,215,0,0.15);
+            border: none;
+            border-radius: 6px;
+            color: #ffd700;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .screenshot-section .screenshot-input-group .screenshot-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 40px;
+            background: rgba(255,215,0,0.15);
+            border: 1px solid rgba(255,215,0,0.3);
+            color: #ffd700;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: .2s;
+            white-space: nowrap;
+        }
+        .screenshot-section .screenshot-input-group .screenshot-btn:hover {
+            background: rgba(255,215,0,0.25);
+        }
+        .screenshot-section .screenshot-preview {
+            margin-top: 8px;
+            max-width: 200px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .screenshot-section .screenshot-preview img {
+            width: 100%;
+            display: block;
+        }
+        .screenshot-section .screenshot-status {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
         }
 
         .friends-page .friends-header {
@@ -1451,7 +1617,6 @@
             margin-top: -2px;
         }
 
-        /* ===== ПРОФИЛЬ ===== */
         .profile-card {
             background: rgba(20,20,28,0.8);
             backdrop-filter: blur(8px);
@@ -1664,7 +1829,6 @@
         .result.win { background: rgba(81, 207, 102, 0.15); color: #51cf66; }
         .result.loss { background: rgba(255, 107, 107, 0.15); color: #ff6b6b; }
 
-        /* ===== АДМИН-ПАНЕЛЬ ===== */
         .admin-panel {
             background: rgba(20,20,28,0.7);
             backdrop-filter: blur(8px);
@@ -1792,145 +1956,6 @@
             background: rgba(255,107,107,0.1);
             color: #ff6b6b;
             border: 1px solid rgba(255,107,107,0.2);
-        }
-
-        /* ===== КНОПКИ ЗАСЧИТЫВАНИЯ В МАТЧЕ ===== */
-        .match-result-section {
-            background: rgba(20, 20, 28, 0.8);
-            backdrop-filter: blur(8px);
-            border-radius: 16px;
-            padding: 16px 20px;
-            margin-top: 16px;
-            border: 1px solid rgba(255,215,0,0.15);
-            display: none;
-            max-width: 900px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .match-result-section.visible { display: block; }
-        .match-result-section .result-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: #ffd700;
-            margin-bottom: 12px;
-            text-align: center;
-        }
-        .match-result-section .result-buttons {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .match-result-section .result-btn {
-            padding: 12px 32px;
-            border: none;
-            border-radius: 60px;
-            font-weight: 800;
-            font-size: 16px;
-            cursor: pointer;
-            transition: .3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            flex: 1;
-            min-width: 140px;
-            justify-content: center;
-        }
-        .match-result-section .result-btn.blue-win {
-            background: rgba(52, 152, 219, 0.2);
-            border: 2px solid #3498db;
-            color: #3498db;
-        }
-        .match-result-section .result-btn.blue-win:hover {
-            background: rgba(52, 152, 219, 0.4);
-            transform: scale(1.02);
-        }
-        .match-result-section .result-btn.orange-win {
-            background: rgba(255, 165, 0, 0.2);
-            border: 2px solid #ffa500;
-            color: #ffa500;
-        }
-        .match-result-section .result-btn.orange-win:hover {
-            background: rgba(255, 165, 0, 0.4);
-            transform: scale(1.02);
-        }
-
-        /* ===== ЗАГРУЗКА СКРИНШОТА ===== */
-        .screenshot-section {
-            background: rgba(20, 20, 28, 0.6);
-            border-radius: 12px;
-            padding: 12px 16px;
-            margin-top: 10px;
-            border: 1px solid rgba(255,255,255,0.04);
-            max-width: 900px;
-            margin-left: auto;
-            margin-right: auto;
-            display: none;
-        }
-        .screenshot-section.visible { display: block; }
-        .screenshot-section .screenshot-title {
-            font-size: 12px;
-            color: #888;
-            margin-bottom: 6px;
-            font-weight: 600;
-        }
-        .screenshot-section .screenshot-input-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        .screenshot-section .screenshot-input-group input[type="file"] {
-            flex: 1;
-            padding: 8px;
-            border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.06);
-            background: rgba(255,255,255,0.04);
-            color: #fff;
-            font-size: 13px;
-            cursor: pointer;
-            min-width: 150px;
-        }
-        .screenshot-section .screenshot-input-group input[type="file"]::-webkit-file-upload-button {
-            background: rgba(255,215,0,0.15);
-            border: none;
-            border-radius: 6px;
-            color: #ffd700;
-            padding: 4px 12px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        .screenshot-section .screenshot-input-group .screenshot-btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 40px;
-            background: rgba(255,215,0,0.15);
-            border: 1px solid rgba(255,215,0,0.3);
-            color: #ffd700;
-            font-weight: 700;
-            font-size: 13px;
-            cursor: pointer;
-            transition: .2s;
-            white-space: nowrap;
-        }
-        .screenshot-section .screenshot-input-group .screenshot-btn:hover {
-            background: rgba(255,215,0,0.25);
-        }
-        .screenshot-section .screenshot-preview {
-            margin-top: 8px;
-            max-width: 200px;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.06);
-        }
-        .screenshot-section .screenshot-preview img {
-            width: 100%;
-            display: block;
-        }
-        .screenshot-section .screenshot-status {
-            font-size: 12px;
-            color: #888;
-            margin-top: 4px;
         }
 
         .placeholder {
@@ -2063,6 +2088,7 @@
             .match-result-section .result-btn { min-width: 100px; font-size: 14px; padding: 10px 16px; }
             .match-result-section .result-buttons { flex-direction: column; align-items: stretch; }
             .screenshot-section .screenshot-input-group { flex-direction: column; align-items: stretch; }
+            .match-actions .btn-end { font-size: 12px; padding: 6px 16px; }
         }
         @media (max-width: 768px) {
             .hero-title { font-size: 30px; }
@@ -2101,6 +2127,7 @@
             .bottom-nav .item { min-width: 40px; }
             .match-result-section .result-buttons { flex-direction: column; align-items: stretch; }
             .match-result-section .result-btn { min-width: 100%; }
+            .match-actions .btn-end { font-size: 13px; padding: 8px 20px; }
         }
     </style>
 </head>
@@ -2263,7 +2290,7 @@
                 </div>
             </div>
 
-            <!-- ПАТИ -->
+            <!-- ПАТИ (НЕ МЕНЯЕТСЯ) -->
             <div class="party-block">
                 <div class="party-title"><i class="fas fa-users"></i> Играть в пати</div>
                 <div class="party-sub">Играйте с друзьями в <strong>BRAWL STARS</strong> — создайте пати и приглашайте товарищей по коду</div>
@@ -2324,7 +2351,7 @@
             </div>
         </div>
 
-        <!-- ===== ЗАГРУЗКА СКРИНШОТА ===== -->
+        <!-- ===== ЗАГРУЗКА СКРИНШОТА (ДЛЯ ВСЕХ УЧАСТНИКОВ) ===== -->
         <div class="screenshot-section" id="screenshotSection">
             <div class="screenshot-title"><i class="fas fa-camera"></i> Прикрепить скриншот результата</div>
             <div class="screenshot-input-group">
@@ -2348,7 +2375,8 @@
             </div>
         </div>
 
-        <div class="match-actions">
+        <!-- ===== КНОПКА ЗАКОНЧИТЬ МАТЧ (ТОЛЬКО ДЛЯ АДМИНОВ) ===== -->
+        <div class="match-actions" id="matchActions">
             <button class="btn-end" id="endMatchBtn" onclick="endMatch()" disabled>
                 <i class="fas fa-times"></i> Закончить матч
             </button>
@@ -2481,7 +2509,9 @@
         <button class="item" data-page="profile" onclick="navigate('profile')"><i class="fas fa-user"></i><span>Профиль</span></button>
         <button class="item" data-page="shop" onclick="navigate('shop')"><i class="fas fa-store"></i><span>Шоп</span></button>
         <button class="item" data-page="friends" onclick="navigate('friends')"><i class="fas fa-user-friends"></i><span>Друзья</span></button>
-        <button class="item active" data-page="matches" onclick="navigate('matches')"><i class="fas fa-search"></i><span>Поиск</span></button>
+        <button class="item active" id="matchNavBtn" data-page="matches" onclick="navigate('matches')">
+            <i class="fas fa-search"></i><span id="matchNavLabel">Поиск</span>
+        </button>
         <button class="item" data-page="top" onclick="navigate('top')"><i class="fas fa-trophy"></i><span>Топ</span></button>
         <button class="item" data-page="wallet" onclick="navigate('wallet')"><i class="fas fa-wallet"></i><span>Кошелёк</span></button>
         <button class="item admin-item" id="adminNavBtn" data-page="admin" onclick="navigate('admin')" style="display:none;">
@@ -2514,6 +2544,7 @@
     let searchTimerInterval = null;
     let searchSeconds = 0;
     let currentScreenshot = null;
+    let isPlayerInMatch = false;
 
     let draftState = {
         gameNumber: 1,
@@ -2758,12 +2789,15 @@
             }
 
             console.log('✅ Найден:', data);
+            console.log('👑 isAdmin:', data.isAdmin);
+
             currentUser = data;
             saveSession(data);
+            
             messageEl.className = 'auth-message show success';
             messageEl.textContent = '✅ Добро пожаловать, ' + username;
             
-            setTimeout(() => checkAuth(), 1000);
+            await checkAuth();
 
         } catch (e) {
             console.error('❌ Ошибка:', e);
@@ -2810,12 +2844,50 @@
             await renderAdminList();
             await renderTopPage();
             
+            // Проверяем, есть ли активный матч у пользователя
+            await checkActiveMatch();
+            
             navigate('home');
             showToast('success', 'Добро пожаловать!', currentUser.username);
         } else {
             document.getElementById('authPage').style.display = 'flex';
             document.getElementById('mainSite').style.display = 'none';
         }
+    }
+
+    // ============================================================
+    //  ПРОВЕРКА АКТИВНОГО МАТЧА
+    // ============================================================
+    async function checkActiveMatch() {
+        if (!currentUser) return;
+        
+        // Проверяем, есть ли матч в localStorage
+        const savedMatch = localStorage.getItem('brawl_active_match');
+        if (savedMatch) {
+            try {
+                const matchData = JSON.parse(savedMatch);
+                // Проверяем, участвует ли пользователь в этом матче
+                const isInMatch = matchData.orange.some(p => p.id === currentUser.id) || 
+                                  matchData.blue.some(p => p.id === currentUser.id);
+                if (isInMatch) {
+                    currentMatch = matchData;
+                    isPlayerInMatch = true;
+                    // Меняем кнопку навигации
+                    document.getElementById('matchNavLabel').textContent = 'Матч';
+                    document.querySelector('#matchNavBtn i').className = 'fas fa-gamepad';
+                    showToast('info', 'Активный матч', 'Вы уже в матче!');
+                    return;
+                } else {
+                    // Если пользователь не в матче, очищаем
+                    localStorage.removeItem('brawl_active_match');
+                }
+            } catch (e) {
+                localStorage.removeItem('brawl_active_match');
+            }
+        }
+        isPlayerInMatch = false;
+        document.getElementById('matchNavLabel').textContent = 'Поиск';
+        document.querySelector('#matchNavBtn i').className = 'fas fa-search';
     }
 
     // ============================================================
@@ -2845,6 +2917,11 @@
     };
 
     function navigate(page) {
+        // Если пользователь в матче и пытается перейти на поиск - перенаправляем в матч
+        if (page === 'matches' && isPlayerInMatch && currentMatch) {
+            page = 'matchPage';
+        }
+        
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(pages[page]).classList.add('active');
         document.querySelectorAll('.bottom-nav .item').forEach(b => b.classList.remove('active'));
@@ -2886,7 +2963,6 @@
         document.getElementById('pMvp').textContent = currentUser.mvp || 0;
         document.getElementById('pElo').textContent = currentUser.elo || 1200;
 
-        // Ранг пользователя
         const rank = await getUserRank();
         document.getElementById('pRank').textContent = rank > 0 ? '#' + rank : '—';
 
@@ -2967,7 +3043,7 @@
     }
 
     // ============================================================
-    //  СТАТИСТИКА ГЛАВНОЙ (Активные игроки = в поиске + в матче)
+    //  СТАТИСТИКА ГЛАВНОЙ
     // ============================================================
     async function updateHomeStats() {
         try {
@@ -3006,7 +3082,6 @@
 
             const container = document.getElementById('topList');
             
-            // Обновляем ранг пользователя в профиле
             const userRank = users.findIndex(u => u.id === currentUser?.id) + 1;
             document.getElementById('userRank').textContent = '#' + (userRank || 0);
             if (currentUser) {
@@ -3046,7 +3121,7 @@
     }
 
     // ============================================================
-    //  ПАТИ
+    //  ПАТИ (НЕ МЕНЯЕТСЯ)
     // ============================================================
     function updatePartyUI() {
         if (!currentUser) return;
@@ -3146,7 +3221,11 @@
     // ============================================================
     function startSearch() {
         if (isSearching) return;
-        if (currentMatch) return showToast('info', 'Идёт матч', 'Дождитесь окончания');
+        if (currentMatch) {
+            // Если есть матч, просто переходим на страницу матча
+            navigate('matchPage');
+            return showToast('info', 'Активный матч', 'Вы уже в матче!');
+        }
         if (!currentUser) return showToast('error', 'Ошибка', 'Авторизуйтесь');
 
         queue = [{ id: currentUser.id, username: currentUser.username }];
@@ -3236,6 +3315,15 @@
         const orange = shuffled.slice(0, half);
         const blue = shuffled.slice(half);
         currentMatch = { orange, blue };
+        isPlayerInMatch = true;
+        
+        // Сохраняем матч в localStorage
+        localStorage.setItem('brawl_active_match', JSON.stringify(currentMatch));
+        
+        // Меняем кнопку навигации
+        document.getElementById('matchNavLabel').textContent = 'Матч';
+        document.querySelector('#matchNavBtn i').className = 'fas fa-gamepad';
+        
         queue = [];
 
         document.getElementById('searchMainBlock').classList.remove('searching');
@@ -3246,8 +3334,9 @@
         resetDraft();
 
         // Скрываем результаты
-        document.getElementById('matchResultSection').classList.remove('visible');
+        document.getElementById('matchResultSection').classList.remove('admin-visible');
         document.getElementById('screenshotSection').classList.remove('visible');
+        document.getElementById('matchActions').classList.remove('admin-visible');
         currentScreenshot = null;
         document.getElementById('screenshotInput').value = '';
         document.getElementById('screenshotPreview').innerHTML = '';
@@ -3258,21 +3347,29 @@
         showToast('success', 'Матч начался!', `${orange.length + blue.length} игроков в игре`);
         updateHomeStats();
 
-        // После завершения драфта показываем кнопки админам
         checkMatchResultVisibility();
     }
 
     function checkMatchResultVisibility() {
-        // Показываем секцию только если:
-        // 1. Драфт завершён
-        // 2. Пользователь - админ
-        if (draftState.isComplete && currentUser?.isAdmin) {
-            document.getElementById('matchResultSection').classList.add('visible');
+        const isAdmin = currentUser?.isAdmin || false;
+        const isPlayer = isPlayerInMatch;
+        
+        // Показываем скриншот всем участникам матча
+        if (draftState.isComplete && isPlayer) {
             document.getElementById('screenshotSection').classList.add('visible');
-        } else if (draftState.isComplete) {
-            // Если не админ - показываем только загрузку скриншота
-            document.getElementById('screenshotSection').classList.add('visible');
-            document.getElementById('matchResultSection').classList.remove('visible');
+        } else {
+            document.getElementById('screenshotSection').classList.remove('visible');
+        }
+        
+        // Показываем кнопки засчитывания и завершения только админам
+        if (draftState.isComplete && isAdmin) {
+            document.getElementById('matchResultSection').classList.add('admin-visible');
+            document.getElementById('matchActions').classList.add('admin-visible');
+            document.getElementById('endMatchBtn').disabled = false;
+        } else {
+            document.getElementById('matchResultSection').classList.remove('admin-visible');
+            document.getElementById('matchActions').classList.remove('admin-visible');
+            document.getElementById('endMatchBtn').disabled = true;
         }
     }
 
@@ -3388,13 +3485,11 @@
         const allPlayers = [...currentMatch.orange, ...currentMatch.blue];
         const realPlayers = allPlayers.filter(p => !p.id.startsWith('bot_'));
 
-        // Определяем победителей
         const orangePlayers = currentMatch.orange;
         const bluePlayers = currentMatch.blue;
         const winners = winner === 'blue' ? bluePlayers : orangePlayers;
         const losers = winner === 'blue' ? orangePlayers : bluePlayers;
 
-        // Сохраняем статистику для всех игроков
         for (const player of realPlayers) {
             const isWin = winners.some(w => w.id === player.id);
             const kills = Math.floor(Math.random() * 15) + 3;
@@ -3450,7 +3545,6 @@
             }
         }
 
-        // Обновляем текущего пользователя
         const { data: updatedUser } = await supabaseClient
             .from('users')
             .select('*')
@@ -3463,23 +3557,28 @@
             await updateProfile();
         }
 
-        // Завершаем матч
         const winnerTeam = winner === 'blue' ? 'BLUE TEAM' : 'ORANGE TEAM';
         showToast('success', 'Матч засчитан!', `Победила команда ${winnerTeam}`);
 
-        // Скрываем секции
-        document.getElementById('matchResultSection').classList.remove('visible');
-        document.getElementById('screenshotSection').classList.remove('visible');
-
         // Очищаем матч
+        document.getElementById('matchResultSection').classList.remove('admin-visible');
+        document.getElementById('screenshotSection').classList.remove('visible');
+        document.getElementById('matchActions').classList.remove('admin-visible');
+        document.getElementById('endMatchBtn').disabled = true;
+
         currentMatch = null;
+        isPlayerInMatch = false;
         draftState.isComplete = false;
         currentScreenshot = null;
         document.getElementById('screenshotInput').value = '';
         document.getElementById('screenshotPreview').innerHTML = '';
         document.getElementById('screenshotStatus').textContent = '';
 
-        // Обновляем интерфейс
+        // Меняем кнопку навигации обратно
+        document.getElementById('matchNavLabel').textContent = 'Поиск';
+        document.querySelector('#matchNavBtn i').className = 'fas fa-search';
+        localStorage.removeItem('brawl_active_match');
+
         await updateHomeStats();
         await renderTopPage();
         navigate('matches');
@@ -3496,10 +3595,20 @@
         }
         if (!confirm('Завершить матч без засчитывания?')) return;
         
+        // Очищаем матч
         currentMatch = null;
+        isPlayerInMatch = false;
         draftState.isComplete = false;
-        document.getElementById('matchResultSection').classList.remove('visible');
+        document.getElementById('matchResultSection').classList.remove('admin-visible');
         document.getElementById('screenshotSection').classList.remove('visible');
+        document.getElementById('matchActions').classList.remove('admin-visible');
+        document.getElementById('endMatchBtn').disabled = true;
+        localStorage.removeItem('brawl_active_match');
+        
+        // Меняем кнопку навигации обратно
+        document.getElementById('matchNavLabel').textContent = 'Поиск';
+        document.querySelector('#matchNavBtn i').className = 'fas fa-search';
+        
         navigate('matches');
         updateQueueUI();
         updateHomeStats();
@@ -3570,8 +3679,6 @@
         }
         document.getElementById('modesTurnName').textContent = !state.isComplete ? getCaptainName(state.currentCaptain) : '—';
 
-        document.getElementById('endMatchBtn').disabled = !state.isComplete;
-
         const bansContainer = document.getElementById('bansContainer');
         if (state.isComplete) {
             bansContainer.style.display = 'none';
@@ -3579,7 +3686,6 @@
             bansContainer.style.display = 'grid';
         }
 
-        // Проверяем видимость кнопок засчитывания
         checkMatchResultVisibility();
     }
 
@@ -3768,7 +3874,7 @@
         // Админ-панель
         document.getElementById('adminAddBtn').addEventListener('click', addAdmin);
 
-        // Запуск - сначала пробуем восстановить сессию
+        // Запуск
         const sessionRestored = await restoreSession();
         if (sessionRestored) {
             await checkAuth();
