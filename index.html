@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brawl Stars - Регистрация</title>
+    <title>Brawl Stars</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
     </script>
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: #0b0b0f;
             color: #fff;
@@ -187,7 +188,7 @@
     });
 
     // ============================================================
-    //  РЕГИСТРАЦИЯ (БЕЗ isBanned и standoffId)
+    //  РЕГИСТРАЦИЯ (БЕЗ ВСЕХ ЛИШНИХ ПЕРЕМЕННЫХ)
     // ============================================================
     document.getElementById('registerBtn').addEventListener('click', async function() {
         log('🔵 РЕГИСТРАЦИЯ');
@@ -233,7 +234,7 @@
 
             log('Имя свободно', 'success');
 
-            // Создаём пользователя БЕЗ isBanned и standoffId
+            // СОЗДАЁМ ПОЛЬЗОВАТЕЛЯ - ТОЛЬКО ОСНОВНЫЕ ПОЛЯ
             const newUser = {
                 id: Date.now().toString(),
                 username: username,
@@ -242,7 +243,6 @@
                 kills: 0,
                 deaths: 0,
                 serverMatches: 0,
-                kdHistory: [0,0,0,0,0,0,0,0,0,0],
                 registered: new Date().toISOString(),
                 lastLogin: new Date().toISOString()
             };
@@ -263,7 +263,6 @@
 
             setStatus('registerStatus', '✅ ' + username + ' создан!', 'ok');
             log('Успешно! Пользователь: ' + data.username, 'success');
-            log('ID: ' + data.id, 'success');
 
         } catch (e) {
             setStatus('registerStatus', '❌ Ошибка: ' + e.message, 'err');
@@ -272,7 +271,7 @@
     });
 
     // ============================================================
-    //  ВХОД (БЕЗ isBanned)
+    //  ВХОД
     // ============================================================
     document.getElementById('loginBtn').addEventListener('click', async function() {
         log('🔵 ВХОД');
