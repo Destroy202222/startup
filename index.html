@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Brawl Stars</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -15,8 +15,6 @@
         html, body {
             touch-action: pan-y pinch-zoom;
             -webkit-text-size-adjust: 100%;
-            -moz-text-size-adjust: 100%;
-            -ms-text-size-adjust: 100%;
             text-size-adjust: 100%;
         }
         body {
@@ -28,15 +26,8 @@
             padding-bottom: 70px;
             min-height: 100vh;
             line-height: 1.5;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
         }
-        button, input, select, textarea {
-            touch-action: manipulation;
-            font-size: 16px;
-        }
+        button, input, select, textarea { touch-action: manipulation; font-size: 16px; }
 
         /* ===== АВТОРИЗАЦИЯ ===== */
         .auth-page {
@@ -2281,7 +2272,7 @@
                 </div>
             </div>
 
-            <!-- ПАТИ (НЕ МЕНЯЕТСЯ) -->
+            <!-- ПАТИ -->
             <div class="party-block">
                 <div class="party-title"><i class="fas fa-users"></i> Играть в пати</div>
                 <div class="party-sub">Играйте с друзьями в <strong>BRAWL STARS</strong> — создайте пати и приглашайте товарищей по коду</div>
@@ -2342,7 +2333,7 @@
             </div>
         </div>
 
-        <!-- ===== ЗАГРУЗКА СКРИНШОТА (ДЛЯ ВСЕХ УЧАСТНИКОВ) ===== -->
+        <!-- Скриншот -->
         <div class="screenshot-section" id="screenshotSection">
             <div class="screenshot-title"><i class="fas fa-camera"></i> Прикрепить скриншот результата</div>
             <div class="screenshot-input-group">
@@ -2353,7 +2344,7 @@
             <div class="screenshot-status" id="screenshotStatus"></div>
         </div>
 
-        <!-- ===== КНОПКИ ЗАСЧИТЫВАНИЯ (ТОЛЬКО ДЛЯ АДМИНОВ) ===== -->
+        <!-- Кнопки засчитывания (только админы) -->
         <div class="match-result-section" id="matchResultSection">
             <div class="result-title"><i class="fas fa-trophy"></i> Засчитать матч</div>
             <div class="result-buttons">
@@ -2366,7 +2357,7 @@
             </div>
         </div>
 
-        <!-- ===== КНОПКА ЗАКОНЧИТЬ МАТЧ (ТОЛЬКО ДЛЯ АДМИНОВ) ===== -->
+        <!-- Кнопка закончить матч (только админы) -->
         <div class="match-actions" id="matchActions">
             <button class="btn-end" id="endMatchBtn" onclick="endMatch()" disabled>
                 <i class="fas fa-times"></i> Закончить матч
@@ -2515,12 +2506,9 @@
     // ============================================================
     //  SUPABASE
     // ============================================================
-    console.log('🚀 СКРИПТ ЗАПУЩЕН');
-
     const SUPABASE_URL = 'https://dlprylagddsmtzpmzxqy.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRscHJ5bGFnZGRzbXR6cG16eHF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQzMDY5MjcsImV4cCI6MjA5OTg4MjkyN30.xyRO-nChHDfqFgtYkhsMOkM3F8BsZGOvacQ0zhjBuRI';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    console.log('✅ Supabase создан');
 
     // ============================================================
     //  ПЕРЕМЕННЫЕ
@@ -2554,9 +2542,7 @@
             localStorage.setItem('brawl_user_id', user.id);
             localStorage.setItem('brawl_username', user.username);
             localStorage.setItem('brawl_isAdmin', JSON.stringify(user.isAdmin || false));
-        } catch (e) {
-            console.error('Ошибка сохранения сессии:', e);
-        }
+        } catch (e) { console.error('Ошибка сохранения сессии:', e); }
     }
 
     function clearSession() {
@@ -2570,40 +2556,47 @@
             const id = localStorage.getItem('brawl_user_id');
             const username = localStorage.getItem('brawl_username');
             const isAdmin = localStorage.getItem('brawl_isAdmin') === 'true';
-            if (id && username) {
-                return { id, username, isAdmin };
-            }
+            if (id && username) return { id, username, isAdmin };
         } catch (e) {}
         return null;
     }
 
     // ============================================================
-    //  АВТОМАТИЧЕСКИЙ ВХОД ПО СЕССИИ
+    //  СОХРАНЕНИЕ МАТЧА
     // ============================================================
-    async function restoreSession() {
-        const session = getSession();
-        if (!session) return false;
+    function saveMatch() {
+        if (currentMatch) {
+            localStorage.setItem('brawl_active_match', JSON.stringify(currentMatch));
+        } else {
+            localStorage.removeItem('brawl_active_match');
+        }
+        if (draftState) {
+            localStorage.setItem('brawl_draft_state', JSON.stringify(draftState));
+        }
+    }
 
+    function loadMatch() {
         try {
-            const { data, error } = await supabaseClient
-                .from('users')
-                .select('*')
-                .eq('id', session.id)
-                .eq('username', session.username)
-                .maybeSingle();
-
-            if (error || !data) {
-                clearSession();
-                return false;
+            const matchData = localStorage.getItem('brawl_active_match');
+            if (matchData) {
+                currentMatch = JSON.parse(matchData);
+                // Проверяем, участвует ли пользователь в этом матче
+                if (currentUser) {
+                    const isInMatch = currentMatch.orange.some(p => p.id === currentUser.id) || 
+                                      currentMatch.blue.some(p => p.id === currentUser.id);
+                    if (isInMatch) {
+                        isPlayerInMatch = true;
+                        document.getElementById('matchNavLabel').textContent = 'Матч';
+                        document.querySelector('#matchNavBtn i').className = 'fas fa-gamepad';
+                    }
+                }
             }
-
-            console.log('✅ Сессия восстановлена:', data.username);
-            currentUser = data;
-            return true;
+            const draftData = localStorage.getItem('brawl_draft_state');
+            if (draftData) {
+                draftState = JSON.parse(draftData);
+            }
         } catch (e) {
-            console.error('Ошибка восстановления сессии:', e);
-            clearSession();
-            return false;
+            console.error('Ошибка загрузки матча:', e);
         }
     }
 
@@ -2635,8 +2628,6 @@
     //  ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК АВТОРИЗАЦИИ
     // ============================================================
     function switchAuthTab(tab) {
-        console.log('🔄 Переключение на:', tab);
-
         document.querySelectorAll('.auth-tabs .tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
 
@@ -2658,8 +2649,6 @@
     //  РЕГИСТРАЦИЯ
     // ============================================================
     async function registerUser() {
-        console.log('🔵 РЕГИСТРАЦИЯ');
-
         const username = document.getElementById('regUsername').value.trim();
         const password = document.getElementById('regPassword').value;
         const confirm = document.getElementById('regPasswordConfirm').value;
@@ -2725,7 +2714,6 @@
                 return;
             }
 
-            console.log('✅ Создан:', data);
             currentUser = data;
             saveSession(data);
             messageEl.className = 'auth-message show success';
@@ -2744,8 +2732,6 @@
     //  ВХОД
     // ============================================================
     async function loginUser() {
-        console.log('🔵 ВХОД');
-
         const username = document.getElementById('loginUsername').value.trim();
         const password = document.getElementById('loginPassword').value;
         const messageEl = document.getElementById('loginMessage');
@@ -2779,9 +2765,6 @@
                 return;
             }
 
-            console.log('✅ Найден:', data);
-            console.log('👑 isAdmin:', data.isAdmin);
-
             currentUser = data;
             saveSession(data);
             
@@ -2805,10 +2788,9 @@
             document.getElementById('authPage').style.display = 'none';
             document.getElementById('mainSite').style.display = 'block';
             
-            // Обновляем профиль
+            // Профиль
             document.getElementById('pName').textContent = currentUser.username;
             document.getElementById('avatar').textContent = currentUser.username.charAt(0).toUpperCase();
-            
             const regDate = currentUser.registered ? new Date(currentUser.registered).toLocaleDateString('ru-RU') : '—';
             document.getElementById('pReg').textContent = regDate;
 
@@ -2820,14 +2802,19 @@
                 adminBadge.classList.remove('visible');
             }
 
-            // Показываем админ-меню если isAdmin = true
+            // Админ-меню
+            const adminNavBtn = document.getElementById('adminNavBtn');
+            const adminPanel = document.getElementById('adminPanel');
             if (currentUser.isAdmin) {
-                document.getElementById('adminNavBtn').style.display = 'flex';
-                document.getElementById('adminPanel').classList.add('visible');
+                adminNavBtn.style.display = 'flex';
+                adminPanel.classList.add('visible');
             } else {
-                document.getElementById('adminNavBtn').style.display = 'none';
-                document.getElementById('adminPanel').classList.remove('visible');
+                adminNavBtn.style.display = 'none';
+                adminPanel.classList.remove('visible');
             }
+
+            // Загружаем сохранённый матч
+            loadMatch();
 
             // Обновляем статистику
             await updateProfile();
@@ -2837,8 +2824,13 @@
             await renderAdminList();
             await renderTopPage();
             
-            // Проверяем, есть ли активный матч у пользователя
-            await checkActiveMatch();
+            // Если есть активный матч, обновляем интерфейс
+            if (isPlayerInMatch && currentMatch) {
+                renderMatchPage();
+                document.getElementById('matchNavLabel').textContent = 'Матч';
+                document.querySelector('#matchNavBtn i').className = 'fas fa-gamepad';
+                showToast('info', 'Активный матч', 'Вы уже в матче!');
+            }
             
             navigate('home');
             showToast('success', 'Добро пожаловать!', currentUser.username);
@@ -2849,57 +2841,16 @@
     }
 
     // ============================================================
-    //  ПРОВЕРКА АКТИВНОГО МАТЧА
-    // ============================================================
-    async function checkActiveMatch() {
-        if (!currentUser) return;
-        
-        // Проверяем, есть ли матч в localStorage
-        const savedMatch = localStorage.getItem('brawl_active_match');
-        if (savedMatch) {
-            try {
-                const matchData = JSON.parse(savedMatch);
-                // Проверяем, участвует ли пользователь в этом матче
-                const isInMatch = matchData.orange.some(p => p.id === currentUser.id) || 
-                                  matchData.blue.some(p => p.id === currentUser.id);
-                if (isInMatch) {
-                    currentMatch = matchData;
-                    isPlayerInMatch = true;
-                    // Восстанавливаем draftState
-                    const savedDraft = localStorage.getItem('brawl_draft_state');
-                    if (savedDraft) {
-                        try {
-                            const draft = JSON.parse(savedDraft);
-                            draftState = draft;
-                        } catch (e) {}
-                    }
-                    // Меняем кнопку навигации
-                    document.getElementById('matchNavLabel').textContent = 'Матч';
-                    document.querySelector('#matchNavBtn i').className = 'fas fa-gamepad';
-                    showToast('info', 'Активный матч', 'Вы уже в матче!');
-                    return;
-                } else {
-                    // Если пользователь не в матче, очищаем
-                    localStorage.removeItem('brawl_active_match');
-                    localStorage.removeItem('brawl_draft_state');
-                }
-            } catch (e) {
-                localStorage.removeItem('brawl_active_match');
-                localStorage.removeItem('brawl_draft_state');
-            }
-        }
-        isPlayerInMatch = false;
-        document.getElementById('matchNavLabel').textContent = 'Поиск';
-        document.querySelector('#matchNavBtn i').className = 'fas fa-search';
-    }
-
-    // ============================================================
     //  ВЫХОД
     // ============================================================
     function handleLogout() {
         if (!confirm('Выйти из аккаунта?')) return;
         clearSession();
+        localStorage.removeItem('brawl_active_match');
+        localStorage.removeItem('brawl_draft_state');
         currentUser = null;
+        currentMatch = null;
+        isPlayerInMatch = false;
         checkAuth();
         showToast('info', 'Выход', 'Вы вышли');
     }
@@ -2920,7 +2871,6 @@
     };
 
     function navigate(page) {
-        // Если пользователь в матче и пытается перейти на поиск - перенаправляем в матч
         if (page === 'matches' && isPlayerInMatch && currentMatch) {
             page = 'matchPage';
         }
@@ -2933,7 +2883,7 @@
     }
 
     // ============================================================
-    //  ПОЛУЧЕНИЕ РАНГА ПОЛЬЗОВАТЕЛЯ
+    //  ПОЛУЧЕНИЕ РАНГА
     // ============================================================
     async function getUserRank() {
         try {
@@ -2943,12 +2893,8 @@
                 .order('elo', { ascending: false });
 
             if (error || !users) return 0;
-
-            const rank = users.findIndex(u => u.id === currentUser.id) + 1;
-            return rank;
-        } catch (e) {
-            return 0;
-        }
+            return users.findIndex(u => u.id === currentUser.id) + 1;
+        } catch (e) { return 0; }
     }
 
     // ============================================================
@@ -3009,7 +2955,7 @@
     }
 
     // ============================================================
-    //  ДИНАМИКА МАТЧЕЙ (ГРАФИК)
+    //  ГРАФИК
     // ============================================================
     async function renderChart() {
         try {
@@ -3319,8 +3265,8 @@
         currentMatch = { orange, blue };
         isPlayerInMatch = true;
         
-        // Сохраняем матч в localStorage
-        localStorage.setItem('brawl_active_match', JSON.stringify(currentMatch));
+        // Сохраняем матч
+        saveMatch();
         
         // Меняем кнопку навигации
         document.getElementById('matchNavLabel').textContent = 'Матч';
@@ -3335,7 +3281,6 @@
         draftState.gameNumber = (draftState.gameNumber || 0) + 1;
         resetDraft();
 
-        // Скрываем результаты
         document.getElementById('matchResultSection').classList.remove('admin-visible');
         document.getElementById('screenshotSection').classList.remove('visible');
         document.getElementById('matchActions').classList.remove('admin-visible');
@@ -3356,14 +3301,12 @@
         const isAdmin = currentUser?.isAdmin || false;
         const isPlayer = isPlayerInMatch;
         
-        // Показываем скриншот всем участникам матча
         if (draftState.isComplete && isPlayer) {
             document.getElementById('screenshotSection').classList.add('visible');
         } else {
             document.getElementById('screenshotSection').classList.remove('visible');
         }
         
-        // Показываем кнопки засчитывания и завершения только админам
         if (draftState.isComplete && isAdmin) {
             document.getElementById('matchResultSection').classList.add('admin-visible');
             document.getElementById('matchActions').classList.add('admin-visible');
@@ -3562,7 +3505,6 @@
         const winnerTeam = winner === 'blue' ? 'BLUE TEAM' : 'ORANGE TEAM';
         showToast('success', 'Матч засчитан!', `Победила команда ${winnerTeam}`);
 
-        // Очищаем матч
         document.getElementById('matchResultSection').classList.remove('admin-visible');
         document.getElementById('screenshotSection').classList.remove('visible');
         document.getElementById('matchActions').classList.remove('admin-visible');
@@ -3576,7 +3518,6 @@
         document.getElementById('screenshotPreview').innerHTML = '';
         document.getElementById('screenshotStatus').textContent = '';
 
-        // Меняем кнопку навигации обратно
         document.getElementById('matchNavLabel').textContent = 'Поиск';
         document.querySelector('#matchNavBtn i').className = 'fas fa-search';
         localStorage.removeItem('brawl_active_match');
@@ -3598,7 +3539,6 @@
         }
         if (!confirm('Завершить матч без засчитывания?')) return;
         
-        // Очищаем матч
         currentMatch = null;
         isPlayerInMatch = false;
         draftState.isComplete = false;
@@ -3609,7 +3549,6 @@
         localStorage.removeItem('brawl_active_match');
         localStorage.removeItem('brawl_draft_state');
         
-        // Меняем кнопку навигации обратно
         document.getElementById('matchNavLabel').textContent = 'Поиск';
         document.querySelector('#matchNavBtn i').className = 'fas fa-search';
         
@@ -3631,8 +3570,7 @@
             currentCaptain: 0,
             isComplete: false
         };
-        // Сохраняем состояние драфта
-        localStorage.setItem('brawl_draft_state', JSON.stringify(draftState));
+        saveMatch();
         renderDraftUI();
     }
 
@@ -3692,9 +3630,7 @@
             bansContainer.style.display = 'grid';
         }
 
-        // Сохраняем состояние драфта
-        localStorage.setItem('brawl_draft_state', JSON.stringify(state));
-
+        saveMatch();
         checkMatchResultVisibility();
     }
 
@@ -3741,7 +3677,7 @@
             container.innerHTML = admins.map(admin => `
                 <span class="admin-tag">
                     ${admin.username}
-                    ${admin.username !== 'Admin' && currentUser?.isAdmin ? 
+                    ${admin.username !== 'Destro' && currentUser?.isAdmin ? 
                         `<span class="remove" onclick="removeAdmin('${admin.id}')">&times;</span>` : 
                         '<span style="color:#ffd700;font-size:10px;">👑</span>'
                     }
@@ -3837,11 +3773,9 @@
     }
 
     // ============================================================
-    //  ПОДКЛЮЧЕНИЕ ОБРАБОТЧИКОВ
+    //  ЗАПУСК
     // ============================================================
     document.addEventListener('DOMContentLoaded', async function() {
-        console.log('✅ DOM ЗАГРУЖЕН!');
-
         // Авторизация
         document.getElementById('tabLogin').addEventListener('click', function() {
             switchAuthTab('login');
@@ -3871,7 +3805,6 @@
             }
         });
 
-        // Бан режимов
         document.getElementById('modesBanContainer').addEventListener('click', function(e) {
             const btn = e.target.closest('.ban-btn');
             if (!btn) return;
@@ -3880,16 +3813,26 @@
             handleModesBan(value);
         });
 
-        // Админ-панель
         document.getElementById('adminAddBtn').addEventListener('click', addAdmin);
 
-        // Запуск
-        const sessionRestored = await restoreSession();
-        if (sessionRestored) {
-            await checkAuth();
-        } else {
-            checkAuth();
+        // Восстановление сессии
+        const session = getSession();
+        if (session) {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('users')
+                    .select('*')
+                    .eq('id', session.id)
+                    .eq('username', session.username)
+                    .maybeSingle();
+
+                if (!error && data) {
+                    currentUser = data;
+                }
+            } catch (e) {}
         }
+
+        await checkAuth();
 
         setInterval(() => {
             if (!currentMatch) updateQueueUI();
