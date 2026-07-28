@@ -1602,7 +1602,6 @@
         .profile-info .username { font-size: 20px; font-weight: 900; color: #fff; }
         .profile-info .details { font-size: 12px; color: #aaa; margin-top: 3px; display: flex; flex-wrap: wrap; gap: 12px; }
         
-        /* ===== АДМИН-БЕЙДЖ ===== */
         .profile-info .admin-badge {
             display: none;
             background: rgba(255, 215, 0, 0.15);
@@ -1617,7 +1616,7 @@
         }
         .profile-info .admin-badge.visible { display: inline-flex; }
 
-        /* ===== АДМИН-ПАНЕЛЬ В ПРОФИЛЕ (ТОЛЬКО ДЛЯ DESTRO) ===== */
+        /* ===== АДМИН-ПАНЕЛЬ В ПРОФИЛЕ ===== */
         .profile-admin-panel {
             margin-top: 14px;
             padding: 16px;
@@ -1706,7 +1705,7 @@
         .profile-admin-panel .admin-tag .remove:hover { transform: scale(1.2); }
         .profile-admin-panel .admin-empty { color: #666; font-size: 12px; padding: 4px 0; }
 
-        /* ===== ПРОМОКОДЫ В АДМИН-ПАНЕЛИ ===== */
+        /* ===== ПРОМОКОДЫ ===== */
         .promo-section {
             background: rgba(20,20,28,0.4);
             border-radius: 8px;
@@ -1751,7 +1750,7 @@
 
         .profile-stats {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 6px;
             margin: 14px 0 16px;
         }
@@ -1794,15 +1793,26 @@
             color: #ff6b6b;
         }
 
-        .match-dynamics { margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 14px; }
-        .match-dynamics .title { font-size: 15px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+        .match-dynamics {
+            margin-top: 14px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            padding-top: 14px;
+        }
+        .match-dynamics .title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
         .chart-container {
             display: flex;
-            align-items: flex-end;
+            align-items: center;
             justify-content: center;
-            gap: 4px;
+            gap: 6px;
             height: 100px;
-            padding: 6px 4px;
+            padding: 10px 6px;
             background: rgba(26,26,34,0.4);
             border-radius: 10px;
             border: 1px solid rgba(255,255,255,0.04);
@@ -1814,22 +1824,48 @@
             flex-direction: column;
             align-items: center;
             height: 100%;
-            justify-content: flex-end;
-            min-width: 14px;
-        }
-        .chart-bar {
-            width: 10px;
-            border-radius: 3px 3px 0 0;
-            transition: height 0.4s ease;
-            min-height: 2px;
+            justify-content: center;
+            min-width: 20px;
             position: relative;
         }
-        .chart-bar.win { background: linear-gradient(180deg, #51cf66, #2b8a3e); }
-        .chart-bar.loss { background: linear-gradient(180deg, #ff6b6b, #c0392b); border-radius: 0 0 3px 3px; align-self: flex-start; }
-        .chart-bar-wrap .bar-label { font-size: 6px; color: #666; margin-top: 2px; }
+        .chart-bar {
+            width: 14px;
+            transition: height 0.4s ease;
+            min-height: 4px;
+            position: relative;
+        }
+        .chart-bar.win {
+            background: linear-gradient(180deg, #51cf66, #2b8a3e);
+            border-radius: 3px 3px 0 0;
+            box-shadow: 0 0 10px rgba(81, 207, 102, 0.2);
+            align-self: flex-end;
+        }
+        .chart-bar.loss {
+            background: linear-gradient(0deg, #ff6b6b, #c0392b);
+            border-radius: 0 0 3px 3px;
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.2);
+            align-self: flex-start;
+        }
+        .chart-bar-wrap .bar-label {
+            font-size: 7px;
+            color: #666;
+            margin-top: 4px;
+            font-weight: 600;
+        }
 
-        .match-history { margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 14px; }
-        .match-history .title { font-size: 15px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .match-history {
+            margin-top: 14px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            padding-top: 14px;
+        }
+        .match-history .title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
         .match-history .match-item {
             background: rgba(26,26,34,0.6);
             border-radius: 10px;
@@ -1844,8 +1880,6 @@
             font-size: 12px;
         }
         .match-history .match-item .map { font-weight: 600; }
-        .match-history .match-item .stats { color: #aaa; }
-        .match-history .match-item .stats span { margin: 0 2px; }
         .match-history .match-item .date { color: #666; font-size: 10px; }
         .match-history .match-item .result {
             font-weight: 700;
@@ -2240,7 +2274,7 @@
             <div class="screenshot-status" id="screenshotStatus"></div>
         </div>
 
-        <!-- Кнопки засчитывания (только админы) -->
+        <!-- Кнопки засчитывания -->
         <div class="match-result-section" id="matchResultSection">
             <div class="result-title"><i class="fas fa-trophy"></i> Засчитать матч</div>
             <div class="result-buttons">
@@ -2253,7 +2287,6 @@
             </div>
         </div>
 
-        <!-- Кнопка закончить матч (только админы) -->
         <div class="match-actions" id="matchActions">
             <button class="btn-end" id="endMatchBtn" onclick="endMatch()" disabled>
                 <i class="fas fa-times"></i> Закончить матч
@@ -2313,7 +2346,7 @@
         <div class="history-empty"><i class="fas fa-history"></i> Операций пока нет.</div>
     </div>
 
-    <!-- ===== ПРОФИЛЬ С АДМИН-ПАНЕЛЬЮ ===== -->
+    <!-- ===== ПРОФИЛЬ ===== -->
     <div class="page" id="pageProfile">
         <div class="profile-card">
             <div class="profile-header">
@@ -2331,6 +2364,7 @@
                 <div class="stat-item"><div class="value" id="pWr">0%</div><div class="label">Винрейт</div></div>
                 <div class="stat-item"><div class="value" id="pMatches">0</div><div class="label">Матчей</div></div>
                 <div class="stat-item"><div class="value" id="pMvp">0</div><div class="label">MVP</div></div>
+                <div class="stat-item"><div class="value" id="pElo">1000</div><div class="label">ELO</div></div>
             </div>
 
             <div class="profile-actions">
@@ -2338,7 +2372,7 @@
                 <button class="btn-action logout" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Выйти с аккаунта</button>
             </div>
 
-            <!-- ===== АДМИН-ПАНЕЛЬ В ПРОФИЛЕ (ТОЛЬКО ДЛЯ DESTRO) ===== -->
+            <!-- ===== АДМИН-ПАНЕЛЬ ===== -->
             <div class="profile-admin-panel" id="profileAdminPanel">
                 <div class="admin-title"><i class="fas fa-user-shield"></i> Админ-панель</div>
 
@@ -2358,7 +2392,6 @@
                     </div>
                 </div>
 
-                <!-- ===== ПРОМОКОДЫ ===== -->
                 <div class="admin-section">
                     <div class="section-title">Создать промокод</div>
                     <div class="promo-section">
@@ -2380,13 +2413,15 @@
                 </div>
             </div>
 
+            <!-- ===== ДИНАМИКА МАТЧЕЙ ===== -->
             <div class="match-dynamics">
-                <div class="title"><i class="fas fa-chart-bar"></i> Динамика матчей</div>
+                <div class="title"><i class="fas fa-chart-bar"></i> Динамика матчей (последние 10)</div>
                 <div class="chart-container" id="chartContainer">
                     <div style="color:#666; text-align:center; width:100%; padding:10px 0;">Нет данных</div>
                 </div>
             </div>
 
+            <!-- ===== ИСТОРИЯ МАТЧЕЙ ===== -->
             <div class="match-history">
                 <div class="title"><i class="fas fa-history"></i> История матчей</div>
                 <div id="matchHistoryList">
@@ -2485,7 +2520,6 @@
                 updated_at: new Date().toISOString()
             };
 
-            // Проверяем, существует ли запись
             const { data: existing } = await supabaseClient
                 .from('active_matches')
                 .select('id')
@@ -2493,13 +2527,11 @@
                 .maybeSingle();
 
             if (existing) {
-                // Обновляем
                 await supabaseClient
                     .from('active_matches')
                     .update(matchData)
                     .eq('id', matchData.id);
             } else {
-                // Создаём
                 matchData.created_at = new Date().toISOString();
                 await supabaseClient
                     .from('active_matches')
@@ -2517,7 +2549,6 @@
     // ============================================================
     async function loadMatchFromSupabase() {
         try {
-            // Ищем активный матч пользователя
             if (!currentUser) return;
 
             const { data, error } = await supabaseClient
@@ -2529,8 +2560,6 @@
             if (error || !data || data.length === 0) return;
 
             const match = data[0];
-            
-            // Проверяем, участвует ли пользователь в этом матче
             const orange = JSON.parse(match.orange);
             const blue = JSON.parse(match.blue);
             const isInMatch = orange.some(p => p.id === currentUser.id) || 
@@ -2544,10 +2573,6 @@
                 if (match.draft_state) {
                     draftState = JSON.parse(match.draft_state);
                 }
-                
-                // Меняем кнопку навигации
-                document.getElementById('matchNavLabel').textContent = 'Матч';
-                document.querySelector('#matchNavBtn i').className = 'fas fa-gamepad';
                 
                 console.log('✅ Матч загружен из Supabase');
             }
@@ -2668,8 +2693,9 @@
                 matches: 0,
                 wins: 0,
                 losses: 0,
-                elo: 1200,
+                elo: 1000,
                 mvp: 0,
+                balance: 0,
                 registered: new Date().toISOString(),
                 lastLogin: new Date().toISOString(),
                 isAdmin: false,
@@ -2778,11 +2804,9 @@
             document.getElementById('pWr').textContent = winrate + '%';
             document.getElementById('pMatches').textContent = matches;
             document.getElementById('pMvp').textContent = currentUser.mvp || 0;
+            document.getElementById('pElo').textContent = currentUser.elo || 1000;
 
-            // ============================================================
-            //  АДМИН-ПАНЕЛЬ В ПРОФИЛЕ - ТОЛЬКО ДЛЯ DESTRO
-            // ============================================================
-            
+            // ===== АДМИН-ПАНЕЛЬ В ПРОФИЛЕ - ТОЛЬКО ДЛЯ DESTRO =====
             const isDestro = currentUser.username === 'Destro';
             
             console.log('🔍 ПРОВЕРКА АДМИНА:');
@@ -2815,7 +2839,7 @@
             // Загружаем матч из Supabase
             await loadMatchFromSupabase();
 
-            // Обновляем очередь
+            // Обновляем очереди
             updateQueueUI();
             updatePartyUI();
             
@@ -2962,7 +2986,6 @@
         currentMatch = { orange, blue };
         isPlayerInMatch = true;
         
-        // Сохраняем в Supabase
         saveMatchToSupabase();
         
         queue = [];
@@ -3115,6 +3138,9 @@
 
     async function finishMatch(winner) {
         if (!currentMatch || !currentUser) return;
+        if (currentUser?.username !== 'Destro') {
+            return showToast('error', 'Доступ запрещён', 'Только Destro может засчитывать матчи');
+        }
 
         const map = draftState.modeFinal || 'Gem Grab';
         const allPlayers = [...currentMatch.orange, ...currentMatch.blue];
@@ -3127,9 +3153,6 @@
 
         for (const player of realPlayers) {
             const isWin = winners.some(w => w.id === player.id);
-            const kills = Math.floor(Math.random() * 15) + 3;
-            const deaths = Math.floor(Math.random() * 12) + 2;
-            const kd = deaths > 0 ? kills / deaths : kills;
 
             try {
                 const { data: userData } = await supabaseClient
@@ -3142,7 +3165,7 @@
                     const newMatches = (userData.matches || 0) + 1;
                     const newWins = (userData.wins || 0) + (isWin ? 1 : 0);
                     const newLosses = (userData.losses || 0) + (isWin ? 0 : 1);
-                    const newElo = userData.elo + (isWin ? 15 : -10);
+                    const newElo = (userData.elo || 1000) + (isWin ? 25 : -25);
                     const newMvp = (userData.mvp || 0) + (isWin ? 1 : 0);
 
                     await supabaseClient
@@ -3165,9 +3188,6 @@
                         user_id: player.id,
                         username: player.username,
                         map: map,
-                        kills: kills,
-                        deaths: deaths,
-                        kd: kd,
                         result: isWin ? 'win' : 'loss',
                         match_date: new Date().toISOString(),
                         server_name: 'Brawl Stars',
@@ -3209,7 +3229,6 @@
         document.getElementById('screenshotStatus').textContent = '';
 
         await deleteMatchFromSupabase();
-
         navigate('matches');
         updateQueueUI();
         showToast('info', 'Матч завершён', 'Статистика сохранена!');
@@ -3339,7 +3358,102 @@
     }
 
     // ============================================================
-    //  АДМИН-ПАНЕЛЬ (ТОЛЬКО ДЛЯ DESTRO)
+    //  ПРОФИЛЬ
+    // ============================================================
+    async function updateProfile() {
+        if (!currentUser) return;
+        
+        const matches = currentUser.matches || 0;
+        const wins = currentUser.wins || 0;
+        const winrate = matches > 0 ? Math.round((wins / matches) * 100) : 0;
+        
+        document.getElementById('pWr').textContent = winrate + '%';
+        document.getElementById('pMatches').textContent = matches;
+        document.getElementById('pMvp').textContent = currentUser.mvp || 0;
+        document.getElementById('pElo').textContent = currentUser.elo || 1000;
+
+        await loadMatchHistory();
+        await renderChart();
+    }
+
+    // ============================================================
+    //  ИСТОРИЯ МАТЧЕЙ
+    // ============================================================
+    async function loadMatchHistory() {
+        if (!currentUser) return;
+        
+        try {
+            const { data, error } = await supabaseClient
+                .from('match_history')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .order('match_date', { ascending: false })
+                .limit(20);
+
+            if (error) throw error;
+
+            const container = document.getElementById('matchHistoryList');
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div style="color:#666; text-align:center; padding:8px 0;">Нет сыгранных матчей</div>';
+                return;
+            }
+
+            container.innerHTML = data.map(m => `
+                <div class="match-item">
+                    <span class="map"><i class="fas fa-gamepad"></i> ${m.map || 'Неизвестная карта'}</span>
+                    <span class="date">${new Date(m.match_date).toLocaleDateString('ru-RU')}</span>
+                    <span class="result ${m.result === 'win' ? 'win' : 'loss'}">
+                        ${m.result === 'win' ? '🏆 Победа' : '💀 Поражение'}
+                    </span>
+                </div>
+            `).join('');
+        } catch (e) {
+            console.error('Ошибка загрузки истории:', e);
+        }
+    }
+
+    // ============================================================
+    //  ДИНАМИКА МАТЧЕЙ (ГРАФИК)
+    // ============================================================
+    async function renderChart() {
+        try {
+            const { data, error } = await supabaseClient
+                .from('match_history')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .order('match_date', { ascending: false })
+                .limit(10);
+
+            if (error || !data || data.length === 0) {
+                document.getElementById('chartContainer').innerHTML = '<div style="color:#666; text-align:center; width:100%; padding:10px 0;">Нет данных</div>';
+                return;
+            }
+
+            const container = document.getElementById('chartContainer');
+            const lastMatches = data.slice(0, 10).reverse();
+            const height = 40;
+
+            container.innerHTML = lastMatches.map((m, index) => {
+                const isWin = m.result === 'win';
+                const barClass = isWin ? 'win' : 'loss';
+                
+                return `
+                    <div class="chart-bar-wrap" title="${m.map || 'Матч'} - ${isWin ? 'Победа' : 'Поражение'}">
+                        <div class="chart-bar ${barClass}" 
+                             style="height: ${height}px; 
+                                    ${isWin ? 'border-radius: 3px 3px 0 0; align-self: flex-end;' : 'border-radius: 0 0 3px 3px; align-self: flex-start;'}">
+                        </div>
+                        <span class="bar-label">${index + 1}</span>
+                    </div>
+                `;
+            }).join('');
+        } catch (e) {
+            console.error('renderChart error:', e);
+        }
+    }
+
+    // ============================================================
+    //  АДМИН-ПАНЕЛЬ
     // ============================================================
     async function renderAdminList() {
         try {
@@ -3716,7 +3830,6 @@
     document.addEventListener('DOMContentLoaded', async function() {
         console.log('✅ DOM ЗАГРУЖЕН!');
 
-        // Авторизация
         document.getElementById('tabLogin').addEventListener('click', function() {
             switchAuthTab('login');
         });
@@ -3745,11 +3858,9 @@
             }
         });
 
-        // Админ-панель (только для Destro)
         document.getElementById('adminAddBtn').addEventListener('click', addAdmin);
         document.getElementById('createPromoBtn').addEventListener('click', createPromo);
 
-        // Бан режимов
         document.getElementById('modesBanContainer').addEventListener('click', function(e) {
             const btn = e.target.closest('.ban-btn');
             if (!btn) return;
@@ -3759,7 +3870,7 @@
         });
 
         // Промокод в кошельке
-        document.querySelector('#promoInput')?.addEventListener('keydown', function(e) {
+        document.getElementById('promoInput')?.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') applyPromo();
         });
 
