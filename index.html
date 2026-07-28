@@ -12,10 +12,7 @@
     </script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { touch-action: pan-y pinch-zoom; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
         body {
-            max-width: 100vw;
-            overflow-x: hidden;
             background: #0b0b0f;
             color: #fff;
             font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
@@ -23,8 +20,8 @@
             min-height: 100vh;
             line-height: 1.5;
         }
-        button, input, select, textarea { touch-action: manipulation; font-size: 16px; }
 
+        /* ===== АВТОРИЗАЦИЯ ===== */
         .auth-page {
             display: flex;
             justify-content: center;
@@ -52,7 +49,13 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .auth-box .auth-logo .sub { color: #666; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; }
+        .auth-box .auth-logo .sub {
+            color: #666;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
 
         .auth-box .auth-tabs {
             display: flex;
@@ -126,7 +129,11 @@
             outline: none;
             font-family: inherit;
         }
-        .auth-box .form-group .input-wrap input::placeholder { color: #555; font-weight: 400; font-size: 14px; }
+        .auth-box .form-group .input-wrap input::placeholder {
+            color: #555;
+            font-weight: 400;
+            font-size: 14px;
+        }
 
         .auth-box .btn-auth {
             width: 100%;
@@ -146,7 +153,10 @@
             gap: 10px;
             margin-top: 4px;
         }
-        .auth-box .btn-auth:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3); }
+        .auth-box .btn-auth:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3);
+        }
 
         .auth-box .auth-message {
             padding: 12px 16px;
@@ -157,12 +167,34 @@
             display: none;
         }
         .auth-box .auth-message.show { display: block; }
-        .auth-box .auth-message.success { background: rgba(81, 207, 102, 0.12); border: 1px solid rgba(81, 207, 102, 0.2); color: #51cf66; }
-        .auth-box .auth-message.error { background: rgba(255, 107, 107, 0.12); border: 1px solid rgba(255, 107, 107, 0.2); color: #ff6b6b; }
-        .auth-box .auth-message.info { background: rgba(255, 215, 0, 0.08); border: 1px solid rgba(255, 215, 0, 0.15); color: #ffd700; }
+        .auth-box .auth-message.success {
+            background: rgba(81, 207, 102, 0.12);
+            border: 1px solid rgba(81, 207, 102, 0.2);
+            color: #51cf66;
+        }
+        .auth-box .auth-message.error {
+            background: rgba(255, 107, 107, 0.12);
+            border: 1px solid rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+        .auth-box .auth-message.info {
+            background: rgba(255, 215, 0, 0.08);
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            color: #ffd700;
+        }
 
-        .auth-box .auth-footer { text-align: center; margin-top: 16px; color: #666; font-size: 13px; }
-        .auth-box .auth-footer a { color: #ffd700; cursor: pointer; font-weight: 600; text-decoration: none; }
+        .auth-box .auth-footer {
+            text-align: center;
+            margin-top: 16px;
+            color: #666;
+            font-size: 13px;
+        }
+        .auth-box .auth-footer a {
+            color: #ffd700;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+        }
         .auth-box .auth-footer a:hover { text-decoration: underline; }
 
         .header {
@@ -184,13 +216,23 @@
             -webkit-text-fill-color: transparent;
             display: inline-block;
         }
-        .logo .sub { display: block; font-size: 9px; color: #666; letter-spacing: 2px; margin-top: 2px; }
 
-        .page { display: none; max-width: 1100px; margin: 16px auto 0; padding: 0 16px 16px; animation: fade .4s ease; }
+        .page {
+            display: none;
+            max-width: 1100px;
+            margin: 16px auto 0;
+            padding: 0 16px 16px;
+            animation: fade .4s ease;
+        }
         .page.active { display: block; }
         @keyframes fade { 0% { opacity: 0; transform: translateY(12px); } 100% { opacity: 1; transform: translateY(0); } }
 
-        .home-hero { text-align: center; max-width: 900px; margin: 0 auto; padding: 6px 0; }
+        .home-hero {
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 6px 0;
+        }
         .hero-badge {
             display: inline-block;
             background: rgba(255, 215, 0, 0.05);
@@ -214,7 +256,11 @@
             margin: 0 auto 24px;
             letter-spacing: -0.5px;
         }
-        .hero-title span { background: linear-gradient(135deg, #ffd700, #ff8c00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-title span {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
         .hero-stats-row {
             display: flex;
             justify-content: center;
@@ -234,10 +280,26 @@
             flex: 1;
             transition: .3s;
         }
-        .hero-stat:hover { border-color: rgba(255,215,0,0.3); transform: translateY(-2px); }
-        .hero-stat .number { font-size: 24px; font-weight: 900; color: #ffd700; }
-        .hero-stat .label { font-size: 10px; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
-        .hero-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
+        .hero-stat .number {
+            font-size: 24px;
+            font-weight: 900;
+            color: #ffd700;
+        }
+        .hero-stat .label {
+            font-size: 10px;
+            color: #888;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+        .hero-actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+        }
         .btn-hero {
             display: inline-flex;
             align-items: center;
@@ -255,10 +317,20 @@
             text-decoration: none;
             letter-spacing: 0.3px;
         }
-        .btn-hero:hover { transform: scale(1.04); box-shadow: 0 0 45px rgba(255, 215, 0, 0.45); }
-        .btn-hero.outline { background: transparent; border: 2px solid #ffd700; color: #ffd700; box-shadow: none; }
-        .btn-hero.outline:hover { background: rgba(255,215,0,0.1); box-shadow: 0 0 20px rgba(255,215,0,0.2); }
-        .btn-hero i { font-size: 16px; }
+        .btn-hero:hover {
+            transform: scale(1.04);
+            box-shadow: 0 0 45px rgba(255, 215, 0, 0.45);
+        }
+        .btn-hero.outline {
+            background: transparent;
+            border: 2px solid #ffd700;
+            color: #ffd700;
+            box-shadow: none;
+        }
+        .btn-hero.outline:hover {
+            background: rgba(255,215,0,0.1);
+            box-shadow: 0 0 20px rgba(255,215,0,0.2);
+        }
 
         .prize-block {
             background: rgba(20, 20, 28, 0.7);
@@ -270,8 +342,19 @@
             margin: 0 auto;
             text-align: center;
         }
-        .prize-block .prize-title { font-size: 16px; font-weight: 800; color: #ffd700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
-        .prize-block .prize-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .prize-block .prize-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: #ffd700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+        .prize-block .prize-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
         .prize-block .prize-item {
             background: rgba(26,26,34,0.6);
             border-radius: 12px;
@@ -279,714 +362,75 @@
             border: 1px solid rgba(255,255,255,0.04);
             transition: .3s;
         }
-        .prize-block .prize-item:hover { border-color: rgba(255,215,0,0.3); }
         .prize-block .prize-item .place { font-size: 11px; font-weight: 700; color: #aaa; }
         .prize-block .prize-item .reward { font-size: 16px; font-weight: 900; color: #ffd700; margin-top: 2px; }
         .prize-block .prize-item.gold { border-color: rgba(255,215,0,0.2); background: rgba(255,215,0,0.05); }
         .prize-block .prize-item.silver { border-color: rgba(192,192,192,0.15); background: rgba(192,192,192,0.03); }
         .prize-block .prize-item.bronze { border-color: rgba(205,127,50,0.15); background: rgba(205,127,50,0.03); }
-        .prize-block .prize-premium { margin-top: 8px; padding: 6px 12px; background: rgba(26,26,34,0.6); border-radius: 8px; border: 1px solid rgba(255,255,255,0.04); font-size: 12px; color: #888; }
+        .prize-block .prize-premium {
+            margin-top: 8px;
+            padding: 6px 12px;
+            background: rgba(26,26,34,0.6);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.04);
+            font-size: 12px;
+            color: #888;
+        }
         .prize-block .prize-premium strong { color: #ffd700; font-weight: 700; }
 
-        .search-page-wrapper { max-width: 700px; margin: 0 auto; }
-        .search-header-block {
-            background: rgba(255, 215, 0, 0.03);
-            border: 1.5px solid rgba(255, 215, 0, 0.25);
-            border-radius: 20px;
-            padding: 20px 24px;
-            margin-bottom: 20px;
-            text-align: center;
-            backdrop-filter: blur(4px);
-        }
-        .search-header-block .search-title {
-            font-size: 28px;
-            font-weight: 900;
-            background: linear-gradient(135deg, #ffd700, #ff8c00);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 4px;
-        }
-        .search-header-block .search-sub { color: #999; font-size: 14px; font-weight: 400; line-height: 1.6; max-width: 560px; margin: 0 auto; }
-
-        .search-main-block {
-            background: rgba(20, 20, 28, 0.7);
-            backdrop-filter: blur(8px);
-            border-radius: 20px;
-            padding: 22px 20px 20px;
-            border: 1px solid rgba(255,255,255,0.04);
-            text-align: center;
-            margin-bottom: 14px;
-            transition: all 0.3s ease;
-        }
-        .search-main-block .label {
-            font-size: 18px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 12px;
-            letter-spacing: 0.3px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .search-main-block .label i { color: #ffd700; font-size: 20px; }
-        .search-main-block .btn-row {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 6px;
-        }
-        .search-main-block .btn-queue {
-            background: linear-gradient(135deg, #ffd700, #ff8c00);
-            color: #000;
-            padding: 14px 36px;
-            border-radius: 60px;
-            font-weight: 800;
-            font-size: 17px;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 0 30px rgba(255,215,0,0.3);
-            transition: .3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .search-main-block .btn-queue:hover { transform: scale(1.03); box-shadow: 0 0 50px rgba(255,215,0,0.5); }
-        .search-main-block .btn-queue.cancel { background: #ff6b6b; color: #fff; box-shadow: 0 0 20px rgba(255,0,0,0.3); }
-        .search-main-block .btn-queue.cancel:hover { background: #ff4444; }
-        .search-main-block .search-type { color: #888; font-size: 13px; margin: 0 0 16px; font-weight: 400; }
-
-        .search-counters {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            flex-wrap: wrap;
-            transition: all 0.3s ease;
-        }
-        .search-counter {
-            background: rgba(26, 26, 34, 0.6);
-            border-radius: 12px;
-            padding: 6px 16px;
-            border: 1px solid rgba(255,255,255,0.04);
-            min-width: 100px;
-            text-align: center;
-            transition: .3s;
-        }
-        .search-counter:hover { border-color: rgba(255,215,0,0.2); }
-        .search-counter .num { font-size: 24px; font-weight: 900; color: #ffd700; }
-        .search-counter .lbl { font-size: 10px; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; margin-top: 2px; }
-
-        .search-main-block.searching .label,
-        .search-main-block.searching .search-type,
-        .search-main-block.searching .search-counters { display: none !important; }
-        .search-main-block.searching .search-progress { display: block !important; }
-
-        .search-progress { display: none; padding: 10px 0; }
-        .search-progress .progress-text { font-size: 38px; font-weight: 900; color: #ffd700; letter-spacing: 1px; }
-        .search-progress .progress-timer { font-size: 16px; color: #888; margin-top: 4px; }
-        .search-progress .progress-timer span { color: #fff; font-weight: 600; }
-
-        /* ===== ПАТИ ===== */
-        .party-block {
-            background: rgba(20, 20, 28, 0.7);
-            backdrop-filter: blur(8px);
-            border-radius: 20px;
-            padding: 18px 20px 20px;
-            border: 1px solid rgba(255,255,255,0.04);
-            text-align: center;
-            margin-bottom: 14px;
-        }
-        .party-block .party-title { font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .party-block .party-title i { color: #ffd700; font-size: 20px; }
-        .party-block .party-sub { color: #888; font-size: 12px; margin-bottom: 14px; font-weight: 400; }
-        .party-block .party-sub strong { color: #ffd700; font-weight: 600; }
-        .party-block .party-code-display {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-        }
-        .party-block .party-code-display .code-box {
-            background: rgba(26, 26, 34, 0.8);
-            border: 1px solid rgba(255,215,0,0.2);
-            border-radius: 10px;
-            padding: 4px 16px;
-            font-size: 20px;
-            font-weight: 800;
-            letter-spacing: 3px;
-            color: #ffd700;
-            font-family: 'Courier New', monospace;
-            min-width: 100px;
-        }
-        .party-block .party-code-display .code-label { color: #888; font-size: 12px; font-weight: 500; }
-        .party-block .party-code-display .btn-copy {
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.06);
-            color: #aaa;
-            padding: 3px 12px;
-            border-radius: 40px;
-            font-size: 11px;
-            cursor: pointer;
-            transition: .2s;
-        }
-        .party-block .party-code-display .btn-copy:hover { background: rgba(255,215,0,0.15); border-color: rgba(255,215,0,0.3); color: #fff; }
-
-        .party-block .party-add {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        .party-block .party-add input {
-            background: rgba(26, 26, 34, 0.8);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 10px;
-            padding: 8px 14px;
-            color: #fff;
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            width: 120px;
-            font-family: 'Courier New', monospace;
-            transition: .2s;
-            text-align: center;
-        }
-        .party-block .party-add input:focus { outline: none; border-color: #ffd700; box-shadow: 0 0 20px rgba(255,215,0,0.1); }
-        .party-block .party-add input::placeholder { color: #555; font-size: 11px; letter-spacing: 0; font-family: 'Inter', sans-serif; }
-        .party-block .party-add .btn-add {
-            background: rgba(255,215,0,0.15);
-            border: 1px solid rgba(255,215,0,0.3);
-            color: #ffd700;
-            padding: 8px 16px;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 13px;
-            cursor: pointer;
-            transition: .2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .party-block .party-add .btn-add:hover { background: rgba(255,215,0,0.25); box-shadow: 0 0 20px rgba(255,215,0,0.1); }
-
-        .party-block .party-friends-list { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
-        .party-block .party-friends-list .friend-tag {
-            background: rgba(26,26,34,0.6);
-            border: 1px solid rgba(255,255,255,0.04);
-            border-radius: 40px;
-            padding: 3px 12px 3px 8px;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 12px;
-            font-weight: 500;
-            color: #ccc;
-        }
-        .party-block .party-friends-list .friend-tag i { color: #51cf66; font-size: 9px; }
-        .party-block .party-friends-list .friend-tag .remove { color: #666; cursor: pointer; font-size: 11px; transition: .2s; }
-        .party-block .party-friends-list .friend-tag .remove:hover { color: #ff6b6b; }
-        .party-block .party-friends-list .empty { color: #555; font-size: 12px; font-weight: 400; }
-
-        .party-block .party-feature { margin-top: 10px; padding: 6px 12px; background: rgba(255,215,0,0.05); border-radius: 8px; border: 1px solid rgba(255,215,0,0.08); font-size: 12px; color: #888; }
-        .party-block .party-feature i { color: #ffd700; margin-right: 4px; }
-        .party-block .party-feature strong { color: #fff; font-weight: 600; }
-
-        /* ===== МАТЧ ===== */
-        .match-page .match-title { font-size: 28px; font-weight: 900; text-align: center; color: #ffd700; margin-bottom: 4px; }
-        .match-info-bar {
-            background: rgba(20, 20, 28, 0.8);
-            backdrop-filter: blur(8px);
-            border-radius: 16px;
-            padding: 14px 20px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(255,255,255,0.06);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .match-info-bar .info-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #ccc;
-        }
-        .match-info-bar .info-item i { color: #ffd700; font-size: 16px; }
-        .match-info-bar .info-item .value { color: #fff; font-weight: 700; background: rgba(255,255,255,0.06); padding: 2px 12px; border-radius: 30px; }
-        .match-info-bar .info-item .value.highlight { background: rgba(255,215,0,0.15); color: #ffd700; }
-
-        .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; max-width: 900px; margin-left: auto; margin-right: auto; }
-        .team-block {
-            backdrop-filter: blur(8px);
-            border-radius: 16px;
-            padding: 14px 12px 12px;
-            text-align: center;
-            transition: .3s;
-            min-width: 0;
-            border: 2px solid transparent;
-        }
-        .team-block:hover { transform: translateY(-2px); }
-        .team-block.blue { border-color: rgba(52, 152, 219, 0.6); background: rgba(52, 152, 219, 0.08); }
-        .team-block.blue .team-name { color: #3498db; }
-        .team-block.blue .captain-badge { background: rgba(52, 152, 219, 0.15); color: #3498db; border: 1px solid rgba(52, 152, 219, 0.3); }
-        .team-block.orange { border-color: rgba(255, 165, 0, 0.6); background: rgba(255, 165, 0, 0.08); }
-        .team-block.orange .team-name { color: #ffa500; }
-        .team-block.orange .captain-badge { background: rgba(255, 165, 0, 0.15); color: #ffa500; border: 1px solid rgba(255, 165, 0, 0.3); }
-        .team-block .team-name { font-size: 18px; font-weight: 800; letter-spacing: 1px; margin-bottom: 2px; text-transform: uppercase; }
-        .team-players { display: flex; flex-direction: column; gap: 5px; }
-
-        .player-card {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(26, 26, 34, 0.6);
-            border-radius: 10px;
-            padding: 6px 10px;
-            border: 1px solid rgba(255,255,255,0.04);
-            transition: .2s;
-        }
-        .player-card:hover { border-color: rgba(255,255,255,0.08); }
-        .player-card .avatar {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #ffd700, #ff8c00);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: 700;
-            color: #000;
-            flex-shrink: 0;
-        }
-        .player-card .info { flex: 1; display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
-        .player-card .info .name { font-size: 13px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
-        .player-card .captain-badge { font-size: 9px; font-weight: 700; padding: 1px 8px; border-radius: 40px; display: inline-flex; align-items: center; gap: 3px; flex-shrink: 0; }
-
-        .bans-container { max-width: 900px; margin: 0 auto 16px; display: grid; grid-template-columns: 1fr; gap: 16px; }
-        .ban-section {
-            background: rgba(20, 20, 28, 0.7);
-            backdrop-filter: blur(8px);
-            border-radius: 14px;
-            padding: 16px 18px 14px;
-            border: 1px solid rgba(255,255,255,0.06);
-            transition: all 0.3s ease;
-        }
-        .ban-section:hover { border-color: rgba(255,215,0,0.15); }
-        .ban-section .ban-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .ban-section .ban-title { font-size: 14px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
-        .ban-section .ban-title i { color: #ffd700; font-size: 16px; }
-        .ban-section .ban-title .turn { font-size: 11px; font-weight: 400; color: #888; }
-        .ban-section .ban-title .turn span { color: #ffd700; font-weight: 600; }
-        .ban-section .ban-status {
-            font-size: 11px;
-            color: #888;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 4px;
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px solid rgba(255,255,255,0.04);
-        }
-        .ban-section .ban-status .left { color: #aaa; }
-        .ban-section .ban-status .left span { color: #ffd700; font-weight: 700; }
-        .ban-section .ban-status .status-text { color: #ffd700; font-weight: 600; }
-        .ban-section .ban-status .status-text.done { color: #51cf66; }
-
-        .ban-buttons { display: flex; flex-wrap: wrap; gap: 6px; min-height: 40px; align-items: center; }
-        .ban-btn {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.08);
-            color: #ccc;
-            padding: 6px 16px;
-            border-radius: 30px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            font-family: inherit;
-            flex: 1;
-            min-width: 60px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            animation: btnAppear 0.3s ease;
-        }
-        @keyframes btnAppear { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-        .ban-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
             left: 0;
             right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0));
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            background: rgba(20,20,28,0.85);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255,255,255,0.04);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 6px 0 4px;
+            z-index: 100;
         }
-        .ban-btn:hover:not(.banned):not(.selected):not(:disabled)::before { opacity: 1; }
-        .ban-btn:hover:not(.banned):not(.selected):not(:disabled) { border-color: rgba(255,215,0,0.3); color: #fff; transform: translateY(-1px); }
-        .ban-btn.banned { display: none !important; }
-        .ban-btn.selected {
-            background: rgba(81, 207, 102, 0.12);
-            border-color: rgba(81, 207, 102, 0.3);
-            color: #51cf66;
-            cursor: default;
-            box-shadow: 0 0 20px rgba(81, 207, 102, 0.05);
-            flex: 1;
-            min-width: 60px;
-        }
-        .ban-btn.selected::after { content: ' ✓'; color: #51cf66; font-weight: 700; }
-        .ban-btn:disabled { cursor: not-allowed; opacity: 0.4; }
-        .ban-btn:disabled:hover { border-color: rgba(255,255,255,0.08); color: #ccc; transform: none; }
-        .ban-btn:disabled:hover::before { opacity: 0; }
-        .ban-btn.mode-btn { background: rgba(52, 152, 219, 0.04); border-color: rgba(52, 152, 219, 0.1); }
-        .ban-btn.mode-btn:hover:not(.banned):not(.selected):not(:disabled) { background: rgba(52, 152, 219, 0.08); border-color: rgba(52, 152, 219, 0.25); }
-        .ban-section.modes-section .ban-title i { color: #3498db; }
-
-        .match-actions { text-align: center; margin-top: 6px; max-width: 900px; margin-left: auto; margin-right: auto; display: none; }
-        .match-actions.admin-visible { display: block; }
-        .match-actions .btn-end {
-            background: #ff6b6b;
-            color: #fff;
-            padding: 8px 24px;
-            border-radius: 60px;
-            font-weight: 700;
-            font-size: 14px;
+        .bottom-nav .item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #888;
+            font-size: 10px;
+            font-weight: 600;
+            background: none;
             border: none;
             cursor: pointer;
-            box-shadow: 0 0 20px rgba(255,0,0,0.3);
-            transition: .2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .match-actions .btn-end:hover:not(:disabled) { background: #ff4444; transform: scale(1.03); }
-        .match-actions .btn-end:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-        .match-result-section {
-            background: rgba(20, 20, 28, 0.8);
-            backdrop-filter: blur(8px);
-            border-radius: 16px;
-            padding: 16px 20px;
-            margin-top: 16px;
-            border: 1px solid rgba(255,215,0,0.15);
-            max-width: 900px;
-            margin-left: auto;
-            margin-right: auto;
-            display: none;
-        }
-        .match-result-section.admin-visible { display: block; }
-        .match-result-section .result-title { font-size: 16px; font-weight: 700; color: #ffd700; margin-bottom: 12px; text-align: center; }
-        .match-result-section .result-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-        .match-result-section .result-btn {
-            padding: 12px 32px;
-            border: none;
-            border-radius: 60px;
-            font-weight: 800;
-            font-size: 16px;
-            cursor: pointer;
-            transition: .3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            flex: 1;
-            min-width: 140px;
-            justify-content: center;
-        }
-        .match-result-section .result-btn.blue-win { background: rgba(52, 152, 219, 0.2); border: 2px solid #3498db; color: #3498db; }
-        .match-result-section .result-btn.blue-win:hover { background: rgba(52, 152, 219, 0.4); transform: scale(1.02); }
-        .match-result-section .result-btn.orange-win { background: rgba(255, 165, 0, 0.2); border: 2px solid #ffa500; color: #ffa500; }
-        .match-result-section .result-btn.orange-win:hover { background: rgba(255, 165, 0, 0.4); transform: scale(1.02); }
-
-        .screenshot-section {
-            background: rgba(20, 20, 28, 0.6);
-            border-radius: 12px;
-            padding: 12px 16px;
-            margin-top: 10px;
-            border: 1px solid rgba(255,255,255,0.04);
-            max-width: 900px;
-            margin-left: auto;
-            margin-right: auto;
-            display: none;
-        }
-        .screenshot-section.visible { display: block; }
-        .screenshot-section .screenshot-title { font-size: 12px; color: #888; margin-bottom: 6px; font-weight: 600; }
-        .screenshot-section .screenshot-input-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        .screenshot-section .screenshot-input-group input[type="file"] {
-            flex: 1;
-            padding: 8px;
-            border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.06);
-            background: rgba(255,255,255,0.04);
-            color: #fff;
-            font-size: 13px;
-            cursor: pointer;
-            min-width: 150px;
-        }
-        .screenshot-section .screenshot-input-group input[type="file"]::-webkit-file-upload-button {
-            background: rgba(255,215,0,0.15);
-            border: none;
-            border-radius: 6px;
-            color: #ffd700;
-            padding: 4px 12px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        .screenshot-section .screenshot-input-group .screenshot-btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 40px;
-            background: rgba(255,215,0,0.15);
-            border: 1px solid rgba(255,215,0,0.3);
-            color: #ffd700;
-            font-weight: 700;
-            font-size: 13px;
-            cursor: pointer;
-            transition: .2s;
-            white-space: nowrap;
-        }
-        .screenshot-section .screenshot-input-group .screenshot-btn:hover { background: rgba(255,215,0,0.25); }
-        .screenshot-section .screenshot-preview { margin-top: 8px; max-width: 200px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06); }
-        .screenshot-section .screenshot-preview img { width: 100%; display: block; }
-        .screenshot-section .screenshot-status { font-size: 12px; color: #888; margin-top: 4px; }
-
-        .friends-page .friends-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 4px 16px 4px; }
-        .friends-page .friends-header .title { font-size: 22px; font-weight: 900; }
-        .friends-page .friends-stats { display: flex; gap: 12px; margin-bottom: 16px; }
-        .friends-page .friends-stats .stat-circle {
-            flex: 1;
-            text-align: center;
-            background: rgba(26,26,34,0.5);
-            border-radius: 16px;
-            padding: 12px 8px;
-            border: 1px solid rgba(255,255,255,0.04);
-        }
-        .friends-page .friends-stats .stat-circle .number { font-size: 28px; font-weight: 900; color: #fff; }
-        .friends-page .friends-stats .stat-circle .label { font-size: 11px; color: #888; font-weight: 600; margin-top: 2px; }
-        .friends-page .friends-search {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 14px;
-            align-items: center;
-        }
-        .friends-page .friends-search input {
-            flex: 1;
-            background: rgba(26, 26, 34, 0.8);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 10px;
-            padding: 8px 14px;
-            color: #fff;
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-family: 'Courier New', monospace;
-            transition: .2s;
-            text-align: center;
-        }
-        .friends-page .friends-search input:focus { outline: none; border-color: #ffd700; box-shadow: 0 0 20px rgba(255,215,0,0.1); }
-        .friends-page .friends-search input::placeholder { color: #555; font-size: 12px; letter-spacing: 0; font-family: 'Inter', sans-serif; }
-        .friends-page .friends-search .btn-add {
-            background: rgba(255,215,0,0.15);
-            border: 1px solid rgba(255,215,0,0.3);
-            color: #ffd700;
-            padding: 8px 18px;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 13px;
-            cursor: pointer;
-            transition: .2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            white-space: nowrap;
-        }
-        .friends-page .friends-search .btn-add:hover { background: rgba(255,215,0,0.25); box-shadow: 0 0 20px rgba(255,215,0,0.1); }
-        .friends-page .friends-tabs {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 14px;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-            padding-bottom: 10px;
-        }
-        .friends-page .friends-tabs .tab { font-size: 14px; font-weight: 600; color: #888; cursor: pointer; transition: .2s; background: none; border: none; padding: 0 4px; }
-        .friends-page .friends-tabs .tab.active { color: #ffd700; }
-        .friends-page .friends-tabs .tab .badge { background: rgba(255,215,0,0.15); color: #ffd700; font-size: 10px; padding: 0 6px; border-radius: 30px; margin-left: 4px; }
-        .friends-page .friends-empty { text-align: center; padding: 30px 0; color: #666; font-size: 14px; }
-        .friends-page .friends-empty i { font-size: 28px; color: #333; display: block; margin-bottom: 8px; }
-        .friends-page .friend-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 12px;
-            background: rgba(26,26,34,0.5);
-            border-radius: 10px;
-            margin-bottom: 4px;
-            border: 1px solid rgba(255,255,255,0.04);
-        }
-        .friends-page .friend-item .avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #ffd700, #ff8c00);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 700;
-            color: #000;
-            flex-shrink: 0;
-        }
-        .friends-page .friend-item .info { flex: 1; }
-        .friends-page .friend-item .info .name { font-weight: 600; font-size: 14px; }
-        .friends-page .friend-item .info .sub { font-size: 11px; color: #666; }
-        .friends-page .friend-item .status { font-size: 11px; font-weight: 600; padding: 1px 10px; border-radius: 40px; }
-        .friends-page .friend-item .status.online { background: rgba(81, 207, 102, 0.15); color: #51cf66; }
-        .friends-page .friend-item .status.offline { background: rgba(255,255,255,0.04); color: #666; }
-        .friends-page .friend-item .btn-action { background: rgba(255,215,0,0.12); border: none; color: #ffd700; padding: 3px 12px; border-radius: 40px; font-size: 11px; font-weight: 600; cursor: pointer; transition: .2s; }
-        .friends-page .friend-item .btn-action:hover { background: rgba(255,215,0,0.25); }
-
-        .wallet-page .wallet-balance { display: flex; justify-content: space-between; align-items: stretch; gap: 16px; margin-bottom: 20px; }
-        .wallet-page .wallet-balance .balance-item {
-            flex: 1;
-            text-align: center;
-            background: rgba(255, 215, 0, 0.03);
-            border: 1.5px solid rgba(255, 215, 0, 0.25);
-            border-radius: 16px;
-            padding: 16px 10px;
-            backdrop-filter: blur(4px);
-            transition: .3s;
-            min-width: 0;
-        }
-        .wallet-page .wallet-balance .balance-item:hover { border-color: rgba(255,215,0,0.5); background: rgba(255,215,0,0.06); }
-        .wallet-page .wallet-balance .balance-item .amount { font-size: 36px; font-weight: 900; color: #ffd700; letter-spacing: 1px; }
-        .wallet-page .wallet-balance .balance-item .currency { font-size: 14px; font-weight: 600; color: #888; display: block; margin-top: 2px; }
-        .wallet-page .wallet-balance .balance-item .rub-amount { font-size: 36px; font-weight: 900; color: #fff; }
-        .wallet-page .wallet-balance .balance-item .rub-currency { font-size: 14px; font-weight: 600; color: #888; display: block; margin-top: 2px; }
-
-        .wallet-page .wallet-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin: 16px 0 20px; }
-        .wallet-page .wallet-actions .btn-wallet {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.06);
-            color: #fff;
-            padding: 10px 24px;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: .2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .wallet-page .wallet-actions .btn-wallet:hover { background: rgba(255,215,0,0.1); border-color: rgba(255,215,0,0.2); color: #ffd700; }
-        .wallet-page .wallet-actions .btn-wallet i { font-size: 16px; }
-        .wallet-page .wallet-actions .btn-wallet.stars i { color: #ffd700; }
-        .wallet-page .wallet-actions .btn-wallet.rub i { color: #51cf66; }
-
-        .wallet-page .promo-block {
-            background: rgba(26,26,34,0.6);
-            border-radius: 14px;
-            padding: 14px 16px;
-            border: 1px solid rgba(255,255,255,0.04);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .wallet-page .promo-block .promo-label { font-size: 13px; font-weight: 600; color: #888; }
-        .wallet-page .promo-block input {
-            flex: 1;
-            background: rgba(26,26,34,0.6);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 10px;
-            padding: 8px 14px;
-            color: #fff;
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            min-width: 120px;
+            padding: 2px 6px;
+            min-width: 44px;
+            position: relative;
             transition: .2s;
         }
-        .wallet-page .promo-block input:focus { outline: none; border-color: #ffd700; box-shadow: 0 0 20px rgba(255,215,0,0.1); }
-        .wallet-page .promo-block input::placeholder { color: #555; font-size: 12px; font-weight: 400; text-transform: none; letter-spacing: 0; }
-        .wallet-page .promo-block .btn-apply {
-            background: rgba(255,215,0,0.15);
-            border: 1px solid rgba(255,215,0,0.3);
-            color: #ffd700;
-            padding: 8px 20px;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 13px;
-            cursor: pointer;
-            transition: .2s;
-            white-space: nowrap;
+        .bottom-nav .item i { font-size: 22px; margin-bottom: 1px; transition: .2s; }
+        .bottom-nav .item span { font-size: 10px; line-height: 1.2; }
+        .bottom-nav .item.active { color: #ffd700; }
+        .bottom-nav .item.active i { text-shadow: 0 0 12px rgba(255,215,0,0.3); }
+        .bottom-nav .item.active::after {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 20%;
+            right: 20%;
+            height: 2px;
+            background: #ffd700;
+            border-radius: 2px;
         }
-        .wallet-page .promo-block .btn-apply:hover { background: rgba(255,215,0,0.25); box-shadow: 0 0 20px rgba(255,215,0,0.1); }
-
-        .wallet-page .history-title { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 12px; letter-spacing: 0.3px; }
-        .wallet-page .history-empty { text-align: center; padding: 24px 0; color: #666; font-size: 14px; }
-        .wallet-page .history-empty i { font-size: 24px; color: #333; display: block; margin-bottom: 6px; }
-
-        .top-page .top-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; flex-wrap: wrap; gap: 8px; }
-        .top-page .page-title { font-size: 26px; font-weight: 900; }
-        .top-page .user-rank { font-size: 14px; font-weight: 600; color: #666; }
-        .top-page .user-rank span { color: #ffd700; }
-
-        .top-list { display: flex; flex-direction: column; gap: 4px; }
-        .top-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 12px;
-            background: rgba(26,26,34,0.4);
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.03);
-            transition: .2s;
+        .bottom-nav .item:hover { color: #ff8c00; }
+        .bottom-nav .item.admin-item {
+            color: #ff4444;
+            display: none !important;
         }
-        .top-item:hover { border-color: rgba(255,215,0,0.15); }
-        .top-item .rank { font-size: 14px; font-weight: 700; color: #555; min-width: 28px; text-align: center; }
-        .top-item .rank.gold { color: #ffd700; }
-        .top-item .rank.silver { color: #c0c0c0; }
-        .top-item .rank.bronze { color: #cd7f32; }
-        .top-item .avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #ffd700, #ff8c00);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 700;
-            color: #000;
-            flex-shrink: 0;
+        .bottom-nav .item.admin-item.visible {
+            display: flex !important;
         }
-        .top-item .info { flex: 1; min-width: 0; }
-        .top-item .info .name { font-size: 14px; font-weight: 700; }
-        .top-item .info .stats { font-size: 11px; color: #888; font-weight: 400; }
-        .top-item .elo { font-size: 16px; font-weight: 900; color: #ffd700; text-align: right; min-width: 50px; }
-        .top-item .elo-label { font-size: 9px; color: #666; font-weight: 600; text-transform: uppercase; display: block; margin-top: -2px; }
+        .bottom-nav .item.admin-item i { color: #ff4444; }
 
-        /* ===== ПРОФИЛЬ С АДМИН-МЕНЮ ===== */
         .profile-card {
             background: rgba(20,20,28,0.8);
             backdrop-filter: blur(8px);
@@ -1017,9 +461,8 @@
         }
         .profile-info .username { font-size: 20px; font-weight: 900; color: #fff; }
         .profile-info .details { font-size: 12px; color: #aaa; margin-top: 3px; display: flex; flex-wrap: wrap; gap: 12px; }
-        
-        /* ===== АДМИН-БЕЙДЖ В ПРОФИЛЕ ===== */
         .profile-info .admin-badge {
+            display: none;
             background: rgba(255, 215, 0, 0.15);
             color: #ffd700;
             border: 1px solid rgba(255, 215, 0, 0.3);
@@ -1027,45 +470,14 @@
             border-radius: 40px;
             font-size: 10px;
             font-weight: 700;
-            display: none;
             align-items: center;
             gap: 4px;
         }
         .profile-info .admin-badge.visible { display: inline-flex; }
 
-        /* ===== АДМИН-КНОПКА В ПРОФИЛЕ ===== */
-        .profile-admin-link {
-            margin-top: 12px;
-            padding: 10px 16px;
-            background: rgba(255, 0, 0, 0.1);
-            border: 1px solid rgba(255, 0, 0, 0.3);
-            border-radius: 10px;
-            display: none;
-            cursor: pointer;
-            transition: .3s;
-            text-align: center;
-        }
-        .profile-admin-link.visible { display: block; }
-        .profile-admin-link:hover {
-            background: rgba(255, 0, 0, 0.2);
-            border-color: rgba(255, 0, 0, 0.5);
-            transform: scale(1.02);
-        }
-        .profile-admin-link a {
-            color: #ff4444;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .profile-admin-link a i { font-size: 18px; }
-
         .profile-stats {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 6px;
             margin: 14px 0 16px;
         }
@@ -1102,13 +514,11 @@
             border: 1px solid rgba(255, 215, 0, 0.3);
             color: #ffd700;
         }
-        .profile-actions .btn-action.edit:hover { background: rgba(255, 215, 0, 0.25); box-shadow: 0 0 20px rgba(255,215,0,0.1); }
         .profile-actions .btn-action.logout {
             background: rgba(255, 107, 107, 0.12);
             border: 1px solid rgba(255, 107, 107, 0.3);
             color: #ff6b6b;
         }
-        .profile-actions .btn-action.logout:hover { background: rgba(255, 107, 107, 0.25); box-shadow: 0 0 20px rgba(255,107,107,0.1); }
 
         .match-dynamics { margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 14px; }
         .match-dynamics .title { font-size: 15px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
@@ -1163,11 +573,15 @@
         .match-history .match-item .stats { color: #aaa; }
         .match-history .match-item .stats span { margin: 0 2px; }
         .match-history .match-item .date { color: #666; font-size: 10px; }
-        .match-history .match-item .result { font-weight: 700; padding: 1px 8px; border-radius: 40px; font-size: 11px; }
+        .match-history .match-item .result {
+            font-weight: 700;
+            padding: 1px 8px;
+            border-radius: 40px;
+            font-size: 11px;
+        }
         .result.win { background: rgba(81, 207, 102, 0.15); color: #51cf66; }
         .result.loss { background: rgba(255, 107, 107, 0.15); color: #ff6b6b; }
 
-        /* ===== АДМИН-ПАНЕЛЬ ===== */
         .admin-panel {
             background: rgba(20,20,28,0.7);
             backdrop-filter: blur(8px);
@@ -1241,91 +655,6 @@
         .admin-panel .admin-status.success { background: rgba(81,207,102,0.1); color: #51cf66; border: 1px solid rgba(81,207,102,0.2); }
         .admin-panel .admin-status.error { background: rgba(255,107,107,0.1); color: #ff6b6b; border: 1px solid rgba(255,107,107,0.2); }
 
-        /* ===== ПРОМОКОДЫ ===== */
-        .promo-section {
-            background: rgba(20,20,28,0.6);
-            border-radius: 12px;
-            padding: 12px 16px;
-            margin-top: 10px;
-            border: 1px solid rgba(255,255,255,0.04);
-        }
-        .promo-section .promo-title { font-size: 13px; font-weight: 700; color: #ffd700; margin-bottom: 8px; }
-        .promo-section .promo-input-group { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-        .promo-section .promo-input-group input {
-            flex: 1;
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.06);
-            background: rgba(255,255,255,0.04);
-            color: #fff;
-            font-size: 13px;
-            min-width: 120px;
-            font-family: inherit;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .promo-section .promo-input-group input:focus { outline: none; border-color: #ffd700; }
-        .promo-section .promo-input-group input::placeholder { text-transform: none; letter-spacing: 0; }
-        .promo-section .promo-input-group .promo-btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 40px;
-            background: rgba(255,215,0,0.15);
-            border: 1px solid rgba(255,215,0,0.3);
-            color: #ffd700;
-            font-weight: 700;
-            font-size: 12px;
-            cursor: pointer;
-            transition: .2s;
-            white-space: nowrap;
-        }
-        .promo-section .promo-input-group .promo-btn:hover { background: rgba(255,215,0,0.25); }
-        .promo-section .promo-status { font-size: 12px; color: #888; margin-top: 6px; }
-
-        .placeholder { text-align: center; padding: 40px 0; color: #888; }
-        .placeholder i { font-size: 34px; color: #ffd700; display: block; margin-bottom: 8px; }
-        .placeholder h2 { font-size: 20px; font-weight: 800; color: #fff; }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(20,20,28,0.85);
-            backdrop-filter: blur(12px);
-            border-top: 1px solid rgba(255,255,255,0.04);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 6px 0 4px;
-            z-index: 100;
-        }
-        .bottom-nav .item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #888;
-            font-size: 10px;
-            font-weight: 600;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 2px 6px;
-            min-width: 44px;
-            position: relative;
-            transition: .2s;
-        }
-        .bottom-nav .item i { font-size: 22px; margin-bottom: 1px; transition: .2s; }
-        .bottom-nav .item span { font-size: 10px; line-height: 1.2; }
-        .bottom-nav .item.active { color: #ffd700; }
-        .bottom-nav .item.active i { text-shadow: 0 0 12px rgba(255,215,0,0.3); }
-        .bottom-nav .item.active::after { content: ''; position: absolute; top: -1px; left: 20%; right: 20%; height: 2px; background: #ffd700; border-radius: 2px; }
-        .bottom-nav .item:hover { color: #ff8c00; }
-        .bottom-nav .item.admin-item { color: #ff6b6b; display: none !important; }
-        .bottom-nav .item.admin-item.visible { display: flex !important; }
-        .bottom-nav .item.admin-item.active { color: #ff6b6b; }
-        .bottom-nav .item.admin-item i { color: #ff6b6b; }
-
         .toast {
             position: fixed;
             bottom: 80px;
@@ -1351,7 +680,6 @@
 
         @media (max-width: 480px) {
             .auth-box { padding: 28px 20px 24px; }
-            .auth-box .auth-logo h1 { font-size: 24px; }
             .hero-title { font-size: 24px; }
             .hero-stats-row { flex-direction: column; gap: 8px; }
             .hero-stat { width: 100%; }
@@ -1360,43 +688,8 @@
             .prize-block .prize-grid { grid-template-columns: 1fr; }
             .profile-stats { grid-template-columns: 1fr 1fr; }
             .profile-header { flex-direction: column; text-align: center; }
-            .match-grid { grid-template-columns: 1fr; }
-            .bans-container { grid-template-columns: 1fr; }
-            .top-item .elo { min-width: 50px; font-size: 14px; }
-            .wallet-page .wallet-balance { flex-direction: column; gap: 10px; }
-            .wallet-page .wallet-balance .balance-item .amount { font-size: 24px; }
-            .wallet-page .wallet-balance .balance-item .rub-amount { font-size: 24px; }
-            .friends-page .friends-stats { flex-direction: column; gap: 6px; }
-            .friends-page .friends-stats .stat-circle .number { font-size: 20px; }
-            .friends-page .friends-header { flex-direction: column; align-items: flex-start; gap: 4px; }
-            .search-header-block .search-title { font-size: 20px; }
-            .search-header-block .search-sub { font-size: 13px; }
-            .search-main-block .btn-queue { font-size: 13px; padding: 8px 16px; }
-            .search-counter .num { font-size: 18px; }
-            .search-progress .progress-text { font-size: 24px; }
-            .party-block .party-add input { width: 80px; }
-            .party-block .party-code-display .code-box { font-size: 14px; padding: 4px 10px; }
-            .match-page .match-title { font-size: 18px; }
-            .team-block .team-name { font-size: 13px; }
-            .player-card .info .name { font-size: 12px; }
-            .match-info-bar { flex-direction: column; align-items: stretch; text-align: center; gap: 6px; }
-            .match-info-bar .info-item { justify-content: center; font-size: 12px; }
-            .ban-section { padding: 12px 14px; }
-            .ban-btn { font-size: 11px; padding: 5px 12px; min-width: 50px; }
-            .top-page .page-title { font-size: 20px; }
-            .top-item { flex-wrap: wrap; gap: 4px; padding: 6px 10px; }
-            .top-item .info .name { font-size: 13px; }
-            .top-item .info .stats { font-size: 10px; }
-            .profile-actions { flex-direction: column; align-items: stretch; }
-            .profile-actions .btn-action { justify-content: center; }
-            .admin-panel { padding: 16px; }
-            .admin-panel .admin-section .admin-input-group { flex-direction: column; align-items: stretch; }
             .bottom-nav .item { min-width: 36px; font-size: 8px; }
             .bottom-nav .item i { font-size: 18px; }
-            .match-result-section .result-btn { min-width: 100px; font-size: 14px; padding: 10px 16px; }
-            .match-result-section .result-buttons { flex-direction: column; align-items: stretch; }
-            .screenshot-section .screenshot-input-group { flex-direction: column; align-items: stretch; }
-            .match-actions .btn-end { font-size: 12px; padding: 6px 16px; }
         }
         @media (max-width: 768px) {
             .hero-title { font-size: 30px; }
@@ -1407,35 +700,7 @@
             .profile-header { flex-direction: column; text-align: center; }
             .profile-info .details { justify-content: center; }
             .profile-stats { grid-template-columns: 1fr 1fr; }
-            .match-grid { grid-template-columns: 1fr; }
-            .bans-container { grid-template-columns: 1fr; }
-            .search-header-block { padding: 16px 18px; }
-            .search-header-block .search-title { font-size: 24px; }
-            .search-main-block { padding: 18px 14px; }
-            .search-main-block .btn-queue { font-size: 15px; padding: 10px 24px; }
-            .search-counter { min-width: 80px; padding: 4px 12px; }
-            .search-counter .num { font-size: 20px; }
-            .search-progress .progress-text { font-size: 30px; }
-            .party-block .party-code-display .code-box { font-size: 16px; padding: 4px 12px; }
-            .friends-page .friends-header .title { font-size: 18px; }
-            .friends-page .friends-stats .stat-circle .number { font-size: 22px; }
-            .top-page .page-title { font-size: 22px; }
-            .top-item .elo { font-size: 14px; }
-            .top-item .info .name { font-size: 13px; }
-            .wallet-page .wallet-balance .balance-item .amount { font-size: 28px; }
-            .wallet-page .wallet-balance .balance-item .rub-amount { font-size: 28px; }
-            .wallet-page .promo-block { flex-direction: column; align-items: stretch; }
-            .profile-actions { flex-direction: column; align-items: stretch; }
-            .profile-actions .btn-action { justify-content: center; }
-            .match-page .match-title { font-size: 22px; }
-            .team-block .team-name { font-size: 15px; }
-            .match-info-bar { flex-direction: column; align-items: stretch; text-align: center; gap: 6px; }
-            .match-info-bar .info-item { justify-content: center; }
-            .admin-panel .admin-section .admin-input-group { flex-direction: column; align-items: stretch; }
             .bottom-nav .item { min-width: 40px; }
-            .match-result-section .result-buttons { flex-direction: column; align-items: stretch; }
-            .match-result-section .result-btn { min-width: 100%; }
-            .match-actions .btn-end { font-size: 13px; padding: 8px 20px; }
         }
     </style>
 </head>
@@ -1468,7 +733,7 @@
         <!-- Вход -->
         <div class="auth-form active" id="loginForm">
             <div class="form-group">
-                <label>Никнейм Brawl Stars</label>
+                <label>Никнейм</label>
                 <div class="input-wrap">
                     <i class="fas fa-user"></i>
                     <input type="text" id="loginUsername" placeholder="Введите никнейм" />
@@ -1493,7 +758,7 @@
         <!-- Регистрация -->
         <div class="auth-form" id="registerForm">
             <div class="form-group">
-                <label>Никнейм Brawl Stars <span style="color:#ff6b6b;">*</span></label>
+                <label>Никнейм <span style="color:#ff6b6b;">*</span></label>
                 <div class="input-wrap">
                     <i class="fas fa-user"></i>
                     <input type="text" id="regUsername" placeholder="Придумайте никнейм" />
@@ -1571,176 +836,11 @@
 
     <!-- ===== ПОИСК МАТЧА ===== -->
     <div class="page" id="pageMatches">
-        <div class="search-page-wrapper">
-            <div class="search-header-block">
-                <div class="search-title">Поиск матча Brawl Stars</div>
-                <p class="search-sub">Играй соло или вместе с друзьями. Создай пати, поделись кодом и заходите в матч одной группой.</p>
-            </div>
-
-            <div class="search-main-block" id="searchMainBlock">
-                <div class="label"><i class="fas fa-crosshairs"></i> Статус поиска</div>
-                <div class="btn-row">
-                    <button class="btn-queue" id="queueBtn" onclick="startSearch()">
-                        <i class="fas fa-search"></i> Поиск матча
-                    </button>
-                    <button class="btn-queue cancel" id="cancelBtn" onclick="cancelSearch()" style="display:none;">
-                        <i class="fas fa-times"></i> Отменить поиск
-                    </button>
-                </div>
-                <div class="search-type">Одиночный поиск матча.</div>
-                <div class="search-counters" id="searchCounters">
-                    <div class="search-counter"><div class="num" id="matchCount">0</div><div class="lbl">Игроков в матче</div></div>
-                    <div class="search-counter"><div class="num" id="queueCount">0</div><div class="lbl">Игроков в очереди</div></div>
-                </div>
-                <div class="search-progress" id="searchProgress">
-                    <div class="progress-text" id="progressText">0/6</div>
-                    <div class="progress-timer">⏱️ <span id="searchTimer">00:00</span></div>
-                </div>
-            </div>
-
-            <!-- ПАТИ -->
-            <div class="party-block">
-                <div class="party-title"><i class="fas fa-users"></i> Играть в пати</div>
-                <div class="party-sub">Играйте с друзьями в <strong>BRAWL STARS</strong> — создайте пати и приглашайте товарищей по коду</div>
-                <div class="party-code-display">
-                    <span class="code-label">Ваш код:</span>
-                    <span class="code-box" id="playerCode">—</span>
-                    <button class="btn-copy" onclick="copyCode()"><i class="fas fa-copy"></i> Копировать</button>
-                </div>
-                <div class="party-add">
-                    <input type="text" id="partyCodeInput" placeholder="Введите код" maxlength="6" />
-                    <button class="btn-add" onclick="addFriendByCode()"><i class="fas fa-user-plus"></i> Добавить</button>
-                </div>
-                <div class="party-friends-list" id="friendsList"><span class="empty">Нет друзей в пати</span></div>
-                <div class="party-feature"><i class="fas fa-info-circle"></i> Играйте вместе с друзьями в <strong>BRAWL STARS</strong> — введите код друга, чтобы добавить его в пати</div>
-            </div>
+        <div class="placeholder" style="text-align:center;padding:40px 0;color:#888;">
+            <i class="fas fa-search" style="font-size:34px;color:#ffd700;display:block;margin-bottom:8px;"></i>
+            <h2 style="font-size:20px;font-weight:800;color:#fff;">Поиск матча</h2>
+            <p style="margin-top:4px;">Функция в разработке</p>
         </div>
-    </div>
-
-    <!-- ===== МАТЧ ===== -->
-    <div class="page match-page" id="matchPage">
-        <div class="match-info-bar" id="matchInfoBar">
-            <div class="info-item"><i class="fas fa-hashtag"></i> Номер игры: <span class="value highlight" id="matchGameNumber">#1</span></div>
-            <div class="info-item"><i class="fas fa-gamepad"></i> Режим: <span class="value" id="matchSelectedMode">—</span></div>
-        </div>
-
-        <div class="match-grid" id="matchGrid">
-            <div class="team-block blue" id="teamBlockBlue">
-                <div class="team-name">BLUE TEAM</div>
-                <div class="team-players" id="teamBluePlayers"></div>
-            </div>
-            <div class="team-block orange" id="teamBlockOrange">
-                <div class="team-name">ORANGE TEAM</div>
-                <div class="team-players" id="teamOrangePlayers"></div>
-            </div>
-        </div>
-
-        <div class="bans-container" id="bansContainer">
-            <div class="ban-section modes-section" id="modesBanSection">
-                <div class="ban-header">
-                    <div class="ban-title">
-                        <i class="fas fa-map-marked-alt"></i> Бан режимов
-                        <span class="turn">Ход: <span id="modesTurnName">Капитан 1</span></span>
-                    </div>
-                </div>
-                <div class="ban-buttons" id="modesBanContainer">
-                    <button class="ban-btn mode-btn" data-value="Gem Grab">💎 Gem Grab</button>
-                    <button class="ban-btn mode-btn" data-value="Brawl Ball">⚽ Brawl Ball</button>
-                    <button class="ban-btn mode-btn" data-value="Knockout">🥊 Knockout</button>
-                    <button class="ban-btn mode-btn" data-value="Heist">💰 Heist</button>
-                    <button class="ban-btn mode-btn" data-value="Bounty">🎯 Bounty</button>
-                    <button class="ban-btn mode-btn" data-value="Hot Zone">🔥 Hot Zone</button>
-                    <button class="ban-btn mode-btn" data-value="Siege">🏰 Siege</button>
-                </div>
-                <div class="ban-status">
-                    <span class="left">Осталось: <span id="modesLeft">7</span></span>
-                    <span class="status-text" id="modesStatus">Выберите режимы</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Скриншот -->
-        <div class="screenshot-section" id="screenshotSection">
-            <div class="screenshot-title"><i class="fas fa-camera"></i> Прикрепить скриншот результата</div>
-            <div class="screenshot-input-group">
-                <input type="file" id="screenshotInput" accept="image/*" />
-                <button class="screenshot-btn" id="screenshotUploadBtn"><i class="fas fa-upload"></i> Загрузить</button>
-            </div>
-            <div class="screenshot-preview" id="screenshotPreview"></div>
-            <div class="screenshot-status" id="screenshotStatus"></div>
-        </div>
-
-        <!-- Кнопки засчитывания (только админы) -->
-        <div class="match-result-section" id="matchResultSection">
-            <div class="result-title"><i class="fas fa-trophy"></i> Засчитать матч</div>
-            <div class="result-buttons">
-                <button class="result-btn blue-win" id="blueWinBtn">
-                    <i class="fas fa-flag"></i> Победа BLUE
-                </button>
-                <button class="result-btn orange-win" id="orangeWinBtn">
-                    <i class="fas fa-flag"></i> Победа ORANGE
-                </button>
-            </div>
-        </div>
-
-        <!-- Кнопка закончить матч (только админы) -->
-        <div class="match-actions" id="matchActions">
-            <button class="btn-end" id="endMatchBtn" onclick="endMatch()" disabled>
-                <i class="fas fa-times"></i> Закончить матч
-            </button>
-        </div>
-    </div>
-
-    <!-- ===== ДРУЗЬЯ ===== -->
-    <div class="page friends-page" id="pageFriends">
-        <div class="friends-header"><span class="title">Друзья</span></div>
-        <div class="friends-stats">
-            <div class="stat-circle"><div class="number" id="friendsStatFriends">0</div><div class="label">Друзья</div></div>
-            <div class="stat-circle"><div class="number" id="friendsStatIncoming">0</div><div class="label">Входящие</div></div>
-            <div class="stat-circle"><div class="number" id="friendsStatOutgoing">0</div><div class="label">Исходящие</div></div>
-        </div>
-        <div class="friends-search">
-            <input type="text" id="friendCodeInput" placeholder="Введите код друга" maxlength="6" />
-            <button class="btn-add" onclick="addFriendByCode2()"><i class="fas fa-user-plus"></i> Добавить</button>
-        </div>
-        <div class="friends-tabs">
-            <button class="tab active" data-tab="friends" onclick="switchFriendsTab('friends')">Друзья <span class="badge" id="friendsBadge">0</span></button>
-            <button class="tab" data-tab="incoming" onclick="switchFriendsTab('incoming')">Входящие <span class="badge" id="incomingBadge">0</span></button>
-            <button class="tab" data-tab="outgoing" onclick="switchFriendsTab('outgoing')">Исходящие <span class="badge" id="outgoingBadge">0</span></button>
-        </div>
-        <div id="friendsListContainer">
-            <div class="friends-empty"><i class="fas fa-user-friends"></i> Друзей пока нет.</div>
-        </div>
-    </div>
-
-    <!-- ===== ТОП ИГРОКОВ ===== -->
-    <div class="page top-page" id="pageTop">
-        <div class="top-header">
-            <div class="page-title">Топ игроков</div>
-            <div class="user-rank">Твоё место: <span id="userRank">#0</span></div>
-        </div>
-        <div class="top-list" id="topList">
-            <div class="friends-empty"><i class="fas fa-trophy"></i> Нет данных</div>
-        </div>
-    </div>
-
-    <!-- ===== КОШЕЛЁК ===== -->
-    <div class="page wallet-page" id="pageWallet">
-        <div class="wallet-balance">
-            <div class="balance-item"><div class="amount">0 ⭐</div><div class="currency">Telegram Stars</div></div>
-            <div class="balance-item"><div class="rub-amount">0 ₽</div><div class="rub-currency">Рубли</div></div>
-        </div>
-        <div class="wallet-actions">
-            <button class="btn-wallet stars" onclick="showToast('info', 'Пополнение', 'Пополнение Stars')"><i class="fas fa-star"></i> Пополнить Stars</button>
-            <button class="btn-wallet rub" onclick="showToast('info', 'Пополнение', 'Пополнение рублями')"><i class="fas fa-credit-card"></i> Пополнить рублями</button>
-        </div>
-        <div class="promo-block">
-            <span class="promo-label">Промокод</span>
-            <input type="text" placeholder="ПРОМОКОД" id="promoInput" />
-            <button class="btn-apply" onclick="applyPromo()">Применить</button>
-        </div>
-        <div class="history-title">ИСТОРИЯ ОПЕРАЦИЙ</div>
-        <div class="history-empty"><i class="fas fa-history"></i> Операций пока нет.</div>
     </div>
 
     <!-- ===== ПРОФИЛЬ С АДМИН-МЕНЮ ===== -->
@@ -1753,27 +853,26 @@
                     <div class="details">
                         <span><i class="fas fa-calendar-alt"></i> Дата регистрации: <span id="pReg">—</span></span>
                         <span class="admin-badge" id="adminBadge"><i class="fas fa-user-shield"></i> Администратор</span>
-                        <span><i class="fas fa-trophy"></i> Место в топе: <span id="pRank">#0</span></span>
                     </div>
                 </div>
-            </div>
-            
-            <!-- АДМИН-ССЫЛКА В ПРОФИЛЕ (ТОЛЬКО ДЛЯ АДМИНОВ) -->
-            <div class="profile-admin-link" id="profileAdminLink">
-                <a href="#" onclick="navigate('admin'); return false;">
-                    <i class="fas fa-user-shield"></i> Перейти в админ-панель
-                </a>
             </div>
 
             <div class="profile-stats">
                 <div class="stat-item"><div class="value" id="pWr">0%</div><div class="label">Винрейт</div></div>
                 <div class="stat-item"><div class="value" id="pMatches">0</div><div class="label">Матчей</div></div>
                 <div class="stat-item"><div class="value" id="pMvp">0</div><div class="label">MVP</div></div>
-                <div class="stat-item"><div class="value" id="pElo">1200</div><div class="label">ELO</div></div>
             </div>
+
             <div class="profile-actions">
                 <button class="btn-action edit" onclick="showToast('info', 'Редактирование', 'Функция редактирования профиля')"><i class="fas fa-edit"></i> Редактировать</button>
                 <button class="btn-action logout" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Выйти с аккаунта</button>
+            </div>
+
+            <!-- АДМИН-ССЫЛКА В ПРОФИЛЕ -->
+            <div id="adminProfileLink" style="margin-top:12px;display:none;">
+                <a href="#" onclick="navigate('admin'); return false;" style="display:block;padding:10px 16px;background:rgba(255,0,0,0.1);border:1px solid rgba(255,0,0,0.3);border-radius:10px;color:#ff4444;text-decoration:none;font-weight:700;font-size:14px;text-align:center;transition:.3s;">
+                    <i class="fas fa-user-shield"></i> 🔐 Перейти в админ-панель
+                </a>
             </div>
 
             <div class="match-dynamics">
@@ -1794,7 +893,7 @@
 
     <!-- ===== АДМИН-ПАНЕЛЬ ===== -->
     <div class="page" id="pageAdmin">
-        <div class="admin-panel" id="adminPanel">
+        <div class="admin-panel visible" id="adminPanel">
             <div class="admin-title"><i class="fas fa-user-shield"></i> Админ-панель</div>
 
             <div class="admin-section">
@@ -1812,42 +911,22 @@
                     <div class="admin-empty">Загрузка...</div>
                 </div>
             </div>
-
-            <!-- ===== ПРОМОКОДЫ ===== -->
-            <div class="admin-section">
-                <div class="section-title">Создать промокод</div>
-                <div class="promo-section">
-                    <div class="promo-input-group">
-                        <input type="text" id="promoCodeInput" placeholder="Введите промокод" maxlength="20" />
-                        <input type="number" id="promoAmountInput" placeholder="Сумма в ₽" min="1" style="max-width:120px;" />
-                        <button class="promo-btn" id="createPromoBtn"><i class="fas fa-plus"></i> Создать</button>
-                    </div>
-                    <div class="promo-status" id="promoStatus"></div>
-                </div>
-            </div>
-
-            <div class="admin-section">
-                <div class="section-title">Список промокодов</div>
-                <div class="admin-list" id="promoList">
-                    <div class="admin-empty">Нет промокодов</div>
-                </div>
-            </div>
         </div>
     </div>
 
-    <!-- ===== МАГАЗИН ===== -->
-    <div class="page" id="pageShop">
-        <div class="placeholder"><i class="fas fa-store"></i><h2>Магазин</h2><p>Здесь будут товары и привилегии.</p></div>
-    </div>
+    <!-- ===== ДРУГИЕ СТРАНИЦЫ ===== -->
+    <div class="page" id="pageShop"><div class="placeholder" style="text-align:center;padding:40px 0;color:#888;"><i class="fas fa-store" style="font-size:34px;color:#ffd700;display:block;margin-bottom:8px;"></i><h2 style="font-size:20px;font-weight:800;color:#fff;">Магазин</h2></div></div>
+    <div class="page" id="pageFriends"><div class="placeholder" style="text-align:center;padding:40px 0;color:#888;"><i class="fas fa-user-friends" style="font-size:34px;color:#ffd700;display:block;margin-bottom:8px;"></i><h2 style="font-size:20px;font-weight:800;color:#fff;">Друзья</h2></div></div>
+    <div class="page" id="pageTop"><div class="placeholder" style="text-align:center;padding:40px 0;color:#888;"><i class="fas fa-trophy" style="font-size:34px;color:#ffd700;display:block;margin-bottom:8px;"></i><h2 style="font-size:20px;font-weight:800;color:#fff;">Топ игроков</h2></div></div>
+    <div class="page" id="pageWallet"><div class="placeholder" style="text-align:center;padding:40px 0;color:#888;"><i class="fas fa-wallet" style="font-size:34px;color:#ffd700;display:block;margin-bottom:8px;"></i><h2 style="font-size:20px;font-weight:800;color:#fff;">Кошелёк</h2></div></div>
+    <div class="page" id="matchPage"><div class="placeholder" style="text-align:center;padding:40px 0;color:#888;"><i class="fas fa-swords" style="font-size:34px;color:#ffd700;display:block;margin-bottom:8px;"></i><h2 style="font-size:20px;font-weight:800;color:#fff;">Матч</h2></div></div>
 
-    <!-- ===== НИЖНЯЯ НАВИГАЦИЯ ===== -->
+    <!-- ===== НИЖНЯЯ НАВИГАЦИЯ С АДМИН-КНОПКОЙ ===== -->
     <nav class="bottom-nav">
         <button class="item" data-page="profile" onclick="navigate('profile')"><i class="fas fa-user"></i><span>Профиль</span></button>
         <button class="item" data-page="shop" onclick="navigate('shop')"><i class="fas fa-store"></i><span>Шоп</span></button>
         <button class="item" data-page="friends" onclick="navigate('friends')"><i class="fas fa-user-friends"></i><span>Друзья</span></button>
-        <button class="item active" id="matchNavBtn" data-page="matches" onclick="navigate('matches')">
-            <i class="fas fa-search"></i><span id="matchNavLabel">Поиск</span>
-        </button>
+        <button class="item active" data-page="matches" onclick="navigate('matches')"><i class="fas fa-search"></i><span>Поиск</span></button>
         <button class="item" data-page="top" onclick="navigate('top')"><i class="fas fa-trophy"></i><span>Топ</span></button>
         <button class="item" data-page="wallet" onclick="navigate('wallet')"><i class="fas fa-wallet"></i><span>Кошелёк</span></button>
         <button class="item admin-item" id="adminNavBtn" data-page="admin" onclick="navigate('admin')">
@@ -1871,25 +950,6 @@
     //  ПЕРЕМЕННЫЕ
     // ============================================================
     let currentUser = null;
-    let queue = [];
-    let currentMatch = null;
-    let botCounter = 0;
-    let partyFriends = [];
-    let friendsTab = 'friends';
-    let isSearching = false;
-    let searchTimerInterval = null;
-    let searchSeconds = 0;
-    let currentScreenshot = null;
-    let isPlayerInMatch = false;
-
-    let draftState = {
-        gameNumber: 1,
-        modeOptions: ['Gem Grab', 'Brawl Ball', 'Knockout', 'Heist', 'Bounty', 'Hot Zone', 'Siege'],
-        modeBanned: [],
-        modeFinal: null,
-        currentCaptain: 0,
-        isComplete: false
-    };
 
     // ============================================================
     //  СОХРАНЕНИЕ СЕССИИ
@@ -1919,83 +979,8 @@
     }
 
     // ============================================================
-    //  СОХРАНЕНИЕ МАТЧА
-    // ============================================================
-    function saveMatch() {
-        if (currentMatch) {
-            localStorage.setItem('brawl_active_match', JSON.stringify(currentMatch));
-        } else {
-            localStorage.removeItem('brawl_active_match');
-        }
-        if (draftState) {
-            localStorage.setItem('brawl_draft_state', JSON.stringify(draftState));
-        }
-    }
-
-    function loadMatch() {
-        try {
-            const matchData = localStorage.getItem('brawl_active_match');
-            if (matchData) {
-                currentMatch = JSON.parse(matchData);
-                if (currentUser) {
-                    const isInMatch = currentMatch.orange.some(p => p.id === currentUser.id) || 
-                                      currentMatch.blue.some(p => p.id === currentUser.id);
-                    if (isInMatch) {
-                        isPlayerInMatch = true;
-                        document.getElementById('matchNavLabel').textContent = 'Матч';
-                        document.querySelector('#matchNavBtn i').className = 'fas fa-gamepad';
-                    }
-                }
-            }
-            const draftData = localStorage.getItem('brawl_draft_state');
-            if (draftData) {
-                draftState = JSON.parse(draftData);
-            }
-        } catch (e) {
-            console.error('Ошибка загрузки матча:', e);
-        }
-    }
-
-    // ============================================================
-    //  ПОЛУЧЕНИЕ НОМЕРА ИГРЫ
-    // ============================================================
-    async function getNextGameNumber() {
-        try {
-            const { data, error } = await supabaseClient
-                .from('game_counter')
-                .select('game_number')
-                .eq('id', 1)
-                .single();
-
-            if (error) throw error;
-
-            const current = data?.game_number || 1;
-            const next = current + 1;
-
-            await supabaseClient
-                .from('game_counter')
-                .update({ game_number: next })
-                .eq('id', 1);
-
-            return current;
-        } catch (e) {
-            console.error('Ошибка получения номера игры:', e);
-            return Math.floor(Math.random() * 100) + 1;
-        }
-    }
-
-    // ============================================================
     //  ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
     // ============================================================
-    function generateCode() {
-        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        let code = '';
-        for (let i = 0; i < 6; i++) {
-            code += letters[Math.floor(Math.random() * letters.length)];
-        }
-        return code;
-    }
-
     function showToast(type, title, text) {
         const toast = document.getElementById('toast');
         const ttl = document.getElementById('toastTitle');
@@ -2070,8 +1055,6 @@
                 return;
             }
 
-            const partyCode = generateCode();
-
             const newUser = {
                 id: Date.now().toString(),
                 username: username,
@@ -2083,8 +1066,7 @@
                 mvp: 0,
                 registered: new Date().toISOString(),
                 lastLogin: new Date().toISOString(),
-                isAdmin: false,
-                partyCode: partyCode
+                isAdmin: false
             };
 
             const { data, error } = await supabaseClient
@@ -2183,59 +1165,75 @@
             const regDate = currentUser.registered ? new Date(currentUser.registered).toLocaleDateString('ru-RU') : '—';
             document.getElementById('pReg').textContent = regDate;
 
-            // АДМИН-БЕЙДЖ В ПРОФИЛЕ
+            // Обновляем статистику
+            const matches = currentUser.matches || 0;
+            const wins = currentUser.wins || 0;
+            const winrate = matches > 0 ? Math.round((wins / matches) * 100) : 0;
+            document.getElementById('pWr').textContent = winrate + '%';
+            document.getElementById('pMatches').textContent = matches;
+            document.getElementById('pMvp').textContent = currentUser.mvp || 0;
+
+            // ============================================================
+            //  АДМИН-МЕНЮ - ПРИНУДИТЕЛЬНОЕ ОТОБРАЖЕНИЕ
+            // ============================================================
+            
+            // Проверяем, является ли пользователь администратором
+            const isAdmin = currentUser.isAdmin === true || currentUser.username === 'Destro';
+            
+            console.log('🔍 ПРОВЕРКА АДМИНА:');
+            console.log('  Имя:', currentUser.username);
+            console.log('  isAdmin из БД:', currentUser.isAdmin);
+            console.log('  isAdmin (принудительно):', isAdmin);
+            
+            // ===== АДМИН-БЕЙДЖ В ПРОФИЛЕ =====
             const adminBadge = document.getElementById('adminBadge');
-            // АДМИН-ССЫЛКА В ПРОФИЛЕ
-            const profileAdminLink = document.getElementById('profileAdminLink');
-            // АДМИН-КНОПКА В НИЖНЕЙ НАВИГАЦИИ
-            const adminNavBtn = document.getElementById('adminNavBtn');
-            // АДМИН-ПАНЕЛЬ
-            const adminPanel = document.getElementById('adminPanel');
-            
-            console.log('🔍 Проверка isAdmin для', currentUser.username, ':', currentUser.isAdmin);
-            
-            // ПРИНУДИТЕЛЬНО ПОКАЗЫВАЕМ АДМИН-ЭЛЕМЕНТЫ
-            if (currentUser.isAdmin === true) {
-                // Бейдж в профиле
+            if (isAdmin) {
                 adminBadge.classList.add('visible');
-                // Ссылка в профиле
-                profileAdminLink.classList.add('visible');
-                // Кнопка в навигации
-                adminNavBtn.classList.add('visible');
-                adminNavBtn.style.display = 'flex !important';
-                // Панель
-                adminPanel.classList.add('visible');
-                
-                console.log('✅ АДМИН-МЕНЮ ПОКАЗАНО для:', currentUser.username);
-                showToast('success', '👑 Администратор', 'Вы вошли как администратор');
+                console.log('✅ АДМИН-БЕЙДЖ ПОКАЗАН');
             } else {
                 adminBadge.classList.remove('visible');
-                profileAdminLink.classList.remove('visible');
+                console.log('❌ АДМИН-БЕЙДЖ СКРЫТ');
+            }
+            
+            // ===== АДМИН-ССЫЛКА В ПРОФИЛЕ =====
+            const adminProfileLink = document.getElementById('adminProfileLink');
+            if (isAdmin) {
+                adminProfileLink.style.display = 'block';
+                console.log('✅ АДМИН-ССЫЛКА В ПРОФИЛЕ ПОКАЗАНА');
+            } else {
+                adminProfileLink.style.display = 'none';
+                console.log('❌ АДМИН-ССЫЛКА В ПРОФИЛЕ СКРЫТА');
+            }
+            
+            // ===== АДМИН-КНОПКА В НАВИГАЦИИ =====
+            const adminNavBtn = document.getElementById('adminNavBtn');
+            if (isAdmin) {
+                adminNavBtn.classList.add('visible');
+                adminNavBtn.style.display = 'flex !important';
+                console.log('✅ АДМИН-КНОПКА В НАВИГАЦИИ ПОКАЗАНА');
+            } else {
                 adminNavBtn.classList.remove('visible');
                 adminNavBtn.style.display = 'none !important';
-                adminPanel.classList.remove('visible');
-                console.log('❌ Админ-меню СКРЫТО для:', currentUser.username);
+                console.log('❌ АДМИН-КНОПКА В НАВИГАЦИИ СКРЫТА');
             }
-
-            // Загружаем сохранённый матч
-            loadMatch();
-
-            // Обновляем статистику
-            await updateProfile();
-            await updateHomeStats();
-            await updateQueueUI();
-            await updatePartyUI();
-            await renderAdminList();
-            await renderPromoList();
-            await renderTopPage();
             
-            // Если есть активный матч, обновляем интерфейс
-            if (isPlayerInMatch && currentMatch) {
-                renderMatchPage();
-                document.getElementById('matchNavLabel').textContent = 'Матч';
-                document.querySelector('#matchNavBtn i').className = 'fas fa-gamepad';
-                showToast('info', 'Активный матч', 'Вы уже в матче!');
+            // ===== АДМИН-ПАНЕЛЬ =====
+            const adminPanel = document.getElementById('adminPanel');
+            if (isAdmin) {
+                adminPanel.classList.add('visible');
+                console.log('✅ АДМИН-ПАНЕЛЬ ПОКАЗАНА');
+            } else {
+                adminPanel.classList.remove('visible');
+                console.log('❌ АДМИН-ПАНЕЛЬ СКРЫТА');
             }
+            
+            // Если админ - показываем тост
+            if (isAdmin) {
+                showToast('success', '👑 Администратор', 'Добро пожаловать в админ-панель!');
+            }
+            
+            // Загружаем список админов
+            await renderAdminList();
             
             navigate('home');
             showToast('success', 'Добро пожаловать!', currentUser.username);
@@ -2251,11 +1249,7 @@
     function handleLogout() {
         if (!confirm('Выйти из аккаунта?')) return;
         clearSession();
-        localStorage.removeItem('brawl_active_match');
-        localStorage.removeItem('brawl_draft_state');
         currentUser = null;
-        currentMatch = null;
-        isPlayerInMatch = false;
         checkAuth();
         showToast('info', 'Выход', 'Вы вышли');
     }
@@ -2276,803 +1270,11 @@
     };
 
     function navigate(page) {
-        if (page === 'matches' && isPlayerInMatch && currentMatch) {
-            page = 'matchPage';
-        }
-        
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(pages[page]).classList.add('active');
         document.querySelectorAll('.bottom-nav .item').forEach(b => b.classList.remove('active'));
         document.querySelector(`.bottom-nav .item[data-page="${page}"]`)?.classList.add('active');
         window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    // ============================================================
-    //  ПОЛУЧЕНИЕ РАНГА
-    // ============================================================
-    async function getUserRank() {
-        try {
-            const { data: users, error } = await supabaseClient
-                .from('users')
-                .select('id')
-                .order('elo', { ascending: false });
-
-            if (error || !users) return 0;
-            return users.findIndex(u => u.id === currentUser.id) + 1;
-        } catch (e) { return 0; }
-    }
-
-    // ============================================================
-    //  ПРОФИЛЬ
-    // ============================================================
-    async function updateProfile() {
-        if (!currentUser) return;
-        
-        const matches = currentUser.matches || 0;
-        const wins = currentUser.wins || 0;
-        const winrate = matches > 0 ? Math.round((wins / matches) * 100) : 0;
-        
-        document.getElementById('pWr').textContent = winrate + '%';
-        document.getElementById('pMatches').textContent = matches;
-        document.getElementById('pMvp').textContent = currentUser.mvp || 0;
-        document.getElementById('pElo').textContent = currentUser.elo || 1200;
-
-        const rank = await getUserRank();
-        document.getElementById('pRank').textContent = rank > 0 ? '#' + rank : '—';
-
-        await loadMatchHistory();
-        await renderChart();
-    }
-
-    // ============================================================
-    //  ИСТОРИЯ МАТЧЕЙ
-    // ============================================================
-    async function loadMatchHistory() {
-        if (!currentUser) return;
-        
-        try {
-            const { data, error } = await supabaseClient
-                .from('match_history')
-                .select('*')
-                .eq('user_id', currentUser.id)
-                .order('match_date', { ascending: false })
-                .limit(20);
-
-            if (error) throw error;
-
-            const container = document.getElementById('matchHistoryList');
-            if (!data || data.length === 0) {
-                container.innerHTML = '<div style="color:#666; text-align:center; padding:8px 0;">Нет сыгранных матчей</div>';
-                return;
-            }
-
-            container.innerHTML = data.map(m => `
-                <div class="match-item">
-                    <span class="map"><i class="fas fa-gamepad"></i> ${m.map || 'Неизвестная карта'}</span>
-                    <span class="stats"><span>📊 ${m.kd ? m.kd.toFixed(2) : '0.00'}</span></span>
-                    <span class="date">${new Date(m.match_date).toLocaleDateString('ru-RU')}</span>
-                    <span class="result ${m.result === 'win' ? 'win' : 'loss'}">${m.result === 'win' ? 'Победа' : 'Поражение'}</span>
-                </div>
-            `).join('');
-        } catch (e) {
-            console.error('Ошибка загрузки истории:', e);
-        }
-    }
-
-    // ============================================================
-    //  ГРАФИК
-    // ============================================================
-    async function renderChart() {
-        try {
-            const { data, error } = await supabaseClient
-                .from('match_history')
-                .select('*')
-                .eq('user_id', currentUser.id)
-                .order('match_date', { ascending: false })
-                .limit(15);
-
-            if (error || !data || data.length === 0) {
-                document.getElementById('chartContainer').innerHTML = '<div style="color:#666; text-align:center; width:100%; padding:10px 0;">Нет данных</div>';
-                return;
-            }
-
-            const container = document.getElementById('chartContainer');
-            const lastMatches = data.slice(0, 15).reverse();
-            const maxKd = Math.max(1, ...lastMatches.map(m => m.kd || 0));
-
-            container.innerHTML = lastMatches.map((m, index) => {
-                const isWin = m.result === 'win';
-                const height = Math.max(6, Math.min(80, ((m.kd || 0) / maxKd) * 80));
-                const barClass = isWin ? 'win' : 'loss';
-                return `
-                    <div class="chart-bar-wrap">
-                        <div class="chart-bar ${barClass}" style="height: ${height}px; ${isWin ? '' : 'align-self: flex-start; border-radius: 0 0 3px 3px;'}"></div>
-                        <span class="bar-label">${index + 1}</span>
-                    </div>
-                `;
-            }).join('');
-        } catch (e) {
-            console.error('renderChart error:', e);
-        }
-    }
-
-    // ============================================================
-    //  СТАТИСТИКА ГЛАВНОЙ
-    // ============================================================
-    async function updateHomeStats() {
-        try {
-            const { data: users, error } = await supabaseClient
-                .from('users')
-                .select('*');
-
-            if (error) return;
-
-            const totalMatches = users.reduce((sum, u) => sum + (u.matches || 0), 0);
-            document.getElementById('totalMatchesHome').textContent = totalMatches;
-
-            let activeCount = 0;
-            activeCount += queue.length;
-            if (currentMatch) {
-                activeCount += currentMatch.orange.length + currentMatch.blue.length;
-            }
-            document.getElementById('activePlayersHome').textContent = activeCount;
-        } catch (e) {
-            console.error('updateHomeStats error:', e);
-        }
-    }
-
-    // ============================================================
-    //  ТОП ИГРОКОВ
-    // ============================================================
-    async function renderTopPage() {
-        try {
-            const { data: users, error } = await supabaseClient
-                .from('users')
-                .select('*')
-                .order('elo', { ascending: false })
-                .limit(10);
-
-            if (error) throw error;
-
-            const container = document.getElementById('topList');
-            
-            const userRank = users.findIndex(u => u.id === currentUser?.id) + 1;
-            document.getElementById('userRank').textContent = '#' + (userRank || 0);
-            if (currentUser) {
-                document.getElementById('pRank').textContent = userRank > 0 ? '#' + userRank : '—';
-            }
-
-            if (!users || users.length === 0) {
-                container.innerHTML = `<div class="friends-empty"><i class="fas fa-trophy"></i> Нет данных</div>`;
-                return;
-            }
-
-            container.innerHTML = users.map((u, i) => {
-                const initial = u.username.charAt(0).toUpperCase();
-                const rankNum = i + 1;
-                let rankClass = '';
-                if (rankNum === 1) rankClass = 'gold';
-                else if (rankNum === 2) rankClass = 'silver';
-                else if (rankNum === 3) rankClass = 'bronze';
-
-                const winrate = u.matches > 0 ? Math.round((u.wins / u.matches) * 100) : 0;
-
-                return `
-                    <div class="top-item">
-                        <div class="rank ${rankClass}">#${rankNum}</div>
-                        <div class="avatar">${initial}</div>
-                        <div class="info">
-                            <div class="name">${u.username} ${u.isAdmin ? '👑' : ''}</div>
-                            <div class="stats">${u.matches || 0} матчей | ${winrate}% побед</div>
-                        </div>
-                        <div class="elo">${u.elo || 1200}<span class="elo-label">ELO</span></div>
-                    </div>
-                `;
-            }).join('');
-        } catch (e) {
-            console.error('renderTopPage error:', e);
-        }
-    }
-
-    // ============================================================
-    //  ПАТИ (НЕ МЕНЯЕТСЯ - КОД СОХРАНЯЕТСЯ)
-    // ============================================================
-    function updatePartyUI() {
-        if (!currentUser) return;
-        
-        // Проверяем, есть ли уже код в localStorage
-        let savedCode = localStorage.getItem('brawl_party_code_' + currentUser.id);
-        if (!savedCode) {
-            savedCode = generateCode();
-            localStorage.setItem('brawl_party_code_' + currentUser.id, savedCode);
-        }
-        
-        // Сохраняем в базу
-        if (currentUser.partyCode !== savedCode) {
-            currentUser.partyCode = savedCode;
-            supabaseClient
-                .from('users')
-                .update({ partyCode: savedCode })
-                .eq('id', currentUser.id)
-                .then(() => {});
-        }
-        
-        document.getElementById('playerCode').textContent = savedCode || '—';
-        renderPartyFriends();
-    }
-
-    function renderPartyFriends() {
-        const container = document.getElementById('friendsList');
-        if (partyFriends.length === 0) {
-            container.innerHTML = '<span class="empty">Нет друзей в пати</span>';
-            return;
-        }
-        container.innerHTML = partyFriends.map(f => `
-            <span class="friend-tag">
-                <i class="fas fa-circle"></i> ${f.username}
-                <span class="remove" onclick="removePartyFriend('${f.id}')">&times;</span>
-            </span>
-        `).join('');
-    }
-
-    function addFriendByCode() {
-        const code = document.getElementById('partyCodeInput').value.trim().toUpperCase();
-        if (!code) return showToast('error', 'Ошибка', 'Введите код');
-        if (code.length !== 6) return showToast('error', 'Ошибка', 'Код должен состоять из 6 букв');
-        if (!currentUser) return showToast('error', 'Ошибка', 'Авторизуйтесь');
-        if (partyFriends.some(f => f.partyCode === code)) {
-            return showToast('info', 'Уже в пати', 'Этот игрок уже в вашей пати');
-        }
-        partyFriends.push({ id: 'friend_' + Date.now(), username: 'Игрок_' + code, partyCode: code });
-        renderPartyFriends();
-        document.getElementById('partyCodeInput').value = '';
-        showToast('success', 'Добавлен!', 'Игрок добавлен в пати');
-    }
-
-    function removePartyFriend(id) {
-        partyFriends = partyFriends.filter(f => f.id !== id);
-        renderPartyFriends();
-        showToast('info', 'Удалён', 'Игрок удалён из пати');
-    }
-
-    function copyCode() {
-        const code = document.getElementById('playerCode').textContent;
-        navigator.clipboard.writeText(code).then(() => {
-            showToast('success', 'Скопировано!', 'Код скопирован в буфер обмена');
-        }).catch(() => {
-            const input = document.createElement('input');
-            input.value = code;
-            document.body.appendChild(input);
-            input.select();
-            document.execCommand('copy');
-            document.body.removeChild(input);
-            showToast('success', 'Скопировано!', 'Код скопирован в буфер обмена');
-        });
-    }
-
-    // ============================================================
-    //  ДРУЗЬЯ
-    // ============================================================
-    function switchFriendsTab(tab) {
-        friendsTab = tab;
-        document.querySelectorAll('.friends-tabs .tab').forEach(t => t.classList.remove('active'));
-        document.querySelector(`.friends-tabs .tab[data-tab="${tab}"]`)?.classList.add('active');
-        renderFriendsPage();
-    }
-
-    function addFriendByCode2() {
-        const code = document.getElementById('friendCodeInput').value.trim().toUpperCase();
-        if (!code) return showToast('error', 'Ошибка', 'Введите код');
-        if (code.length !== 6) return showToast('error', 'Ошибка', 'Код должен состоять из 6 букв');
-        showToast('success', 'Запрос отправлен', 'Запрос в друзья отправлен');
-        document.getElementById('friendCodeInput').value = '';
-        renderFriendsPage();
-    }
-
-    function renderFriendsPage() {
-        const container = document.getElementById('friendsListContainer');
-        container.innerHTML = `<div class="friends-empty"><i class="fas fa-user-friends"></i> Друзей пока нет.</div>`;
-        document.getElementById('friendsStatFriends').textContent = 0;
-        document.getElementById('friendsStatIncoming').textContent = 0;
-        document.getElementById('friendsStatOutgoing').textContent = 0;
-        document.getElementById('friendsBadge').textContent = 0;
-        document.getElementById('incomingBadge').textContent = 0;
-        document.getElementById('outgoingBadge').textContent = 0;
-    }
-
-    // ============================================================
-    //  ПОИСК МАТЧА
-    // ============================================================
-    function startSearch() {
-        if (isSearching) return;
-        if (currentMatch) {
-            navigate('matchPage');
-            return showToast('info', 'Активный матч', 'Вы уже в матче!');
-        }
-        if (!currentUser) return showToast('error', 'Ошибка', 'Авторизуйтесь');
-
-        queue = [{ id: currentUser.id, username: currentUser.username }];
-        isSearching = true;
-        searchSeconds = 0;
-
-        document.getElementById('searchMainBlock').classList.add('searching');
-        document.getElementById('queueBtn').style.display = 'none';
-        document.getElementById('cancelBtn').style.display = 'inline-flex';
-        document.getElementById('progressText').textContent = '1/6';
-
-        if (searchTimerInterval) clearInterval(searchTimerInterval);
-        searchTimerInterval = setInterval(() => {
-            searchSeconds++;
-            const mins = String(Math.floor(searchSeconds / 60)).padStart(2, '0');
-            const secs = String(searchSeconds % 60).padStart(2, '0');
-            document.getElementById('searchTimer').textContent = mins + ':' + secs;
-        }, 1000);
-
-        showToast('info', 'Поиск начат', 'Ищем игроков...');
-        simulateBotSearch();
-        updateHomeStats();
-    }
-
-    function simulateBotSearch() {
-        if (!isSearching) return;
-        const maxBots = 5;
-        const currentBots = queue.length - 1;
-
-        if (currentBots < maxBots && isSearching) {
-            setTimeout(() => {
-                if (!isSearching) return;
-                const botName = 'Bot' + (botCounter + 1);
-                botCounter++;
-                queue.push({ id: 'bot_' + Date.now(), username: botName });
-                document.getElementById('progressText').textContent = queue.length + '/6';
-                showToast('info', 'Игрок найден', botName + ' присоединился (' + queue.length + '/6)');
-
-                if (queue.length >= 6) {
-                    clearInterval(searchTimerInterval);
-                    isSearching = false;
-                    document.getElementById('searchMainBlock').classList.remove('searching');
-                    document.getElementById('queueBtn').style.display = 'inline-flex';
-                    document.getElementById('cancelBtn').style.display = 'none';
-                    startMatch();
-                } else {
-                    simulateBotSearch();
-                }
-                updateHomeStats();
-            }, 1500 + Math.random() * 2000);
-        }
-    }
-
-    function cancelSearch() {
-        if (!isSearching) return;
-        isSearching = false;
-        clearInterval(searchTimerInterval);
-        queue = [];
-        document.getElementById('searchMainBlock').classList.remove('searching');
-        document.getElementById('queueBtn').style.display = 'inline-flex';
-        document.getElementById('cancelBtn').style.display = 'none';
-        document.getElementById('searchTimer').textContent = '00:00';
-        document.getElementById('progressText').textContent = '0/6';
-        updateQueueUI();
-        updateHomeStats();
-        showToast('info', 'Поиск отменён', 'Вы отменили поиск');
-    }
-
-    function updateQueueUI() {
-        const count = queue.length;
-        document.getElementById('queueCount').textContent = count;
-        const matchPlayers = currentMatch ? (currentMatch.orange.length + currentMatch.blue.length) : 0;
-        document.getElementById('matchCount').textContent = matchPlayers;
-        updateHomeStats();
-    }
-
-    // ============================================================
-    //  МАТЧ
-    // ============================================================
-    function startMatch() {
-        const shuffled = [...queue];
-        for (let i = shuffled.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-        }
-        const half = Math.floor(shuffled.length / 2);
-        const orange = shuffled.slice(0, half);
-        const blue = shuffled.slice(half);
-        currentMatch = { orange, blue };
-        isPlayerInMatch = true;
-        
-        saveMatch();
-        
-        document.getElementById('matchNavLabel').textContent = 'Матч';
-        document.querySelector('#matchNavBtn i').className = 'fas fa-gamepad';
-        
-        queue = [];
-
-        document.getElementById('searchMainBlock').classList.remove('searching');
-        document.getElementById('queueBtn').style.display = 'inline-flex';
-        document.getElementById('cancelBtn').style.display = 'none';
-
-        // Получаем следующий номер игры
-        getNextGameNumber().then(num => {
-            draftState.gameNumber = num;
-            resetDraft();
-        }).catch(() => {
-            draftState.gameNumber = (draftState.gameNumber || 0) + 1;
-            resetDraft();
-        });
-
-        document.getElementById('matchResultSection').classList.remove('admin-visible');
-        document.getElementById('screenshotSection').classList.remove('visible');
-        document.getElementById('matchActions').classList.remove('admin-visible');
-        currentScreenshot = null;
-        document.getElementById('screenshotInput').value = '';
-        document.getElementById('screenshotPreview').innerHTML = '';
-        document.getElementById('screenshotStatus').textContent = '';
-
-        navigate('matchPage');
-        renderMatchPage();
-        showToast('success', 'Матч начался!', `${orange.length + blue.length} игроков в игре`);
-        updateHomeStats();
-
-        checkMatchResultVisibility();
-    }
-
-    function checkMatchResultVisibility() {
-        const isAdmin = currentUser?.isAdmin || false;
-        const isPlayer = isPlayerInMatch;
-        
-        if (draftState.isComplete && isPlayer) {
-            document.getElementById('screenshotSection').classList.add('visible');
-        } else {
-            document.getElementById('screenshotSection').classList.remove('visible');
-        }
-        
-        if (draftState.isComplete && isAdmin) {
-            document.getElementById('matchResultSection').classList.add('admin-visible');
-            document.getElementById('matchActions').classList.add('admin-visible');
-            document.getElementById('endMatchBtn').disabled = false;
-        } else {
-            document.getElementById('matchResultSection').classList.remove('admin-visible');
-            document.getElementById('matchActions').classList.remove('admin-visible');
-            document.getElementById('endMatchBtn').disabled = true;
-        }
-    }
-
-    function renderMatchPage() {
-        if (!currentMatch) return;
-
-        const oCaptain = currentMatch.orange.length > 0 ? currentMatch.orange[0].username : null;
-        const bCaptain = currentMatch.blue.length > 0 ? currentMatch.blue[0].username : null;
-
-        const sortedOrange = [...currentMatch.orange].sort((a, b) => {
-            if (a.username === oCaptain) return -1;
-            if (b.username === oCaptain) return 1;
-            return 0;
-        });
-        const sortedBlue = [...currentMatch.blue].sort((a, b) => {
-            if (a.username === bCaptain) return -1;
-            if (b.username === bCaptain) return 1;
-            return 0;
-        });
-
-        document.getElementById('teamOrangePlayers').innerHTML = sortedOrange.map(p => {
-            const isCaptain = p.username === oCaptain;
-            return `
-                <div class="player-card">
-                    <div class="avatar">${p.username.charAt(0).toUpperCase()}</div>
-                    <div class="info"><span class="name">${p.username}</span></div>
-                    ${isCaptain ? `<span class="captain-badge"><i class="fas fa-crown"></i> Капитан</span>` : ''}
-                </div>
-            `;
-        }).join('') || '<p style="color:#888;text-align:center;padding:8px 0;font-size:13px;">Нет игроков</p>';
-
-        document.getElementById('teamBluePlayers').innerHTML = sortedBlue.map(p => {
-            const isCaptain = p.username === bCaptain;
-            return `
-                <div class="player-card">
-                    <div class="avatar">${p.username.charAt(0).toUpperCase()}</div>
-                    <div class="info"><span class="name">${p.username}</span></div>
-                    ${isCaptain ? `<span class="captain-badge"><i class="fas fa-crown"></i> Капитан</span>` : ''}
-                </div>
-            `;
-        }).join('') || '<p style="color:#888;text-align:center;padding:8px 0;font-size:13px;">Нет игроков</p>';
-
-        renderDraftUI();
-        updateHomeStats();
-        checkMatchResultVisibility();
-    }
-
-    // ============================================================
-    //  ЗАГРУЗКА СКРИНШОТА
-    // ============================================================
-    document.getElementById('screenshotUploadBtn').addEventListener('click', function() {
-        const input = document.getElementById('screenshotInput');
-        const file = input.files[0];
-        const statusEl = document.getElementById('screenshotStatus');
-
-        if (!file) {
-            statusEl.textContent = '❌ Выберите файл';
-            statusEl.style.color = '#ff6b6b';
-            return;
-        }
-
-        if (!file.type.startsWith('image/')) {
-            statusEl.textContent = '❌ Только изображения';
-            statusEl.style.color = '#ff6b6b';
-            return;
-        }
-
-        if (file.size > 5 * 1024 * 1024) {
-            statusEl.textContent = '❌ Файл больше 5MB';
-            statusEl.style.color = '#ff6b6b';
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            currentScreenshot = e.target.result;
-            const preview = document.getElementById('screenshotPreview');
-            preview.innerHTML = `<img src="${currentScreenshot}" alt="Скриншот" />`;
-            statusEl.textContent = '✅ Скриншот загружен!';
-            statusEl.style.color = '#51cf66';
-            showToast('success', 'Скриншот загружен', 'Ожидайте решения администратора');
-        };
-        reader.readAsDataURL(file);
-    });
-
-    // ============================================================
-    //  ЗАСЧИТЫВАНИЕ МАТЧА (ТОЛЬКО ДЛЯ АДМИНОВ)
-    // ============================================================
-    document.getElementById('blueWinBtn').addEventListener('click', function() {
-        if (!currentMatch || !draftState.isComplete) {
-            return showToast('error', 'Ошибка', 'Дождитесь завершения драфта');
-        }
-        if (!currentUser?.isAdmin) {
-            return showToast('error', 'Доступ запрещён', 'Только для администраторов');
-        }
-        finishMatch('blue');
-    });
-
-    document.getElementById('orangeWinBtn').addEventListener('click', function() {
-        if (!currentMatch || !draftState.isComplete) {
-            return showToast('error', 'Ошибка', 'Дождитесь завершения драфта');
-        }
-        if (!currentUser?.isAdmin) {
-            return showToast('error', 'Доступ запрещён', 'Только для администраторов');
-        }
-        finishMatch('orange');
-    });
-
-    async function finishMatch(winner) {
-        if (!currentMatch || !currentUser) return;
-
-        const map = draftState.modeFinal || 'Gem Grab';
-        const allPlayers = [...currentMatch.orange, ...currentMatch.blue];
-        const realPlayers = allPlayers.filter(p => !p.id.startsWith('bot_'));
-
-        const orangePlayers = currentMatch.orange;
-        const bluePlayers = currentMatch.blue;
-        const winners = winner === 'blue' ? bluePlayers : orangePlayers;
-        const losers = winner === 'blue' ? orangePlayers : bluePlayers;
-
-        for (const player of realPlayers) {
-            const isWin = winners.some(w => w.id === player.id);
-            const kills = Math.floor(Math.random() * 15) + 3;
-            const deaths = Math.floor(Math.random() * 12) + 2;
-            const kd = deaths > 0 ? kills / deaths : kills;
-
-            try {
-                const { data: userData } = await supabaseClient
-                    .from('users')
-                    .select('*')
-                    .eq('id', player.id)
-                    .single();
-
-                if (userData) {
-                    const newMatches = (userData.matches || 0) + 1;
-                    const newWins = (userData.wins || 0) + (isWin ? 1 : 0);
-                    const newLosses = (userData.losses || 0) + (isWin ? 0 : 1);
-                    const newElo = userData.elo + (isWin ? 15 : -10);
-                    const newMvp = (userData.mvp || 0) + (isWin ? 1 : 0);
-
-                    await supabaseClient
-                        .from('users')
-                        .update({
-                            matches: newMatches,
-                            wins: newWins,
-                            losses: newLosses,
-                            elo: newElo,
-                            mvp: newMvp,
-                            lastLogin: new Date().toISOString()
-                        })
-                        .eq('id', player.id);
-                }
-
-                await supabaseClient
-                    .from('match_history')
-                    .insert([{
-                        id: Date.now().toString() + '_' + Math.random().toString(36).substr(2, 4),
-                        user_id: player.id,
-                        username: player.username,
-                        map: map,
-                        kills: kills,
-                        deaths: deaths,
-                        kd: kd,
-                        result: isWin ? 'win' : 'loss',
-                        match_date: new Date().toISOString(),
-                        server_name: 'Brawl Stars',
-                        screenshot: currentScreenshot || null,
-                        created_at: new Date().toISOString()
-                    }]);
-
-            } catch (e) {
-                console.error('Ошибка сохранения статистики для', player.username, e);
-            }
-        }
-
-        const { data: updatedUser } = await supabaseClient
-            .from('users')
-            .select('*')
-            .eq('id', currentUser.id)
-            .single();
-
-        if (updatedUser) {
-            currentUser = updatedUser;
-            saveSession(updatedUser);
-            await updateProfile();
-        }
-
-        const winnerTeam = winner === 'blue' ? 'BLUE TEAM' : 'ORANGE TEAM';
-        showToast('success', 'Матч засчитан!', `Победила команда ${winnerTeam}`);
-
-        document.getElementById('matchResultSection').classList.remove('admin-visible');
-        document.getElementById('screenshotSection').classList.remove('visible');
-        document.getElementById('matchActions').classList.remove('admin-visible');
-        document.getElementById('endMatchBtn').disabled = true;
-
-        currentMatch = null;
-        isPlayerInMatch = false;
-        draftState.isComplete = false;
-        currentScreenshot = null;
-        document.getElementById('screenshotInput').value = '';
-        document.getElementById('screenshotPreview').innerHTML = '';
-        document.getElementById('screenshotStatus').textContent = '';
-
-        document.getElementById('matchNavLabel').textContent = 'Поиск';
-        document.querySelector('#matchNavBtn i').className = 'fas fa-search';
-        localStorage.removeItem('brawl_active_match');
-        localStorage.removeItem('brawl_draft_state');
-
-        await updateHomeStats();
-        await renderTopPage();
-        navigate('matches');
-        showToast('info', 'Матч завершён', 'Статистика сохранена!');
-    }
-
-    function endMatch() {
-        if (!currentMatch) return;
-        if (!draftState.isComplete) {
-            return showToast('info', 'Дождитесь драфта', 'Сначала завершите выбор режима');
-        }
-        if (!currentUser?.isAdmin) {
-            return showToast('error', 'Доступ запрещён', 'Только администратор может завершить матч');
-        }
-        if (!confirm('Завершить матч без засчитывания?')) return;
-        
-        currentMatch = null;
-        isPlayerInMatch = false;
-        draftState.isComplete = false;
-        document.getElementById('matchResultSection').classList.remove('admin-visible');
-        document.getElementById('screenshotSection').classList.remove('visible');
-        document.getElementById('matchActions').classList.remove('admin-visible');
-        document.getElementById('endMatchBtn').disabled = true;
-        localStorage.removeItem('brawl_active_match');
-        localStorage.removeItem('brawl_draft_state');
-        
-        document.getElementById('matchNavLabel').textContent = 'Поиск';
-        document.querySelector('#matchNavBtn i').className = 'fas fa-search';
-        
-        navigate('matches');
-        updateQueueUI();
-        updateHomeStats();
-        showToast('info', 'Матч завершён', 'Матч отменён');
-    }
-
-    // ============================================================
-    //  ДРАФТ
-    // ============================================================
-    function resetDraft() {
-        draftState = {
-            gameNumber: draftState.gameNumber || 1,
-            modeOptions: ['Gem Grab', 'Brawl Ball', 'Knockout', 'Heist', 'Bounty', 'Hot Zone', 'Siege'],
-            modeBanned: [],
-            modeFinal: null,
-            currentCaptain: 0,
-            isComplete: false
-        };
-        saveMatch();
-        renderDraftUI();
-    }
-
-    function getCaptainName(index) {
-        if (!currentMatch) return 'Капитан ' + (index + 1);
-        const captains = [];
-        if (currentMatch.orange.length > 0) captains.push(currentMatch.orange[0].username);
-        if (currentMatch.blue.length > 0) captains.push(currentMatch.blue[0].username);
-        return captains[index] || 'Капитан ' + (index + 1);
-    }
-
-    function renderDraftUI() {
-        const state = draftState;
-
-        document.getElementById('matchGameNumber').textContent = '#' + state.gameNumber;
-        document.getElementById('matchSelectedMode').textContent = state.modeFinal || '—';
-
-        const modesContainer = document.getElementById('modesBanContainer');
-        const modeBtns = modesContainer.querySelectorAll('.ban-btn');
-        modeBtns.forEach(btn => {
-            const val = btn.dataset.value;
-            if (state.modeBanned.includes(val)) {
-                btn.classList.add('banned');
-                btn.style.display = 'none';
-            } else if (state.modeFinal === val) {
-                btn.classList.add('selected');
-                btn.disabled = true;
-            } else if (state.isComplete) {
-                btn.disabled = true;
-            } else {
-                btn.classList.remove('banned', 'selected');
-                btn.style.display = '';
-                btn.disabled = false;
-            }
-        });
-
-        const availableModes = state.modeOptions.filter(v => !state.modeBanned.includes(v) && v !== state.modeFinal);
-        document.getElementById('modesLeft').textContent = availableModes.length;
-
-        const modesStatus = document.getElementById('modesStatus');
-        if (state.modeFinal) {
-            modesStatus.textContent = '✅ ' + state.modeFinal;
-            modesStatus.className = 'status-text done';
-        } else if (!state.isComplete) {
-            modesStatus.textContent = 'Ход: ' + getCaptainName(state.currentCaptain);
-            modesStatus.className = 'status-text';
-        } else {
-            modesStatus.textContent = 'Ожидание...';
-            modesStatus.className = 'status-text';
-        }
-        document.getElementById('modesTurnName').textContent = !state.isComplete ? getCaptainName(state.currentCaptain) : '—';
-
-        const bansContainer = document.getElementById('bansContainer');
-        if (state.isComplete) {
-            bansContainer.style.display = 'none';
-        } else {
-            bansContainer.style.display = 'grid';
-        }
-
-        saveMatch();
-        checkMatchResultVisibility();
-    }
-
-    function handleModesBan(value) {
-        const state = draftState;
-        if (state.isComplete) return;
-        if (state.modeBanned.includes(value)) return;
-        if (state.modeFinal) return;
-
-        state.modeBanned.push(value);
-
-        const available = state.modeOptions.filter(v => !state.modeBanned.includes(v));
-        if (available.length === 1) {
-            state.modeFinal = available[0];
-            state.isComplete = true;
-            renderDraftUI();
-            showToast('success', 'Драфт завершён!', 'Играем режим ' + state.modeFinal);
-            checkMatchResultVisibility();
-            return;
-        }
-
-        state.currentCaptain = state.currentCaptain === 0 ? 1 : 0;
-        renderDraftUI();
     }
 
     // ============================================================
@@ -3181,151 +1383,6 @@
     }
 
     // ============================================================
-    //  ПРОМОКОДЫ
-    // ============================================================
-    async function renderPromoList() {
-        if (!currentUser?.isAdmin) return;
-        
-        try {
-            const { data, error } = await supabaseClient
-                .from('promocodes')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            if (error) throw error;
-
-            const container = document.getElementById('promoList');
-            if (!data || data.length === 0) {
-                container.innerHTML = '<div class="admin-empty">Нет промокодов</div>';
-                return;
-            }
-
-            container.innerHTML = data.map(p => `
-                <span class="admin-tag" style="${p.used ? 'opacity:0.5;' : ''}">
-                    ${p.code} — ${p.amount} ₽
-                    ${p.used ? '✅ Использован' : '🟢 Активен'}
-                    ${!p.used && currentUser?.isAdmin ? 
-                        `<span class="remove" onclick="deletePromo('${p.id}')">&times;</span>` : ''
-                    }
-                </span>
-            `).join('');
-        } catch (e) {
-            console.error('renderPromoList error:', e);
-        }
-    }
-
-    async function createPromo() {
-        const code = document.getElementById('promoCodeInput').value.trim().toUpperCase();
-        const amount = parseInt(document.getElementById('promoAmountInput').value);
-        const statusEl = document.getElementById('promoStatus');
-
-        if (!code) {
-            statusEl.textContent = '❌ Введите промокод';
-            statusEl.style.color = '#ff6b6b';
-            return;
-        }
-        if (!amount || amount < 1) {
-            statusEl.textContent = '❌ Введите сумму (минимум 1 ₽)';
-            statusEl.style.color = '#ff6b6b';
-            return;
-        }
-
-        try {
-            const { data, error } = await supabaseClient
-                .from('promocodes')
-                .insert([{
-                    code: code,
-                    amount: amount,
-                    created_by: currentUser.username
-                }])
-                .select()
-                .single();
-
-            if (error) {
-                statusEl.textContent = '❌ ' + error.message;
-                statusEl.style.color = '#ff6b6b';
-                return;
-            }
-
-            statusEl.textContent = '✅ Промокод ' + code + ' создан на ' + amount + ' ₽!';
-            statusEl.style.color = '#51cf66';
-            document.getElementById('promoCodeInput').value = '';
-            document.getElementById('promoAmountInput').value = '';
-            renderPromoList();
-
-        } catch (e) {
-            statusEl.textContent = '❌ Ошибка: ' + e.message;
-            statusEl.style.color = '#ff6b6b';
-        }
-    }
-
-    async function deletePromo(id) {
-        if (!confirm('Удалить промокод?')) return;
-        
-        try {
-            const { error } = await supabaseClient
-                .from('promocodes')
-                .delete()
-                .eq('id', id);
-
-            if (error) {
-                showToast('error', 'Ошибка', error.message);
-                return;
-            }
-
-            showToast('success', 'Готово', 'Промокод удалён');
-            renderPromoList();
-
-        } catch (e) {
-            showToast('error', 'Ошибка', e.message);
-        }
-    }
-
-    // ============================================================
-    //  ПРОМОКОД В КОШЕЛЬКЕ
-    // ============================================================
-    async function applyPromo() {
-        const input = document.getElementById('promoInput');
-        const code = input.value.trim().toUpperCase();
-        if (!code) return showToast('error', 'Ошибка', 'Введите промокод');
-
-        try {
-            const { data, error } = await supabaseClient
-                .from('promocodes')
-                .select('*')
-                .eq('code', code)
-                .eq('used', false)
-                .maybeSingle();
-
-            if (error || !data) {
-                showToast('error', 'Ошибка', 'Промокод не найден или уже использован');
-                return;
-            }
-
-            const { error: updateError } = await supabaseClient
-                .from('promocodes')
-                .update({
-                    used: true,
-                    used_by: currentUser?.username || 'unknown',
-                    used_at: new Date().toISOString()
-                })
-                .eq('id', data.id);
-
-            if (updateError) {
-                showToast('error', 'Ошибка', updateError.message);
-                return;
-            }
-
-            showToast('success', 'Промокод применён!', 'Вы получили ' + data.amount + ' ₽');
-            input.value = '';
-            renderPromoList();
-
-        } catch (e) {
-            showToast('error', 'Ошибка', e.message);
-        }
-    }
-
-    // ============================================================
     //  ПОДКЛЮЧЕНИЕ ОБРАБОТЧИКОВ
     // ============================================================
     document.addEventListener('DOMContentLoaded', async function() {
@@ -3360,22 +1417,8 @@
             }
         });
 
-        document.getElementById('modesBanContainer').addEventListener('click', function(e) {
-            const btn = e.target.closest('.ban-btn');
-            if (!btn) return;
-            if (btn.classList.contains('banned') || btn.classList.contains('selected')) return;
-            const value = btn.dataset.value;
-            handleModesBan(value);
-        });
-
         // Админ-панель
         document.getElementById('adminAddBtn').addEventListener('click', addAdmin);
-        document.getElementById('createPromoBtn').addEventListener('click', createPromo);
-
-        // Промокод в кошельке
-        document.getElementById('promoInput')?.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') applyPromo();
-        });
 
         // Восстановление сессии
         const session = getSession();
@@ -3397,11 +1440,6 @@
         }
 
         await checkAuth();
-
-        setInterval(() => {
-            if (!currentMatch) updateQueueUI();
-            updateHomeStats();
-        }, 5000);
     });
 </script>
 </body>
