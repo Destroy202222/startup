@@ -187,7 +187,7 @@
     });
 
     // ============================================================
-    //  РЕГИСТРАЦИЯ
+    //  РЕГИСТРАЦИЯ (БЕЗ isBanned и standoffId)
     // ============================================================
     document.getElementById('registerBtn').addEventListener('click', async function() {
         log('🔵 РЕГИСТРАЦИЯ');
@@ -233,7 +233,7 @@
 
             log('Имя свободно', 'success');
 
-            // Создаём пользователя
+            // Создаём пользователя БЕЗ isBanned и standoffId
             const newUser = {
                 id: Date.now().toString(),
                 username: username,
@@ -244,8 +244,7 @@
                 serverMatches: 0,
                 kdHistory: [0,0,0,0,0,0,0,0,0,0],
                 registered: new Date().toISOString(),
-                lastLogin: new Date().toISOString(),
-                isBanned: false
+                lastLogin: new Date().toISOString()
             };
 
             log('Создание пользователя...');
@@ -273,7 +272,7 @@
     });
 
     // ============================================================
-    //  ВХОД
+    //  ВХОД (БЕЗ isBanned)
     // ============================================================
     document.getElementById('loginBtn').addEventListener('click', async function() {
         log('🔵 ВХОД');
@@ -307,12 +306,6 @@
             if (!data) {
                 setStatus('loginStatus', '❌ Неверное имя или пароль', 'err');
                 log('Ошибка: пользователь не найден', 'error');
-                return;
-            }
-
-            if (data.isBanned) {
-                setStatus('loginStatus', '🚫 Аккаунт забанен', 'err');
-                log('Ошибка: аккаунт забанен', 'error');
                 return;
             }
 
