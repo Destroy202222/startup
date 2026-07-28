@@ -39,10 +39,7 @@
             border: 1px solid rgba(255, 215, 0, 0.08);
             box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
         }
-        .auth-box .auth-logo {
-            text-align: center;
-            margin-bottom: 28px;
-        }
+        .auth-box .auth-logo { text-align: center; margin-bottom: 28px; }
         .auth-box .auth-logo .icon { font-size: 44px; display: block; }
         .auth-box .auth-logo h1 {
             font-size: 28px;
@@ -1454,7 +1451,7 @@
             margin-top: -2px;
         }
 
-        /* ===== ПРОФИЛЬ (КАК ВО ВТОРОМ INDEX) ===== */
+        /* ===== ПРОФИЛЬ ===== */
         .profile-card {
             background: rgba(20,20,28,0.8);
             backdrop-filter: blur(8px);
@@ -1496,10 +1493,23 @@
             flex-wrap: wrap;
             gap: 12px;
         }
+        .profile-info .admin-badge {
+            background: rgba(255, 215, 0, 0.15);
+            color: #ffd700;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            padding: 2px 12px;
+            border-radius: 40px;
+            font-size: 10px;
+            font-weight: 700;
+            display: none;
+            align-items: center;
+            gap: 4px;
+        }
+        .profile-info .admin-badge.visible { display: inline-flex; }
 
         .profile-stats {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 6px;
             margin: 14px 0 16px;
         }
@@ -1784,6 +1794,145 @@
             border: 1px solid rgba(255,107,107,0.2);
         }
 
+        /* ===== КНОПКИ ЗАСЧИТЫВАНИЯ В МАТЧЕ ===== */
+        .match-result-section {
+            background: rgba(20, 20, 28, 0.8);
+            backdrop-filter: blur(8px);
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin-top: 16px;
+            border: 1px solid rgba(255,215,0,0.15);
+            display: none;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .match-result-section.visible { display: block; }
+        .match-result-section .result-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffd700;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .match-result-section .result-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .match-result-section .result-btn {
+            padding: 12px 32px;
+            border: none;
+            border-radius: 60px;
+            font-weight: 800;
+            font-size: 16px;
+            cursor: pointer;
+            transition: .3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 140px;
+            justify-content: center;
+        }
+        .match-result-section .result-btn.blue-win {
+            background: rgba(52, 152, 219, 0.2);
+            border: 2px solid #3498db;
+            color: #3498db;
+        }
+        .match-result-section .result-btn.blue-win:hover {
+            background: rgba(52, 152, 219, 0.4);
+            transform: scale(1.02);
+        }
+        .match-result-section .result-btn.orange-win {
+            background: rgba(255, 165, 0, 0.2);
+            border: 2px solid #ffa500;
+            color: #ffa500;
+        }
+        .match-result-section .result-btn.orange-win:hover {
+            background: rgba(255, 165, 0, 0.4);
+            transform: scale(1.02);
+        }
+
+        /* ===== ЗАГРУЗКА СКРИНШОТА ===== */
+        .screenshot-section {
+            background: rgba(20, 20, 28, 0.6);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-top: 10px;
+            border: 1px solid rgba(255,255,255,0.04);
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            display: none;
+        }
+        .screenshot-section.visible { display: block; }
+        .screenshot-section .screenshot-title {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+        .screenshot-section .screenshot-input-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .screenshot-section .screenshot-input-group input[type="file"] {
+            flex: 1;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.04);
+            color: #fff;
+            font-size: 13px;
+            cursor: pointer;
+            min-width: 150px;
+        }
+        .screenshot-section .screenshot-input-group input[type="file"]::-webkit-file-upload-button {
+            background: rgba(255,215,0,0.15);
+            border: none;
+            border-radius: 6px;
+            color: #ffd700;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .screenshot-section .screenshot-input-group .screenshot-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 40px;
+            background: rgba(255,215,0,0.15);
+            border: 1px solid rgba(255,215,0,0.3);
+            color: #ffd700;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: .2s;
+            white-space: nowrap;
+        }
+        .screenshot-section .screenshot-input-group .screenshot-btn:hover {
+            background: rgba(255,215,0,0.25);
+        }
+        .screenshot-section .screenshot-preview {
+            margin-top: 8px;
+            max-width: 200px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .screenshot-section .screenshot-preview img {
+            width: 100%;
+            display: block;
+        }
+        .screenshot-section .screenshot-status {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
+
         .placeholder {
             text-align: center;
             padding: 40px 0;
@@ -1911,6 +2060,9 @@
             .admin-panel .admin-section .admin-input-group { flex-direction: column; align-items: stretch; }
             .bottom-nav .item { min-width: 36px; font-size: 8px; }
             .bottom-nav .item i { font-size: 18px; }
+            .match-result-section .result-btn { min-width: 100px; font-size: 14px; padding: 10px 16px; }
+            .match-result-section .result-buttons { flex-direction: column; align-items: stretch; }
+            .screenshot-section .screenshot-input-group { flex-direction: column; align-items: stretch; }
         }
         @media (max-width: 768px) {
             .hero-title { font-size: 30px; }
@@ -1947,6 +2099,8 @@
             .match-info-bar .info-item { justify-content: center; }
             .admin-panel .admin-section .admin-input-group { flex-direction: column; align-items: stretch; }
             .bottom-nav .item { min-width: 40px; }
+            .match-result-section .result-buttons { flex-direction: column; align-items: stretch; }
+            .match-result-section .result-btn { min-width: 100%; }
         }
     </style>
 </head>
@@ -2109,7 +2263,7 @@
                 </div>
             </div>
 
-            <!-- ПАТИ (НЕ МЕНЯЕМ) -->
+            <!-- ПАТИ -->
             <div class="party-block">
                 <div class="party-title"><i class="fas fa-users"></i> Играть в пати</div>
                 <div class="party-sub">Играйте с друзьями в <strong>BRAWL STARS</strong> — создайте пати и приглашайте товарищей по коду</div>
@@ -2167,6 +2321,30 @@
                     <span class="left">Осталось: <span id="modesLeft">7</span></span>
                     <span class="status-text" id="modesStatus">Выберите режимы</span>
                 </div>
+            </div>
+        </div>
+
+        <!-- ===== ЗАГРУЗКА СКРИНШОТА ===== -->
+        <div class="screenshot-section" id="screenshotSection">
+            <div class="screenshot-title"><i class="fas fa-camera"></i> Прикрепить скриншот результата</div>
+            <div class="screenshot-input-group">
+                <input type="file" id="screenshotInput" accept="image/*" />
+                <button class="screenshot-btn" id="screenshotUploadBtn"><i class="fas fa-upload"></i> Загрузить</button>
+            </div>
+            <div class="screenshot-preview" id="screenshotPreview"></div>
+            <div class="screenshot-status" id="screenshotStatus"></div>
+        </div>
+
+        <!-- ===== КНОПКИ ЗАСЧИТЫВАНИЯ (ТОЛЬКО ДЛЯ АДМИНОВ) ===== -->
+        <div class="match-result-section" id="matchResultSection">
+            <div class="result-title"><i class="fas fa-trophy"></i> Засчитать матч</div>
+            <div class="result-buttons">
+                <button class="result-btn blue-win" id="blueWinBtn">
+                    <i class="fas fa-flag"></i> Победа BLUE
+                </button>
+                <button class="result-btn orange-win" id="orangeWinBtn">
+                    <i class="fas fa-flag"></i> Победа ORANGE
+                </button>
             </div>
         </div>
 
@@ -2238,6 +2416,8 @@
                     <div class="username" id="pName">Игрок</div>
                     <div class="details">
                         <span><i class="fas fa-calendar-alt"></i> Дата регистрации: <span id="pReg">—</span></span>
+                        <span class="admin-badge" id="adminBadge"><i class="fas fa-user-shield"></i> Администратор</span>
+                        <span><i class="fas fa-trophy"></i> Место в топе: <span id="pRank">#0</span></span>
                     </div>
                 </div>
             </div>
@@ -2245,6 +2425,7 @@
                 <div class="stat-item"><div class="value" id="pWr">0%</div><div class="label">Винрейт</div></div>
                 <div class="stat-item"><div class="value" id="pMatches">0</div><div class="label">Матчей</div></div>
                 <div class="stat-item"><div class="value" id="pMvp">0</div><div class="label">MVP</div></div>
+                <div class="stat-item"><div class="value" id="pElo">1200</div><div class="label">ELO</div></div>
             </div>
             <div class="profile-actions">
                 <button class="btn-action edit" onclick="showToast('info', 'Редактирование', 'Функция редактирования профиля')"><i class="fas fa-edit"></i> Редактировать</button>
@@ -2272,7 +2453,6 @@
         <div class="admin-panel visible" id="adminPanel">
             <div class="admin-title"><i class="fas fa-user-shield"></i> Админ-панель</div>
 
-            <!-- Добавление админа -->
             <div class="admin-section">
                 <div class="section-title">Добавить администратора</div>
                 <div class="admin-input-group">
@@ -2282,7 +2462,6 @@
                 <div class="admin-status" id="adminAddStatus"></div>
             </div>
 
-            <!-- Список админов -->
             <div class="admin-section">
                 <div class="section-title">Список администраторов</div>
                 <div class="admin-list" id="adminList">
@@ -2292,7 +2471,7 @@
         </div>
     </div>
 
-    <!-- ===== МАГАЗИН (заглушка) ===== -->
+    <!-- ===== МАГАЗИН ===== -->
     <div class="page" id="pageShop">
         <div class="placeholder"><i class="fas fa-store"></i><h2>Магазин</h2><p>Здесь будут товары и привилегии.</p></div>
     </div>
@@ -2334,6 +2513,7 @@
     let isSearching = false;
     let searchTimerInterval = null;
     let searchSeconds = 0;
+    let currentScreenshot = null;
 
     let draftState = {
         gameNumber: 1,
@@ -2343,6 +2523,67 @@
         currentCaptain: 0,
         isComplete: false
     };
+
+    // ============================================================
+    //  СОХРАНЕНИЕ СЕССИИ
+    // ============================================================
+    function saveSession(user) {
+        try {
+            localStorage.setItem('brawl_user_id', user.id);
+            localStorage.setItem('brawl_username', user.username);
+            localStorage.setItem('brawl_isAdmin', JSON.stringify(user.isAdmin || false));
+        } catch (e) {
+            console.error('Ошибка сохранения сессии:', e);
+        }
+    }
+
+    function clearSession() {
+        localStorage.removeItem('brawl_user_id');
+        localStorage.removeItem('brawl_username');
+        localStorage.removeItem('brawl_isAdmin');
+    }
+
+    function getSession() {
+        try {
+            const id = localStorage.getItem('brawl_user_id');
+            const username = localStorage.getItem('brawl_username');
+            const isAdmin = localStorage.getItem('brawl_isAdmin') === 'true';
+            if (id && username) {
+                return { id, username, isAdmin };
+            }
+        } catch (e) {}
+        return null;
+    }
+
+    // ============================================================
+    //  АВТОМАТИЧЕСКИЙ ВХОД ПО СЕССИИ
+    // ============================================================
+    async function restoreSession() {
+        const session = getSession();
+        if (!session) return false;
+
+        try {
+            const { data, error } = await supabaseClient
+                .from('users')
+                .select('*')
+                .eq('id', session.id)
+                .eq('username', session.username)
+                .maybeSingle();
+
+            if (error || !data) {
+                clearSession();
+                return false;
+            }
+
+            console.log('✅ Сессия восстановлена:', data.username);
+            currentUser = data;
+            return true;
+        } catch (e) {
+            console.error('Ошибка восстановления сессии:', e);
+            clearSession();
+            return false;
+        }
+    }
 
     // ============================================================
     //  ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
@@ -2464,6 +2705,7 @@
 
             console.log('✅ Создан:', data);
             currentUser = data;
+            saveSession(data);
             messageEl.className = 'auth-message show success';
             messageEl.textContent = '✅ ' + username + ' создан!';
             
@@ -2517,6 +2759,7 @@
 
             console.log('✅ Найден:', data);
             currentUser = data;
+            saveSession(data);
             messageEl.className = 'auth-message show success';
             messageEl.textContent = '✅ Добро пожаловать, ' + username;
             
@@ -2532,7 +2775,7 @@
     // ============================================================
     //  ПРОВЕРКА АВТОРИЗАЦИИ
     // ============================================================
-    function checkAuth() {
+    async function checkAuth() {
         if (currentUser) {
             document.getElementById('authPage').style.display = 'none';
             document.getElementById('mainSite').style.display = 'block';
@@ -2544,6 +2787,14 @@
             const regDate = currentUser.registered ? new Date(currentUser.registered).toLocaleDateString('ru-RU') : '—';
             document.getElementById('pReg').textContent = regDate;
 
+            // Админ-бейдж
+            const adminBadge = document.getElementById('adminBadge');
+            if (currentUser.isAdmin) {
+                adminBadge.classList.add('visible');
+            } else {
+                adminBadge.classList.remove('visible');
+            }
+
             // Показываем админ-меню если isAdmin = true
             if (currentUser.isAdmin) {
                 document.getElementById('adminNavBtn').style.display = 'flex';
@@ -2552,11 +2803,12 @@
             }
 
             // Обновляем статистику
-            updateProfile();
-            updateHomeStats();
-            updateQueueUI();
-            updatePartyUI();
-            renderAdminList();
+            await updateProfile();
+            await updateHomeStats();
+            await updateQueueUI();
+            await updatePartyUI();
+            await renderAdminList();
+            await renderTopPage();
             
             navigate('home');
             showToast('success', 'Добро пожаловать!', currentUser.username);
@@ -2571,6 +2823,7 @@
     // ============================================================
     function handleLogout() {
         if (!confirm('Выйти из аккаунта?')) return;
+        clearSession();
         currentUser = null;
         checkAuth();
         showToast('info', 'Выход', 'Вы вышли');
@@ -2600,9 +2853,28 @@
     }
 
     // ============================================================
+    //  ПОЛУЧЕНИЕ РАНГА ПОЛЬЗОВАТЕЛЯ
+    // ============================================================
+    async function getUserRank() {
+        try {
+            const { data: users, error } = await supabaseClient
+                .from('users')
+                .select('id')
+                .order('elo', { ascending: false });
+
+            if (error || !users) return 0;
+
+            const rank = users.findIndex(u => u.id === currentUser.id) + 1;
+            return rank;
+        } catch (e) {
+            return 0;
+        }
+    }
+
+    // ============================================================
     //  ПРОФИЛЬ
     // ============================================================
-    function updateProfile() {
+    async function updateProfile() {
         if (!currentUser) return;
         
         const matches = currentUser.matches || 0;
@@ -2612,9 +2884,14 @@
         document.getElementById('pWr').textContent = winrate + '%';
         document.getElementById('pMatches').textContent = matches;
         document.getElementById('pMvp').textContent = currentUser.mvp || 0;
+        document.getElementById('pElo').textContent = currentUser.elo || 1200;
 
-        loadMatchHistory();
-        renderChart();
+        // Ранг пользователя
+        const rank = await getUserRank();
+        document.getElementById('pRank').textContent = rank > 0 ? '#' + rank : '—';
+
+        await loadMatchHistory();
+        await renderChart();
     }
 
     // ============================================================
@@ -2700,21 +2977,14 @@
 
             if (error) return;
 
-            // Общее количество матчей
             const totalMatches = users.reduce((sum, u) => sum + (u.matches || 0), 0);
             document.getElementById('totalMatchesHome').textContent = totalMatches;
 
-            // Активные игроки = в очереди + в матче
             let activeCount = 0;
-            
-            // Игроки в очереди (queue)
             activeCount += queue.length;
-            
-            // Игроки в текущем матче
             if (currentMatch) {
                 activeCount += currentMatch.orange.length + currentMatch.blue.length;
             }
-
             document.getElementById('activePlayersHome').textContent = activeCount;
         } catch (e) {
             console.error('updateHomeStats error:', e);
@@ -2735,8 +3005,13 @@
             if (error) throw error;
 
             const container = document.getElementById('topList');
-            const userRank = currentUser ? users.findIndex(u => u.id === currentUser.id) + 1 : 0;
+            
+            // Обновляем ранг пользователя в профиле
+            const userRank = users.findIndex(u => u.id === currentUser?.id) + 1;
             document.getElementById('userRank').textContent = '#' + (userRank || 0);
+            if (currentUser) {
+                document.getElementById('pRank').textContent = userRank > 0 ? '#' + userRank : '—';
+            }
 
             if (!users || users.length === 0) {
                 container.innerHTML = `<div class="friends-empty"><i class="fas fa-trophy"></i> Нет данных</div>`;
@@ -2758,7 +3033,7 @@
                         <div class="rank ${rankClass}">#${rankNum}</div>
                         <div class="avatar">${initial}</div>
                         <div class="info">
-                            <div class="name">${u.username}</div>
+                            <div class="name">${u.username} ${u.isAdmin ? '👑' : ''}</div>
                             <div class="stats">${u.matches || 0} матчей | ${winrate}% побед</div>
                         </div>
                         <div class="elo">${u.elo || 1200}<span class="elo-label">ELO</span></div>
@@ -2771,7 +3046,7 @@
     }
 
     // ============================================================
-    //  ПАТИ (НЕ МЕНЯЕМ)
+    //  ПАТИ
     // ============================================================
     function updatePartyUI() {
         if (!currentUser) return;
@@ -2970,10 +3245,35 @@
         draftState.gameNumber = (draftState.gameNumber || 0) + 1;
         resetDraft();
 
+        // Скрываем результаты
+        document.getElementById('matchResultSection').classList.remove('visible');
+        document.getElementById('screenshotSection').classList.remove('visible');
+        currentScreenshot = null;
+        document.getElementById('screenshotInput').value = '';
+        document.getElementById('screenshotPreview').innerHTML = '';
+        document.getElementById('screenshotStatus').textContent = '';
+
         navigate('matchPage');
         renderMatchPage();
         showToast('success', 'Матч начался!', `${orange.length + blue.length} игроков в игре`);
         updateHomeStats();
+
+        // После завершения драфта показываем кнопки админам
+        checkMatchResultVisibility();
+    }
+
+    function checkMatchResultVisibility() {
+        // Показываем секцию только если:
+        // 1. Драфт завершён
+        // 2. Пользователь - админ
+        if (draftState.isComplete && currentUser?.isAdmin) {
+            document.getElementById('matchResultSection').classList.add('visible');
+            document.getElementById('screenshotSection').classList.add('visible');
+        } else if (draftState.isComplete) {
+            // Если не админ - показываем только загрузку скриншота
+            document.getElementById('screenshotSection').classList.add('visible');
+            document.getElementById('matchResultSection').classList.remove('visible');
+        }
     }
 
     function renderMatchPage() {
@@ -3017,36 +3317,86 @@
 
         renderDraftUI();
         updateHomeStats();
+        checkMatchResultVisibility();
     }
 
-    function endMatch() {
-        if (!currentMatch) return;
-        if (!draftState.isComplete) {
-            return showToast('info', 'Дождитесь драфта', 'Сначала завершите выбор режима');
+    // ============================================================
+    //  ЗАГРУЗКА СКРИНШОТА
+    // ============================================================
+    document.getElementById('screenshotUploadBtn').addEventListener('click', function() {
+        const input = document.getElementById('screenshotInput');
+        const file = input.files[0];
+        const statusEl = document.getElementById('screenshotStatus');
+
+        if (!file) {
+            statusEl.textContent = '❌ Выберите файл';
+            statusEl.style.color = '#ff6b6b';
+            return;
         }
-        if (!confirm('Завершить матч?')) return;
-        
-        saveMatchStats();
-        
-        currentMatch = null;
-        navigate('matches');
-        updateQueueUI();
-        updateHomeStats();
-        showToast('info', 'Матч завершён', 'Статистика сохранена!');
-    }
+
+        if (!file.type.startsWith('image/')) {
+            statusEl.textContent = '❌ Только изображения';
+            statusEl.style.color = '#ff6b6b';
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            statusEl.textContent = '❌ Файл больше 5MB';
+            statusEl.style.color = '#ff6b6b';
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            currentScreenshot = e.target.result;
+            const preview = document.getElementById('screenshotPreview');
+            preview.innerHTML = `<img src="${currentScreenshot}" alt="Скриншот" />`;
+            statusEl.textContent = '✅ Скриншот загружен!';
+            statusEl.style.color = '#51cf66';
+            showToast('success', 'Скриншот загружен', 'Ожидайте решения администратора');
+        };
+        reader.readAsDataURL(file);
+    });
 
     // ============================================================
-    //  СОХРАНЕНИЕ СТАТИСТИКИ
+    //  ЗАСЧИТЫВАНИЕ МАТЧА (ТОЛЬКО ДЛЯ АДМИНОВ)
     // ============================================================
-    async function saveMatchStats() {
+    document.getElementById('blueWinBtn').addEventListener('click', function() {
+        if (!currentMatch || !draftState.isComplete) {
+            return showToast('error', 'Ошибка', 'Дождитесь завершения драфта');
+        }
+        if (!currentUser?.isAdmin) {
+            return showToast('error', 'Доступ запрещён', 'Только для администраторов');
+        }
+        finishMatch('blue');
+    });
+
+    document.getElementById('orangeWinBtn').addEventListener('click', function() {
+        if (!currentMatch || !draftState.isComplete) {
+            return showToast('error', 'Ошибка', 'Дождитесь завершения драфта');
+        }
+        if (!currentUser?.isAdmin) {
+            return showToast('error', 'Доступ запрещён', 'Только для администраторов');
+        }
+        finishMatch('orange');
+    });
+
+    async function finishMatch(winner) {
         if (!currentMatch || !currentUser) return;
 
         const map = draftState.modeFinal || 'Gem Grab';
         const allPlayers = [...currentMatch.orange, ...currentMatch.blue];
         const realPlayers = allPlayers.filter(p => !p.id.startsWith('bot_'));
 
+        // Определяем победителей
+        const orangePlayers = currentMatch.orange;
+        const bluePlayers = currentMatch.blue;
+        const winners = winner === 'blue' ? bluePlayers : orangePlayers;
+        const losers = winner === 'blue' ? orangePlayers : bluePlayers;
+
+        // Сохраняем статистику для всех игроков
         for (const player of realPlayers) {
-            const isWin = player.id === currentUser.id ? true : false;
+            const isWin = winners.some(w => w.id === player.id);
             const kills = Math.floor(Math.random() * 15) + 3;
             const deaths = Math.floor(Math.random() * 12) + 2;
             const kd = deaths > 0 ? kills / deaths : kills;
@@ -3063,6 +3413,7 @@
                     const newWins = (userData.wins || 0) + (isWin ? 1 : 0);
                     const newLosses = (userData.losses || 0) + (isWin ? 0 : 1);
                     const newElo = userData.elo + (isWin ? 15 : -10);
+                    const newMvp = (userData.mvp || 0) + (isWin ? 1 : 0);
 
                     await supabaseClient
                         .from('users')
@@ -3071,6 +3422,7 @@
                             wins: newWins,
                             losses: newLosses,
                             elo: newElo,
+                            mvp: newMvp,
                             lastLogin: new Date().toISOString()
                         })
                         .eq('id', player.id);
@@ -3089,6 +3441,7 @@
                         result: isWin ? 'win' : 'loss',
                         match_date: new Date().toISOString(),
                         server_name: 'Brawl Stars',
+                        screenshot: currentScreenshot || null,
                         created_at: new Date().toISOString()
                     }]);
 
@@ -3097,6 +3450,7 @@
             }
         }
 
+        // Обновляем текущего пользователя
         const { data: updatedUser } = await supabaseClient
             .from('users')
             .select('*')
@@ -3105,9 +3459,51 @@
 
         if (updatedUser) {
             currentUser = updatedUser;
-            updateProfile();
+            saveSession(updatedUser);
+            await updateProfile();
         }
+
+        // Завершаем матч
+        const winnerTeam = winner === 'blue' ? 'BLUE TEAM' : 'ORANGE TEAM';
+        showToast('success', 'Матч засчитан!', `Победила команда ${winnerTeam}`);
+
+        // Скрываем секции
+        document.getElementById('matchResultSection').classList.remove('visible');
+        document.getElementById('screenshotSection').classList.remove('visible');
+
+        // Очищаем матч
+        currentMatch = null;
+        draftState.isComplete = false;
+        currentScreenshot = null;
+        document.getElementById('screenshotInput').value = '';
+        document.getElementById('screenshotPreview').innerHTML = '';
+        document.getElementById('screenshotStatus').textContent = '';
+
+        // Обновляем интерфейс
+        await updateHomeStats();
+        await renderTopPage();
+        navigate('matches');
+        showToast('info', 'Матч завершён', 'Статистика сохранена!');
+    }
+
+    function endMatch() {
+        if (!currentMatch) return;
+        if (!draftState.isComplete) {
+            return showToast('info', 'Дождитесь драфта', 'Сначала завершите выбор режима');
+        }
+        if (!currentUser?.isAdmin) {
+            return showToast('error', 'Доступ запрещён', 'Только администратор может завершить матч');
+        }
+        if (!confirm('Завершить матч без засчитывания?')) return;
+        
+        currentMatch = null;
+        draftState.isComplete = false;
+        document.getElementById('matchResultSection').classList.remove('visible');
+        document.getElementById('screenshotSection').classList.remove('visible');
+        navigate('matches');
+        updateQueueUI();
         updateHomeStats();
+        showToast('info', 'Матч завершён', 'Матч отменён');
     }
 
     // ============================================================
@@ -3182,6 +3578,9 @@
         } else {
             bansContainer.style.display = 'grid';
         }
+
+        // Проверяем видимость кнопок засчитывания
+        checkMatchResultVisibility();
     }
 
     function handleModesBan(value) {
@@ -3198,6 +3597,7 @@
             state.isComplete = true;
             renderDraftUI();
             showToast('success', 'Драфт завершён!', 'Играем режим ' + state.modeFinal);
+            checkMatchResultVisibility();
             return;
         }
 
@@ -3324,7 +3724,7 @@
     // ============================================================
     //  ПОДКЛЮЧЕНИЕ ОБРАБОТЧИКОВ
     // ============================================================
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', async function() {
         console.log('✅ DOM ЗАГРУЖЕН!');
 
         // Авторизация
@@ -3368,8 +3768,14 @@
         // Админ-панель
         document.getElementById('adminAddBtn').addEventListener('click', addAdmin);
 
-        // Запуск
-        checkAuth();
+        // Запуск - сначала пробуем восстановить сессию
+        const sessionRestored = await restoreSession();
+        if (sessionRestored) {
+            await checkAuth();
+        } else {
+            checkAuth();
+        }
+
         setInterval(() => {
             if (!currentMatch) updateQueueUI();
             updateHomeStats();
