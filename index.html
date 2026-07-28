@@ -2330,8 +2330,8 @@
     <!-- ===== КОШЕЛЁК ===== -->
     <div class="page wallet-page" id="pageWallet">
         <div class="wallet-balance">
-            <div class="balance-item"><div class="amount">0 ⭐</div><div class="currency">Telegram Stars</div></div>
-            <div class="balance-item"><div class="rub-amount">0 ₽</div><div class="rub-currency">Рубли</div></div>
+            <div class="balance-item"><div class="amount" id="walletStars">0 ⭐</div><div class="currency">Telegram Stars</div></div>
+            <div class="balance-item"><div class="rub-amount" id="walletRub">0 ₽</div><div class="rub-currency">Рубли</div></div>
         </div>
         <div class="wallet-actions">
             <button class="btn-wallet stars" onclick="showToast('info', 'Пополнение', 'Пополнение Stars')"><i class="fas fa-star"></i> Пополнить Stars</button>
@@ -2363,8 +2363,8 @@
             <div class="profile-stats">
                 <div class="stat-item"><div class="value" id="pWr">0%</div><div class="label">Винрейт</div></div>
                 <div class="stat-item"><div class="value" id="pMatches">0</div><div class="label">Матчей</div></div>
-                <div class="stat-item"><div class="value" id="pMvp">0</div><div class="label">MVP</div></div>
-                <div class="stat-item"><div class="value" id="pElo">1000</div><div class="label">ELO</div></div>
+                <div class="stat-item"><div class="value" id="pMvp">0</div><div class="label">🏆 MVP</div></div>
+                <div class="stat-item"><div class="value" id="pElo">1000</div><div class="label">📊 ELO</div></div>
             </div>
 
             <div class="profile-actions">
@@ -2798,46 +2798,36 @@
             document.getElementById('pReg').textContent = regDate;
 
             // Обновляем статистику
-            const matches = currentUser.matches || 0;
-            const wins = currentUser.wins || 0;
-            const winrate = matches > 0 ? Math.round((wins / matches) * 100) : 0;
-            document.getElementById('pWr').textContent = winrate + '%';
-            document.getElementById('pMatches').textContent = matches;
-            document.getElementById('pMvp').textContent = currentUser.mvp || 0;
-            document.getElementById('pElo').textContent = currentUser.elo || 1000;
+            await updateProfile();
 
-            // ===== АДМИН-ПАНЕЛЬ В ПРОФИЛЕ - ТОЛЬКО ДЛЯ DESTRO =====
+            // Обновляем кошелёк
+            updateWalletUI();
+
+            // ===== АДМИН-ПАНЕЛЬ =====
             const isDestro = currentUser.username === 'Destro';
             
-            console.log('🔍 ПРОВЕРКА АДМИНА:');
-            console.log('  Имя:', currentUser.username);
-            console.log('  isDestro:', isDestro);
-            
-            // АДМИН-БЕЙДЖ
             const adminBadge = document.getElementById('adminBadge');
             if (isDestro) {
                 adminBadge.classList.add('visible');
-                console.log('✅ АДМИН-БЕЙДЖ ПОКАЗАН (Destro)');
             } else {
                 adminBadge.classList.remove('visible');
-                console.log('❌ АДМИН-БЕЙДЖ СКРЫТ');
             }
             
-            // АДМИН-ПАНЕЛЬ В ПРОФИЛЕ
             const adminPanel = document.getElementById('profileAdminPanel');
             if (isDestro) {
                 adminPanel.classList.add('visible');
-                console.log('✅ АДМИН-ПАНЕЛЬ В ПРОФИЛЕ ПОКАЗАНА (Destro)');
                 await renderAdminList();
                 await renderPromoList();
                 showToast('success', '👑 Администратор', 'Добро пожаловать в админ-панель!');
             } else {
                 adminPanel.classList.remove('visible');
-                console.log('❌ АДМИН-ПАНЕЛЬ В ПРОФИЛЕ СКРЫТА');
             }
             
             // Загружаем матч из Supabase
             await loadMatchFromSupabase();
+
+            // Загружаем топ
+            await renderTopPlayers();
 
             // Обновляем очереди
             updateQueueUI();
@@ -3151,10 +3141,12 @@
         const winners = winner === 'blue' ? bluePlayers : orangePlayers;
         const losers = winner === 'blue' ? orangePlayers : bluePlayers;
 
+        // Сохраняем результат для каждого реального игрока
         for (const player of realPlayers) {
             const isWin = winners.some(w => w.id === player.id);
 
             try {
+                // Получаем текущие данные игрока
                 const { data: userData } = await supabaseClient
                     .from('users')
                     .select('*')
@@ -3168,6 +3160,7 @@
                     const newElo = (userData.elo || 1000) + (isWin ? 25 : -25);
                     const newMvp = (userData.mvp || 0) + (isWin ? 1 : 0);
 
+                    // Обновляем данные игрока
                     await supabaseClient
                         .from('users')
                         .update({
@@ -3181,6 +3174,7 @@
                         .eq('id', player.id);
                 }
 
+                // Сохраняем историю матча
                 await supabaseClient
                     .from('match_history')
                     .insert([{
@@ -3200,6 +3194,7 @@
             }
         }
 
+        // Обновляем текущего пользователя
         const { data: updatedUser } = await supabaseClient
             .from('users')
             .select('*')
@@ -3210,6 +3205,7 @@
             currentUser = updatedUser;
             saveSession(updatedUser);
             await updateProfile();
+            updateWalletUI();
         }
 
         const winnerTeam = winner === 'blue' ? 'BLUE TEAM' : 'ORANGE TEAM';
@@ -3232,6 +3228,7 @@
         navigate('matches');
         updateQueueUI();
         showToast('info', 'Матч завершён', 'Статистика сохранена!');
+        await renderTopPlayers();
     }
 
     function endMatch() {
@@ -3363,6 +3360,7 @@
     async function updateProfile() {
         if (!currentUser) return;
         
+        // Обновляем данные из currentUser
         const matches = currentUser.matches || 0;
         const wins = currentUser.wins || 0;
         const winrate = matches > 0 ? Math.round((wins / matches) * 100) : 0;
@@ -3372,8 +3370,22 @@
         document.getElementById('pMvp').textContent = currentUser.mvp || 0;
         document.getElementById('pElo').textContent = currentUser.elo || 1000;
 
+        // Загружаем историю и график
         await loadMatchHistory();
         await renderChart();
+        
+        // Обновляем кошелёк
+        updateWalletUI();
+    }
+
+    // ============================================================
+    //  КОШЕЛЁК
+    // ============================================================
+    function updateWalletUI() {
+        if (!currentUser) return;
+        const balance = currentUser.balance || 0;
+        document.getElementById('walletRub').textContent = balance + ' ₽';
+        document.getElementById('walletStars').textContent = balance + ' ⭐';
     }
 
     // ============================================================
@@ -3449,6 +3461,65 @@
             }).join('');
         } catch (e) {
             console.error('renderChart error:', e);
+        }
+    }
+
+    // ============================================================
+    //  ТОП ИГРОКОВ
+    // ============================================================
+    async function renderTopPlayers() {
+        const container = document.getElementById('topList');
+        
+        try {
+            const { data, error } = await supabaseClient
+                .from('users')
+                .select('id, username, elo, matches, wins, mvp')
+                .order('elo', { ascending: false })
+                .limit(20);
+
+            if (error) throw error;
+
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="friends-empty"><i class="fas fa-trophy"></i> Нет игроков</div>';
+                return;
+            }
+
+            // Находим место текущего игрока
+            let userRank = 0;
+            if (currentUser) {
+                const allUsers = await supabaseClient
+                    .from('users')
+                    .select('id, elo')
+                    .order('elo', { ascending: false });
+                
+                if (allUsers.data) {
+                    const rank = allUsers.data.findIndex(u => u.id === currentUser.id);
+                    userRank = rank !== -1 ? rank + 1 : 0;
+                }
+            }
+            document.getElementById('userRank').textContent = userRank ? '#' + userRank : '#0';
+
+            container.innerHTML = data.map((player, index) => {
+                const isUser = player.id === currentUser?.id;
+                const rankClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : '';
+                const winrate = player.matches > 0 ? Math.round((player.wins / player.matches) * 100) : 0;
+                
+                return `
+                    <div class="top-item" style="${isUser ? 'border-color: rgba(255,215,0,0.4); background: rgba(255,215,0,0.05);' : ''}">
+                        <div class="rank ${rankClass}">${index + 1}</div>
+                        <div class="avatar">${player.username.charAt(0).toUpperCase()}</div>
+                        <div class="info">
+                            <div class="name">${player.username} ${isUser ? '👈' : ''}</div>
+                            <div class="stats">${player.matches || 0} матчей • ${winrate}% побед • ${player.mvp || 0} MVP</div>
+                        </div>
+                        <div class="elo">${player.elo || 1000}</div>
+                    </div>
+                `;
+            }).join('');
+
+        } catch (e) {
+            console.error('Ошибка загрузки топа:', e);
+            container.innerHTML = '<div class="friends-empty"><i class="fas fa-exclamation-triangle"></i> Ошибка загрузки</div>';
         }
     }
 
@@ -3685,14 +3756,26 @@
     }
 
     // ============================================================
-    //  ПРОМОКОД В КОШЕЛЬКЕ
+    //  ПРОМОКОД В КОШЕЛЬКЕ (С ЗАПРЕТОМ НА ПОВТОР)
     // ============================================================
     async function applyPromo() {
         const input = document.getElementById('promoInput');
         const code = input.value.trim().toUpperCase();
-        if (!code) return showToast('error', 'Ошибка', 'Введите промокод');
+        
+        if (!code) {
+            showToast('error', 'Ошибка', 'Введите промокод');
+            return;
+        }
+
+        // 🔒 Проверяем использованные промокоды
+        const usedPromoCodes = JSON.parse(localStorage.getItem('usedPromoCodes')) || [];
+        if (usedPromoCodes.includes(code)) {
+            showToast('error', 'Ошибка', 'Вы уже использовали этот промокод!');
+            return;
+        }
 
         try {
+            // Проверяем существование промокода
             const { data, error } = await supabaseClient
                 .from('promocodes')
                 .select('*')
@@ -3704,32 +3787,59 @@
                 return;
             }
 
+            // Проверяем лимит использований
             if (data.used_count >= data.max_uses) {
-                showToast('error', 'Ошибка', 'Промокод уже использован');
+                showToast('error', 'Ошибка', 'Промокод уже использован максимальное количество раз');
                 return;
             }
 
+            // ✅ Обновляем баланс пользователя
+            if (!currentUser) {
+                showToast('error', 'Ошибка', 'Авторизуйтесь');
+                return;
+            }
+
+            const newBalance = (currentUser.balance || 0) + data.amount;
+            
             const { error: updateError } = await supabaseClient
-                .from('promocodes')
-                .update({ used_count: data.used_count + 1 })
-                .eq('id', data.id);
+                .from('users')
+                .update({ balance: newBalance })
+                .eq('id', currentUser.id);
 
             if (updateError) {
                 showToast('error', 'Ошибка', updateError.message);
                 return;
             }
 
-            showToast('success', 'Промокод применён!', 'Вы получили ' + data.amount + ' ₽');
+            // Увеличиваем счётчик использований
+            await supabaseClient
+                .from('promocodes')
+                .update({ used_count: data.used_count + 1 })
+                .eq('id', data.id);
+
+            // 💾 Сохраняем использованный промокод
+            usedPromoCodes.push(code);
+            localStorage.setItem('usedPromoCodes', JSON.stringify(usedPromoCodes));
+
+            // Обновляем данные пользователя
+            currentUser.balance = newBalance;
+            saveSession(currentUser);
+
+            showToast('success', 'Промокод применён!', `+${data.amount} ₽ добавлено на баланс!`);
             input.value = '';
+            
+            // Обновляем UI
+            updateWalletUI();
             renderPromoList();
 
         } catch (e) {
-            showToast('error', 'Ошибка', e.message);
+            console.error('applyPromo error:', e);
+            showToast('error', 'Ошибка', e.message || 'Не удалось применить промокод');
         }
     }
 
     // ============================================================
-    //  ПАТИ (НЕ МЕНЯЕТСЯ)
+    //  ПАТИ
     // ============================================================
     function updatePartyUI() {
         if (!currentUser) return;
@@ -3869,7 +3979,7 @@
             handleModesBan(value);
         });
 
-        // Промокод в кошельке
+        // Промокод в кошельке (Enter)
         document.getElementById('promoInput')?.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') applyPromo();
         });
