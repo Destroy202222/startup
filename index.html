@@ -112,21 +112,22 @@
     }
 
     // ============================================================
-    //  SUPABASE
+    //  SUPABASE - ИСПРАВЛЕНО!
     // ============================================================
     log('Начинаем инициализацию Supabase...');
 
-    const supabaseUrl = 'https://dlprylagddsmtzpmzxqy.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRscHJ5bGFnZGRzbXR6cG16eHF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQzMDY5MjcsImV4cCI6MjA5OTg4MjkyN30.xyRO-nChHDfqFgtYkhsMOkM3F8BsZGOvacQ0zhjBuRI';
+    const SUPABASE_URL = 'https://dlprylagddsmtzpmzxqy.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRscHJ5bGFnZGRzbXR6cG16eHF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQzMDY5MjcsImV4cCI6MjA5OTg4MjkyN30.xyRO-nChHDfqFgtYkhsMOkM3F8BsZGOvacQ0zhjBuRI';
 
-    log('URL: ' + supabaseUrl);
-    log('KEY: ' + supabaseKey.substring(0, 20) + '...');
+    log('URL: ' + SUPABASE_URL);
+    log('KEY: ' + SUPABASE_KEY.substring(0, 20) + '...');
 
     try {
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        // ВАЖНО: используем ДРУГОЕ имя переменной!
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         log('✅ Supabase создан!', 'success');
         setStatus('✅ Supabase подключен', 'ok');
-        window.supabase = supabase;
+        window.supabaseClient = supabaseClient; // Сохраняем в window
     } catch (e) {
         log('❌ Ошибка создания Supabase: ' + e.message, 'error');
         setStatus('❌ Ошибка: ' + e.message, 'err');
@@ -176,20 +177,30 @@
         log('⏳ Отправка запроса в Supabase...', 'info');
 
         try {
-            const sb = window.supabase;
+            // Используем правильную переменную!
+            const sb = window.supabaseClient;
+            
             if (!sb) {
-                log('❌ Supabase не инициализирован!', 'error');
+                log('❌ SupabaseClient не инициализирован!', 'error');
                 setStatus('❌ Supabase не инициализирован', 'err');
                 return;
             }
 
+            log('✅ SupabaseClient существует', 'success');
+
             // Проверяем имя
             log('Проверка имени...');
-            const { data: existing } = await sb
+            const { data: existing, error: err1 } = await sb
                 .from('users')
                 .select('username')
                 .eq('username', username)
                 .maybeSingle();
+
+            if (err1) {
+                log('❌ Ошибка проверки имени: ' + err1.message, 'error');
+                setStatus('❌ Ошибка: ' + err1.message, 'err');
+                return;
+            }
 
             if (existing) {
                 log('❌ Имя занято: ' + username, 'error');
@@ -200,11 +211,17 @@
 
             // Проверяем ID
             log('Проверка ID...');
-            const { data: existingId } = await sb
+            const { data: existingId, error: err2 } = await sb
                 .from('users')
                 .select('standoffId')
                 .eq('standoffId', standoffId)
                 .maybeSingle();
+
+            if (err2) {
+                log('❌ Ошибка проверки ID: ' + err2.message, 'error');
+                setStatus('❌ Ошибка: ' + err2.message, 'err');
+                return;
+            }
 
             if (existingId) {
                 log('❌ ID занят: ' + standoffId, 'error');
@@ -230,8 +247,6 @@
                 isBanned: false
             };
 
-            log('Данные: ' + JSON.stringify(newUser, null, 2));
-
             const { data, error } = await sb
                 .from('users')
                 .insert([newUser])
@@ -241,14 +256,12 @@
             if (error) {
                 log('❌ Ошибка Supabase: ' + error.message, 'error');
                 log('Код ошибки: ' + error.code, 'error');
-                log('Детали: ' + JSON.stringify(error), 'error');
                 setStatus('❌ ' + error.message, 'err');
                 return;
             }
 
             log('✅ Успешно! Пользователь создан: ' + data.username, 'success');
             log('✅ ID: ' + data.id, 'success');
-            log('✅ Данные: ' + JSON.stringify(data, null, 2), 'success');
             setStatus('✅ Успешно! ' + username + ' создан!', 'ok');
 
         } catch (e) {
