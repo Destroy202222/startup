@@ -1465,7 +1465,7 @@
             margin-top: -2px;
         }
 
-        /* ===== ПРОФИЛЬ ===== */
+        /* ===== ПРОФИЛЬ (КАК ВО ВТОРОМ INDEX) ===== */
         .profile-card {
             background: rgba(20,20,28,0.8);
             backdrop-filter: blur(8px);
@@ -1510,7 +1510,7 @@
 
         .profile-stats {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 6px;
             margin: 14px 0 16px;
         }
@@ -1571,6 +1571,61 @@
             box-shadow: 0 0 20px rgba(255,107,107,0.1);
         }
 
+        .match-dynamics {
+            margin-top: 14px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            padding-top: 14px;
+        }
+        .match-dynamics .title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .chart-container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 4px;
+            height: 100px;
+            padding: 6px 4px;
+            background: rgba(26,26,34,0.4);
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.04);
+            overflow-x: auto;
+            min-height: 100px;
+        }
+        .chart-bar-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            justify-content: flex-end;
+            min-width: 14px;
+        }
+        .chart-bar {
+            width: 10px;
+            border-radius: 3px 3px 0 0;
+            transition: height 0.4s ease;
+            min-height: 2px;
+            position: relative;
+        }
+        .chart-bar.win {
+            background: linear-gradient(180deg, #51cf66, #2b8a3e);
+        }
+        .chart-bar.loss {
+            background: linear-gradient(180deg, #ff6b6b, #c0392b);
+            border-radius: 0 0 3px 3px;
+            align-self: flex-start;
+        }
+        .chart-bar-wrap .bar-label {
+            font-size: 6px;
+            color: #666;
+            margin-top: 2px;
+        }
+
         .match-history {
             margin-top: 14px;
             border-top: 1px solid rgba(255,255,255,0.04);
@@ -1601,6 +1656,14 @@
         .match-history .match-item .stats { color: #aaa; }
         .match-history .match-item .stats span { margin: 0 2px; }
         .match-history .match-item .date { color: #666; font-size: 10px; }
+        .match-history .match-item .result {
+            font-weight: 700;
+            padding: 1px 8px;
+            border-radius: 40px;
+            font-size: 11px;
+        }
+        .result.win { background: rgba(81, 207, 102, 0.15); color: #51cf66; }
+        .result.loss { background: rgba(255, 107, 107, 0.15); color: #ff6b6b; }
 
         .placeholder {
             text-align: center;
@@ -1786,7 +1849,7 @@
             </button>
         </div>
 
-        <!-- ВХОД -->
+        <!-- Вход -->
         <div class="auth-form active" id="loginForm">
             <div class="form-group">
                 <label>Никнейм Brawl Stars</label>
@@ -1811,7 +1874,7 @@
             </div>
         </div>
 
-        <!-- РЕГИСТРАЦИЯ -->
+        <!-- Регистрация -->
         <div class="auth-form" id="registerForm">
             <div class="form-group">
                 <label>Никнейм Brawl Stars <span style="color:#ff6b6b;">*</span></label>
@@ -2038,7 +2101,7 @@
         <div class="history-empty"><i class="fas fa-history"></i> Операций пока нет.</div>
     </div>
 
-    <!-- ===== ПРОФИЛЬ ===== -->
+    <!-- ===== ПРОФИЛЬ (КАК ВО ВТОРОМ INDEX) ===== -->
     <div class="page" id="pageProfile">
         <div class="profile-card">
             <div class="profile-header">
@@ -2051,18 +2114,27 @@
                 </div>
             </div>
             <div class="profile-stats">
+                <div class="stat-item"><div class="value" id="pWr">0%</div><div class="label">Винрейт</div></div>
                 <div class="stat-item"><div class="value" id="pMatches">0</div><div class="label">Матчей</div></div>
-                <div class="stat-item"><div class="value" id="pKills">0</div><div class="label">Убийств</div></div>
-                <div class="stat-item"><div class="value" id="pDeaths">0</div><div class="label">Смертей</div></div>
-                <div class="stat-item"><div class="value" id="pKD">0.00</div><div class="label">K/D</div></div>
+                <div class="stat-item"><div class="value" id="pMvp">0</div><div class="label">MVP</div></div>
             </div>
             <div class="profile-actions">
                 <button class="btn-action edit" onclick="showToast('info', 'Редактирование', 'Функция редактирования профиля')"><i class="fas fa-edit"></i> Редактировать</button>
                 <button class="btn-action logout" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Выйти с аккаунта</button>
             </div>
+
+            <div class="match-dynamics">
+                <div class="title"><i class="fas fa-chart-bar"></i> Динамика матчей</div>
+                <div class="chart-container" id="chartContainer">
+                    <div style="color:#666; text-align:center; width:100%; padding:10px 0;">Нет данных</div>
+                </div>
+            </div>
+
             <div class="match-history">
                 <div class="title"><i class="fas fa-history"></i> История матчей</div>
-                <div id="matchHistoryList"><div style="color:#666; text-align:center; padding:8px 0;">Нет сыгранных матчей</div></div>
+                <div id="matchHistoryList">
+                    <div style="color:#666; text-align:center; padding:8px 0;">Нет сыгранных матчей</div>
+                </div>
             </div>
         </div>
     </div>
@@ -2098,10 +2170,36 @@
     //  ПЕРЕМЕННЫЕ
     // ============================================================
     let currentUser = null;
+    let queue = [];
+    let currentMatch = null;
+    let botCounter = 0;
+    let partyFriends = [];
+    let friendsTab = 'friends';
+    let isSearching = false;
+    let searchTimerInterval = null;
+    let searchSeconds = 0;
+
+    let draftState = {
+        gameNumber: 1,
+        modeOptions: ['Gem Grab', 'Brawl Ball', 'Knockout', 'Heist', 'Bounty', 'Hot Zone', 'Siege'],
+        modeBanned: [],
+        modeFinal: null,
+        currentCaptain: 0,
+        isComplete: false
+    };
 
     // ============================================================
-    //  TOAST
+    //  ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
     // ============================================================
+    function generateCode() {
+        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        let code = '';
+        for (let i = 0; i < 6; i++) {
+            code += letters[Math.floor(Math.random() * letters.length)];
+        }
+        return code;
+    }
+
     function showToast(type, title, text) {
         const toast = document.getElementById('toast');
         const ttl = document.getElementById('toastTitle');
@@ -2115,7 +2213,7 @@
     }
 
     // ============================================================
-    //  ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
+    //  ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК АВТОРИЗАЦИИ
     // ============================================================
     function switchAuthTab(tab) {
         console.log('🔄 Переключение на:', tab);
@@ -2184,7 +2282,15 @@
                 id: Date.now().toString(),
                 username: username,
                 password: password,
-                registered: new Date().toISOString()
+                matches: 0,
+                wins: 0,
+                losses: 0,
+                serverMatches: 0,
+                elo: 1200,
+                mvp: 0,
+                registered: new Date().toISOString(),
+                lastLogin: new Date().toISOString(),
+                isAdmin: false
             };
 
             const { data, error } = await supabaseClient
@@ -2274,12 +2380,36 @@
         if (currentUser) {
             document.getElementById('authPage').style.display = 'none';
             document.getElementById('mainSite').style.display = 'block';
+            
+            // Обновляем профиль
+            document.getElementById('pName').textContent = currentUser.username;
+            document.getElementById('avatar').textContent = currentUser.username.charAt(0).toUpperCase();
+            
+            const regDate = currentUser.registered ? new Date(currentUser.registered).toLocaleDateString('ru-RU') : '—';
+            document.getElementById('pReg').textContent = regDate;
+
+            // Обновляем статистику
+            updateProfile();
+            updateHomeStats();
+            updateQueueUI();
+            updatePartyUI();
+            
             navigate('home');
             showToast('success', 'Добро пожаловать!', currentUser.username);
         } else {
             document.getElementById('authPage').style.display = 'flex';
             document.getElementById('mainSite').style.display = 'none';
         }
+    }
+
+    // ============================================================
+    //  ВЫХОД
+    // ============================================================
+    function handleLogout() {
+        if (!confirm('Выйти из аккаунта?')) return;
+        currentUser = null;
+        checkAuth();
+        showToast('info', 'Выход', 'Вы вышли');
     }
 
     // ============================================================
@@ -2305,17 +2435,97 @@
     }
 
     // ============================================================
-    //  ВЫХОД
+    //  ПРОФИЛЬ
     // ============================================================
-    function handleLogout() {
-        if (!confirm('Выйти из аккаунта?')) return;
-        currentUser = null;
-        checkAuth();
-        showToast('info', 'Выход', 'Вы вышли');
+    function updateProfile() {
+        if (!currentUser) return;
+        
+        const matches = currentUser.matches || 0;
+        const wins = currentUser.wins || 0;
+        const winrate = matches > 0 ? Math.round((wins / matches) * 100) : 0;
+        
+        document.getElementById('pWr').textContent = winrate + '%';
+        document.getElementById('pMatches').textContent = matches;
+        document.getElementById('pMvp').textContent = currentUser.mvp || 0;
+
+        loadMatchHistory();
+        renderChart();
     }
 
     // ============================================================
-    //  СТАТИСТИКА
+    //  ИСТОРИЯ МАТЧЕЙ
+    // ============================================================
+    async function loadMatchHistory() {
+        if (!currentUser) return;
+        
+        try {
+            const { data, error } = await supabaseClient
+                .from('match_history')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .order('match_date', { ascending: false })
+                .limit(20);
+
+            if (error) throw error;
+
+            const container = document.getElementById('matchHistoryList');
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div style="color:#666; text-align:center; padding:8px 0;">Нет сыгранных матчей</div>';
+                return;
+            }
+
+            container.innerHTML = data.map(m => `
+                <div class="match-item">
+                    <span class="map"><i class="fas fa-gamepad"></i> ${m.map || 'Неизвестная карта'}</span>
+                    <span class="stats"><span>📊 ${m.kd ? m.kd.toFixed(2) : '0.00'}</span></span>
+                    <span class="date">${new Date(m.match_date).toLocaleDateString('ru-RU')}</span>
+                    <span class="result ${m.result === 'win' ? 'win' : 'loss'}">${m.result === 'win' ? 'Победа' : 'Поражение'}</span>
+                </div>
+            `).join('');
+        } catch (e) {
+            console.error('Ошибка загрузки истории:', e);
+        }
+    }
+
+    // ============================================================
+    //  ДИНАМИКА МАТЧЕЙ (ГРАФИК)
+    // ============================================================
+    async function renderChart() {
+        try {
+            const { data, error } = await supabaseClient
+                .from('match_history')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .order('match_date', { ascending: false })
+                .limit(15);
+
+            if (error || !data || data.length === 0) {
+                document.getElementById('chartContainer').innerHTML = '<div style="color:#666; text-align:center; width:100%; padding:10px 0;">Нет данных</div>';
+                return;
+            }
+
+            const container = document.getElementById('chartContainer');
+            const lastMatches = data.slice(0, 15).reverse();
+            const maxKd = Math.max(1, ...lastMatches.map(m => m.kd || 0));
+
+            container.innerHTML = lastMatches.map((m, index) => {
+                const isWin = m.result === 'win';
+                const height = Math.max(6, Math.min(80, ((m.kd || 0) / maxKd) * 80));
+                const barClass = isWin ? 'win' : 'loss';
+                return `
+                    <div class="chart-bar-wrap">
+                        <div class="chart-bar ${barClass}" style="height: ${height}px; ${isWin ? '' : 'align-self: flex-start; border-radius: 0 0 3px 3px;'}"></div>
+                        <span class="bar-label">${index + 1}</span>
+                    </div>
+                `;
+            }).join('');
+        } catch (e) {
+            console.error('renderChart error:', e);
+        }
+    }
+
+    // ============================================================
+    //  СТАТИСТИКА ГЛАВНОЙ
     // ============================================================
     async function updateHomeStats() {
         try {
@@ -2331,6 +2541,493 @@
         } catch (e) {
             console.error('updateHomeStats error:', e);
         }
+    }
+
+    // ============================================================
+    //  ТОП ИГРОКОВ
+    // ============================================================
+    async function renderTopPage() {
+        try {
+            const { data: users, error } = await supabaseClient
+                .from('users')
+                .select('*')
+                .order('matches', { ascending: false })
+                .limit(10);
+
+            if (error) throw error;
+
+            const container = document.getElementById('topList');
+            const userRank = currentUser ? users.findIndex(u => u.id === currentUser.id) + 1 : 0;
+            document.getElementById('userRank').textContent = '#' + (userRank || 0);
+
+            if (!users || users.length === 0) {
+                container.innerHTML = `<div class="friends-empty"><i class="fas fa-trophy"></i> Нет данных</div>`;
+                return;
+            }
+
+            container.innerHTML = users.map((u, i) => {
+                const initial = u.username.charAt(0).toUpperCase();
+                const rankNum = i + 1;
+                let rankClass = '';
+                if (rankNum === 1) rankClass = 'gold';
+                else if (rankNum === 2) rankClass = 'silver';
+                else if (rankNum === 3) rankClass = 'bronze';
+
+                const winrate = u.matches > 0 ? Math.round((u.wins / u.matches) * 100) : 0;
+
+                return `
+                    <div class="top-item">
+                        <div class="rank ${rankClass}">#${rankNum}</div>
+                        <div class="avatar">${initial}</div>
+                        <div class="info">
+                            <div class="name">${u.username}</div>
+                            <div class="stats">${u.matches || 0} матчей | ${winrate}% побед</div>
+                        </div>
+                        <div class="elo">${u.elo || 1200}<span class="elo-label">ELO</span></div>
+                    </div>
+                `;
+            }).join('');
+        } catch (e) {
+            console.error('renderTopPage error:', e);
+        }
+    }
+
+    // ============================================================
+    //  ПАТИ
+    // ============================================================
+    function updatePartyUI() {
+        if (!currentUser) return;
+        if (!currentUser.partyCode) {
+            currentUser.partyCode = generateCode();
+            supabaseClient
+                .from('users')
+                .update({ partyCode: currentUser.partyCode })
+                .eq('id', currentUser.id)
+                .then(() => {});
+        }
+        document.getElementById('playerCode').textContent = currentUser.partyCode || '—';
+        renderPartyFriends();
+    }
+
+    function renderPartyFriends() {
+        const container = document.getElementById('friendsList');
+        if (partyFriends.length === 0) {
+            container.innerHTML = '<span class="empty">Нет друзей в пати</span>';
+            return;
+        }
+        container.innerHTML = partyFriends.map(f => `
+            <span class="friend-tag">
+                <i class="fas fa-circle"></i> ${f.username}
+                <span class="remove" onclick="removePartyFriend('${f.id}')">&times;</span>
+            </span>
+        `).join('');
+    }
+
+    function addFriendByCode() {
+        const code = document.getElementById('partyCodeInput').value.trim().toUpperCase();
+        if (!code) return showToast('error', 'Ошибка', 'Введите код');
+        if (code.length !== 6) return showToast('error', 'Ошибка', 'Код должен состоять из 6 букв');
+        if (!currentUser) return showToast('error', 'Ошибка', 'Авторизуйтесь');
+        if (partyFriends.some(f => f.partyCode === code)) {
+            return showToast('info', 'Уже в пати', 'Этот игрок уже в вашей пати');
+        }
+        partyFriends.push({ id: 'friend_' + Date.now(), username: 'Игрок_' + code, partyCode: code });
+        renderPartyFriends();
+        document.getElementById('partyCodeInput').value = '';
+        showToast('success', 'Добавлен!', 'Игрок добавлен в пати');
+    }
+
+    function removePartyFriend(id) {
+        partyFriends = partyFriends.filter(f => f.id !== id);
+        renderPartyFriends();
+        showToast('info', 'Удалён', 'Игрок удалён из пати');
+    }
+
+    function copyCode() {
+        const code = document.getElementById('playerCode').textContent;
+        navigator.clipboard.writeText(code).then(() => {
+            showToast('success', 'Скопировано!', 'Код скопирован в буфер обмена');
+        }).catch(() => {
+            const input = document.createElement('input');
+            input.value = code;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            document.body.removeChild(input);
+            showToast('success', 'Скопировано!', 'Код скопирован в буфер обмена');
+        });
+    }
+
+    // ============================================================
+    //  ДРУЗЬЯ
+    // ============================================================
+    function switchFriendsTab(tab) {
+        friendsTab = tab;
+        document.querySelectorAll('.friends-tabs .tab').forEach(t => t.classList.remove('active'));
+        document.querySelector(`.friends-tabs .tab[data-tab="${tab}"]`)?.classList.add('active');
+        renderFriendsPage();
+    }
+
+    function addFriendByCode2() {
+        const code = document.getElementById('friendCodeInput').value.trim().toUpperCase();
+        if (!code) return showToast('error', 'Ошибка', 'Введите код');
+        if (code.length !== 6) return showToast('error', 'Ошибка', 'Код должен состоять из 6 букв');
+        showToast('success', 'Запрос отправлен', 'Запрос в друзья отправлен');
+        document.getElementById('friendCodeInput').value = '';
+        renderFriendsPage();
+    }
+
+    function renderFriendsPage() {
+        const container = document.getElementById('friendsListContainer');
+        container.innerHTML = `<div class="friends-empty"><i class="fas fa-user-friends"></i> Друзей пока нет.</div>`;
+        document.getElementById('friendsStatFriends').textContent = 0;
+        document.getElementById('friendsStatIncoming').textContent = 0;
+        document.getElementById('friendsStatOutgoing').textContent = 0;
+        document.getElementById('friendsBadge').textContent = 0;
+        document.getElementById('incomingBadge').textContent = 0;
+        document.getElementById('outgoingBadge').textContent = 0;
+    }
+
+    // ============================================================
+    //  ПОИСК МАТЧА
+    // ============================================================
+    function startSearch() {
+        if (isSearching) return;
+        if (currentMatch) return showToast('info', 'Идёт матч', 'Дождитесь окончания');
+        if (!currentUser) return showToast('error', 'Ошибка', 'Авторизуйтесь');
+
+        queue = [{ id: currentUser.id, username: currentUser.username }];
+        isSearching = true;
+        searchSeconds = 0;
+
+        document.getElementById('searchMainBlock').classList.add('searching');
+        document.getElementById('queueBtn').style.display = 'none';
+        document.getElementById('cancelBtn').style.display = 'inline-flex';
+        document.getElementById('progressText').textContent = '1/6';
+
+        if (searchTimerInterval) clearInterval(searchTimerInterval);
+        searchTimerInterval = setInterval(() => {
+            searchSeconds++;
+            const mins = String(Math.floor(searchSeconds / 60)).padStart(2, '0');
+            const secs = String(searchSeconds % 60).padStart(2, '0');
+            document.getElementById('searchTimer').textContent = mins + ':' + secs;
+        }, 1000);
+
+        showToast('info', 'Поиск начат', 'Ищем игроков...');
+        simulateBotSearch();
+    }
+
+    function simulateBotSearch() {
+        if (!isSearching) return;
+        const maxBots = 5;
+        const currentBots = queue.length - 1;
+
+        if (currentBots < maxBots && isSearching) {
+            setTimeout(() => {
+                if (!isSearching) return;
+                const botName = 'Bot' + (botCounter + 1);
+                botCounter++;
+                queue.push({ id: 'bot_' + Date.now(), username: botName });
+                document.getElementById('progressText').textContent = queue.length + '/6';
+                showToast('info', 'Игрок найден', botName + ' присоединился (' + queue.length + '/6)');
+
+                if (queue.length >= 6) {
+                    clearInterval(searchTimerInterval);
+                    isSearching = false;
+                    document.getElementById('searchMainBlock').classList.remove('searching');
+                    document.getElementById('queueBtn').style.display = 'inline-flex';
+                    document.getElementById('cancelBtn').style.display = 'none';
+                    startMatch();
+                } else {
+                    simulateBotSearch();
+                }
+            }, 1500 + Math.random() * 2000);
+        }
+    }
+
+    function cancelSearch() {
+        if (!isSearching) return;
+        isSearching = false;
+        clearInterval(searchTimerInterval);
+        queue = [];
+        document.getElementById('searchMainBlock').classList.remove('searching');
+        document.getElementById('queueBtn').style.display = 'inline-flex';
+        document.getElementById('cancelBtn').style.display = 'none';
+        document.getElementById('searchTimer').textContent = '00:00';
+        document.getElementById('progressText').textContent = '0/6';
+        updateQueueUI();
+        showToast('info', 'Поиск отменён', 'Вы отменили поиск');
+    }
+
+    function updateQueueUI() {
+        const count = queue.length;
+        document.getElementById('queueCount').textContent = count;
+        const matchPlayers = currentMatch ? (currentMatch.orange.length + currentMatch.blue.length) : 0;
+        document.getElementById('matchCount').textContent = matchPlayers;
+    }
+
+    // ============================================================
+    //  МАТЧ
+    // ============================================================
+    function startMatch() {
+        const shuffled = [...queue];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        const half = Math.floor(shuffled.length / 2);
+        const orange = shuffled.slice(0, half);
+        const blue = shuffled.slice(half);
+        currentMatch = { orange, blue };
+        queue = [];
+
+        document.getElementById('searchMainBlock').classList.remove('searching');
+        document.getElementById('queueBtn').style.display = 'inline-flex';
+        document.getElementById('cancelBtn').style.display = 'none';
+
+        draftState.gameNumber = (draftState.gameNumber || 0) + 1;
+        resetDraft();
+
+        navigate('matchPage');
+        renderMatchPage();
+        showToast('success', 'Матч начался!', `${orange.length + blue.length} игроков в игре`);
+    }
+
+    function renderMatchPage() {
+        if (!currentMatch) return;
+
+        const oCaptain = currentMatch.orange.length > 0 ? currentMatch.orange[0].username : null;
+        const bCaptain = currentMatch.blue.length > 0 ? currentMatch.blue[0].username : null;
+
+        const sortedOrange = [...currentMatch.orange].sort((a, b) => {
+            if (a.username === oCaptain) return -1;
+            if (b.username === oCaptain) return 1;
+            return 0;
+        });
+        const sortedBlue = [...currentMatch.blue].sort((a, b) => {
+            if (a.username === bCaptain) return -1;
+            if (b.username === bCaptain) return 1;
+            return 0;
+        });
+
+        document.getElementById('teamOrangePlayers').innerHTML = sortedOrange.map(p => {
+            const isCaptain = p.username === oCaptain;
+            return `
+                <div class="player-card">
+                    <div class="avatar">${p.username.charAt(0).toUpperCase()}</div>
+                    <div class="info"><span class="name">${p.username}</span></div>
+                    ${isCaptain ? `<span class="captain-badge"><i class="fas fa-crown"></i> Капитан</span>` : ''}
+                </div>
+            `;
+        }).join('') || '<p style="color:#888;text-align:center;padding:8px 0;font-size:13px;">Нет игроков</p>';
+
+        document.getElementById('teamBluePlayers').innerHTML = sortedBlue.map(p => {
+            const isCaptain = p.username === bCaptain;
+            return `
+                <div class="player-card">
+                    <div class="avatar">${p.username.charAt(0).toUpperCase()}</div>
+                    <div class="info"><span class="name">${p.username}</span></div>
+                    ${isCaptain ? `<span class="captain-badge"><i class="fas fa-crown"></i> Капитан</span>` : ''}
+                </div>
+            `;
+        }).join('') || '<p style="color:#888;text-align:center;padding:8px 0;font-size:13px;">Нет игроков</p>';
+
+        renderDraftUI();
+    }
+
+    function endMatch() {
+        if (!currentMatch) return;
+        if (!draftState.isComplete) {
+            return showToast('info', 'Дождитесь драфта', 'Сначала завершите выбор режима');
+        }
+        if (!confirm('Завершить матч?')) return;
+        
+        saveMatchStats();
+        
+        currentMatch = null;
+        navigate('matches');
+        updateQueueUI();
+        showToast('info', 'Матч завершён', 'Статистика сохранена!');
+    }
+
+    // ============================================================
+    //  СОХРАНЕНИЕ СТАТИСТИКИ
+    // ============================================================
+    async function saveMatchStats() {
+        if (!currentMatch || !currentUser) return;
+
+        const map = draftState.modeFinal || 'Gem Grab';
+        const allPlayers = [...currentMatch.orange, ...currentMatch.blue];
+        const realPlayers = allPlayers.filter(p => !p.id.startsWith('bot_'));
+
+        for (const player of realPlayers) {
+            const isWin = player.id === currentUser.id ? true : false;
+            const kills = Math.floor(Math.random() * 15) + 3;
+            const deaths = Math.floor(Math.random() * 12) + 2;
+            const kd = deaths > 0 ? kills / deaths : kills;
+
+            try {
+                const { data: userData } = await supabaseClient
+                    .from('users')
+                    .select('*')
+                    .eq('id', player.id)
+                    .single();
+
+                if (userData) {
+                    const newMatches = (userData.matches || 0) + 1;
+                    const newWins = (userData.wins || 0) + (isWin ? 1 : 0);
+                    const newLosses = (userData.losses || 0) + (isWin ? 0 : 1);
+                    const newElo = userData.elo + (isWin ? 15 : -10);
+
+                    await supabaseClient
+                        .from('users')
+                        .update({
+                            matches: newMatches,
+                            wins: newWins,
+                            losses: newLosses,
+                            elo: newElo,
+                            lastLogin: new Date().toISOString()
+                        })
+                        .eq('id', player.id);
+                }
+
+                await supabaseClient
+                    .from('match_history')
+                    .insert([{
+                        id: Date.now().toString() + '_' + Math.random().toString(36).substr(2, 4),
+                        user_id: player.id,
+                        username: player.username,
+                        map: map,
+                        kills: kills,
+                        deaths: deaths,
+                        kd: kd,
+                        result: isWin ? 'win' : 'loss',
+                        match_date: new Date().toISOString(),
+                        server_name: 'Brawl Stars',
+                        created_at: new Date().toISOString()
+                    }]);
+
+            } catch (e) {
+                console.error('Ошибка сохранения статистики для', player.username, e);
+            }
+        }
+
+        const { data: updatedUser } = await supabaseClient
+            .from('users')
+            .select('*')
+            .eq('id', currentUser.id)
+            .single();
+
+        if (updatedUser) {
+            currentUser = updatedUser;
+            updateProfile();
+        }
+    }
+
+    // ============================================================
+    //  ДРАФТ
+    // ============================================================
+    function resetDraft() {
+        draftState = {
+            gameNumber: draftState.gameNumber + 1,
+            modeOptions: ['Gem Grab', 'Brawl Ball', 'Knockout', 'Heist', 'Bounty', 'Hot Zone', 'Siege'],
+            modeBanned: [],
+            modeFinal: null,
+            currentCaptain: 0,
+            isComplete: false
+        };
+        renderDraftUI();
+    }
+
+    function getCaptainName(index) {
+        if (!currentMatch) return 'Капитан ' + (index + 1);
+        const captains = [];
+        if (currentMatch.orange.length > 0) captains.push(currentMatch.orange[0].username);
+        if (currentMatch.blue.length > 0) captains.push(currentMatch.blue[0].username);
+        return captains[index] || 'Капитан ' + (index + 1);
+    }
+
+    function renderDraftUI() {
+        const state = draftState;
+
+        document.getElementById('matchGameNumber').textContent = '#' + state.gameNumber;
+        document.getElementById('matchSelectedMode').textContent = state.modeFinal || '—';
+
+        const modesContainer = document.getElementById('modesBanContainer');
+        const modeBtns = modesContainer.querySelectorAll('.ban-btn');
+        modeBtns.forEach(btn => {
+            const val = btn.dataset.value;
+            if (state.modeBanned.includes(val)) {
+                btn.classList.add('banned');
+                btn.style.display = 'none';
+            } else if (state.modeFinal === val) {
+                btn.classList.add('selected');
+                btn.disabled = true;
+            } else if (state.isComplete) {
+                btn.disabled = true;
+            } else {
+                btn.classList.remove('banned', 'selected');
+                btn.style.display = '';
+                btn.disabled = false;
+            }
+        });
+
+        const availableModes = state.modeOptions.filter(v => !state.modeBanned.includes(v) && v !== state.modeFinal);
+        document.getElementById('modesLeft').textContent = availableModes.length;
+
+        const modesStatus = document.getElementById('modesStatus');
+        if (state.modeFinal) {
+            modesStatus.textContent = '✅ ' + state.modeFinal;
+            modesStatus.className = 'status-text done';
+        } else if (!state.isComplete) {
+            modesStatus.textContent = 'Ход: ' + getCaptainName(state.currentCaptain);
+            modesStatus.className = 'status-text';
+        } else {
+            modesStatus.textContent = 'Ожидание...';
+            modesStatus.className = 'status-text';
+        }
+        document.getElementById('modesTurnName').textContent = !state.isComplete ? getCaptainName(state.currentCaptain) : '—';
+
+        document.getElementById('endMatchBtn').disabled = !state.isComplete;
+
+        const bansContainer = document.getElementById('bansContainer');
+        if (state.isComplete) {
+            bansContainer.style.display = 'none';
+        } else {
+            bansContainer.style.display = 'grid';
+        }
+    }
+
+    function handleModesBan(value) {
+        const state = draftState;
+        if (state.isComplete) return;
+        if (state.modeBanned.includes(value)) return;
+        if (state.modeFinal) return;
+
+        state.modeBanned.push(value);
+
+        const available = state.modeOptions.filter(v => !state.modeBanned.includes(v));
+        if (available.length === 1) {
+            state.modeFinal = available[0];
+            state.isComplete = true;
+            renderDraftUI();
+            showToast('success', 'Драфт завершён!', 'Играем режим ' + state.modeFinal);
+            return;
+        }
+
+        state.currentCaptain = state.currentCaptain === 0 ? 1 : 0;
+        renderDraftUI();
+    }
+
+    // ============================================================
+    //  ПРОМОКОД
+    // ============================================================
+    function applyPromo() {
+        const input = document.getElementById('promoInput');
+        const code = input.value.trim().toUpperCase();
+        if (!code) return showToast('error', 'Ошибка', 'Введите промокод');
+        showToast('success', 'Промокод применён!', 'Промокод ' + code + ' активирован');
+        input.value = '';
     }
 
     // ============================================================
@@ -2367,8 +3064,19 @@
             }
         });
 
+        document.getElementById('modesBanContainer').addEventListener('click', function(e) {
+            const btn = e.target.closest('.ban-btn');
+            if (!btn) return;
+            if (btn.classList.contains('banned') || btn.classList.contains('selected')) return;
+            const value = btn.dataset.value;
+            handleModesBan(value);
+        });
+
         checkAuth();
-        setInterval(updateHomeStats, 5000);
+        setInterval(() => {
+            if (!currentMatch) updateQueueUI();
+            updateHomeStats();
+        }, 5000);
     });
 </script>
 </body>
