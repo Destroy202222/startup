@@ -1786,13 +1786,13 @@
             </button>
         </div>
 
-        <!-- Вход -->
+        <!-- ВХОД -->
         <div class="auth-form active" id="loginForm">
             <div class="form-group">
-                <label>Имя пользователя</label>
+                <label>Никнейм Brawl Stars</label>
                 <div class="input-wrap">
                     <i class="fas fa-user"></i>
-                    <input type="text" id="loginUsername" placeholder="Введите имя пользователя" />
+                    <input type="text" id="loginUsername" placeholder="Введите никнейм" />
                 </div>
             </div>
             <div class="form-group">
@@ -1811,13 +1811,13 @@
             </div>
         </div>
 
-        <!-- Регистрация -->
+        <!-- РЕГИСТРАЦИЯ -->
         <div class="auth-form" id="registerForm">
             <div class="form-group">
-                <label>Имя пользователя <span style="color:#ff6b6b;">*</span></label>
+                <label>Никнейм Brawl Stars <span style="color:#ff6b6b;">*</span></label>
                 <div class="input-wrap">
                     <i class="fas fa-user"></i>
-                    <input type="text" id="regUsername" placeholder="Придумайте имя" />
+                    <input type="text" id="regUsername" placeholder="Придумайте никнейм" />
                 </div>
             </div>
             <div class="form-group">
@@ -2176,7 +2176,7 @@
 
             if (existing) {
                 messageEl.className = 'auth-message show error';
-                messageEl.textContent = '❌ Имя занято';
+                messageEl.textContent = '❌ Никнейм занят';
                 return;
             }
 
@@ -2184,12 +2184,7 @@
                 id: Date.now().toString(),
                 username: username,
                 password: password,
-                matches: 0,
-                kills: 0,
-                deaths: 0,
-                serverMatches: 0,
-                registered: new Date().toISOString(),
-                lastLogin: new Date().toISOString()
+                registered: new Date().toISOString()
             };
 
             const { data, error } = await supabaseClient
@@ -2254,7 +2249,7 @@
 
             if (!data) {
                 messageEl.className = 'auth-message show error';
-                messageEl.textContent = '❌ Неверное имя или пароль';
+                messageEl.textContent = '❌ Неверный никнейм или пароль';
                 return;
             }
 
