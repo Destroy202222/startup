@@ -2471,6 +2471,7 @@
     let currentScreenshot = null;
     let isPlayerInMatch = false;
     let activeMatchId = null;
+    let matchRestored = false;
 
     let draftState = {
         gameNumber: 1,
@@ -2517,6 +2518,7 @@
                 orange: JSON.stringify(currentMatch.orange),
                 blue: JSON.stringify(currentMatch.blue),
                 draft_state: JSON.stringify(draftState),
+                screenshot: currentScreenshot || null,
                 updated_at: new Date().toISOString()
             };
 
@@ -2557,11 +2559,25 @@
                 .order('created_at', { ascending: false })
                 .limit(1);
 
-            if (error || !data || data.length === 0) return;
+            if (error || !data || data.length === 0) {
+                console.log('❌ Нет активных матчей');
+                return;
+            }
 
             const match = data[0];
-            const orange = JSON.parse(match.orange);
-            const blue = JSON.parse(match.blue);
+            console.log('📦 Найден матч:', match);
+
+            let orange = [];
+            let blue = [];
+            
+            try {
+                orange = JSON.parse(match.orange);
+                blue = JSON.parse(match.blue);
+            } catch (e) {
+                console.error('Ошибка парсинга:', e);
+                return;
+            }
+
             const isInMatch = orange.some(p => p.id === currentUser.id) || 
                               blue.some(p => p.id === currentUser.id);
 
@@ -2571,10 +2587,34 @@
                 activeMatchId = match.id;
                 
                 if (match.draft_state) {
-                    draftState = JSON.parse(match.draft_state);
+                    try {
+                        draftState = JSON.parse(match.draft_state);
+                    } catch (e) {}
                 }
                 
+                if (match.screenshot) {
+                    currentScreenshot = match.screenshot;
+                    const preview = document.getElementById('screenshotPreview');
+                    preview.innerHTML = `<img src="${currentScreenshot}" alt="Скриншот" />`;
+                    document.getElementById('screenshotStatus').textContent = '✅ Скриншот загружен из БД';
+                    document.getElementById('screenshotStatus').style.color = '#51cf66';
+                }
+                
+                matchRestored = true;
                 console.log('✅ Матч загружен из Supabase');
+                
+                // Обновляем UI
+                renderMatchPage();
+                checkMatchResultVisibility();
+                navigate('matchPage');
+            } else {
+                // Если пользователь не в матче, но матч есть - удаляем старый
+                if (match.id) {
+                    await supabaseClient
+                        .from('active_matches')
+                        .delete()
+                        .eq('id', match.id);
+                }
             }
         } catch (e) {
             console.error('Ошибка загрузки матча:', e);
@@ -2593,6 +2633,7 @@
                 .delete()
                 .eq('id', activeMatchId);
             activeMatchId = null;
+            matchRestored = false;
         } catch (e) {
             console.error('Ошибка удаления матча:', e);
         }
@@ -2833,7 +2874,9 @@
             updateQueueUI();
             updatePartyUI();
             
-            navigate('home');
+            if (!matchRestored) {
+                navigate('home');
+            }
             showToast('success', 'Добро пожаловать!', currentUser.username);
         } else {
             document.getElementById('authPage').style.display = 'flex';
@@ -2850,6 +2893,7 @@
         currentUser = null;
         currentMatch = null;
         isPlayerInMatch = false;
+        matchRestored = false;
         checkAuth();
         showToast('info', 'Выход', 'Вы вышли');
     }
@@ -2874,9 +2918,15 @@
         }
         
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(pages[page]).classList.add('active');
+        const targetPage = document.getElementById(pages[page]);
+        if (targetPage) {
+            targetPage.classList.add('active');
+        }
         document.querySelectorAll('.bottom-nav .item').forEach(b => b.classList.remove('active'));
-        document.querySelector(`.bottom-nav .item[data-page="${page}"]`)?.classList.add('active');
+        const navItem = document.querySelector(`.bottom-nav .item[data-page="${page}"]`);
+        if (navItem) {
+            navItem.classList.add('active');
+        }
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -3099,6 +3149,7 @@
             statusEl.textContent = '✅ Скриншот загружен!';
             statusEl.style.color = '#51cf66';
             showToast('success', 'Скриншот загружен', 'Ожидайте решения администратора');
+            saveMatchToSupabase();
         };
         reader.readAsDataURL(file);
     });
@@ -3141,17 +3192,27 @@
         const winners = winner === 'blue' ? bluePlayers : orangePlayers;
         const losers = winner === 'blue' ? orangePlayers : bluePlayers;
 
+        console.log('📊 Засчитываем матч:');
+        console.log('  Победители:', winners.map(p => p.username));
+        console.log('  Проигравшие:', losers.map(p => p.username));
+        console.log('  Режим:', map);
+
         // Сохраняем результат для каждого реального игрока
         for (const player of realPlayers) {
             const isWin = winners.some(w => w.id === player.id);
 
             try {
                 // Получаем текущие данные игрока
-                const { data: userData } = await supabaseClient
+                const { data: userData, error: fetchError } = await supabaseClient
                     .from('users')
                     .select('*')
                     .eq('id', player.id)
                     .single();
+
+                if (fetchError) {
+                    console.error('Ошибка получения данных для', player.username, fetchError);
+                    continue;
+                }
 
                 if (userData) {
                     const newMatches = (userData.matches || 0) + 1;
@@ -3160,8 +3221,10 @@
                     const newElo = (userData.elo || 1000) + (isWin ? 25 : -25);
                     const newMvp = (userData.mvp || 0) + (isWin ? 1 : 0);
 
+                    console.log(`  ${player.username}: +1 матч, ELO ${userData.elo} → ${newElo}`);
+
                     // Обновляем данные игрока
-                    await supabaseClient
+                    const { error: updateError } = await supabaseClient
                         .from('users')
                         .update({
                             matches: newMatches,
@@ -3172,13 +3235,18 @@
                             lastLogin: new Date().toISOString()
                         })
                         .eq('id', player.id);
+
+                    if (updateError) {
+                        console.error('Ошибка обновления для', player.username, updateError);
+                    }
                 }
 
                 // Сохраняем историю матча
-                await supabaseClient
+                const historyId = Date.now().toString() + '_' + Math.random().toString(36).substr(2, 4);
+                const { error: historyError } = await supabaseClient
                     .from('match_history')
                     .insert([{
-                        id: Date.now().toString() + '_' + Math.random().toString(36).substr(2, 4),
+                        id: historyId,
                         user_id: player.id,
                         username: player.username,
                         map: map,
@@ -3189,8 +3257,12 @@
                         created_at: new Date().toISOString()
                     }]);
 
+                if (historyError) {
+                    console.error('Ошибка сохранения истории для', player.username, historyError);
+                }
+
             } catch (e) {
-                console.error('Ошибка сохранения статистики для', player.username, e);
+                console.error('Ошибка обработки для', player.username, e);
             }
         }
 
@@ -3229,6 +3301,7 @@
         updateQueueUI();
         showToast('info', 'Матч завершён', 'Статистика сохранена!');
         await renderTopPlayers();
+        await updateProfile();
     }
 
     function endMatch() {
@@ -3244,6 +3317,7 @@
         currentMatch = null;
         isPlayerInMatch = false;
         draftState.isComplete = false;
+        matchRestored = false;
         document.getElementById('matchResultSection').classList.remove('admin-visible');
         document.getElementById('screenshotSection').classList.remove('visible');
         document.getElementById('matchActions').classList.remove('admin-visible');
@@ -3261,7 +3335,7 @@
     // ============================================================
     function resetDraft() {
         draftState = {
-            gameNumber: draftState.gameNumber + 1,
+            gameNumber: (draftState.gameNumber || 0) + 1,
             modeOptions: ['Gem Grab', 'Brawl Ball', 'Knockout', 'Heist', 'Bounty', 'Hot Zone', 'Siege'],
             modeBanned: [],
             modeFinal: null,
