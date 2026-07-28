@@ -21,7 +21,6 @@
             line-height: 1.5;
         }
 
-        /* ===== АВТОРИЗАЦИЯ ===== */
         .auth-page {
             display: flex;
             justify-content: center;
@@ -58,7 +57,6 @@
             letter-spacing: 2px;
             text-transform: uppercase;
             margin-top: 2px;
-            -webkit-text-fill-color: #666;
         }
 
         .auth-box .auth-tabs {
@@ -201,7 +199,6 @@
         }
         .auth-box .auth-footer a:hover { text-decoration: underline; }
 
-        /* ===== ШАПКА ===== */
         .header {
             background: rgba(11, 11, 15, 0.85);
             backdrop-filter: blur(12px);
@@ -225,12 +222,10 @@
             display: block;
             font-size: 9px;
             color: #666;
-            -webkit-text-fill-color: #666;
             letter-spacing: 2px;
             margin-top: 2px;
         }
 
-        /* ===== СТРАНИЦЫ ===== */
         .page {
             display: none;
             max-width: 1100px;
@@ -241,7 +236,6 @@
         .page.active { display: block; }
         @keyframes fade { 0% { opacity: 0; transform: translateY(12px); } 100% { opacity: 1; transform: translateY(0); } }
 
-        /* ===== ГЛАВНАЯ ===== */
         .home-hero {
             text-align: center;
             max-width: 900px;
@@ -413,7 +407,6 @@
             font-weight: 700;
         }
 
-        /* ===== ПОИСК МАТЧА ===== */
         .search-page-wrapper {
             max-width: 700px;
             margin: 0 auto;
@@ -730,7 +723,6 @@
         .party-block .party-feature i { color: #ffd700; margin-right: 4px; }
         .party-block .party-feature strong { color: #fff; font-weight: 600; }
 
-        /* ===== МАТЧ ===== */
         .match-page .match-title {
             font-size: 28px;
             font-weight: 900;
@@ -1040,7 +1032,6 @@
             transform: none;
         }
 
-        /* ===== ДРУЗЬЯ ===== */
         .friends-page .friends-header {
             display: flex;
             justify-content: space-between;
@@ -1222,7 +1213,6 @@
             background: rgba(255,215,0,0.25);
         }
 
-        /* ===== КОШЕЛЁК ===== */
         .wallet-page .wallet-balance {
             display: flex;
             justify-content: space-between;
@@ -1380,7 +1370,6 @@
             margin-bottom: 6px;
         }
 
-        /* ===== ТОП ИГРОКОВ ===== */
         .top-page .top-header {
             display: flex;
             justify-content: space-between;
@@ -1665,6 +1654,136 @@
         .result.win { background: rgba(81, 207, 102, 0.15); color: #51cf66; }
         .result.loss { background: rgba(255, 107, 107, 0.15); color: #ff6b6b; }
 
+        /* ===== АДМИН-ПАНЕЛЬ ===== */
+        .admin-panel {
+            background: rgba(20,20,28,0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            padding: 20px 24px;
+            border: 1px solid rgba(255,215,0,0.15);
+            max-width: 800px;
+            margin: 0 auto;
+            display: none;
+        }
+        .admin-panel.visible { display: block; }
+        .admin-panel .admin-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #ffd700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .admin-panel .admin-title i { font-size: 24px; }
+        .admin-panel .admin-section {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .admin-panel .admin-section:last-child { border-bottom: none; }
+        .admin-panel .admin-section .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+        .admin-panel .admin-section .admin-input-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .admin-panel .admin-section .admin-input-group input {
+            flex: 1;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.04);
+            color: #fff;
+            font-size: 14px;
+            min-width: 150px;
+            font-family: inherit;
+        }
+        .admin-panel .admin-section .admin-input-group input:focus {
+            outline: none;
+            border-color: #ffd700;
+        }
+        .admin-panel .admin-section .admin-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 40px;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            color: #000;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: .2s;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .admin-panel .admin-section .admin-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(255,215,0,0.3);
+        }
+        .admin-panel .admin-section .admin-btn.danger {
+            background: #ff6b6b;
+            color: #fff;
+        }
+        .admin-panel .admin-section .admin-btn.danger:hover {
+            box-shadow: 0 0 20px rgba(255,0,0,0.3);
+        }
+        .admin-panel .admin-section .admin-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .admin-panel .admin-section .admin-tag {
+            background: rgba(255,215,0,0.1);
+            border: 1px solid rgba(255,215,0,0.2);
+            border-radius: 40px;
+            padding: 4px 14px 4px 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .admin-panel .admin-section .admin-tag .remove {
+            color: #ff6b6b;
+            cursor: pointer;
+            font-size: 14px;
+            transition: .2s;
+        }
+        .admin-panel .admin-section .admin-tag .remove:hover { transform: scale(1.2); }
+        .admin-panel .admin-section .admin-empty {
+            color: #666;
+            font-size: 13px;
+            padding: 8px 0;
+        }
+        .admin-panel .admin-status {
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-top: 8px;
+            display: none;
+        }
+        .admin-panel .admin-status.show { display: block; }
+        .admin-panel .admin-status.success {
+            background: rgba(81,207,102,0.1);
+            color: #51cf66;
+            border: 1px solid rgba(81,207,102,0.2);
+        }
+        .admin-panel .admin-status.error {
+            background: rgba(255,107,107,0.1);
+            color: #ff6b6b;
+            border: 1px solid rgba(255,107,107,0.2);
+        }
+
         .placeholder {
             text-align: center;
             padding: 40px 0;
@@ -1673,7 +1792,6 @@
         .placeholder i { font-size: 34px; color: #ffd700; display: block; margin-bottom: 8px; }
         .placeholder h2 { font-size: 20px; font-weight: 800; color: #fff; }
 
-        /* ===== НИЖНЯЯ НАВИГАЦИЯ ===== */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -1722,6 +1840,9 @@
             border-radius: 2px;
         }
         .bottom-nav .item:hover { color: #ff8c00; }
+        .bottom-nav .item.admin-item { color: #ff6b6b; }
+        .bottom-nav .item.admin-item.active { color: #ff6b6b; }
+        .bottom-nav .item.admin-item i { color: #ff6b6b; }
 
         .toast {
             position: fixed;
@@ -1786,6 +1907,10 @@
             .top-item .info .stats { font-size: 10px; }
             .profile-actions { flex-direction: column; align-items: stretch; }
             .profile-actions .btn-action { justify-content: center; }
+            .admin-panel { padding: 16px; }
+            .admin-panel .admin-section .admin-input-group { flex-direction: column; align-items: stretch; }
+            .bottom-nav .item { min-width: 36px; font-size: 8px; }
+            .bottom-nav .item i { font-size: 18px; }
         }
         @media (max-width: 768px) {
             .hero-title { font-size: 30px; }
@@ -1820,6 +1945,8 @@
             .team-block .team-name { font-size: 15px; }
             .match-info-bar { flex-direction: column; align-items: stretch; text-align: center; gap: 6px; }
             .match-info-bar .info-item { justify-content: center; }
+            .admin-panel .admin-section .admin-input-group { flex-direction: column; align-items: stretch; }
+            .bottom-nav .item { min-width: 40px; }
         }
     </style>
 </head>
@@ -1982,6 +2109,7 @@
                 </div>
             </div>
 
+            <!-- ПАТИ (НЕ МЕНЯЕМ) -->
             <div class="party-block">
                 <div class="party-title"><i class="fas fa-users"></i> Играть в пати</div>
                 <div class="party-sub">Играйте с друзьями в <strong>BRAWL STARS</strong> — создайте пати и приглашайте товарищей по коду</div>
@@ -2101,7 +2229,7 @@
         <div class="history-empty"><i class="fas fa-history"></i> Операций пока нет.</div>
     </div>
 
-    <!-- ===== ПРОФИЛЬ (КАК ВО ВТОРОМ INDEX) ===== -->
+    <!-- ===== ПРОФИЛЬ ===== -->
     <div class="page" id="pageProfile">
         <div class="profile-card">
             <div class="profile-header">
@@ -2139,6 +2267,31 @@
         </div>
     </div>
 
+    <!-- ===== АДМИН-ПАНЕЛЬ ===== -->
+    <div class="page" id="pageAdmin">
+        <div class="admin-panel visible" id="adminPanel">
+            <div class="admin-title"><i class="fas fa-user-shield"></i> Админ-панель</div>
+
+            <!-- Добавление админа -->
+            <div class="admin-section">
+                <div class="section-title">Добавить администратора</div>
+                <div class="admin-input-group">
+                    <input type="text" id="adminAddInput" placeholder="Введите никнейм игрока" />
+                    <button class="admin-btn" id="adminAddBtn"><i class="fas fa-user-plus"></i> Добавить</button>
+                </div>
+                <div class="admin-status" id="adminAddStatus"></div>
+            </div>
+
+            <!-- Список админов -->
+            <div class="admin-section">
+                <div class="section-title">Список администраторов</div>
+                <div class="admin-list" id="adminList">
+                    <div class="admin-empty">Загрузка...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ===== МАГАЗИН (заглушка) ===== -->
     <div class="page" id="pageShop">
         <div class="placeholder"><i class="fas fa-store"></i><h2>Магазин</h2><p>Здесь будут товары и привилегии.</p></div>
@@ -2152,6 +2305,9 @@
         <button class="item active" data-page="matches" onclick="navigate('matches')"><i class="fas fa-search"></i><span>Поиск</span></button>
         <button class="item" data-page="top" onclick="navigate('top')"><i class="fas fa-trophy"></i><span>Топ</span></button>
         <button class="item" data-page="wallet" onclick="navigate('wallet')"><i class="fas fa-wallet"></i><span>Кошелёк</span></button>
+        <button class="item admin-item" id="adminNavBtn" data-page="admin" onclick="navigate('admin')" style="display:none;">
+            <i class="fas fa-user-shield"></i><span>Админ</span>
+        </button>
     </nav>
 </div>
 
@@ -2285,12 +2441,12 @@
                 matches: 0,
                 wins: 0,
                 losses: 0,
-                serverMatches: 0,
                 elo: 1200,
                 mvp: 0,
                 registered: new Date().toISOString(),
                 lastLogin: new Date().toISOString(),
-                isAdmin: false
+                isAdmin: false,
+                partyCode: generateCode()
             };
 
             const { data, error } = await supabaseClient
@@ -2388,11 +2544,19 @@
             const regDate = currentUser.registered ? new Date(currentUser.registered).toLocaleDateString('ru-RU') : '—';
             document.getElementById('pReg').textContent = regDate;
 
+            // Показываем админ-меню если isAdmin = true
+            if (currentUser.isAdmin) {
+                document.getElementById('adminNavBtn').style.display = 'flex';
+            } else {
+                document.getElementById('adminNavBtn').style.display = 'none';
+            }
+
             // Обновляем статистику
             updateProfile();
             updateHomeStats();
             updateQueueUI();
             updatePartyUI();
+            renderAdminList();
             
             navigate('home');
             showToast('success', 'Добро пожаловать!', currentUser.username);
@@ -2423,7 +2587,8 @@
         matches: 'pageMatches',
         top: 'pageTop',
         wallet: 'pageWallet',
-        matchPage: 'matchPage'
+        matchPage: 'matchPage',
+        admin: 'pageAdmin'
     };
 
     function navigate(page) {
@@ -2525,7 +2690,7 @@
     }
 
     // ============================================================
-    //  СТАТИСТИКА ГЛАВНОЙ
+    //  СТАТИСТИКА ГЛАВНОЙ (Активные игроки = в поиске + в матче)
     // ============================================================
     async function updateHomeStats() {
         try {
@@ -2535,9 +2700,22 @@
 
             if (error) return;
 
+            // Общее количество матчей
             const totalMatches = users.reduce((sum, u) => sum + (u.matches || 0), 0);
             document.getElementById('totalMatchesHome').textContent = totalMatches;
-            document.getElementById('activePlayersHome').textContent = users.length;
+
+            // Активные игроки = в очереди + в матче
+            let activeCount = 0;
+            
+            // Игроки в очереди (queue)
+            activeCount += queue.length;
+            
+            // Игроки в текущем матче
+            if (currentMatch) {
+                activeCount += currentMatch.orange.length + currentMatch.blue.length;
+            }
+
+            document.getElementById('activePlayersHome').textContent = activeCount;
         } catch (e) {
             console.error('updateHomeStats error:', e);
         }
@@ -2551,7 +2729,7 @@
             const { data: users, error } = await supabaseClient
                 .from('users')
                 .select('*')
-                .order('matches', { ascending: false })
+                .order('elo', { ascending: false })
                 .limit(10);
 
             if (error) throw error;
@@ -2593,7 +2771,7 @@
     }
 
     // ============================================================
-    //  ПАТИ
+    //  ПАТИ (НЕ МЕНЯЕМ)
     // ============================================================
     function updatePartyUI() {
         if (!currentUser) return;
@@ -2715,6 +2893,7 @@
 
         showToast('info', 'Поиск начат', 'Ищем игроков...');
         simulateBotSearch();
+        updateHomeStats();
     }
 
     function simulateBotSearch() {
@@ -2741,6 +2920,7 @@
                 } else {
                     simulateBotSearch();
                 }
+                updateHomeStats();
             }, 1500 + Math.random() * 2000);
         }
     }
@@ -2756,6 +2936,7 @@
         document.getElementById('searchTimer').textContent = '00:00';
         document.getElementById('progressText').textContent = '0/6';
         updateQueueUI();
+        updateHomeStats();
         showToast('info', 'Поиск отменён', 'Вы отменили поиск');
     }
 
@@ -2764,6 +2945,7 @@
         document.getElementById('queueCount').textContent = count;
         const matchPlayers = currentMatch ? (currentMatch.orange.length + currentMatch.blue.length) : 0;
         document.getElementById('matchCount').textContent = matchPlayers;
+        updateHomeStats();
     }
 
     // ============================================================
@@ -2791,6 +2973,7 @@
         navigate('matchPage');
         renderMatchPage();
         showToast('success', 'Матч начался!', `${orange.length + blue.length} игроков в игре`);
+        updateHomeStats();
     }
 
     function renderMatchPage() {
@@ -2833,6 +3016,7 @@
         }).join('') || '<p style="color:#888;text-align:center;padding:8px 0;font-size:13px;">Нет игроков</p>';
 
         renderDraftUI();
+        updateHomeStats();
     }
 
     function endMatch() {
@@ -2847,6 +3031,7 @@
         currentMatch = null;
         navigate('matches');
         updateQueueUI();
+        updateHomeStats();
         showToast('info', 'Матч завершён', 'Статистика сохранена!');
     }
 
@@ -2922,6 +3107,7 @@
             currentUser = updatedUser;
             updateProfile();
         }
+        updateHomeStats();
     }
 
     // ============================================================
@@ -3020,6 +3206,111 @@
     }
 
     // ============================================================
+    //  АДМИН-ПАНЕЛЬ
+    // ============================================================
+    async function renderAdminList() {
+        try {
+            const { data: admins, error } = await supabaseClient
+                .from('users')
+                .select('id, username, isAdmin')
+                .eq('isAdmin', true);
+
+            if (error) throw error;
+
+            const container = document.getElementById('adminList');
+            if (!admins || admins.length === 0) {
+                container.innerHTML = '<div class="admin-empty">Нет администраторов</div>';
+                return;
+            }
+
+            container.innerHTML = admins.map(admin => `
+                <span class="admin-tag">
+                    ${admin.username}
+                    ${admin.username !== 'Admin' && currentUser?.isAdmin ? 
+                        `<span class="remove" onclick="removeAdmin('${admin.id}')">&times;</span>` : 
+                        '<span style="color:#ffd700;font-size:10px;">👑</span>'
+                    }
+                </span>
+            `).join('');
+        } catch (e) {
+            console.error('renderAdminList error:', e);
+        }
+    }
+
+    async function addAdmin() {
+        const username = document.getElementById('adminAddInput').value.trim();
+        const statusEl = document.getElementById('adminAddStatus');
+
+        if (!username) {
+            statusEl.className = 'admin-status show error';
+            statusEl.textContent = '❌ Введите никнейм';
+            return;
+        }
+
+        try {
+            const { data: user, error } = await supabaseClient
+                .from('users')
+                .select('id, isAdmin')
+                .eq('username', username)
+                .maybeSingle();
+
+            if (error || !user) {
+                statusEl.className = 'admin-status show error';
+                statusEl.textContent = '❌ Пользователь не найден';
+                return;
+            }
+
+            if (user.isAdmin) {
+                statusEl.className = 'admin-status show error';
+                statusEl.textContent = '❌ Этот пользователь уже администратор';
+                return;
+            }
+
+            const { error: updateError } = await supabaseClient
+                .from('users')
+                .update({ isAdmin: true })
+                .eq('id', user.id);
+
+            if (updateError) {
+                statusEl.className = 'admin-status show error';
+                statusEl.textContent = '❌ Ошибка: ' + updateError.message;
+                return;
+            }
+
+            statusEl.className = 'admin-status show success';
+            statusEl.textContent = '✅ ' + username + ' теперь администратор!';
+            document.getElementById('adminAddInput').value = '';
+            renderAdminList();
+
+        } catch (e) {
+            statusEl.className = 'admin-status show error';
+            statusEl.textContent = '❌ Ошибка: ' + e.message;
+        }
+    }
+
+    async function removeAdmin(userId) {
+        if (!confirm('Удалить этого администратора?')) return;
+
+        try {
+            const { error } = await supabaseClient
+                .from('users')
+                .update({ isAdmin: false })
+                .eq('id', userId);
+
+            if (error) {
+                showToast('error', 'Ошибка', error.message);
+                return;
+            }
+
+            showToast('success', 'Готово', 'Администратор удалён');
+            renderAdminList();
+
+        } catch (e) {
+            showToast('error', 'Ошибка', e.message);
+        }
+    }
+
+    // ============================================================
     //  ПРОМОКОД
     // ============================================================
     function applyPromo() {
@@ -3036,6 +3327,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         console.log('✅ DOM ЗАГРУЖЕН!');
 
+        // Авторизация
         document.getElementById('tabLogin').addEventListener('click', function() {
             switchAuthTab('login');
         });
@@ -3064,6 +3356,7 @@
             }
         });
 
+        // Бан режимов
         document.getElementById('modesBanContainer').addEventListener('click', function(e) {
             const btn = e.target.closest('.ban-btn');
             if (!btn) return;
@@ -3072,6 +3365,10 @@
             handleModesBan(value);
         });
 
+        // Админ-панель
+        document.getElementById('adminAddBtn').addEventListener('click', addAdmin);
+
+        // Запуск
         checkAuth();
         setInterval(() => {
             if (!currentMatch) updateQueueUI();
