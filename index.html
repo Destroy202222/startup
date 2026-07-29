@@ -3107,7 +3107,7 @@
     }
 
     // ============================================================
-    //  ПОИСК МАТЧА (ТОЛЬКО РЕАЛЬНЫЕ ИГРОКИ)
+    //  ПОИСК МАТЧА (ТОЛЬКО РЕАЛЬНЫЕ ИГРОКИ) - ИСПРАВЛЕНО
     // ============================================================
     function startSearch() {
         if (isSearching) return;
@@ -3142,39 +3142,49 @@
     }
 
     function doStartSearch() {
-        // Добавляем себя в очередь
+        // Сначала удаляем все старые записи этого игрока в очереди
         supabaseClient
             .from('match_queue')
-            .insert([{
-                user_id: currentUser.id,
-                username: currentUser.username,
-                status: 'waiting',
-                created_at: new Date().toISOString()
-            }])
+            .delete()
+            .eq('user_id', currentUser.id)
             .then(() => {
-                isSearching = true;
-                searchSeconds = 0;
+                // Добавляем себя в очередь
+                supabaseClient
+                    .from('match_queue')
+                    .insert([{
+                        user_id: currentUser.id,
+                        username: currentUser.username,
+                        status: 'waiting',
+                        created_at: new Date().toISOString()
+                    }])
+                    .then(() => {
+                        isSearching = true;
+                        searchSeconds = 0;
 
-                document.getElementById('searchMainBlock').classList.add('searching');
-                document.getElementById('queueBtn').style.display = 'none';
-                document.getElementById('cancelBtn').style.display = 'inline-flex';
+                        document.getElementById('searchMainBlock').classList.add('searching');
+                        document.getElementById('queueBtn').style.display = 'none';
+                        document.getElementById('cancelBtn').style.display = 'inline-flex');
 
-                if (searchTimerInterval) clearInterval(searchTimerInterval);
-                searchTimerInterval = setInterval(() => {
-                    searchSeconds++;
-                    const mins = String(Math.floor(searchSeconds / 60)).padStart(2, '0');
-                    const secs = String(searchSeconds % 60).padStart(2, '0');
-                    document.getElementById('searchTimer').textContent = mins + ':' + secs;
-                }, 1000);
+                        if (searchTimerInterval) clearInterval(searchTimerInterval);
+                        searchTimerInterval = setInterval(() => {
+                            searchSeconds++;
+                            const mins = String(Math.floor(searchSeconds / 60)).padStart(2, '0');
+                            const secs = String(searchSeconds % 60).padStart(2, '0');
+                            document.getElementById('searchTimer').textContent = mins + ':' + secs;
+                        }, 1000);
 
-                showToast('info', 'Поиск начат', 'Ожидаем игроков...');
-                
-                // Сразу обновляем UI, показываем 1/6
-                updateQueueUI();
-                
-                // Проверяем очередь каждые 2 секунды
-                if (queueCheckInterval) clearInterval(queueCheckInterval);
-                queueCheckInterval = setInterval(checkQueue, 2000);
+                        showToast('info', 'Поиск начат', 'Ожидаем игроков...');
+                        
+                        // Сразу обновляем UI - показываем 1/6
+                        // Делаем это с небольшой задержкой, чтобы БД успела обработать запрос
+                        setTimeout(() => {
+                            updateQueueUI();
+                        }, 500);
+                        
+                        // Проверяем очередь каждые 2 секунды
+                        if (queueCheckInterval) clearInterval(queueCheckInterval);
+                        queueCheckInterval = setInterval(checkQueue, 2000);
+                    });
             });
     }
 
