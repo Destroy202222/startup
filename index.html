@@ -11,7 +11,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
     </script>
     <style>
-        /* ===== ВЕСЬ CSS (полная копия) ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: #0b0b0f;
@@ -1142,6 +1141,101 @@
             margin-top: 4px;
         }
 
+        /* ===== ЛОББИ ===== */
+        .lobby-section {
+            background: rgba(20, 20, 28, 0.6);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-top: 10px;
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            display: none;
+        }
+        .lobby-section.visible { display: block; }
+        .lobby-section .lobby-title {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+        .lobby-section .lobby-title i { color: #ffd700; }
+        .lobby-section .lobby-input-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .lobby-section .lobby-input-group input {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.04);
+            color: #fff;
+            font-size: 13px;
+            min-width: 200px;
+            font-family: inherit;
+        }
+        .lobby-section .lobby-input-group input:focus {
+            outline: none;
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(255,215,0,0.1);
+        }
+        .lobby-section .lobby-input-group input::placeholder {
+            color: #555;
+            font-size: 12px;
+        }
+        .lobby-section .lobby-input-group .lobby-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 40px;
+            background: rgba(255,215,0,0.15);
+            border: 1px solid rgba(255,215,0,0.3);
+            color: #ffd700;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: .2s;
+            white-space: nowrap;
+        }
+        .lobby-section .lobby-input-group .lobby-btn:hover {
+            background: rgba(255,215,0,0.25);
+        }
+        .lobby-section .lobby-link-display {
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: rgba(26,26,34,0.6);
+            border-radius: 8px;
+            border: 1px solid rgba(255,215,0,0.08);
+            display: none;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .lobby-section .lobby-link-display .lobby-label {
+            font-size: 12px;
+            color: #888;
+            font-weight: 500;
+        }
+        .lobby-section .lobby-link-display a {
+            color: #ffd700;
+            word-break: break-all;
+            font-size: 13px;
+            text-decoration: none;
+        }
+        .lobby-section .lobby-link-display a:hover {
+            text-decoration: underline;
+        }
+        .lobby-section .lobby-status {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
+        .lobby-section .lobby-status.success { color: #51cf66; }
+        .lobby-section .lobby-status.error { color: #ff6b6b; }
+
         .friends-page .friends-header {
             display: flex;
             justify-content: space-between;
@@ -2138,6 +2232,7 @@
             .match-result-section .result-btn { min-width: 100px; font-size: 14px; padding: 10px 16px; }
             .match-result-section .result-buttons { flex-direction: column; align-items: stretch; }
             .screenshot-section .screenshot-input-group { flex-direction: column; align-items: stretch; }
+            .lobby-section .lobby-input-group { flex-direction: column; align-items: stretch; }
             .match-actions .btn-end { font-size: 12px; padding: 6px 16px; }
             .promo-section .promo-input-group { flex-direction: column; align-items: stretch; }
             .matches-grid { grid-template-columns: 1fr; }
@@ -2185,9 +2280,8 @@
         }
     </style>
 </head>
-<body>
-
-<!-- ===== ТОСТ ===== -->
+<body> 
+   <!-- ===== ТОСТ ===== -->
 <div class="toast" id="toast">
     <div class="ttl" id="toastTitle">Успешно</div>
     <div class="txt" id="toastText">Действие выполнено</div>
@@ -2364,7 +2458,6 @@
 
     <!-- ===== МАТЧ ===== -->
     <div class="page match-page" id="matchPage">
-        <!-- ... (match page content, не менялось) ... -->
         <div class="match-info-bar" id="matchInfoBar">
             <div class="info-item"><i class="fas fa-hashtag"></i> Номер игры: <span class="value highlight" id="matchGameNumber">#1</span></div>
             <div class="info-item"><i class="fas fa-gamepad"></i> Режим: <span class="value" id="matchSelectedMode">—</span></div>
@@ -2414,6 +2507,21 @@
             </div>
             <div class="screenshot-preview" id="screenshotPreview"></div>
             <div class="screenshot-status" id="screenshotStatus"></div>
+        </div>
+
+        <!-- Лобби -->
+        <div class="lobby-section" id="lobbySection">
+            <div class="lobby-title"><i class="fas fa-link"></i> Ссылка на лобби Brawl Stars</div>
+            <div class="lobby-input-group">
+                <input type="text" id="lobbyLinkInput" placeholder="Вставьте ссылку на лобби" />
+                <button class="lobby-btn" id="lobbySaveBtn"><i class="fas fa-save"></i> Сохранить</button>
+            </div>
+            <div class="lobby-link-display" id="lobbyLinkDisplay">
+                <span class="lobby-label">Ссылка для входа:</span>
+                <a href="#" id="lobbyLink" target="_blank" style="color: #ffd700; word-break: break-all;">—</a>
+                <button class="btn-copy" onclick="copyLobbyLink()" style="margin-left: 8px;"><i class="fas fa-copy"></i> Копировать</button>
+            </div>
+            <div class="lobby-status" id="lobbyStatus"></div>
         </div>
 
         <!-- Кнопки засчитывания -->
@@ -2518,7 +2626,6 @@
             <div class="profile-admin-panel" id="profileAdminPanel">
                 <div class="admin-title"><i class="fas fa-user-shield"></i> Админ-панель</div>
 
-                <!-- Статистика регистраций -->
                 <div class="admin-section">
                     <div class="section-title">📊 Статистика платформы</div>
                     <div style="display: flex; gap: 20px; flex-wrap: wrap; padding: 8px 0;">
@@ -2573,7 +2680,6 @@
                     </div>
                 </div>
 
-                <!-- ===== УПРАВЛЕНИЕ МАТЧАМИ (АДМИН) ===== -->
                 <div class="admin-section">
                     <div class="section-title">🎮 Управление активными матчами</div>
                     <div style="margin-bottom: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
@@ -2654,6 +2760,7 @@
     let isAdmin = false;
     let queueCheckInterval = null;
     let matchSubscription = null;
+    let lobbyLink = null;
 
     let draftState = {
         gameNumber: 1,
@@ -2703,6 +2810,7 @@
                 blue: JSON.stringify(currentMatch.blue),
                 draft_state: JSON.stringify(draftState),
                 screenshot: currentScreenshot || null,
+                lobby_link: lobbyLink || null,
                 updated_at: new Date().toISOString()
             };
 
@@ -2731,7 +2839,7 @@
     }
 
     // ============================================================
-    //  ЗАГРУЗКА МАТЧА ИЗ SUPABASE (ПРИ ВХОДЕ)
+    //  ЗАГРУЗКА МАТЧА ИЗ SUPABASE
     // ============================================================
     async function loadMatchFromSupabase() {
         try {
@@ -2765,12 +2873,16 @@
                         document.getElementById('screenshotStatus').textContent = '✅ Скриншот загружен из БД';
                         document.getElementById('screenshotStatus').style.color = '#51cf66';
                     }
+                    if (match.lobby_link) {
+                        lobbyLink = match.lobby_link;
+                    }
                     const isOrangeCaptain = currentMatch.orange.length > 0 && currentMatch.orange[0].id === currentUser.id;
                     const isBlueCaptain = currentMatch.blue.length > 0 && currentMatch.blue[0].id === currentUser.id;
                     isCaptain = isOrangeCaptain || isBlueCaptain;
                     isAdmin = currentUser.username === 'Destro';
                     renderMatchPage();
                     checkMatchResultVisibility();
+                    checkLobbyVisibility();
                     navigate('matchPage');
                     return true;
                 }
@@ -2795,6 +2907,7 @@
                 .eq('id', activeMatchId);
             activeMatchId = null;
             matchRestored = false;
+            lobbyLink = null;
         } catch (e) {
             console.error('Ошибка удаления матча:', e);
         }
@@ -3022,14 +3135,12 @@
                 adminPanel.classList.remove('visible');
             }
             
-            // Загружаем существующий матч
             const loaded = await loadMatchFromSupabase();
             
             await renderTopPlayers();
             updateQueueUI();
             updatePartyUI();
 
-            // Подписываемся на Realtime (вместо polling)
             subscribeToMatches();
             
             if (!loaded && !matchRestored) {
@@ -3047,7 +3158,6 @@
     // ============================================================
     function handleLogout() {
         if (!confirm('Выйти из аккаунта?')) return;
-        // Отписываемся от Realtime
         if (matchSubscription) {
             supabaseClient.removeChannel(matchSubscription);
             matchSubscription = null;
@@ -3057,6 +3167,7 @@
         currentMatch = null;
         isPlayerInMatch = false;
         matchRestored = false;
+        lobbyLink = null;
         checkAuth();
         showToast('info', 'Выход', 'Вы вышли');
     }
@@ -3094,7 +3205,7 @@
     }
 
     // ============================================================
-    //  ПОИСК МАТЧА (ОЧЕРЕДЬ)
+    //  ПОИСК МАТЧА
     // ============================================================
     function startSearch() {
         if (isSearching) return;
@@ -3298,7 +3409,7 @@
         const isBlueCaptain = currentMatch.blue.length > 0 && currentMatch.blue[0].id === currentUser.id;
         isCaptain = isOrangeCaptain || isBlueCaptain;
         
-        // Сохраняем матч в БД – это вызовет Realtime-событие для всех подписчиков
+        lobbyLink = null;
         await saveMatchToSupabase();
         
         document.getElementById('searchMainBlock').classList.remove('searching');
@@ -3310,19 +3421,21 @@
         
         document.getElementById('matchResultSection').classList.remove('admin-visible');
         document.getElementById('screenshotSection').classList.remove('visible');
+        document.getElementById('lobbySection').classList.remove('visible');
         document.getElementById('matchActions').classList.remove('admin-visible');
         currentScreenshot = null;
         document.getElementById('screenshotInput').value = '';
         document.getElementById('screenshotPreview').innerHTML = '';
         document.getElementById('screenshotStatus').textContent = '';
+        document.getElementById('lobbyLinkInput').value = '';
+        document.getElementById('lobbyLinkDisplay').style.display = 'none';
+        document.getElementById('lobbyStatus').textContent = '';
         
-        // Переходим на страницу матча у текущего игрока
         navigate('matchPage');
         renderMatchPage();
         showToast('success', 'Матч начался!', `${orange.length + blue.length} игроков в игре`);
         checkMatchResultVisibility();
-        
-        // Другие игроки увидят матч через Realtime подписку (см. subscribeToMatches)
+        checkLobbyVisibility();
     }
 
     // ============================================================
@@ -3395,6 +3508,9 @@
                                 document.getElementById('screenshotStatus').textContent = '✅ Скриншот загружен из БД';
                                 document.getElementById('screenshotStatus').style.color = '#51cf66';
                             }
+                            if (match.lobby_link) {
+                                lobbyLink = match.lobby_link;
+                            }
 
                             const isOrangeCaptain = currentMatch.orange.length > 0 && currentMatch.orange[0].id === currentUser.id;
                             const isBlueCaptain = currentMatch.blue.length > 0 && currentMatch.blue[0].id === currentUser.id;
@@ -3402,6 +3518,7 @@
 
                             renderMatchPage();
                             checkMatchResultVisibility();
+                            checkLobbyVisibility();
                             navigate('matchPage');
                             showToast('success', 'Матч найден!', 'Вы были добавлены в матч');
                         }
@@ -3411,6 +3528,7 @@
                             currentMatch = null;
                             isPlayerInMatch = false;
                             matchRestored = false;
+                            lobbyLink = null;
                         }
                     }
                 }
@@ -3419,9 +3537,1332 @@
     }
 
     // ============================================================
-    //  ОСТАЛЬНЫЕ ФУНКЦИИ (АДМИН, ТОП, ДРАФТ, СКРИНШОТ, ИСТОРИЯ и т.д.)
+    //  ЛОББИ
     // ============================================================
-    // ... (все остальные функции из предыдущей версии, они не менялись)
+    function checkLobbyVisibility() {
+        const isPlayer = isPlayerInMatch;
+        const isCaptainLocal = isCaptain;
+        
+        if (draftState.isComplete && isPlayer) {
+            document.getElementById('lobbySection').classList.add('visible');
+        } else {
+            document.getElementById('lobbySection').classList.remove('visible');
+        }
+        
+        const inputGroup = document.querySelector('.lobby-input-group');
+        if (isCaptainLocal && draftState.isComplete) {
+            inputGroup.style.display = 'flex';
+        } else {
+            inputGroup.style.display = 'none';
+        }
+        
+        const display = document.getElementById('lobbyLinkDisplay');
+        if (lobbyLink) {
+            display.style.display = 'flex';
+            document.getElementById('lobbyLink').href = lobbyLink;
+            document.getElementById('lobbyLink').textContent = lobbyLink;
+        } else {
+            display.style.display = 'none';
+        }
+    }
+
+    document.getElementById('lobbySaveBtn').addEventListener('click', function() {
+        const input = document.getElementById('lobbyLinkInput');
+        const link = input.value.trim();
+        const statusEl = document.getElementById('lobbyStatus');
+        
+        if (!link) {
+            statusEl.textContent = '❌ Введите ссылку на лобби';
+            statusEl.className = 'lobby-status error';
+            return;
+        }
+        
+        if (!link.startsWith('http://') && !link.startsWith('https://')) {
+            statusEl.textContent = '❌ Введите корректную ссылку (начинается с http:// или https://)';
+            statusEl.className = 'lobby-status error';
+            return;
+        }
+        
+        lobbyLink = link;
+        input.value = '';
+        statusEl.textContent = '✅ Ссылка сохранена!';
+        statusEl.className = 'lobby-status success';
+        
+        checkLobbyVisibility();
+        showToast('success', 'Ссылка на лобби сохранена!', 'Другие игроки могут присоединиться');
+        saveMatchToSupabase();
+    });
+
+    function copyLobbyLink() {
+        if (!lobbyLink) return;
+        navigator.clipboard.writeText(lobbyLink).then(() => {
+            showToast('success', 'Скопировано!', 'Ссылка на лобби скопирована');
+        }).catch(() => {
+            const input = document.createElement('input');
+            input.value = lobbyLink;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            document.body.removeChild(input);
+            showToast('success', 'Скопировано!', 'Ссылка на лобби скопирована');
+        });
+    }
+
+    // ============================================================
+    //  АДМИН СТАТИСТИКА
+    // ============================================================
+    async function loadAdminStats() {
+        try {
+            const { count: totalUsers } = await supabaseClient
+                .from('users')
+                .select('*', { count: 'exact', head: true });
+            document.getElementById('totalUsersCount').textContent = totalUsers || 0;
+
+            const weekAgo = new Date();
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            const { count: activeUsers } = await supabaseClient
+                .from('users')
+                .select('*', { count: 'exact', head: true })
+                .gte('lastLogin', weekAgo.toISOString());
+            document.getElementById('activeUsersCount').textContent = activeUsers || 0;
+
+            const { count: totalMatches } = await supabaseClient
+                .from('match_history')
+                .select('*', { count: 'exact', head: true });
+            document.getElementById('totalMatchesCountAdmin').textContent = totalMatches || 0;
+
+        } catch (e) {
+            console.error('Ошибка загрузки статистики:', e);
+        }
+    }
+
+    // ============================================================
+    //  ТОП ИГРОКОВ (50 ЧЕЛОВЕК)
+    // ============================================================
+    async function renderTopPlayers() {
+        const container = document.getElementById('topList');
+        
+        try {
+            const { data, error } = await supabaseClient
+                .from('users')
+                .select('id, username, elo, matches, wins, mvp')
+                .order('elo', { ascending: false })
+                .limit(50);
+
+            if (error) throw error;
+
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="friends-empty"><i class="fas fa-trophy"></i> Нет игроков</div>';
+                return;
+            }
+
+            let userRank = 0;
+            if (currentUser) {
+                const allUsers = await supabaseClient
+                    .from('users')
+                    .select('id, elo')
+                    .order('elo', { ascending: false });
+                
+                if (allUsers.data) {
+                    const rank = allUsers.data.findIndex(u => u.id === currentUser.id);
+                    userRank = rank !== -1 ? rank + 1 : 0;
+                }
+            }
+            document.getElementById('userRank').textContent = userRank ? '#' + userRank : '#0';
+
+            container.innerHTML = data.map((player, index) => {
+                const isUser = player.id === currentUser?.id;
+                const rankClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : '';
+                const winrate = player.matches > 0 ? Math.round((player.wins / player.matches) * 100) : 0;
+                
+                return `
+                    <div class="top-item" style="${isUser ? 'border-color: rgba(255,215,0,0.4); background: rgba(255,215,0,0.05);' : ''}">
+                        <div class="rank ${rankClass}">${index + 1}</div>
+                        <div class="avatar">${player.username.charAt(0).toUpperCase()}</div>
+                        <div class="info">
+                            <div class="name">${player.username} ${isUser ? '👈' : ''}</div>
+                            <div class="stats">${player.matches || 0} матчей • ${winrate}% побед • ${player.mvp || 0} MVP</div>
+                        </div>
+                        <div class="elo">${player.elo || 1000}</div>
+                    </div>
+                `;
+            }).join('');
+
+        } catch (e) {
+            console.error('Ошибка загрузки топа:', e);
+            container.innerHTML = '<div class="friends-empty"><i class="fas fa-exclamation-triangle"></i> Ошибка загрузки</div>';
+        }
+    }
+
+    // ============================================================
+    //  МАТЧ (ОТОБРАЖЕНИЕ, ДРАФТ И Т.Д.)
+    // ============================================================
+    function checkMatchResultVisibility() {
+        const isPlayer = isPlayerInMatch;
+        
+        if (draftState.isComplete && isPlayer) {
+            document.getElementById('screenshotSection').classList.add('visible');
+        } else {
+            document.getElementById('screenshotSection').classList.remove('visible');
+        }
+        
+        if (draftState.isComplete && isAdmin) {
+            document.getElementById('matchResultSection').classList.add('admin-visible');
+            document.getElementById('matchActions').classList.add('admin-visible');
+            document.getElementById('endMatchBtn').disabled = false;
+        } else {
+            document.getElementById('matchResultSection').classList.remove('admin-visible');
+            document.getElementById('matchActions').classList.remove('admin-visible');
+            document.getElementById('endMatchBtn').disabled = true;
+        }
+        
+        checkLobbyVisibility();
+    }
+
+    function renderMatchPage() {
+        if (!currentMatch) return;
+
+        const oCaptain = currentMatch.orange.length > 0 ? currentMatch.orange[0].username : null;
+        const bCaptain = currentMatch.blue.length > 0 ? currentMatch.blue[0].username : null;
+
+        const sortedOrange = [...currentMatch.orange].sort((a, b) => {
+            if (a.username === oCaptain) return -1;
+            if (b.username === oCaptain) return 1;
+            return 0;
+        });
+        const sortedBlue = [...currentMatch.blue].sort((a, b) => {
+            if (a.username === bCaptain) return -1;
+            if (b.username === bCaptain) return 1;
+            return 0;
+        });
+
+        document.getElementById('teamOrangePlayers').innerHTML = sortedOrange.map(p => {
+            const isCaptain2 = p.username === oCaptain;
+            return `
+                <div class="player-card">
+                    <div class="avatar">${p.username.charAt(0).toUpperCase()}</div>
+                    <div class="info">
+                        <span class="name">${p.username}</span>
+                    </div>
+                    ${isCaptain2 ? `<span class="captain-badge" style="max-width:100%; white-space:nowrap; overflow:visible; font-size:9px;"><i class="fas fa-crown"></i> ${p.username}</span>` : ''}
+                </div>
+            `;
+        }).join('') || '<p style="color:#888;text-align:center;padding:8px 0;font-size:13px;">Нет игроков</p>';
+
+        document.getElementById('teamBluePlayers').innerHTML = sortedBlue.map(p => {
+            const isCaptain2 = p.username === bCaptain;
+            return `
+                <div class="player-card">
+                    <div class="avatar">${p.username.charAt(0).toUpperCase()}</div>
+                    <div class="info">
+                        <span class="name">${p.username}</span>
+                    </div>
+                    ${isCaptain2 ? `<span class="captain-badge" style="max-width:100%; white-space:nowrap; overflow:visible; font-size:9px;"><i class="fas fa-crown"></i> ${p.username}</span>` : ''}
+                </div>
+            `;
+        }).join('') || '<p style="color:#888;text-align:center;padding:8px 0;font-size:13px;">Нет игроков</p>';
+
+        renderDraftUI();
+        checkMatchResultVisibility();
+        checkLobbyVisibility();
+    }
+
+    // ============================================================
+    //  ДРАФТ
+    // ============================================================
+    function resetDraft() {
+        draftState = {
+            gameNumber: (draftState.gameNumber || 0) + 1,
+            modeOptions: ['Gem Grab', 'Brawl Ball', 'Knockout', 'Heist', 'Bounty', 'Hot Zone', 'Siege'],
+            modeBanned: [],
+            modeFinal: null,
+            currentCaptain: 0,
+            isComplete: false,
+            captain1: draftState.captain1 || null,
+            captain2: draftState.captain2 || null
+        };
+        saveMatchToSupabase();
+        renderDraftUI();
+    }
+
+    function getCaptainName(index) {
+        if (!currentMatch) return 'Капитан ' + (index + 1);
+        const captains = [];
+        if (currentMatch.orange.length > 0) captains.push(currentMatch.orange[0].username);
+        if (currentMatch.blue.length > 0) captains.push(currentMatch.blue[0].username);
+        return captains[index] || 'Капитан ' + (index + 1);
+    }
+
+    function isCurrentCaptain() {
+        if (!currentMatch || !currentUser) return false;
+        const captains = [];
+        if (currentMatch.orange.length > 0) captains.push(currentMatch.orange[0].id);
+        if (currentMatch.blue.length > 0) captains.push(currentMatch.blue[0].id);
+        return captains[draftState.currentCaptain] === currentUser.id;
+    }
+
+    function renderDraftUI() {
+        const state = draftState;
+
+        document.getElementById('matchGameNumber').textContent = '#' + state.gameNumber;
+        document.getElementById('matchSelectedMode').textContent = state.modeFinal || '—';
+
+        const modesContainer = document.getElementById('modesBanContainer');
+        const modeBtns = modesContainer.querySelectorAll('.ban-btn');
+        
+        const canBan = isCurrentCaptain() && !state.isComplete;
+        
+        modeBtns.forEach(btn => {
+            const val = btn.dataset.value;
+            if (state.modeBanned.includes(val)) {
+                btn.classList.add('banned');
+                btn.style.display = 'none';
+            } else if (state.modeFinal === val) {
+                btn.classList.add('selected');
+                btn.disabled = true;
+            } else if (state.isComplete) {
+                btn.disabled = true;
+            } else {
+                btn.classList.remove('banned', 'selected');
+                btn.style.display = '';
+                btn.disabled = !canBan;
+            }
+        });
+
+        const availableModes = state.modeOptions.filter(v => !state.modeBanned.includes(v) && v !== state.modeFinal);
+        document.getElementById('modesLeft').textContent = availableModes.length;
+
+        const modesStatus = document.getElementById('modesStatus');
+        if (state.modeFinal) {
+            modesStatus.textContent = '✅ ' + state.modeFinal;
+            modesStatus.className = 'status-text done';
+        } else if (!state.isComplete) {
+            const captainName = getCaptainName(state.currentCaptain);
+            modesStatus.textContent = 'Ход: ' + captainName;
+            modesStatus.className = 'status-text';
+            if (isCurrentCaptain()) {
+                modesStatus.textContent += ' (👈 Ваш ход!)';
+                modesStatus.style.color = '#51cf66';
+            } else {
+                modesStatus.style.color = '#ffd700';
+            }
+        } else {
+            modesStatus.textContent = 'Ожидание...';
+            modesStatus.className = 'status-text';
+        }
+        document.getElementById('modesTurnName').textContent = !state.isComplete ? getCaptainName(state.currentCaptain) : '—';
+
+        const bansContainer = document.getElementById('bansContainer');
+        if (state.isComplete) {
+            bansContainer.style.display = 'none';
+        } else {
+            bansContainer.style.display = 'grid';
+        }
+
+        saveMatchToSupabase();
+        checkMatchResultVisibility();
+        checkLobbyVisibility();
+    }
+
+    function handleModesBan(value) {
+        const state = draftState;
+        if (state.isComplete) return;
+        if (state.modeBanned.includes(value)) return;
+        if (state.modeFinal) return;
+        
+        if (!isCurrentCaptain()) {
+            showToast('error', 'Не ваш ход!', 'Сейчас банит другой капитан');
+            return;
+        }
+
+        state.modeBanned.push(value);
+
+        const available = state.modeOptions.filter(v => !state.modeBanned.includes(v));
+        if (available.length === 1) {
+            state.modeFinal = available[0];
+            state.isComplete = true;
+            renderDraftUI();
+            showToast('success', 'Драфт завершён!', 'Играем режим ' + state.modeFinal);
+            checkMatchResultVisibility();
+            checkLobbyVisibility();
+            return;
+        }
+
+        state.currentCaptain = state.currentCaptain === 0 ? 1 : 0;
+        renderDraftUI();
+        showToast('info', 'Ход передан', 'Теперь банит ' + getCaptainName(state.currentCaptain));
+    }
+
+    // ============================================================
+    //  СКРИНШОТ
+    // ============================================================
+    document.getElementById('screenshotUploadBtn').addEventListener('click', function() {
+        const input = document.getElementById('screenshotInput');
+        const file = input.files[0];
+        const statusEl = document.getElementById('screenshotStatus');
+
+        if (!file) {
+            statusEl.textContent = '❌ Выберите файл';
+            statusEl.style.color = '#ff6b6b';
+            return;
+        }
+
+        if (!file.type.startsWith('image/')) {
+            statusEl.textContent = '❌ Только изображения';
+            statusEl.style.color = '#ff6b6b';
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            statusEl.textContent = '❌ Файл больше 5MB';
+            statusEl.style.color = '#ff6b6b';
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            currentScreenshot = e.target.result;
+            const preview = document.getElementById('screenshotPreview');
+            preview.innerHTML = `<img src="${currentScreenshot}" alt="Скриншот" />`;
+            statusEl.textContent = '✅ Скриншот загружен!';
+            statusEl.style.color = '#51cf66';
+            showToast('success', 'Скриншот загружен', 'Ожидайте решения администратора');
+            saveMatchToSupabase();
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // ============================================================
+    //  ЗАСЧИТЫВАНИЕ МАТЧА
+    // ============================================================
+    document.getElementById('blueWinBtn').addEventListener('click', function() {
+        if (!currentMatch || !draftState.isComplete) {
+            return showToast('error', 'Ошибка', 'Дождитесь завершения драфта');
+        }
+        if (!isAdmin) {
+            return showToast('error', 'Доступ запрещён', 'Только администратор может засчитывать матчи');
+        }
+        finishMatch('blue');
+    });
+
+    document.getElementById('orangeWinBtn').addEventListener('click', function() {
+        if (!currentMatch || !draftState.isComplete) {
+            return showToast('error', 'Ошибка', 'Дождитесь завершения драфта');
+        }
+        if (!isAdmin) {
+            return showToast('error', 'Доступ запрещён', 'Только администратор может засчитывать матчи');
+        }
+        finishMatch('orange');
+    });
+
+    async function finishMatch(winner) {
+        if (!currentMatch || !currentUser) return;
+        if (!isAdmin) {
+            return showToast('error', 'Доступ запрещён', 'Только администратор может засчитывать матчи');
+        }
+
+        const map = draftState.modeFinal || 'Gem Grab';
+        const allPlayers = [...currentMatch.orange, ...currentMatch.blue];
+        const realPlayers = allPlayers.filter(p => !p.id.startsWith('bot_'));
+
+        const orangePlayers = currentMatch.orange;
+        const bluePlayers = currentMatch.blue;
+        const winners = winner === 'blue' ? bluePlayers : orangePlayers;
+        const losers = winner === 'blue' ? orangePlayers : bluePlayers;
+
+        console.log('📊 Засчитываем матч:');
+        console.log('  Победители:', winners.map(p => p.username));
+        console.log('  Проигравшие:', losers.map(p => p.username));
+        console.log('  Режим:', map);
+
+        for (const player of realPlayers) {
+            const isWin = winners.some(w => w.id === player.id);
+
+            try {
+                const { data: userData, error: fetchError } = await supabaseClient
+                    .from('users')
+                    .select('*')
+                    .eq('id', player.id)
+                    .single();
+
+                if (fetchError) {
+                    console.error('Ошибка получения данных для', player.username, fetchError);
+                    continue;
+                }
+
+                if (userData) {
+                    const newMatches = (userData.matches || 0) + 1;
+                    const newWins = (userData.wins || 0) + (isWin ? 1 : 0);
+                    const newLosses = (userData.losses || 0) + (isWin ? 0 : 1);
+                    const newElo = (userData.elo || 1000) + (isWin ? 25 : -25);
+                    const newMvp = (userData.mvp || 0) + (isWin ? 1 : 0);
+
+                    console.log(`  ${player.username}: +1 матч, ELO ${userData.elo} → ${newElo}`);
+
+                    await supabaseClient
+                        .from('users')
+                        .update({
+                            matches: newMatches,
+                            wins: newWins,
+                            losses: newLosses,
+                            elo: newElo,
+                            mvp: newMvp,
+                            lastLogin: new Date().toISOString()
+                        })
+                        .eq('id', player.id);
+                }
+
+                const historyId = Date.now().toString() + '_' + Math.random().toString(36).substr(2, 4);
+                await supabaseClient
+                    .from('match_history')
+                    .insert([{
+                        id: historyId,
+                        user_id: player.id,
+                        username: player.username,
+                        map: map,
+                        result: isWin ? 'win' : 'loss',
+                        match_date: new Date().toISOString(),
+                        server_name: 'Brawl Stars',
+                        screenshot: currentScreenshot || null,
+                        created_at: new Date().toISOString()
+                    }]);
+
+            } catch (e) {
+                console.error('Ошибка обработки для', player.username, e);
+            }
+        }
+
+        const { data: updatedUser } = await supabaseClient
+            .from('users')
+            .select('*')
+            .eq('id', currentUser.id)
+            .single();
+
+        if (updatedUser) {
+            currentUser = updatedUser;
+            saveSession(updatedUser);
+            await updateProfile();
+            updateWalletUI();
+        }
+
+        const winnerTeam = winner === 'blue' ? 'BLUE TEAM' : 'ORANGE TEAM';
+        showToast('success', 'Матч засчитан!', `Победила команда ${winnerTeam}`);
+
+        document.getElementById('matchResultSection').classList.remove('admin-visible');
+        document.getElementById('screenshotSection').classList.remove('visible');
+        document.getElementById('lobbySection').classList.remove('visible');
+        document.getElementById('matchActions').classList.remove('admin-visible');
+        document.getElementById('endMatchBtn').disabled = true;
+
+        currentMatch = null;
+        isPlayerInMatch = false;
+        draftState.isComplete = false;
+        currentScreenshot = null;
+        lobbyLink = null;
+        document.getElementById('screenshotInput').value = '';
+        document.getElementById('screenshotPreview').innerHTML = '';
+        document.getElementById('screenshotStatus').textContent = '';
+        document.getElementById('lobbyLinkInput').value = '';
+        document.getElementById('lobbyLinkDisplay').style.display = 'none';
+        document.getElementById('lobbyStatus').textContent = '';
+
+        await deleteMatchFromSupabase();
+        navigate('matches');
+        updateQueueUI();
+        showToast('info', 'Матч завершён', 'Статистика сохранена!');
+        await renderTopPlayers();
+        await updateProfile();
+        await loadAllMatches();
+        await loadAdminStats();
+    }
+
+    function endMatch() {
+        if (!currentMatch) return;
+        if (!draftState.isComplete) {
+            return showToast('info', 'Дождитесь драфта', 'Сначала завершите выбор режима');
+        }
+        if (!isAdmin) {
+            return showToast('error', 'Доступ запрещён', 'Только администратор может завершить матч');
+        }
+        if (!confirm('Завершить матч без засчитывания?')) return;
+        
+        currentMatch = null;
+        isPlayerInMatch = false;
+        draftState.isComplete = false;
+        matchRestored = false;
+        lobbyLink = null;
+        document.getElementById('matchResultSection').classList.remove('admin-visible');
+        document.getElementById('screenshotSection').classList.remove('visible');
+        document.getElementById('lobbySection').classList.remove('visible');
+        document.getElementById('matchActions').classList.remove('admin-visible');
+        document.getElementById('endMatchBtn').disabled = true;
+        
+        deleteMatchFromSupabase();
+        
+        navigate('matches');
+        updateQueueUI();
+        showToast('info', 'Матч завершён', 'Матч отменён');
+        loadAllMatches();
+        loadAdminStats();
+    }
+
+    // ============================================================
+    //  УПРАВЛЕНИЕ МАТЧАМИ (АДМИН)
+    // ============================================================
+    async function loadAllMatches() {
+        const container = document.getElementById('matchesListContainer');
+        if (!container) return;
+        
+        container.innerHTML = '<div class="admin-empty">⏳ Загрузка...</div>';
+        
+        try {
+            const { data, error } = await supabaseClient
+                .from('active_matches')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+
+            document.getElementById('totalMatchesCountAdmin2').textContent = data?.length || 0;
+
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="admin-empty"><i class="fas fa-inbox"></i> Нет активных матчей</div>';
+                return;
+            }
+
+            container.innerHTML = `
+                <div style="margin-bottom: 8px; color: #888; font-size: 12px;">
+                    <i class="fas fa-info-circle"></i> Всего: ${data.length} матчей
+                </div>
+                <div class="matches-grid">
+                    ${data.map(match => {
+                        let orange = [], blue = [];
+                        try {
+                            orange = JSON.parse(match.orange || '[]');
+                            blue = JSON.parse(match.blue || '[]');
+                        } catch(e) {}
+                        
+                        const totalPlayers = orange.length + blue.length;
+                        const date = new Date(match.created_at).toLocaleString('ru-RU');
+                        let status = 'active';
+                        let mapName = '—';
+                        try {
+                            if (match.draft_state) {
+                                const ds = JSON.parse(match.draft_state);
+                                status = ds.isComplete ? 'complete' : 'active';
+                                mapName = ds.modeFinal || '—';
+                            }
+                        } catch(e) {}
+                        
+                        const statusLabels = {
+                            'active': '🟢 В процессе',
+                            'complete': '✅ Завершён',
+                            'waiting': '🟡 Ожидание'
+                        };
+                        
+                        const canJoin = isAdmin && !isPlayerInMatch;
+                        
+                        return `
+                            <div class="match-card">
+                                <span class="match-status ${status}">${statusLabels[status] || '🟢 Активен'}</span>
+                                <div class="match-header">
+                                    <span class="match-id">#${match.id.substring(0, 8)}</span>
+                                    <span class="match-date">📅 ${date}</span>
+                                </div>
+                                <div class="match-map">🎮 Режим: <strong>${mapName}</strong></div>
+                                <div class="match-teams">
+                                    <span class="team blue">
+                                        🔵 BLUE (${blue.length})
+                                        ${blue.map(p => `<span class="player-tag">${p.username}</span>`).join('')}
+                                    </span>
+                                    <span class="team orange">
+                                        🟠 ORANGE (${orange.length})
+                                        ${orange.map(p => `<span class="player-tag">${p.username}</span>`).join('')}
+                                    </span>
+                                </div>
+                                <div class="match-actions-admin">
+                                    <button class="btn-sm view" onclick="viewMatch('${match.id}')">
+                                        <i class="fas fa-eye"></i> Посмотреть
+                                    </button>
+                                    ${canJoin ? `<button class="btn-sm join" onclick="joinMatch('${match.id}')">
+                                        <i class="fas fa-sign-in-alt"></i> Войти
+                                    </button>` : ''}
+                                    <button class="btn-sm delete" onclick="deleteMatch('${match.id}')">
+                                        <i class="fas fa-trash"></i> Удалить
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        } catch (e) {
+            console.error('Ошибка загрузки матчей:', e);
+            container.innerHTML = '<div class="admin-empty">❌ Ошибка загрузки</div>';
+        }
+    }
+
+    async function viewMatch(matchId) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('active_matches')
+                .select('*')
+                .eq('id', matchId)
+                .single();
+
+            if (error || !data) {
+                showToast('error', 'Ошибка', 'Матч не найден');
+                return;
+            }
+
+            let orange = [], blue = [];
+            try {
+                orange = JSON.parse(data.orange || '[]');
+                blue = JSON.parse(data.blue || '[]');
+            } catch(e) {}
+
+            const allPlayers = [...orange, ...blue];
+            const playerNames = allPlayers.map(p => p.username).join(', ');
+            
+            showToast('info', '📋 Информация о матче', 
+                `Игроки: ${playerNames || 'Нет игроков'}\n` +
+                `Режим: ${data.draft_state ? JSON.parse(data.draft_state).modeFinal || '—' : '—'}\n` +
+                `Создан: ${new Date(data.created_at).toLocaleString('ru-RU')}`
+            );
+        } catch (e) {
+            showToast('error', 'Ошибка', e.message);
+        }
+    }
+
+    async function joinMatch(matchId) {
+        if (!isAdmin) {
+            showToast('error', 'Доступ запрещён', 'Только администратор может присоединиться');
+            return;
+        }
+        
+        if (isPlayerInMatch) {
+            showToast('error', 'Ошибка', 'Вы уже в матче');
+            return;
+        }
+
+        try {
+            const { data, error } = await supabaseClient
+                .from('active_matches')
+                .select('*')
+                .eq('id', matchId)
+                .single();
+
+            if (error || !data) {
+                showToast('error', 'Ошибка', 'Матч не найден');
+                return;
+            }
+
+            let orange = [], blue = [];
+            try {
+                orange = JSON.parse(data.orange || '[]');
+                blue = JSON.parse(data.blue || '[]');
+            } catch(e) {}
+
+            const adminPlayer = {
+                id: currentUser.id,
+                username: currentUser.username + ' (Админ)'
+            };
+
+            if (blue.length <= orange.length) {
+                blue.push(adminPlayer);
+            } else {
+                orange.push(adminPlayer);
+            }
+
+            await supabaseClient
+                .from('active_matches')
+                .update({
+                    orange: JSON.stringify(orange),
+                    blue: JSON.stringify(blue),
+                    updated_at: new Date().toISOString()
+                })
+                .eq('id', matchId);
+
+            currentMatch = { orange, blue };
+            isPlayerInMatch = true;
+            activeMatchId = matchId;
+            
+            if (data.draft_state) {
+                try {
+                    draftState = JSON.parse(data.draft_state);
+                } catch(e) {}
+            }
+            if (data.lobby_link) {
+                lobbyLink = data.lobby_link;
+            }
+            
+            renderMatchPage();
+            checkMatchResultVisibility();
+            checkLobbyVisibility();
+            navigate('matchPage');
+            await loadAllMatches();
+            
+            showToast('success', 'Присоединились!', 'Вы вошли в матч как администратор');
+
+        } catch (e) {
+            console.error('Ошибка присоединения:', e);
+            showToast('error', 'Ошибка', e.message);
+        }
+    }
+
+    async function deleteMatch(matchId) {
+        if (!confirm('Удалить этот матч?')) return;
+        
+        try {
+            await supabaseClient
+                .from('active_matches')
+                .delete()
+                .eq('id', matchId);
+            
+            showToast('success', 'Готово', 'Матч удалён');
+            await loadAllMatches();
+            
+            if (activeMatchId === matchId) {
+                currentMatch = null;
+                isPlayerInMatch = false;
+                matchRestored = false;
+                lobbyLink = null;
+                navigate('matches');
+            }
+        } catch (e) {
+            showToast('error', 'Ошибка', e.message);
+        }
+    }
+
+    async function clearAllMatches() {
+        if (!confirm('⚠️ Удалить ВСЕ активные матчи? Это действие необратимо!')) return;
+        
+        try {
+            await supabaseClient
+                .from('active_matches')
+                .delete()
+                .neq('id', '0');
+            
+            showToast('success', 'Готово', 'Все матчи удалены');
+            currentMatch = null;
+            isPlayerInMatch = false;
+            matchRestored = false;
+            lobbyLink = null;
+            await loadAllMatches();
+            navigate('matches');
+        } catch (e) {
+            showToast('error', 'Ошибка', e.message);
+        }
+    }
+
+    // ============================================================
+    //  ПРОФИЛЬ
+    // ============================================================
+    async function updateProfile() {
+        if (!currentUser) return;
+        
+        const matches = currentUser.matches || 0;
+        const wins = currentUser.wins || 0;
+        const winrate = matches > 0 ? Math.round((wins / matches) * 100) : 0;
+        
+        document.getElementById('pWr').textContent = winrate + '%';
+        document.getElementById('pMatches').textContent = matches;
+        document.getElementById('pMvp').textContent = currentUser.mvp || 0;
+        document.getElementById('pElo').textContent = currentUser.elo || 1000;
+
+        await loadMatchHistory();
+        await renderChart();
+        updateWalletUI();
+    }
+
+    // ============================================================
+    //  КОШЕЛЁК
+    // ============================================================
+    function updateWalletUI() {
+        if (!currentUser) return;
+        const balance = currentUser.balance || 0;
+        document.getElementById('walletRub').textContent = balance + ' ₽';
+        document.getElementById('walletStars').textContent = balance + ' ⭐';
+    }
+
+    // ============================================================
+    //  ИСТОРИЯ МАТЧЕЙ
+    // ============================================================
+    async function loadMatchHistory() {
+        if (!currentUser) return;
+        
+        try {
+            const { data, error } = await supabaseClient
+                .from('match_history')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .order('match_date', { ascending: false })
+                .limit(20);
+
+            if (error) throw error;
+
+            const container = document.getElementById('matchHistoryList');
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div style="color:#666; text-align:center; padding:8px 0;">Нет сыгранных матчей</div>';
+                return;
+            }
+
+            container.innerHTML = data.map(m => `
+                <div class="match-item">
+                    <span class="map"><i class="fas fa-gamepad"></i> ${m.map || 'Неизвестная карта'}</span>
+                    <span class="date">${new Date(m.match_date).toLocaleDateString('ru-RU')}</span>
+                    <span class="result ${m.result === 'win' ? 'win' : 'loss'}">
+                        ${m.result === 'win' ? '🏆 Победа' : '💀 Поражение'}
+                    </span>
+                </div>
+            `).join('');
+        } catch (e) {
+            console.error('Ошибка загрузки истории:', e);
+        }
+    }
+
+    // ============================================================
+    //  ДИНАМИКА МАТЧЕЙ (ГРАФИК)
+    // ============================================================
+    async function renderChart() {
+        try {
+            const { data, error } = await supabaseClient
+                .from('match_history')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .order('match_date', { ascending: false })
+                .limit(10);
+
+            if (error || !data || data.length === 0) {
+                document.getElementById('chartContainer').innerHTML = '<div style="color:#666; text-align:center; width:100%; padding:10px 0;">Нет данных</div>';
+                return;
+            }
+
+            const container = document.getElementById('chartContainer');
+            const lastMatches = data.slice(0, 10).reverse();
+            const height = 40;
+
+            container.innerHTML = lastMatches.map((m, index) => {
+                const isWin = m.result === 'win';
+                const barClass = isWin ? 'win' : 'loss';
+                
+                return `
+                    <div class="chart-bar-wrap" title="${m.map || 'Матч'} - ${isWin ? 'Победа' : 'Поражение'}">
+                        <div class="chart-bar ${barClass}" 
+                             style="height: ${height}px; 
+                                    ${isWin ? 'border-radius: 3px 3px 0 0; align-self: flex-end;' : 'border-radius: 0 0 3px 3px; align-self: flex-start;'}">
+                        </div>
+                        <span class="bar-label">${index + 1}</span>
+                    </div>
+                `;
+            }).join('');
+        } catch (e) {
+            console.error('renderChart error:', e);
+        }
+    }
+
+    // ============================================================
+    //  АДМИН-ПАНЕЛЬ (ПРОМОКОДЫ И АДМИНЫ)
+    // ============================================================
+    async function renderAdminList() {
+        try {
+            const { data: admins, error } = await supabaseClient
+                .from('users')
+                .select('id, username, isAdmin')
+                .eq('isAdmin', true);
+
+            if (error) throw error;
+
+            const container = document.getElementById('adminList');
+            if (!admins || admins.length === 0) {
+                container.innerHTML = '<div class="admin-empty">Нет администраторов</div>';
+                return;
+            }
+
+            container.innerHTML = admins.map(admin => `
+                <span class="admin-tag">
+                    ${admin.username}
+                    ${admin.username !== 'Destro' && isAdmin ? 
+                        `<span class="remove" onclick="removeAdmin('${admin.id}')">&times;</span>` : 
+                        '<span style="color:#ffd700;font-size:10px;">👑</span>'
+                    }
+                </span>
+            `).join('');
+        } catch (e) {
+            console.error('renderAdminList error:', e);
+        }
+    }
+
+    async function addAdmin() {
+        if (!isAdmin) {
+            showToast('error', 'Доступ запрещён', 'Только Destro может управлять админами');
+            return;
+        }
+
+        const username = document.getElementById('adminAddInput').value.trim();
+        const statusEl = document.getElementById('adminAddStatus');
+
+        if (!username) {
+            statusEl.className = 'admin-status show error';
+            statusEl.textContent = '❌ Введите никнейм';
+            return;
+        }
+
+        try {
+            const { data: user, error } = await supabaseClient
+                .from('users')
+                .select('id, isAdmin')
+                .eq('username', username)
+                .maybeSingle();
+
+            if (error || !user) {
+                statusEl.className = 'admin-status show error';
+                statusEl.textContent = '❌ Пользователь не найден';
+                return;
+            }
+
+            if (user.isAdmin) {
+                statusEl.className = 'admin-status show error';
+                statusEl.textContent = '❌ Этот пользователь уже администратор';
+                return;
+            }
+
+            const { error: updateError } = await supabaseClient
+                .from('users')
+                .update({ isAdmin: true })
+                .eq('id', user.id);
+
+            if (updateError) {
+                statusEl.className = 'admin-status show error';
+                statusEl.textContent = '❌ Ошибка: ' + updateError.message;
+                return;
+            }
+
+            statusEl.className = 'admin-status show success';
+            statusEl.textContent = '✅ ' + username + ' теперь администратор!';
+            document.getElementById('adminAddInput').value = '';
+            renderAdminList();
+
+        } catch (e) {
+            statusEl.className = 'admin-status show error';
+            statusEl.textContent = '❌ Ошибка: ' + e.message;
+        }
+    }
+
+    async function removeAdmin(userId) {
+        if (!isAdmin) {
+            showToast('error', 'Доступ запрещён', 'Только Destro может управлять админами');
+            return;
+        }
+
+        if (!confirm('Удалить этого администратора?')) return;
+
+        try {
+            const { error } = await supabaseClient
+                .from('users')
+                .update({ isAdmin: false })
+                .eq('id', userId);
+
+            if (error) {
+                showToast('error', 'Ошибка', error.message);
+                return;
+            }
+
+            showToast('success', 'Готово', 'Администратор удалён');
+            renderAdminList();
+
+        } catch (e) {
+            showToast('error', 'Ошибка', e.message);
+        }
+    }
+
+    // ============================================================
+    //  ПРОМОКОДЫ
+    // ============================================================
+    async function renderPromoList() {
+        try {
+            const { data, error } = await supabaseClient
+                .from('promocodes')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+
+            const container = document.getElementById('promoList');
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="admin-empty">Нет промокодов</div>';
+                return;
+            }
+
+            container.innerHTML = data.map(p => `
+                <span class="admin-tag" style="${p.used_count >= p.max_uses ? 'opacity:0.5;' : ''}">
+                    ${p.code} — ${p.amount} ₽ (${p.used_count}/${p.max_uses})
+                    ${p.used_count >= p.max_uses ? '✅ Использован' : '🟢 Активен'}
+                    ${p.used_count < p.max_uses && isAdmin ? 
+                        `<span class="remove" onclick="deletePromo('${p.id}')">&times;</span>` : ''
+                    }
+                </span>
+            `).join('');
+        } catch (e) {
+            console.error('renderPromoList error:', e);
+        }
+    }
+
+    async function createPromo() {
+        if (!isAdmin) {
+            showToast('error', 'Доступ запрещён', 'Только Destro может создавать промокоды');
+            return;
+        }
+
+        const code = document.getElementById('promoCodeInput').value.trim().toUpperCase();
+        const amount = parseInt(document.getElementById('promoAmountInput').value);
+        const maxUses = parseInt(document.getElementById('promoUsesInput').value) || 1;
+        const statusEl = document.getElementById('promoStatus');
+
+        if (!code) {
+            statusEl.textContent = '❌ Введите промокод';
+            statusEl.style.color = '#ff6b6b';
+            return;
+        }
+        if (!amount || amount < 1) {
+            statusEl.textContent = '❌ Введите сумму (минимум 1 ₽)';
+            statusEl.style.color = '#ff6b6b';
+            return;
+        }
+        if (!maxUses || maxUses < 1) {
+            statusEl.textContent = '❌ Введите количество активаций';
+            statusEl.style.color = '#ff6b6b';
+            return;
+        }
+
+        try {
+            const { data, error } = await supabaseClient
+                .from('promocodes')
+                .insert([{
+                    code: code,
+                    amount: amount,
+                    max_uses: maxUses,
+                    used_count: 0,
+                    created_by: currentUser.username
+                }])
+                .select()
+                .single();
+
+            if (error) {
+                if (error.code === '23505') {
+                    statusEl.textContent = '❌ Промокод уже существует';
+                } else {
+                    statusEl.textContent = '❌ ' + error.message;
+                }
+                statusEl.style.color = '#ff6b6b';
+                return;
+            }
+
+            statusEl.textContent = '✅ Промокод ' + code + ' создан на ' + amount + ' ₽ (' + maxUses + ' активаций)!';
+            statusEl.style.color = '#51cf66';
+            document.getElementById('promoCodeInput').value = '';
+            document.getElementById('promoAmountInput').value = '';
+            document.getElementById('promoUsesInput').value = '1';
+            renderPromoList();
+
+        } catch (e) {
+            statusEl.textContent = '❌ Ошибка: ' + e.message;
+            statusEl.style.color = '#ff6b6b';
+        }
+    }
+
+    async function deletePromo(id) {
+        if (!confirm('Удалить промокод?')) return;
+        
+        try {
+            const { error } = await supabaseClient
+                .from('promocodes')
+                .delete()
+                .eq('id', id);
+
+            if (error) {
+                showToast('error', 'Ошибка', error.message);
+                return;
+            }
+
+            showToast('success', 'Готово', 'Промокод удалён');
+            renderPromoList();
+
+        } catch (e) {
+            showToast('error', 'Ошибка', e.message);
+        }
+    }
+
+    // ============================================================
+    //  ПРОМОКОД В КОШЕЛЬКЕ
+    // ============================================================
+    async function applyPromo() {
+        const input = document.getElementById('promoInput');
+        const code = input.value.trim().toUpperCase();
+        
+        if (!code) {
+            showToast('error', 'Ошибка', 'Введите промокод');
+            return;
+        }
+
+        const usedPromoCodes = JSON.parse(localStorage.getItem('usedPromoCodes')) || [];
+        if (usedPromoCodes.includes(code)) {
+            showToast('error', 'Ошибка', 'Вы уже использовали этот промокод!');
+            return;
+        }
+
+        try {
+            const { data, error } = await supabaseClient
+                .from('promocodes')
+                .select('*')
+                .eq('code', code)
+                .single();
+
+            if (error || !data) {
+                showToast('error', 'Ошибка', 'Промокод не найден');
+                return;
+            }
+
+            if (data.used_count >= data.max_uses) {
+                showToast('error', 'Ошибка', 'Промокод уже использован максимальное количество раз');
+                return;
+            }
+
+            if (!currentUser) {
+                showToast('error', 'Ошибка', 'Авторизуйтесь');
+                return;
+            }
+
+            const newBalance = (currentUser.balance || 0) + data.amount;
+            
+            const { error: updateError } = await supabaseClient
+                .from('users')
+                .update({ balance: newBalance })
+                .eq('id', currentUser.id);
+
+            if (updateError) {
+                showToast('error', 'Ошибка', updateError.message);
+                return;
+            }
+
+            await supabaseClient
+                .from('promocodes')
+                .update({ used_count: data.used_count + 1 })
+                .eq('id', data.id);
+
+            usedPromoCodes.push(code);
+            localStorage.setItem('usedPromoCodes', JSON.stringify(usedPromoCodes));
+
+            currentUser.balance = newBalance;
+            saveSession(currentUser);
+
+            showToast('success', 'Промокод применён!', `+${data.amount} ₽ добавлено на баланс!`);
+            input.value = '';
+            
+            updateWalletUI();
+            renderPromoList();
+
+        } catch (e) {
+            console.error('applyPromo error:', e);
+            showToast('error', 'Ошибка', e.message || 'Не удалось применить промокод');
+        }
+    }
+
+    // ============================================================
+    //  ПАТИ
+    // ============================================================
+    function updatePartyUI() {
+        if (!currentUser) return;
+        if (!currentUser.partyCode) {
+            currentUser.partyCode = generateCode();
+            supabaseClient
+                .from('users')
+                .update({ partyCode: currentUser.partyCode })
+                .eq('id', currentUser.id)
+                .then(() => {});
+        }
+        document.getElementById('playerCode').textContent = currentUser.partyCode || '—';
+        renderPartyFriends();
+    }
+
+    function renderPartyFriends() {
+        const container = document.getElementById('friendsList');
+        if (partyFriends.length === 0) {
+            container.innerHTML = '<span class="empty">Нет друзей в пати</span>';
+            return;
+        }
+        container.innerHTML = partyFriends.map(f => `
+            <span class="friend-tag">
+                <i class="fas fa-circle"></i> ${f.username}
+                <span class="remove" onclick="removePartyFriend('${f.id}')">&times;</span>
+            </span>
+        `).join('');
+    }
+
+    function addFriendByCode() {
+        const code = document.getElementById('partyCodeInput').value.trim().toUpperCase();
+        if (!code) return showToast('error', 'Ошибка', 'Введите код');
+        if (code.length !== 6) return showToast('error', 'Ошибка', 'Код должен состоять из 6 букв');
+        if (!currentUser) return showToast('error', 'Ошибка', 'Авторизуйтесь');
+        if (partyFriends.some(f => f.partyCode === code)) {
+            return showToast('info', 'Уже в пати', 'Этот игрок уже в вашей пати');
+        }
+        partyFriends.push({ id: 'friend_' + Date.now(), username: 'Игрок_' + code, partyCode: code });
+        renderPartyFriends();
+        document.getElementById('partyCodeInput').value = '';
+        showToast('success', 'Добавлен!', 'Игрок добавлен в пати');
+    }
+
+    function removePartyFriend(id) {
+        partyFriends = partyFriends.filter(f => f.id !== id);
+        renderPartyFriends();
+        showToast('info', 'Удалён', 'Игрок удалён из пати');
+    }
+
+    function copyCode() {
+        const code = document.getElementById('playerCode').textContent;
+        navigator.clipboard.writeText(code).then(() => {
+            showToast('success', 'Скопировано!', 'Код скопирован в буфер обмена');
+        }).catch(() => {
+            const input = document.createElement('input');
+            input.value = code;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            document.body.removeChild(input);
+            showToast('success', 'Скопировано!', 'Код скопирован в буфер обмена');
+        });
+    }
+
+    // ============================================================
+    //  ДРУЗЬЯ
+    // ============================================================
+    function switchFriendsTab(tab) {
+        friendsTab = tab;
+        document.querySelectorAll('.friends-tabs .tab').forEach(t => t.classList.remove('active'));
+        document.querySelector(`.friends-tabs .tab[data-tab="${tab}"]`)?.classList.add('active');
+        renderFriendsPage();
+    }
+
+    function addFriendByCode2() {
+        const code = document.getElementById('friendCodeInput').value.trim().toUpperCase();
+        if (!code) return showToast('error', 'Ошибка', 'Введите код');
+        if (code.length !== 6) return showToast('error', 'Ошибка', 'Код должен состоять из 6 букв');
+        showToast('success', 'Запрос отправлен', 'Запрос в друзья отправлен');
+        document.getElementById('friendCodeInput').value = '';
+        renderFriendsPage();
+    }
+
+    function renderFriendsPage() {
+        const container = document.getElementById('friendsListContainer');
+        container.innerHTML = `<div class="friends-empty"><i class="fas fa-user-friends"></i> Друзей пока нет.</div>`;
+        document.getElementById('friendsStatFriends').textContent = 0;
+        document.getElementById('friendsStatIncoming').textContent = 0;
+        document.getElementById('friendsStatOutgoing').textContent = 0;
+        document.getElementById('friendsBadge').textContent = 0;
+        document.getElementById('incomingBadge').textContent = 0;
+        document.getElementById('outgoingBadge').textContent = 0;
+    }
 
     // ============================================================
     //  ПОДКЛЮЧЕНИЕ ОБРАБОТЧИКОВ И ЗАПУСК
@@ -3495,4 +4936,4 @@
     });
 </script>
 </body>
-</html>
+</html> 
