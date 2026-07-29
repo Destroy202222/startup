@@ -3181,10 +3181,8 @@
 
                         showToast('info', 'Поиск начат', 'Ожидаем игроков...');
                         
-                        // Ждём 500мс перед обновлением UI, чтобы данные успели записаться
-                        setTimeout(() => {
-                            updateQueueUI();
-                        }, 500);
+                        // Сразу обновляем UI, показываем 1/6
+                        updateQueueUI();
                         
                         // Проверяем очередь каждые 2 секунды
                         if (queueCheckInterval) clearInterval(queueCheckInterval);
