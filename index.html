@@ -838,6 +838,8 @@
             align-items: center;
             gap: 3px;
             flex-shrink: 0;
+            white-space: nowrap;
+            max-width: 100%;
         }
 
         .bans-container {
@@ -3143,13 +3145,11 @@
         try {
             console.log('🔍 Начинаем поиск...');
             
-            // Удаляем старые записи
             await supabaseClient
                 .from('match_queue')
                 .delete()
                 .eq('user_id', currentUser.id);
 
-            // Добавляем в очередь
             const { error: insertError } = await supabaseClient
                 .from('match_queue')
                 .insert([{
@@ -3167,7 +3167,6 @@
 
             console.log('✅ Добавлен в очередь');
 
-            // Включаем режим поиска
             isSearching = true;
             searchSeconds = 0;
 
@@ -3185,11 +3184,10 @@
 
             showToast('info', 'Поиск начат', 'Ожидаем игроков...');
             
-            // Мгновенное обновление UI
             await updateQueueUI();
             
             if (queueCheckInterval) clearInterval(queueCheckInterval);
-            queueCheckInterval = setInterval(checkQueue, 2000);
+            queueCheckInterval = setInterval(checkQueue, 1000); // Проверка каждую секунду
             
         } catch (e) {
             console.error('❌ Ошибка в doStartSearch:', e);
@@ -3233,7 +3231,6 @@
                         username: p.username
                     }));
                     
-                    // Очищаем очередь
                     supabaseClient
                         .from('match_queue')
                         .delete()
@@ -3294,7 +3291,7 @@
     }
 
     // ============================================================
-    //  ПОСТОЯННАЯ ПРОВЕРКА МАТЧА (ЧТОБЫ ВСЕ УВИДЕЛИ 6/6)
+    //  ПОСТОЯННАЯ ПРОВЕРКА МАТЧА (ДЛЯ ВСЕХ ИГРОКОВ - КАЖДУЮ СЕКУНДУ)
     // ============================================================
     function startMatchPolling() {
         if (matchCheckInterval) clearInterval(matchCheckInterval);
@@ -3320,7 +3317,6 @@
                 const isInMatch = orange.some(p => p.id === currentUser.id) || 
                                   blue.some(p => p.id === currentUser.id);
 
-                // Если игрок в матче, но у него не загружен currentMatch
                 if (isInMatch && !currentMatch) {
                     console.log('🎯 Обнаружен новый матч для игрока!');
                     currentMatch = { orange, blue };
@@ -3353,7 +3349,7 @@
             } catch (e) {
                 console.error('Ошибка проверки матча:', e);
             }
-        }, 3000); // Проверяем каждые 3 секунды
+        }, 1000); // Проверяем каждую секунду!
     }
 
     // ============================================================
@@ -3531,8 +3527,10 @@
             return `
                 <div class="player-card">
                     <div class="avatar">${p.username.charAt(0).toUpperCase()}</div>
-                    <div class="info"><span class="name">${p.username}</span></div>
-                    ${isCaptain2 ? `<span class="captain-badge"><i class="fas fa-crown"></i> Капитан</span>` : ''}
+                    <div class="info">
+                        <span class="name">${p.username}</span>
+                    </div>
+                    ${isCaptain2 ? `<span class="captain-badge" style="max-width:100%; white-space:nowrap; overflow:visible; font-size:9px;"><i class="fas fa-crown"></i> ${p.username}</span>` : ''}
                 </div>
             `;
         }).join('') || '<p style="color:#888;text-align:center;padding:8px 0;font-size:13px;">Нет игроков</p>';
@@ -3542,8 +3540,10 @@
             return `
                 <div class="player-card">
                     <div class="avatar">${p.username.charAt(0).toUpperCase()}</div>
-                    <div class="info"><span class="name">${p.username}</span></div>
-                    ${isCaptain2 ? `<span class="captain-badge"><i class="fas fa-crown"></i> Капитан</span>` : ''}
+                    <div class="info">
+                        <span class="name">${p.username}</span>
+                    </div>
+                    ${isCaptain2 ? `<span class="captain-badge" style="max-width:100%; white-space:nowrap; overflow:visible; font-size:9px;"><i class="fas fa-crown"></i> ${p.username}</span>` : ''}
                 </div>
             `;
         }).join('') || '<p style="color:#888;text-align:center;padding:8px 0;font-size:13px;">Нет игроков</p>';
@@ -4700,7 +4700,7 @@
             } catch (e) {}
         }
 
-        // Запускаем постоянную проверку матчей (для всех игроков)
+        // Запускаем постоянную проверку матчей (каждую секунду!)
         startMatchPolling();
 
         setInterval(updateQueueUI, 5000);
