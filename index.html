@@ -2658,6 +2658,7 @@
     let isCaptain = false;
     let isAdmin = false;
     let queueCheckInterval = null;
+    let matchCheckInterval = null;
 
     let draftState = {
         gameNumber: 1,
@@ -2773,6 +2774,7 @@
                 currentMatch = { orange, blue };
                 isPlayerInMatch = true;
                 activeMatchId = match.id;
+                matchRestored = true;
                 
                 if (match.draft_state) {
                     try {
@@ -2788,7 +2790,6 @@
                     document.getElementById('screenshotStatus').style.color = '#51cf66';
                 }
                 
-                matchRestored = true;
                 console.log('✅ Матч загружен из Supabase');
                 
                 const isOrangeCaptain = currentMatch.orange.length > 0 && currentMatch.orange[0].id === currentUser.id;
@@ -2799,13 +2800,6 @@
                 renderMatchPage();
                 checkMatchResultVisibility();
                 navigate('matchPage');
-            } else {
-                if (match.id) {
-                    await supabaseClient
-                        .from('active_matches')
-                        .delete()
-                        .eq('id', match.id);
-                }
             }
         } catch (e) {
             console.error('Ошибка загрузки матча:', e);
@@ -3124,36 +3118,24 @@
         }
         if (!currentUser) return showToast('error', 'Ошибка', 'Авторизуйтесь');
 
-        // Проверяем, есть ли таблица match_queue
         supabaseClient
-            .from('match_queue')
-            .select('count')
-            .limit(1)
-            .then(({ error }) => {
-                if (error && error.code === '42P01') {
-                    showToast('error', 'Ошибка', 'Таблица очереди не создана. Свяжитесь с администратором.');
-                    return;
-                }
-                
-                supabaseClient
-                    .from('active_matches')
-                    .select('*')
-                    .then(({ data }) => {
-                        if (data && data.length > 0) {
-                            for (const match of data) {
-                                try {
-                                    const orange = JSON.parse(match.orange);
-                                    const blue = JSON.parse(match.blue);
-                                    const allPlayers = [...orange, ...blue];
-                                    if (allPlayers.some(p => p.id === currentUser.id)) {
-                                        showToast('error', 'Ошибка', 'Вы уже в другом матче!');
-                                        return;
-                                    }
-                                } catch(e) {}
+            .from('active_matches')
+            .select('*')
+            .then(({ data }) => {
+                if (data && data.length > 0) {
+                    for (const match of data) {
+                        try {
+                            const orange = JSON.parse(match.orange);
+                            const blue = JSON.parse(match.blue);
+                            const allPlayers = [...orange, ...blue];
+                            if (allPlayers.some(p => p.id === currentUser.id)) {
+                                showToast('error', 'Ошибка', 'Вы уже в другом матче!');
+                                return;
                             }
-                        }
-                        doStartSearch();
-                    });
+                        } catch(e) {}
+                    }
+                }
+                doStartSearch();
             });
     }
 
@@ -3161,29 +3143,11 @@
         try {
             console.log('🔍 Начинаем поиск...');
             
-            // Проверяем существование таблицы
-            const { error: tableCheck } = await supabaseClient
-                .from('match_queue')
-                .select('count')
-                .limit(1);
-            
-            if (tableCheck && tableCheck.code === '42P01') {
-                showToast('error', 'Ошибка', 'Таблица очереди не существует. Создайте таблицу match_queue в Supabase.');
-                console.error('❌ Таблица match_queue не существует:', tableCheck);
-                return;
-            }
-
             // Удаляем старые записи
-            const { error: deleteError } = await supabaseClient
+            await supabaseClient
                 .from('match_queue')
                 .delete()
                 .eq('user_id', currentUser.id);
-
-            if (deleteError) {
-                console.error('❌ Ошибка удаления:', deleteError);
-                showToast('error', 'Ошибка', 'Ошибка при очистке очереди');
-                return;
-            }
 
             // Добавляем в очередь
             const { error: insertError } = await supabaseClient
@@ -3269,6 +3233,7 @@
                         username: p.username
                     }));
                     
+                    // Очищаем очередь
                     supabaseClient
                         .from('match_queue')
                         .delete()
@@ -3329,17 +3294,78 @@
     }
 
     // ============================================================
+    //  ПОСТОЯННАЯ ПРОВЕРКА МАТЧА (ЧТОБЫ ВСЕ УВИДЕЛИ 6/6)
+    // ============================================================
+    function startMatchPolling() {
+        if (matchCheckInterval) clearInterval(matchCheckInterval);
+        matchCheckInterval = setInterval(async () => {
+            if (!currentUser) return;
+            
+            try {
+                const { data, error } = await supabaseClient
+                    .from('active_matches')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(1);
+
+                if (error || !data || data.length === 0) return;
+
+                const match = data[0];
+                let orange = [], blue = [];
+                try {
+                    orange = JSON.parse(match.orange);
+                    blue = JSON.parse(match.blue);
+                } catch (e) { return; }
+
+                const isInMatch = orange.some(p => p.id === currentUser.id) || 
+                                  blue.some(p => p.id === currentUser.id);
+
+                // Если игрок в матче, но у него не загружен currentMatch
+                if (isInMatch && !currentMatch) {
+                    console.log('🎯 Обнаружен новый матч для игрока!');
+                    currentMatch = { orange, blue };
+                    isPlayerInMatch = true;
+                    activeMatchId = match.id;
+                    
+                    if (match.draft_state) {
+                        try {
+                            draftState = JSON.parse(match.draft_state);
+                        } catch (e) {}
+                    }
+                    
+                    if (match.screenshot) {
+                        currentScreenshot = match.screenshot;
+                        const preview = document.getElementById('screenshotPreview');
+                        preview.innerHTML = `<img src="${currentScreenshot}" alt="Скриншот" />`;
+                        document.getElementById('screenshotStatus').textContent = '✅ Скриншот загружен из БД';
+                        document.getElementById('screenshotStatus').style.color = '#51cf66';
+                    }
+                    
+                    const isOrangeCaptain = currentMatch.orange.length > 0 && currentMatch.orange[0].id === currentUser.id;
+                    const isBlueCaptain = currentMatch.blue.length > 0 && currentMatch.blue[0].id === currentUser.id;
+                    isCaptain = isOrangeCaptain || isBlueCaptain;
+                    
+                    renderMatchPage();
+                    checkMatchResultVisibility();
+                    navigate('matchPage');
+                    showToast('success', 'Матч найден!', 'Вы были добавлены в матч');
+                }
+            } catch (e) {
+                console.error('Ошибка проверки матча:', e);
+            }
+        }, 3000); // Проверяем каждые 3 секунды
+    }
+
+    // ============================================================
     //  АДМИН СТАТИСТИКА
     // ============================================================
     async function loadAdminStats() {
         try {
-            // Всего пользователей
             const { count: totalUsers } = await supabaseClient
                 .from('users')
                 .select('*', { count: 'exact', head: true });
             document.getElementById('totalUsersCount').textContent = totalUsers || 0;
 
-            // Активные игроки (кто заходил за последние 7 дней)
             const weekAgo = new Date();
             weekAgo.setDate(weekAgo.getDate() - 7);
             const { count: activeUsers } = await supabaseClient
@@ -3348,7 +3374,6 @@
                 .gte('lastLogin', weekAgo.toISOString());
             document.getElementById('activeUsersCount').textContent = activeUsers || 0;
 
-            // Всего матчей
             const { count: totalMatches } = await supabaseClient
                 .from('match_history')
                 .select('*', { count: 'exact', head: true });
@@ -3633,7 +3658,7 @@
 
                     console.log(`  ${player.username}: +1 матч, ELO ${userData.elo} → ${newElo}`);
 
-                    const { error: updateError } = await supabaseClient
+                    await supabaseClient
                         .from('users')
                         .update({
                             matches: newMatches,
@@ -3644,14 +3669,10 @@
                             lastLogin: new Date().toISOString()
                         })
                         .eq('id', player.id);
-
-                    if (updateError) {
-                        console.error('Ошибка обновления для', player.username, updateError);
-                    }
                 }
 
                 const historyId = Date.now().toString() + '_' + Math.random().toString(36).substr(2, 4);
-                const { error: historyError } = await supabaseClient
+                await supabaseClient
                     .from('match_history')
                     .insert([{
                         id: historyId,
@@ -3664,10 +3685,6 @@
                         screenshot: currentScreenshot || null,
                         created_at: new Date().toISOString()
                     }]);
-
-                if (historyError) {
-                    console.error('Ошибка сохранения истории для', player.username, historyError);
-                }
 
             } catch (e) {
                 console.error('Ошибка обработки для', player.username, e);
@@ -4682,6 +4699,9 @@
                 }
             } catch (e) {}
         }
+
+        // Запускаем постоянную проверку матчей (для всех игроков)
+        startMatchPolling();
 
         setInterval(updateQueueUI, 5000);
 
