@@ -2463,7 +2463,7 @@
         </div>
     </div>
 
-    <!-- ===== ТОП ИГРОКОВ ===== -->
+    <!-- ===== ТОП ИГРОКОВ (50 ЧЕЛОВЕК) ===== -->
     <div class="page top-page" id="pageTop">
         <div class="top-header">
             <div class="page-title">Топ игроков</div>
@@ -2523,6 +2523,25 @@
             <div class="profile-admin-panel" id="profileAdminPanel">
                 <div class="admin-title"><i class="fas fa-user-shield"></i> Админ-панель</div>
 
+                <!-- Статистика регистраций -->
+                <div class="admin-section">
+                    <div class="section-title">📊 Статистика платформы</div>
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap; padding: 8px 0;">
+                        <div style="background: rgba(255,215,0,0.05); border-radius: 12px; padding: 12px 20px; border: 1px solid rgba(255,215,0,0.15);">
+                            <div style="font-size: 28px; font-weight: 900; color: #ffd700;" id="totalUsersCount">0</div>
+                            <div style="font-size: 11px; color: #888;">Всего участников</div>
+                        </div>
+                        <div style="background: rgba(52,152,219,0.05); border-radius: 12px; padding: 12px 20px; border: 1px solid rgba(52,152,219,0.15);">
+                            <div style="font-size: 28px; font-weight: 900; color: #3498db;" id="activeUsersCount">0</div>
+                            <div style="font-size: 11px; color: #888;">Активных игроков</div>
+                        </div>
+                        <div style="background: rgba(81,207,102,0.05); border-radius: 12px; padding: 12px 20px; border: 1px solid rgba(81,207,102,0.15);">
+                            <div style="font-size: 28px; font-weight: 900; color: #51cf66;" id="totalMatchesCountAdmin">0</div>
+                            <div style="font-size: 11px; color: #888;">Сыграно матчей</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="admin-section">
                     <div class="section-title">Добавить администратора</div>
                     <div class="admin-input-group">
@@ -2570,7 +2589,7 @@
                             <i class="fas fa-trash"></i> Очистить все
                         </button>
                         <span style="color: #666; font-size: 12px; display: flex; align-items: center; margin-left: auto;">
-                            <i class="fas fa-users"></i> <span id="totalMatchesCount">0</span> матчей
+                            <i class="fas fa-users"></i> <span id="totalMatchesCountAdmin2">0</span> матчей
                         </span>
                     </div>
                     <div id="matchesListContainer" style="max-height: 400px; overflow-y: auto;">
@@ -3027,6 +3046,7 @@
                 await renderAdminList();
                 await renderPromoList();
                 await loadAllMatches();
+                await loadAdminStats();
                 showToast('success', '👑 Администратор', 'Добро пожаловать в админ-панель!');
             } else {
                 adminPanel.classList.remove('visible');
@@ -3104,47 +3124,69 @@
         }
         if (!currentUser) return showToast('error', 'Ошибка', 'Авторизуйтесь');
 
+        // Проверяем, есть ли таблица match_queue
         supabaseClient
-            .from('active_matches')
-            .select('*')
-            .then(({ data }) => {
-                if (data && data.length > 0) {
-                    for (const match of data) {
-                        try {
-                            const orange = JSON.parse(match.orange);
-                            const blue = JSON.parse(match.blue);
-                            const allPlayers = [...orange, ...blue];
-                            if (allPlayers.some(p => p.id === currentUser.id)) {
-                                showToast('error', 'Ошибка', 'Вы уже в другом матче!');
-                                return;
-                            }
-                        } catch(e) {}
-                    }
+            .from('match_queue')
+            .select('count')
+            .limit(1)
+            .then(({ error }) => {
+                if (error && error.code === '42P01') {
+                    showToast('error', 'Ошибка', 'Таблица очереди не создана. Свяжитесь с администратором.');
+                    return;
                 }
-                doStartSearch();
+                
+                supabaseClient
+                    .from('active_matches')
+                    .select('*')
+                    .then(({ data }) => {
+                        if (data && data.length > 0) {
+                            for (const match of data) {
+                                try {
+                                    const orange = JSON.parse(match.orange);
+                                    const blue = JSON.parse(match.blue);
+                                    const allPlayers = [...orange, ...blue];
+                                    if (allPlayers.some(p => p.id === currentUser.id)) {
+                                        showToast('error', 'Ошибка', 'Вы уже в другом матче!');
+                                        return;
+                                    }
+                                } catch(e) {}
+                            }
+                        }
+                        doStartSearch();
+                    });
             });
     }
 
     async function doStartSearch() {
         try {
-            // Сначала проверяем, есть ли уже записи в очереди
-            const { data: existing } = await supabaseClient
+            console.log('🔍 Начинаем поиск...');
+            
+            // Проверяем существование таблицы
+            const { error: tableCheck } = await supabaseClient
                 .from('match_queue')
-                .select('*')
-                .eq('user_id', currentUser.id)
-                .eq('status', 'waiting');
-
-            // Если уже есть - удаляем их
-            if (existing && existing.length > 0) {
-                await supabaseClient
-                    .from('match_queue')
-                    .delete()
-                    .eq('user_id', currentUser.id)
-                    .eq('status', 'waiting');
+                .select('count')
+                .limit(1);
+            
+            if (tableCheck && tableCheck.code === '42P01') {
+                showToast('error', 'Ошибка', 'Таблица очереди не существует. Создайте таблицу match_queue в Supabase.');
+                console.error('❌ Таблица match_queue не существует:', tableCheck);
+                return;
             }
 
-            // Добавляем себя в очередь
-            const { error } = await supabaseClient
+            // Удаляем старые записи
+            const { error: deleteError } = await supabaseClient
+                .from('match_queue')
+                .delete()
+                .eq('user_id', currentUser.id);
+
+            if (deleteError) {
+                console.error('❌ Ошибка удаления:', deleteError);
+                showToast('error', 'Ошибка', 'Ошибка при очистке очереди');
+                return;
+            }
+
+            // Добавляем в очередь
+            const { error: insertError } = await supabaseClient
                 .from('match_queue')
                 .insert([{
                     user_id: currentUser.id,
@@ -3153,11 +3195,13 @@
                     created_at: new Date().toISOString()
                 }]);
 
-            if (error) {
-                console.error('Ошибка добавления в очередь:', error);
-                showToast('error', 'Ошибка', 'Не удалось добавить в очередь');
+            if (insertError) {
+                console.error('❌ Ошибка добавления в очередь:', insertError);
+                showToast('error', 'Ошибка', 'Не удалось добавить в очередь: ' + insertError.message);
                 return;
             }
+
+            console.log('✅ Добавлен в очередь');
 
             // Включаем режим поиска
             isSearching = true;
@@ -3177,15 +3221,15 @@
 
             showToast('info', 'Поиск начат', 'Ожидаем игроков...');
             
-            // Мгновенное обновление UI (без задержки!)
+            // Мгновенное обновление UI
             await updateQueueUI();
             
             if (queueCheckInterval) clearInterval(queueCheckInterval);
             queueCheckInterval = setInterval(checkQueue, 2000);
             
         } catch (e) {
-            console.error('Ошибка в doStartSearch:', e);
-            showToast('error', 'Ошибка', 'Не удалось начать поиск');
+            console.error('❌ Ошибка в doStartSearch:', e);
+            showToast('error', 'Ошибка', 'Не удалось начать поиск: ' + e.message);
         }
     }
 
@@ -3282,6 +3326,95 @@
             
         const matchPlayers = currentMatch ? (currentMatch.orange.length + currentMatch.blue.length) : 0;
         document.getElementById('matchCount').textContent = matchPlayers;
+    }
+
+    // ============================================================
+    //  АДМИН СТАТИСТИКА
+    // ============================================================
+    async function loadAdminStats() {
+        try {
+            // Всего пользователей
+            const { count: totalUsers } = await supabaseClient
+                .from('users')
+                .select('*', { count: 'exact', head: true });
+            document.getElementById('totalUsersCount').textContent = totalUsers || 0;
+
+            // Активные игроки (кто заходил за последние 7 дней)
+            const weekAgo = new Date();
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            const { count: activeUsers } = await supabaseClient
+                .from('users')
+                .select('*', { count: 'exact', head: true })
+                .gte('lastLogin', weekAgo.toISOString());
+            document.getElementById('activeUsersCount').textContent = activeUsers || 0;
+
+            // Всего матчей
+            const { count: totalMatches } = await supabaseClient
+                .from('match_history')
+                .select('*', { count: 'exact', head: true });
+            document.getElementById('totalMatchesCountAdmin').textContent = totalMatches || 0;
+
+        } catch (e) {
+            console.error('Ошибка загрузки статистики:', e);
+        }
+    }
+
+    // ============================================================
+    //  ТОП ИГРОКОВ (50 ЧЕЛОВЕК)
+    // ============================================================
+    async function renderTopPlayers() {
+        const container = document.getElementById('topList');
+        
+        try {
+            const { data, error } = await supabaseClient
+                .from('users')
+                .select('id, username, elo, matches, wins, mvp')
+                .order('elo', { ascending: false })
+                .limit(50);
+
+            if (error) throw error;
+
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="friends-empty"><i class="fas fa-trophy"></i> Нет игроков</div>';
+                return;
+            }
+
+            let userRank = 0;
+            if (currentUser) {
+                const allUsers = await supabaseClient
+                    .from('users')
+                    .select('id, elo')
+                    .order('elo', { ascending: false });
+                
+                if (allUsers.data) {
+                    const rank = allUsers.data.findIndex(u => u.id === currentUser.id);
+                    userRank = rank !== -1 ? rank + 1 : 0;
+                }
+            }
+            document.getElementById('userRank').textContent = userRank ? '#' + userRank : '#0';
+
+            container.innerHTML = data.map((player, index) => {
+                const isUser = player.id === currentUser?.id;
+                const rankClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : '';
+                const winrate = player.matches > 0 ? Math.round((player.wins / player.matches) * 100) : 0;
+                
+                return `
+                    <div class="top-item" style="${isUser ? 'border-color: rgba(255,215,0,0.4); background: rgba(255,215,0,0.05);' : ''}">
+                        <div class="rank ${rankClass}">${index + 1}</div>
+                        <div class="avatar">${player.username.charAt(0).toUpperCase()}</div>
+                        <div class="info">
+                            <div class="name">${player.username} ${isUser ? '👈' : ''}</div>
+                            <div class="stats">${player.matches || 0} матчей • ${winrate}% побед • ${player.mvp || 0} MVP</div>
+                        </div>
+                        <div class="elo">${player.elo || 1000}</div>
+                    </div>
+                `;
+            }).join('');
+
+        } catch (e) {
+            console.error('Ошибка загрузки топа:', e);
+            container.innerHTML = '<div class="friends-empty"><i class="fas fa-exclamation-triangle"></i> Ошибка загрузки</div>';
+        }
     }
 
     // ============================================================
@@ -3577,6 +3710,7 @@
         await renderTopPlayers();
         await updateProfile();
         await loadAllMatches();
+        await loadAdminStats();
     }
 
     function endMatch() {
@@ -3604,6 +3738,7 @@
         updateQueueUI();
         showToast('info', 'Матч завершён', 'Матч отменён');
         loadAllMatches();
+        loadAdminStats();
     }
 
     // ============================================================
@@ -3747,7 +3882,7 @@
 
             if (error) throw error;
 
-            document.getElementById('totalMatchesCount').textContent = data?.length || 0;
+            document.getElementById('totalMatchesCountAdmin2').textContent = data?.length || 0;
 
             if (!data || data.length === 0) {
                 container.innerHTML = '<div class="admin-empty"><i class="fas fa-inbox"></i> Нет активных матчей</div>';
@@ -4076,64 +4211,6 @@
             }).join('');
         } catch (e) {
             console.error('renderChart error:', e);
-        }
-    }
-
-    // ============================================================
-    //  ТОП ИГРОКОВ
-    // ============================================================
-    async function renderTopPlayers() {
-        const container = document.getElementById('topList');
-        
-        try {
-            const { data, error } = await supabaseClient
-                .from('users')
-                .select('id, username, elo, matches, wins, mvp')
-                .order('elo', { ascending: false })
-                .limit(20);
-
-            if (error) throw error;
-
-            if (!data || data.length === 0) {
-                container.innerHTML = '<div class="friends-empty"><i class="fas fa-trophy"></i> Нет игроков</div>';
-                return;
-            }
-
-            let userRank = 0;
-            if (currentUser) {
-                const allUsers = await supabaseClient
-                    .from('users')
-                    .select('id, elo')
-                    .order('elo', { ascending: false });
-                
-                if (allUsers.data) {
-                    const rank = allUsers.data.findIndex(u => u.id === currentUser.id);
-                    userRank = rank !== -1 ? rank + 1 : 0;
-                }
-            }
-            document.getElementById('userRank').textContent = userRank ? '#' + userRank : '#0';
-
-            container.innerHTML = data.map((player, index) => {
-                const isUser = player.id === currentUser?.id;
-                const rankClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : '';
-                const winrate = player.matches > 0 ? Math.round((player.wins / player.matches) * 100) : 0;
-                
-                return `
-                    <div class="top-item" style="${isUser ? 'border-color: rgba(255,215,0,0.4); background: rgba(255,215,0,0.05);' : ''}">
-                        <div class="rank ${rankClass}">${index + 1}</div>
-                        <div class="avatar">${player.username.charAt(0).toUpperCase()}</div>
-                        <div class="info">
-                            <div class="name">${player.username} ${isUser ? '👈' : ''}</div>
-                            <div class="stats">${player.matches || 0} матчей • ${winrate}% побед • ${player.mvp || 0} MVP</div>
-                        </div>
-                        <div class="elo">${player.elo || 1000}</div>
-                    </div>
-                `;
-            }).join('');
-
-        } catch (e) {
-            console.error('Ошибка загрузки топа:', e);
-            container.innerHTML = '<div class="friends-empty"><i class="fas fa-exclamation-triangle"></i> Ошибка загрузки</div>';
         }
     }
 
