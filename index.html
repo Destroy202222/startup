@@ -3142,52 +3142,39 @@
     }
 
     function doStartSearch() {
-        // Проверяем, не в очереди ли уже игрок
+        // Добавляем себя в очередь
         supabaseClient
             .from('match_queue')
-            .select('*')
-            .eq('user_id', currentUser.id)
-            .eq('status', 'waiting')
-            .then(({ data }) => {
-                if (data && data.length > 0) {
-                    showToast('info', 'Уже в очереди', 'Вы уже в поиске');
-                    return;
-                }
+            .insert([{
+                user_id: currentUser.id,
+                username: currentUser.username,
+                status: 'waiting',
+                created_at: new Date().toISOString()
+            }])
+            .then(() => {
+                isSearching = true;
+                searchSeconds = 0;
+
+                document.getElementById('searchMainBlock').classList.add('searching');
+                document.getElementById('queueBtn').style.display = 'none';
+                document.getElementById('cancelBtn').style.display = 'inline-flex';
+
+                if (searchTimerInterval) clearInterval(searchTimerInterval);
+                searchTimerInterval = setInterval(() => {
+                    searchSeconds++;
+                    const mins = String(Math.floor(searchSeconds / 60)).padStart(2, '0');
+                    const secs = String(searchSeconds % 60).padStart(2, '0');
+                    document.getElementById('searchTimer').textContent = mins + ':' + secs;
+                }, 1000);
+
+                showToast('info', 'Поиск начат', 'Ожидаем игроков...');
                 
-                // Добавляем себя в очередь
-                supabaseClient
-                    .from('match_queue')
-                    .insert([{
-                        user_id: currentUser.id,
-                        username: currentUser.username,
-                        status: 'waiting',
-                        created_at: new Date().toISOString()
-                    }])
-                    .then(() => {
-                        isSearching = true;
-                        searchSeconds = 0;
-
-                        document.getElementById('searchMainBlock').classList.add('searching');
-                        document.getElementById('queueBtn').style.display = 'none';
-                        document.getElementById('cancelBtn').style.display = 'inline-flex';
-
-                        if (searchTimerInterval) clearInterval(searchTimerInterval);
-                        searchTimerInterval = setInterval(() => {
-                            searchSeconds++;
-                            const mins = String(Math.floor(searchSeconds / 60)).padStart(2, '0');
-                            const secs = String(searchSeconds % 60).padStart(2, '0');
-                            document.getElementById('searchTimer').textContent = mins + ':' + secs;
-                        }, 1000);
-
-                        showToast('info', 'Поиск начат', 'Ожидаем игроков...');
-                        
-                        // Сразу обновляем UI, показываем 1/6
-                        updateQueueUI();
-                        
-                        // Проверяем очередь каждые 2 секунды
-                        if (queueCheckInterval) clearInterval(queueCheckInterval);
-                        queueCheckInterval = setInterval(checkQueue, 2000);
-                    });
+                // Сразу обновляем UI, показываем 1/6
+                updateQueueUI();
+                
+                // Проверяем очередь каждые 2 секунды
+                if (queueCheckInterval) clearInterval(queueCheckInterval);
+                queueCheckInterval = setInterval(checkQueue, 2000);
             });
     }
 
@@ -3269,16 +3256,19 @@
             .from('match_queue')
             .select('*')
             .eq('status', 'waiting')
-            .then(({ data }) => {
+            .then(({ data, error }) => {
+                if (error) {
+                    console.error('Ошибка обновления очереди:', error);
+                    return;
+                }
+                
                 const count = (data || []).length;
                 document.getElementById('queueCount').textContent = count;
                 
-                // Если мы в поиске, обновляем progressText
                 if (isSearching) {
                     document.getElementById('progressText').textContent = count + '/6';
+                    console.log(`👥 В очереди: ${count} игроков`);
                 }
-                
-                console.log(`👥 В очереди: ${count} игроков`);
             })
             .catch(err => console.error('Ошибка обновления очереди:', err));
             
