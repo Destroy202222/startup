@@ -3094,7 +3094,7 @@
     }
 
     // ============================================================
-    //  ПОИСК МАТЧА - БЕЗ ЗАДЕРЖКИ!
+    //  ПОИСК МАТЧА - ИСПРАВЛЕНО!
     // ============================================================
     function startSearch() {
         if (isSearching) return;
@@ -3127,14 +3127,24 @@
 
     async function doStartSearch() {
         try {
-            // Удаляем старые записи
-            await supabaseClient
+            // Сначала проверяем, есть ли уже записи в очереди
+            const { data: existing } = await supabaseClient
                 .from('match_queue')
-                .delete()
-                .eq('user_id', currentUser.id);
-            
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .eq('status', 'waiting');
+
+            // Если уже есть - удаляем их
+            if (existing && existing.length > 0) {
+                await supabaseClient
+                    .from('match_queue')
+                    .delete()
+                    .eq('user_id', currentUser.id)
+                    .eq('status', 'waiting');
+            }
+
             // Добавляем себя в очередь
-            await supabaseClient
+            const { error } = await supabaseClient
                 .from('match_queue')
                 .insert([{
                     user_id: currentUser.id,
@@ -3142,8 +3152,14 @@
                     status: 'waiting',
                     created_at: new Date().toISOString()
                 }]);
-            
-            // Данные записаны - обновляем UI мгновенно
+
+            if (error) {
+                console.error('Ошибка добавления в очередь:', error);
+                showToast('error', 'Ошибка', 'Не удалось добавить в очередь');
+                return;
+            }
+
+            // Включаем режим поиска
             isSearching = true;
             searchSeconds = 0;
 
@@ -3162,12 +3178,13 @@
             showToast('info', 'Поиск начат', 'Ожидаем игроков...');
             
             // Мгновенное обновление UI (без задержки!)
-            updateQueueUI();
+            await updateQueueUI();
             
             if (queueCheckInterval) clearInterval(queueCheckInterval);
             queueCheckInterval = setInterval(checkQueue, 2000);
+            
         } catch (e) {
-            console.error('Ошибка поиска:', e);
+            console.error('Ошибка в doStartSearch:', e);
             showToast('error', 'Ошибка', 'Не удалось начать поиск');
         }
     }
@@ -3240,26 +3257,28 @@
             });
     }
 
-    function updateQueueUI() {
-        supabaseClient
-            .from('match_queue')
-            .select('*')
-            .eq('status', 'waiting')
-            .then(({ data, error }) => {
-                if (error) {
-                    console.error('Ошибка обновления очереди:', error);
-                    return;
-                }
-                
-                const count = (data || []).length;
-                document.getElementById('queueCount').textContent = count;
-                
-                if (isSearching) {
-                    document.getElementById('progressText').textContent = count + '/6';
-                    console.log(`👥 В очереди: ${count} игроков`);
-                }
-            })
-            .catch(err => console.error('Ошибка обновления очереди:', err));
+    async function updateQueueUI() {
+        try {
+            const { data, error } = await supabaseClient
+                .from('match_queue')
+                .select('*')
+                .eq('status', 'waiting');
+
+            if (error) {
+                console.error('Ошибка обновления очереди:', error);
+                return;
+            }
+            
+            const count = (data || []).length;
+            document.getElementById('queueCount').textContent = count;
+            
+            if (isSearching) {
+                document.getElementById('progressText').textContent = count + '/6';
+                console.log(`👥 В очереди: ${count} игроков`);
+            }
+        } catch (err) {
+            console.error('Ошибка обновления очереди:', err);
+        }
             
         const matchPlayers = currentMatch ? (currentMatch.orange.length + currentMatch.blue.length) : 0;
         document.getElementById('matchCount').textContent = matchPlayers;
