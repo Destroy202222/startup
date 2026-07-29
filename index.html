@@ -11,6 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
     </script>
     <style>
+        /* ===== ВЕСЬ CSS (полная копия из предыдущей рабочей версии) ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: #0b0b0f;
@@ -2651,7 +2652,7 @@
     let isCaptain = false;
     let isAdmin = false;
     let queueCheckInterval = null;
-    let matchCheckInterval = null;
+    let matchSubscription = null;
 
     let draftState = {
         gameNumber: 1,
@@ -2738,60 +2739,40 @@
             const { data, error } = await supabaseClient
                 .from('active_matches')
                 .select('*')
-                .order('created_at', { ascending: false })
-                .limit(1);
+                .order('created_at', { ascending: false });
 
-            if (error || !data || data.length === 0) {
-                console.log('❌ Нет активных матчей');
-                return false;
-            }
+            if (error || !data) return false;
 
-            const match = data[0];
-            console.log('📦 Найден матч:', match);
-
-            let orange = [], blue = [];
-            try {
-                orange = JSON.parse(match.orange);
-                blue = JSON.parse(match.blue);
-            } catch (e) {
-                console.error('Ошибка парсинга:', e);
-                return false;
-            }
-
-            const isInMatch = orange.some(p => p.id === currentUser.id) ||
-                              blue.some(p => p.id === currentUser.id);
-
-            if (isInMatch) {
-                currentMatch = { orange, blue };
-                isPlayerInMatch = true;
-                activeMatchId = match.id;
-                matchRestored = true;
-
-                if (match.draft_state) {
-                    try {
-                        draftState = JSON.parse(match.draft_state);
-                    } catch (e) {}
+            for (const match of data) {
+                let orange = [], blue = [];
+                try {
+                    orange = JSON.parse(match.orange);
+                    blue = JSON.parse(match.blue);
+                } catch (e) { continue; }
+                if (orange.some(p => p.id === currentUser.id) || blue.some(p => p.id === currentUser.id)) {
+                    currentMatch = { orange, blue };
+                    isPlayerInMatch = true;
+                    activeMatchId = match.id;
+                    matchRestored = true;
+                    if (match.draft_state) {
+                        try { draftState = JSON.parse(match.draft_state); } catch(e) {}
+                    }
+                    if (match.screenshot) {
+                        currentScreenshot = match.screenshot;
+                        const preview = document.getElementById('screenshotPreview');
+                        preview.innerHTML = `<img src="${currentScreenshot}" alt="Скриншот" />`;
+                        document.getElementById('screenshotStatus').textContent = '✅ Скриншот загружен из БД';
+                        document.getElementById('screenshotStatus').style.color = '#51cf66';
+                    }
+                    const isOrangeCaptain = currentMatch.orange.length > 0 && currentMatch.orange[0].id === currentUser.id;
+                    const isBlueCaptain = currentMatch.blue.length > 0 && currentMatch.blue[0].id === currentUser.id;
+                    isCaptain = isOrangeCaptain || isBlueCaptain;
+                    isAdmin = currentUser.username === 'Destro';
+                    renderMatchPage();
+                    checkMatchResultVisibility();
+                    navigate('matchPage');
+                    return true;
                 }
-
-                if (match.screenshot) {
-                    currentScreenshot = match.screenshot;
-                    const preview = document.getElementById('screenshotPreview');
-                    preview.innerHTML = `<img src="${currentScreenshot}" alt="Скриншот" />`;
-                    document.getElementById('screenshotStatus').textContent = '✅ Скриншот загружен из БД';
-                    document.getElementById('screenshotStatus').style.color = '#51cf66';
-                }
-
-                console.log('✅ Матч загружен из Supabase');
-
-                const isOrangeCaptain = currentMatch.orange.length > 0 && currentMatch.orange[0].id === currentUser.id;
-                const isBlueCaptain = currentMatch.blue.length > 0 && currentMatch.blue[0].id === currentUser.id;
-                isCaptain = isOrangeCaptain || isBlueCaptain;
-                isAdmin = currentUser.username === 'Destro';
-
-                renderMatchPage();
-                checkMatchResultVisibility();
-                navigate('matchPage');
-                return true;
             }
             return false;
         } catch (e) {
@@ -3040,12 +3021,15 @@
                 adminPanel.classList.remove('visible');
             }
             
-            // Загружаем матч из Supabase
+            // Загружаем существующий матч
             const loaded = await loadMatchFromSupabase();
             
             await renderTopPlayers();
             updateQueueUI();
             updatePartyUI();
+
+            // Подписываемся на Realtime (вместо polling)
+            subscribeToMatches();
             
             if (!loaded && !matchRestored) {
                 navigate('home');
@@ -3062,6 +3046,11 @@
     // ============================================================
     function handleLogout() {
         if (!confirm('Выйти из аккаунта?')) return;
+        // Отписываемся от Realtime
+        if (matchSubscription) {
+            supabaseClient.removeChannel(matchSubscription);
+            matchSubscription = null;
+        }
         clearSession();
         currentUser = null;
         currentMatch = null;
@@ -3086,7 +3075,6 @@
     };
 
     function navigate(page) {
-        // Если игрок в матче, всегда показываем matchPage вместо matches или home
         if ((page === 'matches' || page === 'home') && isPlayerInMatch && currentMatch) {
             page = 'matchPage';
         }
@@ -3105,7 +3093,7 @@
     }
 
     // ============================================================
-    //  ПОИСК МАТЧА
+    //  ПОИСК МАТЧА (ОЧЕРЕДЬ)
     // ============================================================
     function startSearch() {
         if (isSearching) return;
@@ -3140,13 +3128,11 @@
         try {
             console.log('🔍 Начинаем поиск...');
             
-            // Удаляем старые записи
             await supabaseClient
                 .from('match_queue')
                 .delete()
                 .eq('user_id', currentUser.id);
 
-            // Добавляем в очередь
             const { error: insertError } = await supabaseClient
                 .from('match_queue')
                 .insert([{
@@ -3169,7 +3155,7 @@
 
             document.getElementById('searchMainBlock').classList.add('searching');
             document.getElementById('queueBtn').style.display = 'none';
-            document.getElementById('cancelBtn').style.display = 'inline-flex';
+            document.getElementById('cancelBtn').style.display = 'inline-flex');
 
             if (searchTimerInterval) clearInterval(searchTimerInterval);
             searchTimerInterval = setInterval(() => {
@@ -3228,7 +3214,6 @@
                         username: p.username
                     }));
                     
-                    // Очищаем очередь и создаём матч
                     supabaseClient
                         .from('match_queue')
                         .delete()
@@ -3289,102 +3274,151 @@
     }
 
     // ============================================================
-    //  ПОСТОЯННАЯ ПРОВЕРКА МАТЧА (ДЛЯ ВСЕХ ИГРОКОВ)
+    //  ЗАПУСК МАТЧА
     // ============================================================
-    function startMatchPolling() {
-        if (matchCheckInterval) clearInterval(matchCheckInterval);
-        matchCheckInterval = setInterval(async () => {
-            if (!currentUser) return;
-            
-            try {
-                // Проверяем все активные матчи
-                const { data, error } = await supabaseClient
-                    .from('active_matches')
-                    .select('*')
-                    .order('created_at', { ascending: false });
+    async function startMatch(players) {
+        const shuffled = [...players];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        const half = Math.floor(shuffled.length / 2);
+        const orange = shuffled.slice(0, half);
+        const blue = shuffled.slice(half);
+        
+        if (orange.length > 0) draftState.captain1 = orange[0].id;
+        if (blue.length > 0) draftState.captain2 = blue[0].id;
+        draftState.currentCaptain = 0;
+        
+        currentMatch = { orange, blue };
+        isPlayerInMatch = true;
+        
+        const isOrangeCaptain = currentMatch.orange.length > 0 && currentMatch.orange[0].id === currentUser.id;
+        const isBlueCaptain = currentMatch.blue.length > 0 && currentMatch.blue[0].id === currentUser.id;
+        isCaptain = isOrangeCaptain || isBlueCaptain;
+        
+        // Сохраняем матч в БД – это вызовет Realtime-событие для всех подписчиков
+        await saveMatchToSupabase();
+        
+        document.getElementById('searchMainBlock').classList.remove('searching');
+        document.getElementById('queueBtn').style.display = 'inline-flex';
+        document.getElementById('cancelBtn').style.display = 'none';
+        
+        draftState.gameNumber = (draftState.gameNumber || 0) + 1;
+        resetDraft();
+        
+        document.getElementById('matchResultSection').classList.remove('admin-visible');
+        document.getElementById('screenshotSection').classList.remove('visible');
+        document.getElementById('matchActions').classList.remove('admin-visible');
+        currentScreenshot = null;
+        document.getElementById('screenshotInput').value = '';
+        document.getElementById('screenshotPreview').innerHTML = '';
+        document.getElementById('screenshotStatus').textContent = '';
+        
+        // Переходим на страницу матча у текущего игрока
+        navigate('matchPage');
+        renderMatchPage();
+        showToast('success', 'Матч начался!', `${orange.length + blue.length} игроков в игре`);
+        checkMatchResultVisibility();
+        
+        // Другие игроки увидят матч через Realtime подписку (см. subscribeToMatches)
+    }
 
-                if (error) {
-                    console.error('Ошибка проверки матчей:', error);
-                    return;
-                }
+    // ============================================================
+    //  REALTIME ПОДПИСКА (ВМЕСТО POLLING)
+    // ============================================================
+    function subscribeToMatches() {
+        // Отписываемся от старой подписки
+        if (matchSubscription) {
+            supabaseClient.removeChannel(matchSubscription);
+            matchSubscription = null;
+        }
 
-                if (!data || data.length === 0) {
-                    // Если матч был, но пропал - сбрасываем состояние
-                    if (isPlayerInMatch && currentMatch) {
-                        console.log('🔄 Матч был удалён из БД');
-                        currentMatch = null;
-                        isPlayerInMatch = false;
-                        matchRestored = false;
-                        const matchPage = document.getElementById('matchPage');
-                        if (matchPage && matchPage.classList.contains('active')) {
-                            navigate('matches');
+        matchSubscription = supabaseClient
+            .channel('active_matches_channel')
+            .on(
+                'postgres_changes',
+                {
+                    event: '*', // INSERT, UPDATE, DELETE
+                    schema: 'public',
+                    table: 'active_matches'
+                },
+                async (payload) => {
+                    console.log('🔔 Изменение в матчах:', payload);
+                    if (!currentUser) return;
+
+                    // При любом изменении проверяем, есть ли матч для текущего игрока
+                    const { data, error } = await supabaseClient
+                        .from('active_matches')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+
+                    if (error || !data) return;
+
+                    let foundMatch = null;
+                    for (const match of data) {
+                        let orange = [], blue = [];
+                        try {
+                            orange = JSON.parse(match.orange);
+                            blue = JSON.parse(match.blue);
+                        } catch (e) { continue; }
+                        if (orange.some(p => p.id === currentUser.id) || blue.some(p => p.id === currentUser.id)) {
+                            foundMatch = match;
+                            break;
                         }
                     }
-                    return;
-                }
 
-                let foundMatch = null;
-                for (const match of data) {
-                    let orange = [], blue = [];
-                    try {
-                        orange = JSON.parse(match.orange);
-                        blue = JSON.parse(match.blue);
-                    } catch (e) { continue; }
-                    if (orange.some(p => p.id === currentUser.id) || blue.some(p => p.id === currentUser.id)) {
-                        foundMatch = match;
-                        break;
-                    }
-                }
+                    if (foundMatch) {
+                        const match = foundMatch;
+                        let orange = [], blue = [];
+                        try {
+                            orange = JSON.parse(match.orange);
+                            blue = JSON.parse(match.blue);
+                        } catch (e) { return; }
 
-                if (foundMatch) {
-                    const match = foundMatch;
-                    let orange = [], blue = [];
-                    try {
-                        orange = JSON.parse(match.orange);
-                        blue = JSON.parse(match.blue);
-                    } catch (e) { return; }
+                        // Если это новый матч или изменился состав
+                        if (!currentMatch || activeMatchId !== match.id || 
+                            JSON.stringify(currentMatch.orange) !== JSON.stringify(orange) ||
+                            JSON.stringify(currentMatch.blue) !== JSON.stringify(blue)) {
+                            
+                            console.log('🎯 Обнаружен матч через Realtime!', match.id);
+                            currentMatch = { orange, blue };
+                            isPlayerInMatch = true;
+                            activeMatchId = match.id;
+                            matchRestored = true;
 
-                    if (!currentMatch || activeMatchId !== match.id) {
-                        console.log('🎯 Обнаружен новый матч для игрока!');
-                        currentMatch = { orange, blue };
-                        isPlayerInMatch = true;
-                        activeMatchId = match.id;
-                        matchRestored = true;
+                            if (match.draft_state) {
+                                try { draftState = JSON.parse(match.draft_state); } catch(e) {}
+                            }
+                            if (match.screenshot) {
+                                currentScreenshot = match.screenshot;
+                                const preview = document.getElementById('screenshotPreview');
+                                preview.innerHTML = `<img src="${currentScreenshot}" alt="Скриншот" />`;
+                                document.getElementById('screenshotStatus').textContent = '✅ Скриншот загружен из БД';
+                                document.getElementById('screenshotStatus').style.color = '#51cf66';
+                            }
 
-                        if (match.draft_state) {
-                            try { draftState = JSON.parse(match.draft_state); } catch(e) {}
+                            const isOrangeCaptain = currentMatch.orange.length > 0 && currentMatch.orange[0].id === currentUser.id;
+                            const isBlueCaptain = currentMatch.blue.length > 0 && currentMatch.blue[0].id === currentUser.id;
+                            isCaptain = isOrangeCaptain || isBlueCaptain;
+
+                            renderMatchPage();
+                            checkMatchResultVisibility();
+                            navigate('matchPage');
+                            showToast('success', 'Матч найден!', 'Вы были добавлены в матч');
                         }
-
-                        if (match.screenshot) {
-                            currentScreenshot = match.screenshot;
-                            const preview = document.getElementById('screenshotPreview');
-                            preview.innerHTML = `<img src="${currentScreenshot}" alt="Скриншот" />`;
-                            document.getElementById('screenshotStatus').textContent = '✅ Скриншот загружен из БД';
-                            document.getElementById('screenshotStatus').style.color = '#51cf66';
+                    } else {
+                        // Если игрок больше не в матче
+                        if (isPlayerInMatch && currentMatch) {
+                            console.log('🔄 Пользователь больше не в матче');
+                            currentMatch = null;
+                            isPlayerInMatch = false;
+                            matchRestored = false;
                         }
-
-                        const isOrangeCaptain = currentMatch.orange.length > 0 && currentMatch.orange[0].id === currentUser.id;
-                        const isBlueCaptain = currentMatch.blue.length > 0 && currentMatch.blue[0].id === currentUser.id;
-                        isCaptain = isOrangeCaptain || isBlueCaptain;
-
-                        renderMatchPage();
-                        checkMatchResultVisibility();
-                        navigate('matchPage');
-                        showToast('success', 'Матч найден!', 'Вы были добавлены в матч');
-                    }
-                } else {
-                    // Если игрок не в матче, но у него есть активный currentMatch - сбрасываем
-                    if (isPlayerInMatch && currentMatch) {
-                        console.log('🔄 Пользователь больше не в матче');
-                        currentMatch = null;
-                        isPlayerInMatch = false;
-                        matchRestored = false;
                     }
                 }
-            } catch (e) {
-                console.error('Ошибка проверки матча:', e);
-            }
-        }, 1000); // Проверка каждую секунду
+            )
+            .subscribe();
     }
 
     // ============================================================
@@ -3474,52 +3508,8 @@
     }
 
     // ============================================================
-    //  МАТЧ
+    //  МАТЧ (ОТОБРАЖЕНИЕ, ДРАФТ И Т.Д.)
     // ============================================================
-    function startMatch(players) {
-        const shuffled = [...players];
-        for (let i = shuffled.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-        }
-        const half = Math.floor(shuffled.length / 2);
-        const orange = shuffled.slice(0, half);
-        const blue = shuffled.slice(half);
-        
-        if (orange.length > 0) draftState.captain1 = orange[0].id;
-        if (blue.length > 0) draftState.captain2 = blue[0].id;
-        draftState.currentCaptain = 0;
-        
-        currentMatch = { orange, blue };
-        isPlayerInMatch = true;
-        
-        const isOrangeCaptain = currentMatch.orange.length > 0 && currentMatch.orange[0].id === currentUser.id;
-        const isBlueCaptain = currentMatch.blue.length > 0 && currentMatch.blue[0].id === currentUser.id;
-        isCaptain = isOrangeCaptain || isBlueCaptain;
-        
-        saveMatchToSupabase();
-
-        document.getElementById('searchMainBlock').classList.remove('searching');
-        document.getElementById('queueBtn').style.display = 'inline-flex';
-        document.getElementById('cancelBtn').style.display = 'none';
-
-        draftState.gameNumber = (draftState.gameNumber || 0) + 1;
-        resetDraft();
-
-        document.getElementById('matchResultSection').classList.remove('admin-visible');
-        document.getElementById('screenshotSection').classList.remove('visible');
-        document.getElementById('matchActions').classList.remove('admin-visible');
-        currentScreenshot = null;
-        document.getElementById('screenshotInput').value = '';
-        document.getElementById('screenshotPreview').innerHTML = '';
-        document.getElementById('screenshotStatus').textContent = '';
-
-        navigate('matchPage');
-        renderMatchPage();
-        showToast('success', 'Матч начался!', `${orange.length + blue.length} игроков в игре`);
-        checkMatchResultVisibility();
-    }
-
     function checkMatchResultVisibility() {
         const isPlayer = isPlayerInMatch;
         
@@ -3588,7 +3578,131 @@
     }
 
     // ============================================================
-    //  ЗАГРУЗКА СКРИНШОТА
+    //  ДРАФТ
+    // ============================================================
+    function resetDraft() {
+        draftState = {
+            gameNumber: (draftState.gameNumber || 0) + 1,
+            modeOptions: ['Gem Grab', 'Brawl Ball', 'Knockout', 'Heist', 'Bounty', 'Hot Zone', 'Siege'],
+            modeBanned: [],
+            modeFinal: null,
+            currentCaptain: 0,
+            isComplete: false,
+            captain1: draftState.captain1 || null,
+            captain2: draftState.captain2 || null
+        };
+        saveMatchToSupabase();
+        renderDraftUI();
+    }
+
+    function getCaptainName(index) {
+        if (!currentMatch) return 'Капитан ' + (index + 1);
+        const captains = [];
+        if (currentMatch.orange.length > 0) captains.push(currentMatch.orange[0].username);
+        if (currentMatch.blue.length > 0) captains.push(currentMatch.blue[0].username);
+        return captains[index] || 'Капитан ' + (index + 1);
+    }
+
+    function isCurrentCaptain() {
+        if (!currentMatch || !currentUser) return false;
+        const captains = [];
+        if (currentMatch.orange.length > 0) captains.push(currentMatch.orange[0].id);
+        if (currentMatch.blue.length > 0) captains.push(currentMatch.blue[0].id);
+        return captains[draftState.currentCaptain] === currentUser.id;
+    }
+
+    function renderDraftUI() {
+        const state = draftState;
+
+        document.getElementById('matchGameNumber').textContent = '#' + state.gameNumber;
+        document.getElementById('matchSelectedMode').textContent = state.modeFinal || '—';
+
+        const modesContainer = document.getElementById('modesBanContainer');
+        const modeBtns = modesContainer.querySelectorAll('.ban-btn');
+        
+        const canBan = isCurrentCaptain() && !state.isComplete;
+        
+        modeBtns.forEach(btn => {
+            const val = btn.dataset.value;
+            if (state.modeBanned.includes(val)) {
+                btn.classList.add('banned');
+                btn.style.display = 'none';
+            } else if (state.modeFinal === val) {
+                btn.classList.add('selected');
+                btn.disabled = true;
+            } else if (state.isComplete) {
+                btn.disabled = true;
+            } else {
+                btn.classList.remove('banned', 'selected');
+                btn.style.display = '';
+                btn.disabled = !canBan;
+            }
+        });
+
+        const availableModes = state.modeOptions.filter(v => !state.modeBanned.includes(v) && v !== state.modeFinal);
+        document.getElementById('modesLeft').textContent = availableModes.length;
+
+        const modesStatus = document.getElementById('modesStatus');
+        if (state.modeFinal) {
+            modesStatus.textContent = '✅ ' + state.modeFinal;
+            modesStatus.className = 'status-text done';
+        } else if (!state.isComplete) {
+            const captainName = getCaptainName(state.currentCaptain);
+            modesStatus.textContent = 'Ход: ' + captainName;
+            modesStatus.className = 'status-text';
+            if (isCurrentCaptain()) {
+                modesStatus.textContent += ' (👈 Ваш ход!)';
+                modesStatus.style.color = '#51cf66';
+            } else {
+                modesStatus.style.color = '#ffd700';
+            }
+        } else {
+            modesStatus.textContent = 'Ожидание...';
+            modesStatus.className = 'status-text';
+        }
+        document.getElementById('modesTurnName').textContent = !state.isComplete ? getCaptainName(state.currentCaptain) : '—';
+
+        const bansContainer = document.getElementById('bansContainer');
+        if (state.isComplete) {
+            bansContainer.style.display = 'none';
+        } else {
+            bansContainer.style.display = 'grid';
+        }
+
+        saveMatchToSupabase();
+        checkMatchResultVisibility();
+    }
+
+    function handleModesBan(value) {
+        const state = draftState;
+        if (state.isComplete) return;
+        if (state.modeBanned.includes(value)) return;
+        if (state.modeFinal) return;
+        
+        if (!isCurrentCaptain()) {
+            showToast('error', 'Не ваш ход!', 'Сейчас банит другой капитан');
+            return;
+        }
+
+        state.modeBanned.push(value);
+
+        const available = state.modeOptions.filter(v => !state.modeBanned.includes(v));
+        if (available.length === 1) {
+            state.modeFinal = available[0];
+            state.isComplete = true;
+            renderDraftUI();
+            showToast('success', 'Драфт завершён!', 'Играем режим ' + state.modeFinal);
+            checkMatchResultVisibility();
+            return;
+        }
+
+        state.currentCaptain = state.currentCaptain === 0 ? 1 : 0;
+        renderDraftUI();
+        showToast('info', 'Ход передан', 'Теперь банит ' + getCaptainName(state.currentCaptain));
+    }
+
+    // ============================================================
+    //  СКРИНШОТ
     // ============================================================
     document.getElementById('screenshotUploadBtn').addEventListener('click', function() {
         const input = document.getElementById('screenshotInput');
@@ -3791,130 +3905,6 @@
         showToast('info', 'Матч завершён', 'Матч отменён');
         loadAllMatches();
         loadAdminStats();
-    }
-
-    // ============================================================
-    //  ДРАФТ
-    // ============================================================
-    function resetDraft() {
-        draftState = {
-            gameNumber: (draftState.gameNumber || 0) + 1,
-            modeOptions: ['Gem Grab', 'Brawl Ball', 'Knockout', 'Heist', 'Bounty', 'Hot Zone', 'Siege'],
-            modeBanned: [],
-            modeFinal: null,
-            currentCaptain: 0,
-            isComplete: false,
-            captain1: draftState.captain1 || null,
-            captain2: draftState.captain2 || null
-        };
-        saveMatchToSupabase();
-        renderDraftUI();
-    }
-
-    function getCaptainName(index) {
-        if (!currentMatch) return 'Капитан ' + (index + 1);
-        const captains = [];
-        if (currentMatch.orange.length > 0) captains.push(currentMatch.orange[0].username);
-        if (currentMatch.blue.length > 0) captains.push(currentMatch.blue[0].username);
-        return captains[index] || 'Капитан ' + (index + 1);
-    }
-
-    function isCurrentCaptain() {
-        if (!currentMatch || !currentUser) return false;
-        const captains = [];
-        if (currentMatch.orange.length > 0) captains.push(currentMatch.orange[0].id);
-        if (currentMatch.blue.length > 0) captains.push(currentMatch.blue[0].id);
-        return captains[draftState.currentCaptain] === currentUser.id;
-    }
-
-    function renderDraftUI() {
-        const state = draftState;
-
-        document.getElementById('matchGameNumber').textContent = '#' + state.gameNumber;
-        document.getElementById('matchSelectedMode').textContent = state.modeFinal || '—';
-
-        const modesContainer = document.getElementById('modesBanContainer');
-        const modeBtns = modesContainer.querySelectorAll('.ban-btn');
-        
-        const canBan = isCurrentCaptain() && !state.isComplete;
-        
-        modeBtns.forEach(btn => {
-            const val = btn.dataset.value;
-            if (state.modeBanned.includes(val)) {
-                btn.classList.add('banned');
-                btn.style.display = 'none';
-            } else if (state.modeFinal === val) {
-                btn.classList.add('selected');
-                btn.disabled = true;
-            } else if (state.isComplete) {
-                btn.disabled = true;
-            } else {
-                btn.classList.remove('banned', 'selected');
-                btn.style.display = '';
-                btn.disabled = !canBan;
-            }
-        });
-
-        const availableModes = state.modeOptions.filter(v => !state.modeBanned.includes(v) && v !== state.modeFinal);
-        document.getElementById('modesLeft').textContent = availableModes.length;
-
-        const modesStatus = document.getElementById('modesStatus');
-        if (state.modeFinal) {
-            modesStatus.textContent = '✅ ' + state.modeFinal;
-            modesStatus.className = 'status-text done';
-        } else if (!state.isComplete) {
-            const captainName = getCaptainName(state.currentCaptain);
-            modesStatus.textContent = 'Ход: ' + captainName;
-            modesStatus.className = 'status-text';
-            if (isCurrentCaptain()) {
-                modesStatus.textContent += ' (👈 Ваш ход!)';
-                modesStatus.style.color = '#51cf66';
-            } else {
-                modesStatus.style.color = '#ffd700';
-            }
-        } else {
-            modesStatus.textContent = 'Ожидание...';
-            modesStatus.className = 'status-text';
-        }
-        document.getElementById('modesTurnName').textContent = !state.isComplete ? getCaptainName(state.currentCaptain) : '—';
-
-        const bansContainer = document.getElementById('bansContainer');
-        if (state.isComplete) {
-            bansContainer.style.display = 'none';
-        } else {
-            bansContainer.style.display = 'grid';
-        }
-
-        saveMatchToSupabase();
-        checkMatchResultVisibility();
-    }
-
-    function handleModesBan(value) {
-        const state = draftState;
-        if (state.isComplete) return;
-        if (state.modeBanned.includes(value)) return;
-        if (state.modeFinal) return;
-        
-        if (!isCurrentCaptain()) {
-            showToast('error', 'Не ваш ход!', 'Сейчас банит другой капитан');
-            return;
-        }
-
-        state.modeBanned.push(value);
-
-        const available = state.modeOptions.filter(v => !state.modeBanned.includes(v));
-        if (available.length === 1) {
-            state.modeFinal = available[0];
-            state.isComplete = true;
-            renderDraftUI();
-            showToast('success', 'Драфт завершён!', 'Играем режим ' + state.modeFinal);
-            checkMatchResultVisibility();
-            return;
-        }
-
-        state.currentCaptain = state.currentCaptain === 0 ? 1 : 0;
-        renderDraftUI();
-        showToast('info', 'Ход передан', 'Теперь банит ' + getCaptainName(state.currentCaptain));
     }
 
     // ============================================================
@@ -4735,9 +4725,7 @@
             } catch (e) {}
         }
 
-        // Запускаем постоянную проверку матчей (каждую секунду)
-        startMatchPolling();
-
+        // Обновляем очередь каждые 5 секунд (для UI)
         setInterval(updateQueueUI, 5000);
 
         await checkAuth();
