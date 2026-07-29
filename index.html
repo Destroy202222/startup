@@ -20,7 +20,6 @@
             min-height: 100vh;
             line-height: 1.5;
         }
-
         .auth-page {
             display: flex;
             justify-content: center;
@@ -55,7 +54,6 @@
             text-transform: uppercase;
             margin-top: 2px;
         }
-
         .auth-box .auth-tabs {
             display: flex;
             gap: 4px;
@@ -85,10 +83,8 @@
             box-shadow: 0 4px 20px rgba(255, 215, 0, 0.25);
         }
         .auth-box .auth-tabs .tab:hover:not(.active) { color: #fff; }
-
         .auth-box .auth-form { display: none; }
         .auth-box .auth-form.active { display: block; }
-
         .auth-box .form-group { margin-bottom: 16px; }
         .auth-box .form-group label {
             display: block;
@@ -133,7 +129,6 @@
             font-weight: 400;
             font-size: 14px;
         }
-
         .auth-box .btn-auth {
             width: 100%;
             padding: 15px;
@@ -156,7 +151,6 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3);
         }
-
         .auth-box .auth-message {
             padding: 12px 16px;
             border-radius: 12px;
@@ -181,7 +175,6 @@
             border: 1px solid rgba(255, 215, 0, 0.15);
             color: #ffd700;
         }
-
         .auth-box .auth-footer {
             text-align: center;
             margin-top: 16px;
@@ -384,10 +377,7 @@
         }
         .prize-block .prize-premium strong { color: #ffd700; font-weight: 700; }
 
-        .search-page-wrapper {
-            max-width: 700px;
-            margin: 0 auto;
-        }
+        .search-page-wrapper { max-width: 700px; margin: 0 auto; }
         .search-header-block {
             background: rgba(255, 215, 0, 0.03);
             border: 1.5px solid rgba(255, 215, 0, 0.25);
@@ -2739,11 +2729,11 @@
     }
 
     // ============================================================
-    //  ЗАГРУЗКА МАТЧА ИЗ SUPABASE
+    //  ЗАГРУЗКА МАТЧА ИЗ SUPABASE (ПРИ ВХОДЕ)
     // ============================================================
     async function loadMatchFromSupabase() {
         try {
-            if (!currentUser) return;
+            if (!currentUser) return false;
 
             const { data, error } = await supabaseClient
                 .from('active_matches')
@@ -3096,7 +3086,7 @@
     };
 
     function navigate(page) {
-        // Если игрок в матче, всегда показываем matchPage вместо matches
+        // Если игрок в матче, всегда показываем matchPage вместо matches или home
         if ((page === 'matches' || page === 'home') && isPlayerInMatch && currentMatch) {
             page = 'matchPage';
         }
@@ -3238,6 +3228,7 @@
                         username: p.username
                     }));
                     
+                    // Очищаем очередь и создаём матч
                     supabaseClient
                         .from('match_queue')
                         .delete()
@@ -3298,7 +3289,7 @@
     }
 
     // ============================================================
-    //  ПОСТОЯННАЯ ПРОВЕРКА МАТЧА
+    //  ПОСТОЯННАЯ ПРОВЕРКА МАТЧА (ДЛЯ ВСЕХ ИГРОКОВ)
     // ============================================================
     function startMatchPolling() {
         if (matchCheckInterval) clearInterval(matchCheckInterval);
@@ -3306,21 +3297,24 @@
             if (!currentUser) return;
             
             try {
-                // Проверяем, есть ли матч в БД
+                // Проверяем все активные матчи
                 const { data, error } = await supabaseClient
                     .from('active_matches')
                     .select('*')
-                    .order('created_at', { ascending: false })
-                    .limit(1);
+                    .order('created_at', { ascending: false });
 
-                if (error || !data || data.length === 0) {
+                if (error) {
+                    console.error('Ошибка проверки матчей:', error);
+                    return;
+                }
+
+                if (!data || data.length === 0) {
                     // Если матч был, но пропал - сбрасываем состояние
                     if (isPlayerInMatch && currentMatch) {
                         console.log('🔄 Матч был удалён из БД');
                         currentMatch = null;
                         isPlayerInMatch = false;
                         matchRestored = false;
-                        // Проверяем, не на странице ли матча
                         const matchPage = document.getElementById('matchPage');
                         if (matchPage && matchPage.classList.contains('active')) {
                             navigate('matches');
@@ -3329,63 +3323,68 @@
                     return;
                 }
 
-                const match = data[0];
-                let orange = [], blue = [];
-                try {
-                    orange = JSON.parse(match.orange);
-                    blue = JSON.parse(match.blue);
-                } catch (e) { return; }
-
-                const isInMatch = orange.some(p => p.id === currentUser.id) ||
-                                  blue.some(p => p.id === currentUser.id);
-
-                if (isInMatch && !currentMatch) {
-                    console.log('🎯 Обнаружен новый матч для игрока!');
-                    currentMatch = { orange, blue };
-                    isPlayerInMatch = true;
-                    activeMatchId = match.id;
-                    matchRestored = true;
-
-                    if (match.draft_state) {
-                        try {
-                            draftState = JSON.parse(match.draft_state);
-                        } catch (e) {}
+                let foundMatch = null;
+                for (const match of data) {
+                    let orange = [], blue = [];
+                    try {
+                        orange = JSON.parse(match.orange);
+                        blue = JSON.parse(match.blue);
+                    } catch (e) { continue; }
+                    if (orange.some(p => p.id === currentUser.id) || blue.some(p => p.id === currentUser.id)) {
+                        foundMatch = match;
+                        break;
                     }
-
-                    if (match.screenshot) {
-                        currentScreenshot = match.screenshot;
-                        const preview = document.getElementById('screenshotPreview');
-                        preview.innerHTML = `<img src="${currentScreenshot}" alt="Скриншот" />`;
-                        document.getElementById('screenshotStatus').textContent = '✅ Скриншот загружен из БД';
-                        document.getElementById('screenshotStatus').style.color = '#51cf66';
-                    }
-
-                    const isOrangeCaptain = currentMatch.orange.length > 0 && currentMatch.orange[0].id === currentUser.id;
-                    const isBlueCaptain = currentMatch.blue.length > 0 && currentMatch.blue[0].id === currentUser.id;
-                    isCaptain = isOrangeCaptain || isBlueCaptain;
-
-                    renderMatchPage();
-                    checkMatchResultVisibility();
-                    navigate('matchPage');
-                    showToast('success', 'Матч найден!', 'Вы были добавлены в матч');
                 }
-                
-                // Если игрок в матче, но на странице matches - перенаправляем
-                if (isInMatch && currentMatch) {
-                    const matchPage = document.getElementById('matchPage');
-                    const matchesPage = document.getElementById('pageMatches');
-                    if (matchesPage && matchesPage.classList.contains('active') && matchPage) {
-                        // Обновляем данные матча на случай изменений
+
+                if (foundMatch) {
+                    const match = foundMatch;
+                    let orange = [], blue = [];
+                    try {
+                        orange = JSON.parse(match.orange);
+                        blue = JSON.parse(match.blue);
+                    } catch (e) { return; }
+
+                    if (!currentMatch || activeMatchId !== match.id) {
+                        console.log('🎯 Обнаружен новый матч для игрока!');
                         currentMatch = { orange, blue };
+                        isPlayerInMatch = true;
+                        activeMatchId = match.id;
+                        matchRestored = true;
+
+                        if (match.draft_state) {
+                            try { draftState = JSON.parse(match.draft_state); } catch(e) {}
+                        }
+
+                        if (match.screenshot) {
+                            currentScreenshot = match.screenshot;
+                            const preview = document.getElementById('screenshotPreview');
+                            preview.innerHTML = `<img src="${currentScreenshot}" alt="Скриншот" />`;
+                            document.getElementById('screenshotStatus').textContent = '✅ Скриншот загружен из БД';
+                            document.getElementById('screenshotStatus').style.color = '#51cf66';
+                        }
+
+                        const isOrangeCaptain = currentMatch.orange.length > 0 && currentMatch.orange[0].id === currentUser.id;
+                        const isBlueCaptain = currentMatch.blue.length > 0 && currentMatch.blue[0].id === currentUser.id;
+                        isCaptain = isOrangeCaptain || isBlueCaptain;
+
                         renderMatchPage();
                         checkMatchResultVisibility();
                         navigate('matchPage');
+                        showToast('success', 'Матч найден!', 'Вы были добавлены в матч');
+                    }
+                } else {
+                    // Если игрок не в матче, но у него есть активный currentMatch - сбрасываем
+                    if (isPlayerInMatch && currentMatch) {
+                        console.log('🔄 Пользователь больше не в матче');
+                        currentMatch = null;
+                        isPlayerInMatch = false;
+                        matchRestored = false;
                     }
                 }
             } catch (e) {
                 console.error('Ошибка проверки матча:', e);
             }
-        }, 2000); // Проверяем каждые 2 секунды
+        }, 1000); // Проверка каждую секунду
     }
 
     // ============================================================
@@ -4671,7 +4670,7 @@
     }
 
     // ============================================================
-    //  ПОДКЛЮЧЕНИЕ ОБРАБОТЧИКОВ
+    //  ПОДКЛЮЧЕНИЕ ОБРАБОТЧИКОВ И ЗАПУСК
     // ============================================================
     document.addEventListener('DOMContentLoaded', async function() {
         console.log('✅ DOM ЗАГРУЖЕН!');
@@ -4736,7 +4735,7 @@
             } catch (e) {}
         }
 
-        // Запускаем постоянную проверку матчей
+        // Запускаем постоянную проверку матчей (каждую секунду)
         startMatchPolling();
 
         setInterval(updateQueueUI, 5000);
