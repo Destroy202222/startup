@@ -2772,18 +2772,15 @@
                 matchRestored = true;
                 console.log('✅ Матч загружен из Supabase');
                 
-                // Определяем, является ли игрок капитаном
                 const isOrangeCaptain = currentMatch.orange.length > 0 && currentMatch.orange[0].id === currentUser.id;
                 const isBlueCaptain = currentMatch.blue.length > 0 && currentMatch.blue[0].id === currentUser.id;
                 isCaptain = isOrangeCaptain || isBlueCaptain;
                 isAdmin = currentUser.username === 'Destro';
                 
-                // Обновляем UI
                 renderMatchPage();
                 checkMatchResultVisibility();
                 navigate('matchPage');
             } else {
-                // Если пользователь не в матче, но матч есть - удаляем старый
                 if (match.id) {
                     await supabaseClient
                         .from('active_matches')
@@ -3007,19 +3004,14 @@
             document.getElementById('authPage').style.display = 'none';
             document.getElementById('mainSite').style.display = 'block';
             
-            // Профиль
             document.getElementById('pName').textContent = currentUser.username;
             document.getElementById('avatar').textContent = currentUser.username.charAt(0).toUpperCase();
             const regDate = currentUser.registered ? new Date(currentUser.registered).toLocaleDateString('ru-RU') : '—';
             document.getElementById('pReg').textContent = regDate;
 
-            // Обновляем статистику
             await updateProfile();
-
-            // Обновляем кошелёк
             updateWalletUI();
 
-            // ===== АДМИН-ПАНЕЛЬ =====
             isAdmin = currentUser.username === 'Destro';
             
             const adminBadge = document.getElementById('adminBadge');
@@ -3040,13 +3032,8 @@
                 adminPanel.classList.remove('visible');
             }
             
-            // Загружаем матч из Supabase
             await loadMatchFromSupabase();
-
-            // Загружаем топ
             await renderTopPlayers();
-
-            // Обновляем очереди
             updateQueueUI();
             updatePartyUI();
             
@@ -3107,7 +3094,7 @@
     }
 
     // ============================================================
-    //  ПОИСК МАТЧА (ТОЛЬКО РЕАЛЬНЫЕ ИГРОКИ) - ИСПРАВЛЕНО
+    //  ПОИСК МАТЧА - БЕЗ ЗАДЕРЖКИ!
     // ============================================================
     function startSearch() {
         if (isSearching) return;
@@ -3117,7 +3104,6 @@
         }
         if (!currentUser) return showToast('error', 'Ошибка', 'Авторизуйтесь');
 
-        // Проверяем, есть ли уже активные матчи с этим игроком
         supabaseClient
             .from('active_matches')
             .select('*')
@@ -3135,57 +3121,55 @@
                         } catch(e) {}
                     }
                 }
-                
-                // Начинаем поиск
                 doStartSearch();
             });
     }
 
-    function doStartSearch() {
-        // Сначала удаляем все старые записи этого игрока в очереди
-        supabaseClient
-            .from('match_queue')
-            .delete()
-            .eq('user_id', currentUser.id)
-            .then(() => {
-                // Добавляем себя в очередь
-                supabaseClient
-                    .from('match_queue')
-                    .insert([{
-                        user_id: currentUser.id,
-                        username: currentUser.username,
-                        status: 'waiting',
-                        created_at: new Date().toISOString()
-                    }])
-                    .then(() => {
-                        isSearching = true;
-                        searchSeconds = 0;
+    async function doStartSearch() {
+        try {
+            // Удаляем старые записи
+            await supabaseClient
+                .from('match_queue')
+                .delete()
+                .eq('user_id', currentUser.id);
+            
+            // Добавляем себя в очередь
+            await supabaseClient
+                .from('match_queue')
+                .insert([{
+                    user_id: currentUser.id,
+                    username: currentUser.username,
+                    status: 'waiting',
+                    created_at: new Date().toISOString()
+                }]);
+            
+            // Данные записаны - обновляем UI мгновенно
+            isSearching = true;
+            searchSeconds = 0;
 
-                        document.getElementById('searchMainBlock').classList.add('searching');
-                        document.getElementById('queueBtn').style.display = 'none';
-                        document.getElementById('cancelBtn').style.display = 'inline-flex');
+            document.getElementById('searchMainBlock').classList.add('searching');
+            document.getElementById('queueBtn').style.display = 'none';
+            document.getElementById('cancelBtn').style.display = 'inline-flex';
 
-                        if (searchTimerInterval) clearInterval(searchTimerInterval);
-                        searchTimerInterval = setInterval(() => {
-                            searchSeconds++;
-                            const mins = String(Math.floor(searchSeconds / 60)).padStart(2, '0');
-                            const secs = String(searchSeconds % 60).padStart(2, '0');
-                            document.getElementById('searchTimer').textContent = mins + ':' + secs;
-                        }, 1000);
+            if (searchTimerInterval) clearInterval(searchTimerInterval);
+            searchTimerInterval = setInterval(() => {
+                searchSeconds++;
+                const mins = String(Math.floor(searchSeconds / 60)).padStart(2, '0');
+                const secs = String(searchSeconds % 60).padStart(2, '0');
+                document.getElementById('searchTimer').textContent = mins + ':' + secs;
+            }, 1000);
 
-                        showToast('info', 'Поиск начат', 'Ожидаем игроков...');
-                        
-                        // Сразу обновляем UI - показываем 1/6
-                        // Делаем это с небольшой задержкой, чтобы БД успела обработать запрос
-                        setTimeout(() => {
-                            updateQueueUI();
-                        }, 500);
-                        
-                        // Проверяем очередь каждые 2 секунды
-                        if (queueCheckInterval) clearInterval(queueCheckInterval);
-                        queueCheckInterval = setInterval(checkQueue, 2000);
-                    });
-            });
+            showToast('info', 'Поиск начат', 'Ожидаем игроков...');
+            
+            // Мгновенное обновление UI (без задержки!)
+            updateQueueUI();
+            
+            if (queueCheckInterval) clearInterval(queueCheckInterval);
+            queueCheckInterval = setInterval(checkQueue, 2000);
+        } catch (e) {
+            console.error('Ошибка поиска:', e);
+            showToast('error', 'Ошибка', 'Не удалось начать поиск');
+        }
     }
 
     function checkQueue() {
@@ -3207,27 +3191,23 @@
                 const players = data || [];
                 const count = players.length;
                 
-                // Обновляем UI
                 document.getElementById('progressText').textContent = count + '/6';
                 document.getElementById('queueCount').textContent = count;
                 
                 console.log(`👥 В очереди: ${count} игроков`);
                 
                 if (count >= 6) {
-                    // Начинаем матч
                     clearInterval(queueCheckInterval);
                     isSearching = false;
                     document.getElementById('searchMainBlock').classList.remove('searching');
                     document.getElementById('queueBtn').style.display = 'inline-flex';
                     document.getElementById('cancelBtn').style.display = 'none';
                     
-                    // Собираем игроков
                     const playersList = players.map(p => ({
                         id: p.user_id,
                         username: p.username
                     }));
                     
-                    // Очищаем очередь
                     supabaseClient
                         .from('match_queue')
                         .delete()
@@ -3245,7 +3225,6 @@
         clearInterval(queueCheckInterval);
         clearInterval(searchTimerInterval);
         
-        // Удаляем себя из очереди
         supabaseClient
             .from('match_queue')
             .delete()
@@ -3299,7 +3278,6 @@
         const orange = shuffled.slice(0, half);
         const blue = shuffled.slice(half);
         
-        // Назначаем капитанов (первые в каждой команде)
         if (orange.length > 0) draftState.captain1 = orange[0].id;
         if (blue.length > 0) draftState.captain2 = blue[0].id;
         draftState.currentCaptain = 0;
@@ -3307,7 +3285,6 @@
         currentMatch = { orange, blue };
         isPlayerInMatch = true;
         
-        // Определяем, является ли игрок капитаном
         const isOrangeCaptain = currentMatch.orange.length > 0 && currentMatch.orange[0].id === currentUser.id;
         const isBlueCaptain = currentMatch.blue.length > 0 && currentMatch.blue[0].id === currentUser.id;
         isCaptain = isOrangeCaptain || isBlueCaptain;
@@ -3438,7 +3415,7 @@
     });
 
     // ============================================================
-    //  ЗАСЧИТЫВАНИЕ МАТЧА (ТОЛЬКО ДЛЯ АДМИНА)
+    //  ЗАСЧИТЫВАНИЕ МАТЧА
     // ============================================================
     document.getElementById('blueWinBtn').addEventListener('click', function() {
         if (!currentMatch || !draftState.isComplete) {
@@ -3480,12 +3457,10 @@
         console.log('  Проигравшие:', losers.map(p => p.username));
         console.log('  Режим:', map);
 
-        // Сохраняем результат для каждого реального игрока
         for (const player of realPlayers) {
             const isWin = winners.some(w => w.id === player.id);
 
             try {
-                // Получаем текущие данные игрока
                 const { data: userData, error: fetchError } = await supabaseClient
                     .from('users')
                     .select('*')
@@ -3506,7 +3481,6 @@
 
                     console.log(`  ${player.username}: +1 матч, ELO ${userData.elo} → ${newElo}`);
 
-                    // Обновляем данные игрока
                     const { error: updateError } = await supabaseClient
                         .from('users')
                         .update({
@@ -3524,7 +3498,6 @@
                     }
                 }
 
-                // Сохраняем историю матча
                 const historyId = Date.now().toString() + '_' + Math.random().toString(36).substr(2, 4);
                 const { error: historyError } = await supabaseClient
                     .from('match_history')
@@ -3549,7 +3522,6 @@
             }
         }
 
-        // Обновляем текущего пользователя
         const { data: updatedUser } = await supabaseClient
             .from('users')
             .select('*')
@@ -3616,7 +3588,7 @@
     }
 
     // ============================================================
-    //  ДРАФТ (БАНЯТ ТОЛЬКО КАПИТАНЫ ПО ОЧЕРЕДИ)
+    //  ДРАФТ
     // ============================================================
     function resetDraft() {
         draftState = {
@@ -3717,7 +3689,6 @@
         if (state.modeBanned.includes(value)) return;
         if (state.modeFinal) return;
         
-        // Проверяем, может ли текущий игрок банить
         if (!isCurrentCaptain()) {
             showToast('error', 'Не ваш ход!', 'Сейчас банит другой капитан');
             return;
@@ -3735,7 +3706,6 @@
             return;
         }
 
-        // Передаём ход другому капитану
         state.currentCaptain = state.currentCaptain === 0 ? 1 : 0;
         renderDraftUI();
         showToast('info', 'Ход передан', 'Теперь банит ' + getCaptainName(state.currentCaptain));
@@ -3795,7 +3765,6 @@
                             'waiting': '🟡 Ожидание'
                         };
                         
-                        // Проверяем, может ли админ присоединиться к матчу
                         const canJoin = isAdmin && !isPlayerInMatch;
                         
                         return `
@@ -3899,20 +3868,17 @@
                 blue = JSON.parse(data.blue || '[]');
             } catch(e) {}
 
-            // Добавляем админа в случайную команду
             const adminPlayer = {
                 id: currentUser.id,
                 username: currentUser.username + ' (Админ)'
             };
 
-            // Добавляем в команду с меньшим количеством игроков
             if (blue.length <= orange.length) {
                 blue.push(adminPlayer);
             } else {
                 orange.push(adminPlayer);
             }
 
-            // Обновляем матч в БД
             await supabaseClient
                 .from('active_matches')
                 .update({
@@ -3926,14 +3892,12 @@
             isPlayerInMatch = true;
             activeMatchId = matchId;
             
-            // Загружаем draft_state
             if (data.draft_state) {
                 try {
                     draftState = JSON.parse(data.draft_state);
                 } catch(e) {}
             }
             
-            // Обновляем UI
             renderMatchPage();
             checkMatchResultVisibility();
             navigate('matchPage');
@@ -3959,7 +3923,6 @@
             showToast('success', 'Готово', 'Матч удалён');
             await loadAllMatches();
             
-            // Если это текущий матч игрока
             if (activeMatchId === matchId) {
                 currentMatch = null;
                 isPlayerInMatch = false;
@@ -4624,7 +4587,6 @@
             } catch (e) {}
         }
 
-        // Обновляем очередь каждые 5 секунд
         setInterval(updateQueueUI, 5000);
 
         await checkAuth();
