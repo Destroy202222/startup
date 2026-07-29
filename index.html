@@ -3181,8 +3181,10 @@
 
                         showToast('info', 'Поиск начат', 'Ожидаем игроков...');
                         
-                        // Обновляем UI сразу
-                        updateQueueUI();
+                        // Ждём 500мс перед обновлением UI, чтобы данные успели записаться
+                        setTimeout(() => {
+                            updateQueueUI();
+                        }, 500);
                         
                         // Проверяем очередь каждые 2 секунды
                         if (queueCheckInterval) clearInterval(queueCheckInterval);
@@ -3270,8 +3272,17 @@
             .select('*')
             .eq('status', 'waiting')
             .then(({ data }) => {
-                document.getElementById('queueCount').textContent = (data || []).length;
-            });
+                const count = (data || []).length;
+                document.getElementById('queueCount').textContent = count;
+                
+                // Если мы в поиске, обновляем progressText
+                if (isSearching) {
+                    document.getElementById('progressText').textContent = count + '/6';
+                }
+                
+                console.log(`👥 В очереди: ${count} игроков`);
+            })
+            .catch(err => console.error('Ошибка обновления очереди:', err));
             
         const matchPlayers = currentMatch ? (currentMatch.orange.length + currentMatch.blue.length) : 0;
         document.getElementById('matchCount').textContent = matchPlayers;
