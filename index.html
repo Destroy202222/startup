@@ -108,8 +108,10 @@ input{-webkit-user-select:text;user-select:text}
 </nav>
 <script>
 const EDGE = "https://wlhzcocwgmzcrtzhefic.supabase.co/functions/v1/api";
-const RPC  = "https://wlhzcocwgmzcrtzhefic.supabase.co/rest/v1/rpc/api";
-const SQL_ACTIONS = /^(lobbies|lobby_|room_link|admin_)/;
+// ✅ RPC теперь указывает на app_rpc
+const RPC  = "https://wlhzcocwgmzcrtzhefic.supabase.co/rest/v1/rpc/app_rpc";
+// ✅ В RPC идут только lobbies, lobby_attach_result, room_link, admin_*
+const SQL_ACTIONS = /^(lobbies$|lobby_attach_result|room_link|admin_)/;
 const ADMIN_TAG = "#QQQ09U2PJ";
 const isAdmin = p => !!p && p.status === "verified" && p.bs_tag === ADMIN_TAG;
 const ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndsaHpjb2N3Z216Y3J0emhlZmljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzQ4ODYsImV4cCI6MjEwNjQ1MDg4Nn0.-Y1jYFT1NO9Nm1SgzNU7QYBA1E8zTZr8aXA768-5cd8";
@@ -154,7 +156,7 @@ const ERR_MAP = {
   no_link:"Сначала должна быть ссылка на лобби", already_result:"Скриншот уже отправлен",
   bad_shot:"Некорректный скриншот", shot_too_big:"Файл больше 10 МБ",
   already_resolved:"Результат уже засчитан", unknown_action:"Сервер не знает это действие",
-  bad_response:"Пустой ответ от сервера"
+  unknown:"Сервер не знает это действие", bad_response:"Пустой ответ от сервера"
 };
 const errText = e => ERR_MAP[e && e.error] || (e && e.error) || (e && e.message) || "Ошибка, попробуй ещё раз";
 const LERR = ERR_MAP;
@@ -283,9 +285,7 @@ const ICONS = {
   top: '<svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4"/><path d="M12 13v4M10 17h4M8 21h8"/></svg>'
 };
 let curTab = "profile", cur = null;
-
 function profile(p) { cur = p; showTab(curTab); startPoll(); }
-
 function showTab(t) {
   curTab = t;
   document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("on", b.dataset.t === t));
@@ -447,13 +447,13 @@ function renderMatches() {
     <button class="btn" data-j="${l.id}">Войти</button></div>`).join("");
   app.innerHTML = `<h1>Матчи</h1><p>Создай матч</p>
   <div class="balrow"><span>Баланс</span><b>${money(bal)}</b></div>
-  <div class="sec">Карта</div>
-  <div class="chips one">${MAPS.map(x => `<button class="chip${x === pickMap ? " on" : ""}" data-m="${x}">🐍 ${x}</button>`).join("")}</div>
+  <div class="sec =>">Карта</div>
+  <div class="ch {ips one">${MAPS.map(x => pickStake = `<button class="chip${x === pickMap ? " on" : ""}" data-m="${x}">🐍 ${x}</button>`).join("")}</div>
   <div class="sec">Ставка</div>
   <div class="chips three">${stakes.map(x => `<button class="chip${x === pickStake ? " on" : ""}" data-s="${x}">${x} ₽</button>`).join("")}</div>
   <button class="btn" id="mk">Создать матч · ${money(pickStake)}</button>
   <div class="sec">Открытые лобби</div>${open || "<p>Пока нет открытых лобби — создай своё.</p>"}`;
-  app.querySelectorAll("[data-s]").forEach(c => c.onclick = () => { pickStake = +c.dataset.s; renderMatches(); });
+  app.querySelectorAll("[data-s]").forEach(c => c.onclick = () +c.dataset.s; renderMatches(); });
   app.querySelectorAll("[data-m]").forEach(c => c.onclick = () => { pickMap = c.dataset.m; renderMatches(); });
   q("mk").onclick = () => lobbyCall("lobby_create", { stake: pickStake, map: pickMap });
   app.querySelectorAll("[data-j]").forEach(b => b.onclick = () => lobbyCall("lobby_join", { id: +b.dataset.j }));
