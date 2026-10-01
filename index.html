@@ -55,29 +55,26 @@ function render(p) {
 
 async function readTag(file) {
   const img = await createImageBitmap(file);
-  const scale = Math.min(3, 2000 / img.width);
+  const scale = img.width < 1500 ? 1500 / img.width : 1;   // только увеличиваем
   const c = document.createElement("canvas");
-  c.width = img.width * scale; c.height = img.height * scale;
-  const x = c.getContext("2d");
-  const modes = ["gray", "invert", "thresh", "thresh-invert"];
+  c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale);
+  const x = c.getContext("2d", { willReadFrequently: true });
   const w = await Tesseract.createWorker("eng");
-  await w.setParameters({ tessedit_char_whitelist: "#0289PYLQGRJCUVO ", tessedit_pageseg_mode: "11" });
+  await w.setParameters({ tessedit_char_whitelist: "#0289PYLQGRJCUVO", tessedit_pageseg_mode: "11" });
   try {
-    for (const m of modes) {
-      x.filter = "grayscale(1) contrast(1.8)";
+    for (const m of ["gray", "t100", "t100inv"]) {
       x.drawImage(img, 0, 0, c.width, c.height);
-      x.filter = "none";
       const d = x.getImageData(0, 0, c.width, c.height), px = d.data;
       for (let i = 0; i < px.length; i += 4) {
-        let v = px[i];
-        if (m.includes("thresh")) v = v > 170 ? 255 : 0;
-        if (m.includes("invert")) v = 255 - v;
+        let v = 0.299 * px[i] + 0.587 * px[i + 1] + 0.114 * px[i + 2];
+        if (m !== "gray") v = v > 100 ? 255 : 0;
+        if (m === "t100inv") v = 255 - v;
         px[i] = px[i + 1] = px[i + 2] = v;
       }
       x.putImageData(d, 0, 0);
       const { data } = await w.recognize(c);
       const t = data.text.toUpperCase();
-      const hit = t.match(/#\s*([0289PYLQGRJCUVO]{6,10})/) || t.match(/\b([0289PYLQGRJCUV]{7,9})\b/);
+      const hit = t.match(/#\s*([0289PYLQGRJCUVO]{6,10})/);
       if (hit) return "#" + hit[1].replace(/O/g, "0");
     }
   } finally { await w.terminate(); }
@@ -98,9 +95,9 @@ function upload() {
     if (!f.files[0]) return;
     st.textContent = "Распознаём тег…"; st.className = "";
     let tag = "";
-    try { tag = await readTag(f.files[0]); } catch (e) {}
+    let err = ""; try { tag = await readTag(f.files[0]); } catch (e) { err = " (" + (e.message || e) + ")"; }
     q("manual").value = tag;
-    st.textContent = tag ? "Проверь тег и нажми «Продолжить»" : "Тег не распознан — введи вручную";
+    st.textContent = tag ? "Проверь тег и нажми «Продолжить»" : "Тег не распознан — введи вручную" + err;
     q("manual").classList.remove("hidden"); q("go").classList.remove("hidden");
   };
   q("go").onclick = async () => {
