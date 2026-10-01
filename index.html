@@ -3,28 +3,43 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Brawl Profile</title>
+<title>StartUp — Brawl Stars</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.0/dist/tesseract.min.js"></script>
 <style>
-:root{--bg:#0d0d0d;--card:#1a1a1a;--or:#ff7a00;--or2:#ffa040;--tx:#f5f5f5;--mut:#8a8a8a}
+:root{--bg:#0a0a0a;--card:#141414;--or:#ff7a00;--or2:#ffa040;--tx:#f5f5f5;--mut:#8f8f8f}
 *{box-sizing:border-box;margin:0}
-body{background:var(--bg);color:var(--tx);font-family:system-ui,sans-serif;min-height:100vh;padding:20px;display:flex;flex-direction:column;align-items:center}
-.card{background:var(--card);border:1px solid #2a2a2a;border-radius:20px;padding:24px;width:100%;max-width:420px;text-align:center;margin-top:20px}
-h1{color:var(--or);font-size:22px;margin-bottom:8px}
-p{color:var(--mut);font-size:14px;line-height:1.5;margin:8px 0}
-.btn{background:linear-gradient(135deg,var(--or),var(--or2));color:#000;border:0;border-radius:12px;padding:14px;font-weight:700;font-size:16px;width:100%;margin-top:16px;cursor:pointer}
+body{background-color:var(--bg);background-image:linear-gradient(rgba(255,122,0,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(255,122,0,.08) 1px,transparent 1px);background-size:28px 28px;background-position:center top;color:var(--tx);font-family:system-ui,-apple-system,sans-serif;min-height:100vh;padding:80px 20px 40px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.brand{font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--or);text-align:center;opacity:.95}
+.brand span{color:var(--mut)}
+.card{position:relative;background:linear-gradient(180deg,#191919,#101010);border:1px solid rgba(255,122,0,.25);border-radius:26px;padding:30px 22px 24px;width:100%;max-width:400px;text-align:center;margin-top:18px;box-shadow:0 0 0 1px #000,0 18px 50px rgba(0,0,0,.65),0 0 60px rgba(255,122,0,.10)}
+.card::before{content:"";position:absolute;left:20%;right:20%;top:-1px;height:2px;background:linear-gradient(90deg,transparent,var(--or),transparent);border-radius:2px}
+.icon{width:68px;height:68px;margin:0 auto 14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;background:radial-gradient(circle at 30% 25%,#ffb066,var(--or) 60%,#c85a00);box-shadow:0 0 28px rgba(255,122,0,.45)}
+h1{color:var(--tx);font-size:22px;font-weight:800;margin-bottom:6px}
+p{color:var(--mut);font-size:14px;line-height:1.55;margin:8px 0}
+.steps{display:flex;justify-content:center;gap:8px;margin:16px 0 4px}
+.steps i{width:30px;height:4px;border-radius:4px;background:#2c2c2c}
+.steps i.on{background:linear-gradient(90deg,var(--or),var(--or2));box-shadow:0 0 8px rgba(255,122,0,.6)}
+.btn{background:linear-gradient(135deg,var(--or),var(--or2));color:#111;border:0;border-radius:14px;padding:15px;font-weight:800;font-size:16px;width:100%;margin-top:16px;cursor:pointer;box-shadow:0 6px 20px rgba(255,122,0,.3);transition:transform .1s}
+.btn:active{transform:scale(.97)}
 .btn:disabled{opacity:.5}
-.ava{width:110px;height:110px;border-radius:50%;border:3px solid var(--or);object-fit:cover;background:#222}
-.nick{font-size:26px;font-weight:800;margin-top:14px}
-.tag{color:var(--or);font-weight:600}
-.badge{display:inline-block;background:#1f1400;color:var(--or);border:1px solid var(--or);border-radius:20px;padding:4px 12px;font-size:12px;margin-top:10px}
-input[type=text]{width:100%;background:#111;border:1px solid #333;color:var(--tx);border-radius:10px;padding:12px;margin-top:12px;font-size:16px;text-align:center}
-.err{color:#ff5252}
+.drop{display:block;width:100%;margin-top:18px;padding:26px 14px;border:2px dashed rgba(255,122,0,.45);border-radius:18px;background:rgba(255,122,0,.05);color:var(--tx);font-size:15px;font-weight:600;cursor:pointer}
+.drop small{display:block;color:var(--mut);font-weight:400;font-size:12px;margin-top:6px}
+.drop b{display:block;font-size:30px;margin-bottom:6px}
+.ava{width:116px;height:116px;border-radius:50%;border:3px solid var(--or);object-fit:cover;background:#222;box-shadow:0 0 30px rgba(255,122,0,.45)}
+.nick{font-size:26px;font-weight:800;margin-top:16px}
+.tag{color:var(--or);font-weight:700;letter-spacing:.5px}
+.badge{display:inline-block;background:rgba(255,122,0,.1);color:var(--or2);border:1px solid rgba(255,122,0,.5);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;margin-top:12px}
+.found{background:#0d0d0d;border:1px solid #2a2a2a;border-radius:14px;padding:12px;margin-top:14px}
+.found .tag{font-size:18px}
+input[type=text]{width:100%;background:#0c0c0c;border:1px solid #2e2e2e;color:var(--tx);border-radius:12px;padding:14px;margin-top:14px;font-size:18px;font-weight:700;letter-spacing:1px;text-align:center;outline:0}
+input[type=text]:focus{border-color:var(--or);box-shadow:0 0 0 3px rgba(255,122,0,.15)}
+.err{color:#ff6b6b}
 .hidden{display:none}
 </style>
 </head>
 <body>
+<div class="brand">StartUp <span>—</span> Brawl Stars</div>
 <div id="app" class="card"><h1>Загрузка…</h1></div>
 
 <script>
@@ -113,10 +128,11 @@ function withVariants(list) {   // + варианты без задвоенно�
 }
 
 function upload() {
-  app.innerHTML = `<h1>Верификация Brawl Stars</h1>
-  <p>Прикрепи скриншот своего профиля — мы найдём #ТЕГ.</p>
+  app.innerHTML = `<div class="icon">🛡️</div><h1>Верификация аккаунта</h1>
+  <p>Подтверди, что аккаунт Brawl Stars принадлежит тебе</p>
+  <div class="steps"><i class="on"></i><i></i><i></i></div>
   <input type="file" id="f" accept="image/*" class="hidden">
-  <button class="btn" id="pick">📷 Выбрать фото профиля</button>
+  <button class="drop" id="pick"><b>📷</b>Загрузить скриншот профиля<small>Мы сами найдём твой #ТЕГ</small></button>
   <p id="st"></p>
   <input type="text" id="manual" class="hidden" placeholder="#ТЕГ вручную">
   <button class="btn hidden" id="go">Продолжить</button>`;
@@ -148,9 +164,10 @@ function upload() {
 }
 
 function pending(p) {
-  app.innerHTML = `<h1>Подтверди аккаунт</h1>
-  <p class="tag">${p.bs_name} · ${p.bs_tag}</p>
-  <p>Зайди в Brawl Stars и <b>смени аватарку</b> на любую другую. Затем нажми кнопку.</p>
+  app.innerHTML = `<div class="icon">🔑</div><h1>Подтверди аккаунт</h1>
+  <div class="steps"><i class="on"></i><i class="on"></i><i></i></div>
+  <div class="found"><div style="font-weight:800;font-size:18px">${p.bs_name}</div><div class="tag">${p.bs_tag}</div></div>
+  <p>Зайди в Brawl Stars и <b style="color:var(--or2)">смени аватарку</b> на любую другую. Затем нажми кнопку ниже.</p>
   <button class="btn" id="chk">Я сменил аватарку</button>
   <p id="st"></p><p><a href="#" id="back" style="color:var(--mut)">Другой аккаунт</a></p>`;
   q("chk").onclick = async () => {
@@ -169,7 +186,8 @@ function profile(p) {
   app.innerHTML = `<img class="ava" src="${ava || p.tg_photo_url || ""}" alt="">
   <div class="nick">${p.bs_name}</div>
   <p class="tag">${p.bs_tag}</p>
-  <span class="badge">✔ Аккаунт подтверждён</span>`;
+  <span class="badge">✔ Аккаунт подтверждён</span>
+  <div class="steps"><i class="on"></i><i class="on"></i><i class="on"></i></div>`;
 }
 
 const q = id => document.getElementById(id);
