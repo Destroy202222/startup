@@ -52,6 +52,38 @@ function render(p) {
   return upload();
 }
 
+
+async function readTag(file) {
+  const img = await createImageBitmap(file);
+  const scale = Math.min(3, 2000 / img.width);
+  const c = document.createElement("canvas");
+  c.width = img.width * scale; c.height = img.height * scale;
+  const x = c.getContext("2d");
+  const modes = ["gray", "invert", "thresh", "thresh-invert"];
+  const w = await Tesseract.createWorker("eng");
+  await w.setParameters({ tessedit_char_whitelist: "#0289PYLQGRJCUVO ", tessedit_pageseg_mode: "11" });
+  try {
+    for (const m of modes) {
+      x.filter = "grayscale(1) contrast(1.8)";
+      x.drawImage(img, 0, 0, c.width, c.height);
+      x.filter = "none";
+      const d = x.getImageData(0, 0, c.width, c.height), px = d.data;
+      for (let i = 0; i < px.length; i += 4) {
+        let v = px[i];
+        if (m.includes("thresh")) v = v > 170 ? 255 : 0;
+        if (m.includes("invert")) v = 255 - v;
+        px[i] = px[i + 1] = px[i + 2] = v;
+      }
+      x.putImageData(d, 0, 0);
+      const { data } = await w.recognize(c);
+      const t = data.text.toUpperCase();
+      const hit = t.match(/#\s*([0289PYLQGRJCUVO]{6,10})/) || t.match(/\b([0289PYLQGRJCUV]{7,9})\b/);
+      if (hit) return "#" + hit[1].replace(/O/g, "0");
+    }
+  } finally { await w.terminate(); }
+  return "";
+}
+
 function upload() {
   app.innerHTML = `<h1>Верификация Brawl Stars</h1>
   <p>Прикрепи скриншот своего профиля — мы найдём #ТЕГ.</p>
@@ -65,12 +97,10 @@ function upload() {
   f.onchange = async () => {
     if (!f.files[0]) return;
     st.textContent = "Распознаём тег…"; st.className = "";
-    try {
-      const { data } = await Tesseract.recognize(f.files[0], "eng");
-      const m = data.text.match(/#\s?([0-9A-Za-z]{5,10})/);
-      q("manual").value = m ? "#" + m[1].toUpperCase() : "";
-      st.textContent = m ? "Проверь тег и нажми «Продолжить»" : "Тег не распознан — введи вручную";
-    } catch { st.textContent = "Не удалось распознать — введи тег вручную"; }
+    let tag = "";
+    try { tag = await readTag(f.files[0]); } catch (e) {}
+    q("manual").value = tag;
+    st.textContent = tag ? "Проверь тег и нажми «Продолжить»" : "Тег не распознан — введи вручную";
     q("manual").classList.remove("hidden"); q("go").classList.remove("hidden");
   };
   q("go").onclick = async () => {
