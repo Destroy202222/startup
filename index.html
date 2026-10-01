@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>StartUp — Brawl Stars</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.0/dist/tesseract.min.js"></script>
@@ -45,6 +45,24 @@ body.shell{justify-content:flex-start;padding-top:90px;padding-bottom:120px}
 .soon{margin-top:14px;display:inline-block;border:1px dashed rgba(255,122,0,.4);color:var(--or2);border-radius:12px;padding:8px 14px;font-size:13px;font-weight:600}
 .ico svg{width:34px;height:34px;fill:none;stroke:#111;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 #nav.hidden{display:none}
+html{touch-action:manipulation;-webkit-text-size-adjust:100%}
+body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input{-webkit-user-select:text;user-select:text}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:20px}
+.stat{background:#0d0d0d;border:1px solid #262626;border-radius:16px;padding:14px 4px}
+.stat b{display:block;font-size:24px;font-weight:800}
+.stat span{display:block;color:var(--mut);font-size:11px;margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+.stat.w b{color:#4cd964}.stat.l b{color:#ff6b6b}.stat.r b{color:var(--or)}
+.wallet{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;background:linear-gradient(135deg,rgba(255,122,0,.16),rgba(255,122,0,.04));border:1px solid rgba(255,122,0,.35);border-radius:18px;padding:14px 16px;text-align:left}
+.wallet span{display:block;color:var(--mut);font-size:12px}
+.wallet b{font-size:24px;font-weight:800}
+.wallet .btn{width:auto;margin:0;padding:11px 16px;font-size:14px}
+.sheet{position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:flex-end;justify-content:center;z-index:50}
+.sheet-in{width:100%;max-width:440px;background:#141414;border:1px solid rgba(255,122,0,.3);border-bottom:0;border-radius:26px 26px 0 0;padding:22px 20px calc(24px + env(safe-area-inset-bottom,0px));text-align:center}
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px}
+.chip{background:#0d0d0d;border:1px solid #2e2e2e;color:var(--tx);border-radius:12px;padding:12px 0;font-weight:700;font-size:15px;cursor:pointer}
+.chip.on{border-color:var(--or);color:var(--or);background:rgba(255,122,0,.1)}
+.link{background:none;border:0;color:var(--mut);margin-top:12px;font-size:14px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -223,16 +241,56 @@ function showTab(t) {
     app.innerHTML = `<div class="icon ico">${ICONS[t]}</div><h1>${title}</h1><p>${text}</p><span class="soon">Скоро</span>`;
     return;
   }
-  const date = cur.verified_at ? new Date(cur.verified_at).toLocaleDateString("ru-RU") : "";
+  const w = cur.wins || 0, l = cur.losses || 0, g = w + l;
+  const wr = g ? Math.round(w / g * 100) + "%" : "—";
+  const bal = Number(cur.balance || 0).toLocaleString("ru-RU");
   app.innerHTML = `<img class="ava" src="${ava || cur.tg_photo_url || ""}" alt="">
   <div class="nick">${cur.bs_name}</div>
   <p class="tag">${cur.bs_tag}</p>
   <span class="badge">✔ Аккаунт подтверждён</span>
-  ${date ? `<p style="font-size:12px;margin-top:14px">Верификация: ${date}</p>` : ""}`;
+  <div class="stats">
+    <div class="stat w"><b>${w}</b><span>Победы</span></div>
+    <div class="stat l"><b>${l}</b><span>Поражения</span></div>
+    <div class="stat r"><b>${wr}</b><span>Винрейт</span></div>
+  </div>
+  <div class="wallet"><div><span>Баланс</span><b>${bal} ₽</b></div><button class="btn" id="topup">＋ Пополнить</button></div>`;
+  q("topup").onclick = openTopup;
 }
 
 const q = id => document.getElementById(id);
+
+function openTopup() {
+  let amount = 300;
+  const el = document.createElement("div");
+  el.className = "sheet";
+  el.innerHTML = `<div class="sheet-in">
+    <h1>Пополнение</h1><p>Выбери сумму в рублях</p>
+    <div class="chips">${[100, 300, 500, 1000].map(a => `<button class="chip${a === 300 ? " on" : ""}" data-a="${a}">${a} ₽</button>`).join("")}</div>
+    <input type="text" id="amt" inputmode="numeric" value="300" placeholder="Своя сумма, ₽">
+    <p id="tst"></p>
+    <button class="btn" id="pay">Перейти к оплате</button>
+    <button class="link" id="cls">Отмена</button></div>`;
+  document.body.appendChild(el);
+  const inp = el.querySelector("#amt"), tst = el.querySelector("#tst");
+  el.querySelectorAll(".chip").forEach(c => c.onclick = () => {
+    el.querySelectorAll(".chip").forEach(x => x.classList.remove("on")); c.classList.add("on"); inp.value = c.dataset.a;
+  });
+  el.onclick = e => { if (e.target === el) el.remove(); };
+  el.querySelector("#cls").onclick = () => el.remove();
+  el.querySelector("#pay").onclick = async () => {
+    amount = parseInt(inp.value.replace(/\D/g, ""), 10);
+    if (!amount || amount < 50) { tst.textContent = "Минимальная сумма — 50 ₽"; tst.className = "err"; return; }
+    tst.className = ""; tst.textContent = "Создаём счёт…";
+    try { const d = await call("topup", { amount }); if (d.url) tg.openInvoice ? tg.openInvoice(d.url) : tg.openLink(d.url); }
+    catch (e) { tst.textContent = "Оплата ещё не подключена. Скоро добавим."; tst.className = "err"; }
+  };
+}
+
 document.querySelectorAll("#nav button").forEach(b => b.onclick = () => { if (cur) showTab(b.dataset.t); });
+
+["gesturestart", "gesturechange", "gestureend"].forEach(ev => document.addEventListener(ev, e => e.preventDefault()));
+document.addEventListener("touchmove", e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
+document.addEventListener("dblclick", e => e.preventDefault());
 
 function boot() {
   app.innerHTML = "<h1>Загрузка…</h1>";
