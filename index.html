@@ -54,12 +54,21 @@ const tgUser = tg.initDataUnsafe.user || {};
 const ava = tgUser.photo_url || "";
 
 async function call(action, extra = {}) {
-  const r = await fetch(API, { method: "POST",
-    headers: { "Content-Type": "application/json", apikey: ANON, Authorization: "Bearer " + ANON },
-    body: JSON.stringify({ action, initData: tg.initData, ...extra }) });
-  const d = await r.json(); if (!r.ok) throw d; return d;
+  const ac = new AbortController(), tm = setTimeout(() => ac.abort(), 15000);
+  try {
+    const r = await fetch(API, { method: "POST", signal: ac.signal,
+      headers: { "Content-Type": "application/json", apikey: ANON, Authorization: "Bearer " + ANON },
+      body: JSON.stringify({ action, initData: tg.initData, ...extra }) });
+    let d = {}; try { d = await r.json(); } catch (_) { d = { error: "http_" + r.status }; }
+    if (!r.ok) { d.status = d.status || r.status; throw d; }
+    return d;
+  } catch (e) {
+    if (e.name === "AbortError") throw { error: "timeout" };
+    if (e instanceof TypeError) throw { error: "network", detail: e.message };
+    throw e;
+  } finally { clearTimeout(tm); }
 }
-const errText = e => ({ tag_not_found: "Тег не найден", tag_taken: "Этот аккаунт уже привязан", bad_auth: "Открой приложение из Telegram" }[e.error] || "Ошибка, попробуй ещё раз");
+const errText = e => ({ tag_not_found: "Тег не найден", tag_taken: "Этот аккаунт уже привязан", bad_auth: "Открой приложение из Telegram", timeout: "Сервер не отвечает (таймаут)", network: "Нет связи с сервером" }[e.error] || "Ошибка, попробуй ещё раз");
 
 function render(p) {
   if (p.status === "verified") return profile(p);
@@ -191,7 +200,13 @@ function profile(p) {
 }
 
 const q = id => document.getElementById(id);
-call("me").then(d => render(d.player)).catch(e => { app.innerHTML = `<h1>Ошибка</h1><p class="err">${errText(e)}</p>`; });
+function boot() {
+  app.innerHTML = "<h1>Загрузка…</h1>";
+  call("me").then(d => render(d.player)).catch(e => {
+    app.innerHTML = `<div class="icon">⚠️</div><h1>Не удалось загрузить</h1><p class="err">${errText(e)}</p><p style="font-size:12px">${[e.error, e.status, e.detail, e.message].filter(Boolean).join(" · ")}</p><button class="btn" onclick="boot()">Повторить</button>`;
+  });
+}
+boot();
 </script>
 </body>
 </html>
