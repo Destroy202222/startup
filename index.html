@@ -101,8 +101,14 @@ input{-webkit-user-select:text;user-select:text}
   <button data-t="top"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4"/><path d="M12 13v4M10 17h4M8 21h8"/></svg>Топ</button>
 </nav>
 <script>
-// Бэкенд — SQL-функция api(p_action, p_init, p_args) через PostgREST (без edge-функции)
-const API = "https://wlhzcocwgmzcrtzhefic.supabase.co/rest/v1/rpc/api";
+// me / start / check / topup — прежняя edge-функция api (не тронута)
+// лобби, ссылка на комнату и админка — SQL-функция api(p_action, p_init, p_args)
+const EDGE = "https://wlhzcocwgmzcrtzhefic.supabase.co/functions/v1/api";
+const RPC = "https://wlhzcocwgmzcrtzhefic.supabase.co/rest/v1/rpc/api";
+const SQL_ACTIONS = /^(lobbies|lobby_|room_link|admin_)/;
+// Кнопка админ-меню: только для верифицированного тега. Доступ к данным всё равно проверяет SQL.
+const ADMIN_TAG = "#QQQ09U2PJ";
+const isAdmin = p => !!p && p.status === "verified" && p.bs_tag === ADMIN_TAG;
 const ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndsaHpjb2N3Z216Y3J0emhlZmljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzQ4ODYsImV4cCI6MjEwNjQ1MDg4Nn0.-Y1jYFT1NO9Nm1SgzNU7QYBA1E8zTZr8aXA768-5cd8";
 
 const tg = Telegram.WebApp; tg.ready(); tg.expand();
@@ -116,11 +122,13 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": 
 async function call(action, extra = {}) {
   const ac = new AbortController(), tm = setTimeout(() => ac.abort(), 15000);
   try {
-    const r = await fetch(API, { method: "POST", signal: ac.signal,
+    const sql = SQL_ACTIONS.test(action);
+    const r = await fetch(sql ? RPC : EDGE, { method: "POST", signal: ac.signal,
       headers: { "Content-Type": "application/json", apikey: ANON, Authorization: "Bearer " + ANON },
-      body: JSON.stringify({ p_action: action, p_init: tg.initData, p_args: extra }) });
-    let d = {}; try { d = await r.json(); } catch (_) { d = { message: "http_" + r.status }; }
-    if (!r.ok) throw { error: d.message || "http_" + r.status, status: r.status, detail: d.details || d.hint };
+      body: JSON.stringify(sql ? { p_action: action, p_init: tg.initData, p_args: extra } : { action, initData: tg.initData, ...extra }) });
+    let d = {}; try { d = await r.json(); } catch (_) { d = sql ? { message: "http_" + r.status } : { error: "http_" + r.status }; }
+    if (!r.ok) throw sql ? { error: d.message || "http_" + r.status, status: r.status, detail: d.details || d.hint }
+                         : { ...d, status: d.status || r.status };
     return d;
   } catch (e) {
     if (e.name === "AbortError") throw { error: "timeout" };
@@ -281,7 +289,7 @@ function showTab(t) {
     <div class="stat r"><b>${wr}</b><span>Винрейт</span></div>
   </div>
   <div class="wallet"><div><span>Баланс</span><b>${bal} ₽</b></div><button class="btn" id="topup">＋ Пополнить</button></div>
-  ${cur.is_admin ? '<button class="btn ghost" id="adm">🛠 Админ-меню</button>' : ""}`;
+  ${isAdmin(cur) ? '<button class="btn ghost" id="adm">🛠 Админ-меню</button>' : ""}`;
   q("topup").onclick = openTopup;
   if (q("adm")) q("adm").onclick = openAdmin;
 }
