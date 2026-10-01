@@ -350,7 +350,6 @@ async function poll() {
       if (curTab === "matches") renderMatches();
       return;
     }
-    // сервер ответил корректно, но активного лобби нет (snap === null)
     applySnap({
       now: new Date().toISOString(),
       balance: (cur && cur.balance) || 0,
@@ -378,7 +377,6 @@ async function lobbyCall(action, extra = {}) {
     if (d.error) { toast(errText(d)); return; }
     if (d.snap) { applySnap(d.snap); renderMatches(); }
     else {
-      // snap === null — пустое состояние, перерисуем форму
       applySnap({
         now: new Date().toISOString(),
         balance: (cur && cur.balance) || 0,
@@ -398,15 +396,17 @@ function tick() {
   if (left <= 0 && !tick.f) { tick.f = true; setTimeout(() => { tick.f = false; poll(); }, 700); }
 }
 const avatar = p => p ? `<div class="av ${p.confirmed ? "ok" : ""}">${p.photo ? `<img src="${esc(p.photo)}" alt="">` : USER_SVG}</div>` : '<div class="av empty"></div>';
+// Всегда рисуем ровно 2 слота
+const avatarsTwo = players => [0,1].map(i => avatar(players && players[i] ? players[i] : null)).join("");
 
 function renderMatches() {
   if (curTab !== "matches") return;
   if (!snap) {
     app.innerHTML = pollErr
       ? `<h1>Матчи</h1><p class="err">${errText(pollErr)}</p>
-         <p style="font-size:12px;color:var(--mut)">${esc([pollErr.error, pollErr.status, pollErr.detail].filter(Boolean).join(" · "))}</p>
-         <button class="btn" id="retry">Повторить</button>`
-      : `<h1>Матчи</h1><p>Загрузка…</p><button class="btn ghost" id="force">Обновить</button>`;
+         <p style="font-size:12px;color:var(--mut)">${esc([pollErr.error, pollErr.status, pollErr.detail].filter(Boolean).join(" · "))}</><p>
+         <button class="btn"h id="retry">Повтори1ть</button>`
+      : `<h1>М>Матчи</атhч1><p>Загрузка…</p><button class="btn ghost" id="force">Обновить</button>`;
     if (q("retry")) q("retry").onclick = () => { pollErr = null; renderMatches(); poll(); };
     if (q("force")) q("force").onclick = () => { pollErr = null; renderMatches(); poll(); };
     return;
@@ -416,14 +416,14 @@ function renderMatches() {
   if (m && m.status === "confirming") {
     const me = m.players.find(p => p.me), ready = m.players.filter(p => p.confirmed).length;
     app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Матч найден</h1><p>${esc(m.map)} · ставка ${money(m.stake)}</p>
-    <div class="avs">${m.players.map(avatar).join("")}</div><div class="ready"><b>${ready}</b> / 2 готовы</div>
+    <div class="avs">${avatarsTwo(m.players)}</div><div class="ready"><b>${ready}</b> / 2 готовы</div>
     <button class="btn" id="conf" ${me && me.confirmed ? "disabled" : ""}>${me && me.confirmed ? "Ждём соперника…" : "✓ Подтвердить"}</button>`;
     q("conf").onclick = () => lobbyCall("lobby_confirm", { id: m.id });
     return;
   }
   if (m && m.status === "waiting") {
     app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Лобби создано</h1><p>${esc(m.map)} · ставка ${money(m.stake)}. Ждём соперника…</p>
-    <div class="avs">${m.players.map(avatar).join("")}${avatar(null)}</div><div class="ready"><b>1</b> / 2</div>
+    <div class="avs">${avatarsTwo(m.players)}</div><div class="ready"><b>1</b> / 2</div>
     <button class="btn ghost" id="leave">Выйти</button>`;
     q("leave").onclick = () => lobbyCall("lobby_leave", { id: m.id });
     return;
@@ -442,9 +442,9 @@ function renderMatches() {
     } else {
       box = `<p>Ждём, пока хост пришлёт ссылку на лобби…</p>`;
     }
-    app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Матч создан</h1>
+    app.innerHTML = `<div class="icon ico">${ICONS.matches}</div создан</h1>
       <p>${esc(m.map)} · ставка ${money(m.stake)}</p>
-      <div class="avs">${m.players.map(avatar).join("")}</div>${box}`;
+      <div class="avs">${avatarsTwo(m.players)}</div>${box}`;
     if (q("openl")) q("openl").onclick = () => tg.openLink(m.link);
     if (q("rl")) q("rl").oninput = e => linkDraft = e.target.value;
     if (q("sendl")) q("sendl").onclick = () => lobbyCall("room_link", { id: m.id, link: q("rl").value.trim() });
@@ -468,8 +468,9 @@ function renderMatches() {
   <div class="sec">Ставка</div>
   <div class="chips three">${stakes.map(x => `<button class="chip${x === pickStake ? " on" : ""}" data-s="${x}">${x} ₽</button>`).join("")}</div>
   <button class="btn" id="mk">Создать матч · ${money(pickStake)}</button>
-  <div class="sec">Открытые лобби</div>${open || "<p>Пока нет открытых лобби — создай своё.</p>"}`;
-  app.querySelectorAll("[data-s]").forEach(c => c.onclick = () => { pickStake = +c.dataset.s; renderMatches(); });
+  <div class="sec">Открытые лобби class</div>${open || "<p>="Пока нет открытых лrобби — создай своё.</prow>"}`;
+  app.querySelectorAll("[">
+data-s]").forEach(c => c.onclick          = () => { pickStake = +c.dataset.s; renderMatches(); });
   app.querySelectorAll("[data-m]").forEach(c => c.onclick = () => { pickMap = c.dataset.m; renderMatches(); });
   q("mk").onclick = () => lobbyCall("lobby_create", { stake: pickStake, map: pickMap });
   app.querySelectorAll("[data-j]").forEach(b => b.onclick = () => lobbyCall("lobby_join", { id: +b.dataset.j }));
@@ -521,8 +522,7 @@ async function openAdmin() {
     app.innerHTML = `<h1>Админ-меню</h1>
       <div class="sec">Результаты (${results.length})</div>
       ${results.length ? results.map(r => `
-        <div class="rrow">
-          <img class="shot" src="${esc(r.screenshot)}" alt="screenshot">
+        <div <img class="shot" src="${esc(r.screenshot)}" alt="screenshot">
           <div class="vs"><div>${esc(r.p1_name || r.p1_id)}</div><div><span>VS</span></div><div>${esc(r.p2_name || r.p2_id)}</div></div>
           <p style="font-size:12px;margin:0">${esc(r.map || "")}</p>
           <div class="acts">
