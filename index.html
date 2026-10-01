@@ -249,10 +249,9 @@ function profile(p) { cur = p; showTab(curTab); }
 function showTab(t) {
   curTab = t;
   document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("on", b.dataset.t === t));
-  if (t === "matches") { renderMatches(); return; }
-  if (t === "top") {
+  if (t === "matches" || t === "top") {
     const title = t === "matches" ? "Матчи" : "Топ игроков";
-    const text = t === "matches" ? "Здесь появятся твои матчи и результаты." : "Здесь будет рейтинг лучших игроков платформы.";
+    const text = t === "matches" ? "Здесь появятся твои матчи и результаты — когда запустим матчи на платформе." : "Здесь будет рейтинг лучших игроков платформы.";
     app.innerHTML = `<div class="icon ico">${ICONS[t]}</div><h1>${title}</h1><p>${text}</p><span class="soon">Скоро</span>`;
     return;
   }
@@ -268,80 +267,11 @@ function showTab(t) {
     <div class="stat l"><b>${l}</b><span>Поражения</span></div>
     <div class="stat r"><b>${wr}</b><span>Винрейт</span></div>
   </div>
-  <div class="wallet"><div><span>Баланс</span><b>${bal} ₽</b></div><button class="btn" id="topup">＋ Пополнить</button></div>
-  <div class="chart"><div class="ch-title">История рейтинга</div><div id="chbox"><p>Загрузка…</p></div></div>`;
+  <div class="wallet"><div><span>Баланс</span><b>${bal} ₽</b></div><button class="btn" id="topup">＋ Пополнить</button></div>`;
   q("topup").onclick = openTopup;
-  loadHist().then(ms => { const b = document.getElementById("chbox"); if (b && curTab === "profile") drawChart(b, ms); });
 }
 
 const q = id => document.getElementById(id);
-
-async function loadHist() {
-  try { return (await call("history")).matches || []; } catch (e) { return null; }
-}
-const fmtD = d => new Date(d).toLocaleDateString("ru-RU", { day: "numeric", month: "short" }).replace(".", "");
-const sgn = n => (n > 0 ? "+" : "") + n;
-
-function drawChart(box, ms) {
-  if (ms === null) { box.innerHTML = "<p>История недоступна. Обнови функцию api и SQL.</p>"; return; }
-  if (!ms.length) { box.innerHTML = "<p>Пока нет матчей — график появится после первой игры.</p>"; return; }
-  const W = box.clientWidth || 320, H = 150, pt = 12, pb = 8, n = ms.length;
-  const vals = ms.map(m => m.rating_after);
-  let min = Math.min(...vals), max = Math.max(...vals);
-  if (min === max) { min -= 10; max += 10; }
-  const pad = (max - min) * 0.15; min -= pad; max += pad;
-  const X = i => n === 1 ? W / 2 : i * (W / (n - 1));
-  const Y = v => pt + (H - pt - pb) * (1 - (v - min) / (max - min));
-  const line = "M" + ms.map((m, i) => X(i).toFixed(1) + "," + Y(m.rating_after).toFixed(1)).join(" L");
-  const area = line + ` L${X(n - 1).toFixed(1)},${H} L${X(0).toFixed(1)},${H} Z`;
-  const col = vals[n - 1] >= vals[0] ? "#6ee787" : "#ff6b6b";
-  const grid = [0, 1, 2, 3].map(k => { const y = (pt + (H - pt - pb) * k / 3).toFixed(1); return `<line x1="0" x2="${W}" y1="${y}" y2="${y}" stroke="#222" stroke-width="1"/>`; }).join("");
-  box.innerHTML = `<div class="ch-head"><div><b id="chv"></b><span id="chd"></span></div><span id="cht"></span></div>
-  <svg id="chsvg" viewBox="0 0 ${W} ${H}" height="${H}">
-    <defs><linearGradient id="gf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".35"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>
-    ${grid}<path d="${area}" fill="url(#gf)"/>
-    <path d="${line}" fill="none" stroke="${col}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
-    <line id="cl" y1="0" y2="${H}" stroke="rgba(255,255,255,.45)" stroke-width="1.5" stroke-dasharray="4 4"/>
-    <circle id="cc" r="6" fill="#0d0d0d" stroke="${col}" stroke-width="3"/>
-  </svg>
-  <div class="ch-foot"><span>${fmtD(ms[0].created_at)}</span><span>${fmtD(ms[n - 1].created_at)}</span></div>`;
-  const svg = box.querySelector("#chsvg"), cl = box.querySelector("#cl"), cc = box.querySelector("#cc");
-  const set = i => {
-    const m = ms[i], x = X(i);
-    cl.setAttribute("x1", x); cl.setAttribute("x2", x);
-    cc.setAttribute("cx", x); cc.setAttribute("cy", Y(m.rating_after));
-    box.querySelector("#chv").textContent = m.rating_after;
-    const d = box.querySelector("#chd"); d.textContent = sgn(m.delta); d.className = m.delta >= 0 ? "up" : "down";
-    box.querySelector("#cht").textContent = fmtD(m.created_at);
-  };
-  let drag = false;
-  const move = e => {
-    const r = svg.getBoundingClientRect();
-    const i = n === 1 ? 0 : Math.round((e.clientX - r.left) / r.width * (n - 1));
-    set(Math.max(0, Math.min(n - 1, i)));
-  };
-  svg.addEventListener("pointerdown", e => { drag = true; svg.setPointerCapture(e.pointerId); move(e); });
-  svg.addEventListener("pointermove", e => { if (drag) move(e); });
-  ["pointerup", "pointercancel"].forEach(ev => svg.addEventListener(ev, () => drag = false));
-  set(n - 1);
-}
-
-async function renderMatches() {
-  app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>История матчей</h1><p>Загрузка…</p>`;
-  const ms = await loadHist();
-  if (curTab !== "matches") return;
-  const head = `<div class="icon ico">${ICONS.matches}</div><h1>История матчей</h1>`;
-  if (ms === null) { app.innerHTML = head + "<p>История недоступна. Обнови функцию api и SQL.</p>"; return; }
-  if (!ms.length) { app.innerHTML = head + '<p>Матчей пока нет.</p><span class="soon">Сыграй первый</span>'; return; }
-  const rows = ms.slice().reverse().slice(0, 50).map(m => {
-    const w = m.result === "win";
-    const dt = new Date(m.created_at).toLocaleString("ru-RU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
-    return `<div class="mrow"><div class="mres ${w ? "win" : "loss"}">${w ? "Победа" : "Поражение"}</div>
-      <div class="minfo"><b>${m.mode}</b><span>${dt}</span></div>
-      <div class="mdelta ${m.delta >= 0 ? "up" : "down"}">${sgn(m.delta)}<small>${m.rating_after}</small></div></div>`;
-  }).join("");
-  app.innerHTML = head + `<div class="mlist">${rows}</div>`;
-}
 
 function openTopup() {
   let amount = 300;
