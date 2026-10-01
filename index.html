@@ -101,9 +101,17 @@ function upload() {
     q("manual").classList.remove("hidden"); q("go").classList.remove("hidden");
   };
   q("go").onclick = async () => {
-    q("go").disabled = true;
-    try { render((await call("start", { tag: q("manual").value })).player); }
-    catch (e) { st.textContent = errText(e); st.className = "err"; q("go").disabled = false; }
+    q("go").disabled = true; st.className = "";
+    const raw = q("manual").value.toUpperCase().replace(/^#/, "").replace(/O/g, "0").replace(/[^0289PYLQGRJCUV]/g, "");
+    // OCR иногда дублирует символ (00 вместо 0) — пробуем и варианты без дубля
+    const cands = [raw];
+    for (let i = 1; i < raw.length; i++) if (raw[i] === raw[i - 1]) cands.push(raw.slice(0, i) + raw.slice(i + 1));
+    let last;
+    for (const t of cands) {
+      try { return render((await call("start", { tag: t })).player); }
+      catch (e) { last = e; if (e.error !== "tag_not_found") break; }
+    }
+    st.textContent = errText(last || {}); st.className = "err"; q("go").disabled = false;
   };
 }
 
