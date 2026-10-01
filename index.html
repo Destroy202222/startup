@@ -108,9 +108,7 @@ input{-webkit-user-select:text;user-select:text}
 </nav>
 <script>
 const EDGE = "https://wlhzcocwgmzcrtzhefic.supabase.co/functions/v1/api";
-// ✅ RPC теперь указывает на app_rpc
 const RPC  = "https://wlhzcocwgmzcrtzhefic.supabase.co/rest/v1/rpc/app_rpc";
-// ✅ В RPC идут только lobbies, lobby_attach_result, room_link, admin_*
 const SQL_ACTIONS = /^(lobbies$|lobby_attach_result|room_link|admin_)/;
 const ADMIN_TAG = "#QQQ09U2PJ";
 const isAdmin = p => !!p && p.status === "verified" && p.bs_tag === ADMIN_TAG;
@@ -447,13 +445,13 @@ function renderMatches() {
     <button class="btn" data-j="${l.id}">Войти</button></div>`).join("");
   app.innerHTML = `<h1>Матчи</h1><p>Создай матч</p>
   <div class="balrow"><span>Баланс</span><b>${money(bal)}</b></div>
-  <div class="sec =>">Карта</div>
-  <div class="ch {ips one">${MAPS.map(x => pickStake = `<button class="chip${x === pickMap ? " on" : ""}" data-m="${x}">🐍 ${x}</button>`).join("")}</div>
+  <div class="sec">Карта</div>
+  <div class="chips one">${MAPS.map(x => `<button class="chip${x === pickMap ? " on" : ""}" data-m="${x}">🐍 ${x}</button>`).join("")}</div>
   <div class="sec">Ставка</div>
   <div class="chips three">${stakes.map(x => `<button class="chip${x === pickStake ? " on" : ""}" data-s="${x}">${x} ₽</button>`).join("")}</div>
   <button class="btn" id="mk">Создать матч · ${money(pickStake)}</button>
   <div class="sec">Открытые лобби</div>${open || "<p>Пока нет открытых лобби — создай своё.</p>"}`;
-  app.querySelectorAll("[data-s]").forEach(c => c.onclick = () +c.dataset.s; renderMatches(); });
+  app.querySelectorAll("[data-s]").forEach(c => c.onclick = () => { pickStake = +c.dataset.s; renderMatches(); });
   app.querySelectorAll("[data-m]").forEach(c => c.onclick = () => { pickMap = c.dataset.m; renderMatches(); });
   q("mk").onclick = () => lobbyCall("lobby_create", { stake: pickStake, map: pickMap });
   app.querySelectorAll("[data-j]").forEach(b => b.onclick = () => lobbyCall("lobby_join", { id: +b.dataset.j }));
@@ -583,19 +581,14 @@ document.querySelectorAll("#nav button").forEach(b => b.onclick = () => {
 document.addEventListener("touchmove", e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
 document.addEventListener("dblclick", e => e.preventDefault());
 
+/* boot: без блокирующего ожидания initData — если его нет, edge-функция вернёт bad_auth и мы это покажем */
 function boot() {
   app.innerHTML = "<h1>Загрузка…</h1>";
-  let tries = 0;
-  const wait = () => {
-    if (tg.initData || tries++ > 20) {
-      call("me").then(d => render(d.player)).catch(e => {
-        app.innerHTML = `<div class="icon">⚠️</div><h1>Не удалось загрузить</h1><p class="err">${errText(e)}</p>
-          <p style="font-size:12px">${esc([e.error, e.status, e.detail, e.message].filter(Boolean).join(" · "))}</p>
-          <button class="btn" onclick="boot()">Повторить</button>`;
-      });
-    } else setTimeout(wait, 150);
-  };
-  wait();
+  call("me").then(d => render(d.player)).catch(e => {
+    app.innerHTML = `<div class="icon">⚠️</div><h1>Не удалось загрузить</h1><p class="err">${errText(e)}</p>
+      <p style="font-size:12px">${esc([e.error, e.status, e.detail, e.message].filter(Boolean).join(" · "))}</p>
+      <button class="btn" onclick="boot()">Повторить</button>`;
+  });
 }
 boot();
 </script>
