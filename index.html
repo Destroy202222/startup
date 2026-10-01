@@ -36,12 +36,26 @@ input[type=text]{width:100%;background:#0c0c0c;border:1px solid #2e2e2e;color:va
 input[type=text]:focus{border-color:var(--or);box-shadow:0 0 0 3px rgba(255,122,0,.15)}
 .err{color:#ff6b6b}
 .hidden{display:none}
+body.shell{justify-content:flex-start;padding-top:90px;padding-bottom:120px}
+#nav{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:420px;margin:0 auto;display:flex;gap:4px;padding:8px;background:rgba(18,18,18,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,122,0,.3);border-radius:24px;box-shadow:0 10px 30px rgba(0,0,0,.7),0 0 30px rgba(255,122,0,.1)}
+#nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;color:var(--mut);font-size:11px;font-weight:700;padding:9px 4px;border-radius:17px;cursor:pointer;transition:.15s}
+#nav button svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#nav button.on{color:var(--or);background:rgba(255,122,0,.13)}
+#nav button.on svg{filter:drop-shadow(0 0 6px rgba(255,122,0,.8))}
+.soon{margin-top:14px;display:inline-block;border:1px dashed rgba(255,122,0,.4);color:var(--or2);border-radius:12px;padding:8px 14px;font-size:13px;font-weight:600}
+.ico svg{width:34px;height:34px;fill:none;stroke:#111;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#nav.hidden{display:none}
 </style>
 </head>
 <body>
 <div class="brand">StartUp <span>—</span> Brawl Stars</div>
 <div id="app" class="card"><h1>Загрузка…</h1></div>
 
+<nav id="nav" class="hidden">
+  <button data-t="profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Профиль</button>
+  <button data-t="matches"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>Матчи</button>
+  <button data-t="top"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4"/><path d="M12 13v4M10 17h4M8 21h8"/></svg>Топ</button>
+</nav>
 <script>
 // ВСТАВЬ после деплоя функции:
 const API = "https://wlhzcocwgmzcrtzhefic.supabase.co/functions/v1/api";
@@ -71,6 +85,9 @@ async function call(action, extra = {}) {
 const errText = e => ({ tag_not_found: "Тег не найден", tag_taken: "Этот аккаунт уже привязан", bad_auth: "Открой приложение из Telegram", timeout: "Сервер не отвечает (таймаут)", network: "Нет связи с сервером" }[e.error] || "Ошибка, попробуй ещё раз");
 
 function render(p) {
+  const v = p.status === "verified";
+  document.body.classList.toggle("shell", v);
+  document.getElementById("nav").classList.toggle("hidden", !v);
   if (p.status === "verified") return profile(p);
   if (p.status === "pending") return pending(p);
   return upload();
@@ -191,15 +208,32 @@ function pending(p) {
   q("back").onclick = e => { e.preventDefault(); upload(); };
 }
 
-function profile(p) {
-  app.innerHTML = `<img class="ava" src="${ava || p.tg_photo_url || ""}" alt="">
-  <div class="nick">${p.bs_name}</div>
-  <p class="tag">${p.bs_tag}</p>
+const ICONS = {
+  matches: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>',
+  top: '<svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4"/><path d="M12 13v4M10 17h4M8 21h8"/></svg>'
+};
+let curTab = "profile", cur = null;
+function profile(p) { cur = p; showTab(curTab); }
+function showTab(t) {
+  curTab = t;
+  document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("on", b.dataset.t === t));
+  if (t === "matches" || t === "top") {
+    const title = t === "matches" ? "Матчи" : "Топ игроков";
+    const text = t === "matches" ? "Здесь появятся твои матчи и результаты." : "Здесь будет рейтинг лучших игроков платформы.";
+    app.innerHTML = `<div class="icon ico">${ICONS[t]}</div><h1>${title}</h1><p>${text}</p><span class="soon">Скоро</span>`;
+    return;
+  }
+  const date = cur.verified_at ? new Date(cur.verified_at).toLocaleDateString("ru-RU") : "";
+  app.innerHTML = `<img class="ava" src="${ava || cur.tg_photo_url || ""}" alt="">
+  <div class="nick">${cur.bs_name}</div>
+  <p class="tag">${cur.bs_tag}</p>
   <span class="badge">✔ Аккаунт подтверждён</span>
-  <div class="steps"><i class="on"></i><i class="on"></i><i class="on"></i></div>`;
+  ${date ? `<p style="font-size:12px;margin-top:14px">Верификация: ${date}</p>` : ""}`;
 }
 
 const q = id => document.getElementById(id);
+document.querySelectorAll("#nav button").forEach(b => b.onclick = () => { if (cur) showTab(b.dataset.t); });
+
 function boot() {
   app.innerHTML = "<h1>Загрузка…</h1>";
   call("me").then(d => render(d.player)).catch(e => {
