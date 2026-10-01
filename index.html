@@ -89,7 +89,7 @@ input{-webkit-user-select:text;user-select:text}
 .toast{position:fixed;left:50%;top:96px;transform:translateX(-50%);background:#2a1200;border:1px solid var(--or);color:var(--tx);padding:10px 16px;border-radius:12px;font-size:14px;z-index:99;max-width:90%;text-align:center}
 .btn.ghost{background:none;border:1px solid #333;color:var(--mut);box-shadow:none}
 .linkin{font-size:13px;letter-spacing:0;font-weight:600}
-/* NEW: стили для админки результатов */
+/* стили для админки результатов */
 .shot{width:100%;max-height:320px;object-fit:contain;background:#000;border-radius:12px;border:1px solid #2a2a2a}
 .rrow{background:#0d0d0d;border:1px solid rgba(255,122,0,.35);border-radius:16px;padding:12px;margin-top:10px;text-align:left}
 .rrow .vs{display:flex;justify-content:space-between;font-weight:800;margin:8px 0;font-size:14px}
@@ -108,12 +108,9 @@ input{-webkit-user-select:text;user-select:text}
   <button data-t="top"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4"/><path d="M12 13v4M10 17h4M8 21h8"/></svg>Топ</button>
 </nav>
 <script>
-// me / start / check / topup — прежняя edge-функция api (не тронута)
-// лобби, ссылка на комнату, скриншоты результатов и админка — SQL-функция api(p_action, p_init, p_args)
 const EDGE = "https://wlhzcocwgmzcrtzhefic.supabase.co/functions/v1/api";
-const RPC = "https://wlhzcocwgmzcrtzhefic.supabase.co/rest/v1/rpc/api";
+const RPC  = "https://wlhzcocwgmzcrtzhefic.supabase.co/rest/v1/rpc/api";
 const SQL_ACTIONS = /^(lobbies|lobby_|room_link|admin_)/;
-// Кнопка админ-меню: только для верифицированного тега. Доступ к данным всё равно проверяет SQL.
 const ADMIN_TAG = "#QQQ09U2PJ";
 const isAdmin = p => !!p && p.status === "verified" && p.bs_tag === ADMIN_TAG;
 const ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndsaHpjb2N3Z216Y3J0emhlZmljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzQ4ODYsImV4cCI6MjEwNjQ1MDg4Nn0.-Y1jYFT1NO9Nm1SgzNU7QYBA1E8zTZr8aXA768-5cd8";
@@ -127,15 +124,21 @@ const q = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 async function call(action, extra = {}) {
-  const ac = new AbortController(), tm = setTimeout(() => ac.abort(), 20000); // чуть больше для скринов
+  const ac = new AbortController(), tm = setTimeout(() => ac.abort(), 25000);
   try {
     const sql = SQL_ACTIONS.test(action);
+    const body = sql ? { p_action: action, p_init: tg.initData, p_args: extra }
+                     : { action, initData: tg.initData, ...extra };
     const r = await fetch(sql ? RPC : EDGE, { method: "POST", signal: ac.signal,
       headers: { "Content-Type": "application/json", apikey: ANON, Authorization: "Bearer " + ANON },
-      body: JSON.stringify(sql ? { p_action: action, p_init: tg.initData, p_args: extra } : { action, initData: tg.initData, ...extra }) });
-    let d = {}; try { d = await r.json(); } catch (_) { d = sql ? { message: "http_" + r.status } : { error: "http_" + r.status }; }
-    if (!r.ok) throw sql ? { error: d.message || "http_" + r.status, status: r.status, detail: d.details || d.hint }
-                         : { ...d, status: d.status || r.status };
+      body: JSON.stringify(body) });
+    let d = {};
+    try { d = await r.json(); } catch (_) { d = { message: "http_" + r.status }; }
+    if (!r.ok) {
+      // PostgREST может вернуть {message, details, hint} или {code, message}
+      throw { error: d.error || d.message || "http_" + r.status, status: r.status,
+              detail: d.details || d.hint || d.code };
+    }
     return d;
   } catch (e) {
     if (e.name === "AbortError") throw { error: "timeout" };
@@ -143,18 +146,31 @@ async function call(action, extra = {}) {
     throw e;
   } finally { clearTimeout(tm); }
 }
-const errText = e => ({ tag_not_found: "Тег не найден", tag_taken: "Этот аккаунт уже привязан", bad_auth: "Открой приложение из Telegram",
-  timeout: "Сервер не отвечает (таймаут)", network: "Нет связи с сервером", forbidden: "Нет доступа" }[e.error] || "Ошибка, попробуй ещё раз");
+
+const ERR_MAP = {
+  tag_not_found:"Тег не найден", tag_taken:"Этот аккаунт уже привязан", bad_auth:"Открой приложение из Telegram",
+  timeout:"Сервер не отвечает", network:"Нет связи с сервером", forbidden:"Нет доступа",
+  no_balance:"Недостаточно средств", already_in_lobby:"Ты уже в лобби", lobby_unavailable:"Лобби уже недоступно",
+  bad_stake:"Неверная ставка", not_verified:"Аккаунт не верифицирован", not_in_lobby:"Тебя нет в этом лобби",
+  not_host:"Ссылку прикрепляет только выбранный игрок",
+  bad_link:"Нужна ссылка вида link.brawlstars.com/invite/gameroom/…",
+  no_link:"Сначала должна быть ссылка на лобби", already_result:"Скриншот уже отправлен по этому лобби",
+  bad_shot:"Некорректный скриншот (слишком маленький или большой)", shot_too_big:"Файл больше 10 МБ",
+  already_resolved:"Результат уже засчитан", unknown_action:"Сервер не знает это действие (обнови SQL-функцию)"
+};
+const errText = e => ERR_MAP[e && e.error] || (e && e.error) || (e && e.message) || "Ошибка, попробуй ещё раз";
+const LERR = ERR_MAP; // совместимость
 
 function render(p) {
   const v = p.status === "verified";
   document.body.classList.toggle("shell", v);
   document.getElementById("nav").classList.toggle("hidden", !v);
   if (p.status === "verified") return profile(p);
-  if (p.status === "pending") return pending(p);
+  if (p.status === "pending")  return pending(p);
   return upload();
 }
 
+/* ---------------- Верификация ---------------- */
 const WL = "#0289PYLQGRJCUVO";
 function makeCanvas(img, sx, sy, sw, sh, k, mode) {
   const c = document.createElement("canvas");
@@ -256,13 +272,14 @@ function pending(p) {
     try {
       const d = await call("check");
       if (d.player.status === "verified") return render(d.player);
-      q("st").textContent = "Аватарка не изменилась. Подожди ~30 сек после смены и попробуй снова."; q("st").className = "err";
+      q("st").textContent = "Аватарка не изменилась. Подожди ~30 сек и попробуй снова."; q("st").className = "err";
     } catch (e) { q("st").textContent = errText(e); q("st").className = "err"; }
     q("chk").disabled = false;
   };
   q("back").onclick = e => { e.preventDefault(); upload(); };
 }
 
+/* ---------------- Профиль / Табы ---------------- */
 const ICONS = {
   matches: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>',
   top: '<svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4"/><path d="M12 13v4M10 17h4M8 21h8"/></svg>'
@@ -295,16 +312,11 @@ function showTab(t) {
   if (q("adm")) q("adm").onclick = openAdmin;
 }
 
-// ---------- Матчи со ставками ----------
+/* ---------------- Матчи ---------------- */
 const USER_SVG = '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>';
-const LERR = { no_balance: "Недостаточно средств на балансе", already_in_lobby: "Ты уже в лобби", lobby_unavailable: "Лобби уже недоступно",
-  bad_stake: "Неверная ставка", not_verified: "Аккаунт не верифицирован", not_in_lobby: "Тебя нет в этом лобби",
-  not_host: "Ссылку прикрепляет только выбранный игрок", bad_link: "Нужна ссылка вида link.brawlstars.com/invite/gameroom/…",
-  // NEW
-  no_link: "Сначала нужна ссылка на лобби", already_result: "Скриншот уже отправлен по этому лобби",
-  bad_shot: "Некорректный скриншот", shot_too_big: "Файл больше 5 МБ" };
 const MAPS = ["Змеиное кольцо"];
-let snap = null, off = 0, pollT = null, cdT = null, lastKey = "", busy = false, pickStake = 100, pickMap = MAPS[0], linkDraft = "", pollErr = null;
+let snap = null, off = 0, pollT = null, cdT = null, lastKey = "", busy = false,
+    pickStake = 100, pickMap = MAPS[0], linkDraft = "", pollErr = null;
 const money = n => Number(n || 0).toLocaleString("ru-RU") + " ₽";
 
 function toast(t) {
@@ -327,13 +339,18 @@ async function poll() {
 function startPoll() { if (pollT) return; poll(); pollT = setInterval(poll, 2500); cdT = setInterval(tick, 250); }
 async function lobbyCall(action, extra = {}) {
   if (busy) return; busy = true;
-  try { const d = await call(action, extra); busy = false; applySnap(d.snap); if (d.error) toast(LERR[d.error] || d.error); if (d.snap) renderMatches(); }
-  catch (e) { busy = false; toast(LERR[e.error] || errText(e)); }
+  try {
+    const d = await call(action, extra);
+    busy = false;
+    if (d.error) { toast(errText(d)); return; }
+    applySnap(d.snap);
+    if (d.snap) renderMatches();
+  } catch (e) { busy = false; toast(errText(e)); }
 }
 function tick() {
   const el = document.getElementById("cd");
   if (!el || !snap || !snap.mine || snap.mine.status !== "confirming") return;
-  const total = snap.confirm_seconds * 1000;
+  const total = (snap.confirm_seconds || 30) * 1000;
   const left = Math.max(0, new Date(snap.mine.deadline).getTime() - (Date.now() + off));
   el.textContent = Math.ceil(left / 1000);
   const ring = document.getElementById("ring"); if (ring) ring.style.strokeDashoffset = 565 * (1 - left / total);
@@ -351,6 +368,7 @@ function renderMatches() {
     return;
   }
   const m = snap.mine, bal = snap.balance;
+
   if (m && m.status === "confirming") {
     const me = m.players.find(p => p.me), ready = m.players.filter(p => p.confirmed).length;
     app.innerHTML = `<div class="ringwrap"><svg viewBox="0 0 200 200"><circle class="r-bg" cx="100" cy="100" r="90"/><circle class="r-fg" id="ring" cx="100" cy="100" r="90"/></svg><div class="cd" id="cd"></div></div>
@@ -361,6 +379,7 @@ function renderMatches() {
     q("conf").onclick = () => lobbyCall("lobby_confirm", { id: m.id });
     tick(); return;
   }
+
   if (m && m.status === "waiting") {
     app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Лобби создано</h1><p>${esc(m.map || MAPS[0])} · ставка ${money(m.stake)}. Ждём соперника…</p>
     <div class="avs">${avatar(m.players[0])}${avatar(null)}</div><div class="ready"><b>1</b> / 2</div>
@@ -368,10 +387,10 @@ function renderMatches() {
     q("leave").onclick = () => lobbyCall("lobby_leave", { id: m.id });
     return;
   }
+
   if (m && m.status === "live") {
     let box;
     if (m.link) {
-      // NEW: если ссылка есть — даём кнопку прикрепить скриншот
       box = `<div class="found"><div class="tag" style="font-size:14px">Ссылка на лобби получена</div></div>
         <button class="btn" id="openl">Открыть в Brawl Stars</button>
         <button class="btn" id="shot">📷 Прикрепить скриншот результата</button>
@@ -392,12 +411,13 @@ function renderMatches() {
     if (q("shot")) q("shot").onclick = () => pickResultShot(m.id);
     return;
   }
-  // NEW: лобби закрыто, скрин отправлен — ждём вердикт админа
+
   if (m && (m.status === "closed" || m.status === "review")) {
     app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Скриншот отправлен</h1>
       <p>Результат на рассмотрении у админа. Как только он определит победителя — тебе начислят победу/поражение в профиль.</p>`;
     return;
   }
+
   const stakes = [50, 100, 200];
   const open = snap.open.map(l => `<div class="lrow"><div class="av">${l.photo ? `<img src="${esc(l.photo)}" alt="">` : USER_SVG}</div>
     <div class="li"><b>${esc(l.name || "Игрок")}</b><span>${esc(l.map || MAPS[0])} · 1 / 2 · ждёт соперника</span></div><div class="st">${money(l.stake)}</div>
@@ -416,17 +436,8 @@ function renderMatches() {
   app.querySelectorAll("[data-j]").forEach(b => b.onclick = () => lobbyCall("lobby_join", { id: +b.dataset.j }));
 }
 
-// NEW: загрузка скриншота результата
-function fileToDataURL(file) {
-  return new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onload = () => res(r.result);
-    r.onerror = rej;
-    r.readAsDataURL(file);
-  });
-}
+/* ---------------- Скриншот результата ---------------- */
 async function compressShot(file, maxSide = 1600, quality = 0.82) {
-  // сжимаем, чтобы уложиться в лимиты запроса
   const img = await createImageBitmap(file);
   const k = Math.min(1, maxSide / Math.max(img.width, img.height));
   const c = document.createElement("canvas");
@@ -441,21 +452,21 @@ function pickResultShot(lobbyId) {
     if (!f.files[0]) return;
     const file = f.files[0];
     if (file.size > 10 * 1024 * 1024) { toast(LERR.shot_too_big); return; }
-    toast("Загружаем скриншот…");
+    toast("Обрабатываем скриншот…");
     try {
       const dataUrl = await compressShot(file);
       if (dataUrl.length > 6_500_000) { toast(LERR.shot_too_big); return; }
       const d = await call("lobby_attach_result", { id: lobbyId, screenshot: dataUrl });
-      if (d.error) { toast(LERR[d.error] || d.error); return; }
+      if (d.error) { toast(errText(d)); return; }
       toast("Скриншот отправлен админу, лобби закрыто");
       applySnap(d.snap);
       renderMatches();
-    } catch (e) { toast(LERR[e.error] || errText(e)); }
+    } catch (e) { toast(errText(e)); }
   };
   f.click();
 }
 
-// ---------- Админ-меню ----------
+/* ---------------- Админ-меню ---------------- */
 async function openAdmin() {
   app.innerHTML = "<h1>Админ-меню</h1><p>Загрузка…</p>";
   try {
@@ -513,6 +524,7 @@ function adminBalance(p) {
   el.onclick = e => { if (e.target === el) el.remove(); };
 }
 
+/* ---------------- Пополнение ---------------- */
 function openTopup() {
   let amount = 300;
   const el = document.createElement("div");
@@ -540,9 +552,9 @@ function openTopup() {
   };
 }
 
+/* ---------------- Инициализация ---------------- */
 document.querySelectorAll("#nav button").forEach(b => b.onclick = () => { if (cur) showTab(b.dataset.t); });
-
-["gesturestart", "gesturechange", "gestureend"].forEach(ev => document.addEventListener(ev, e => e.preventDefault()));
+["gesturestart","gesturechange","gestureend"].forEach(ev => document.addEventListener(ev, e => e.preventDefault()));
 document.addEventListener("touchmove", e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
 document.addEventListener("dblclick", e => e.preventDefault());
 
