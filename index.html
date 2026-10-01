@@ -109,8 +109,7 @@ input{-webkit-user-select:text;user-select:text}
 <script>
 const EDGE = "https://wlhzcocwgmzcrtzhefic.supabase.co/functions/v1/api";
 const RPC  = "https://wlhzcocwgmzcrtzhefic.supabase.co/rest/v1/rpc/app_rpc";
-// ✅ Создание лобби, join/confirm/leave, room_link, lobbies — идут в edge-функцию api, как было
-// ✅ В RPC app_rpc ходят только новые экшены: lobby_attach_result, admin_*
+// ✅ lobby_* и lobbies идут в edge-функцию api (как было). В RPC app_rpc — только новые экшены.
 const SQL_ACTIONS = /^(lobby_attach_result|admin_)/;
 const ADMIN_TAG = "#QQQ09U2PJ";
 const isAdmin = p => !!p && p.status === "verified" && p.bs_tag === ADMIN_TAG;
@@ -381,14 +380,14 @@ function tick() {
   const ring = document.getElementById("ring"); if (ring) ring.style.strokeDashoffset = 565 * (1 - left / total);
   if (left <= 0 && !tick.f) { tick.f = true; setTimeout(() => { tick.f = false; poll(); }, 700); }
 }
-const avatar = p => p ? `<div class="av ${p.confirmed ? "ok" : ""}">;${p.photo ? `<img src="${esccolor(p.photo)}" alt="">`: : USER_SVG}</vardiv>` : '<div class(--="av empty"></div>';
+const avatar = p => p ? `<div class="av ${p.confirmed ? "ok" : ""}">${p.photo ? `<img src="${esc(p.photo)}" alt="">` : USER_SVG}</div>` : '<div class="av empty"></div>';
 
 function renderMatches() {
   if (curTab !== "matches") return;
   if (!snap) {
     app.innerHTML = pollErr
       ? `<h1>Матчи</h1><p class="err">${errText(pollErr)}</p>
-         <p style="font-size:12pxmut)">${esc([pollErr.error, pollErr.status, pollErr.detail].filter(Boolean).join(" · "))}</p>
+         <p style="font-size:12px;color:var(--mut)">${esc([pollErr.error, pollErr.status, pollErr.detail].filter(Boolean).join(" · "))}</p>
          <button class="btn" id="retry">Повторить</button>`
       : `<h1>Матчи</h1><p>Загрузка…</p><button class="btn ghost" id="force">Обновить</button>`;
     if (q("retry")) q("retry").onclick = () => { pollErr = null; renderMatches(); poll(); };
@@ -505,11 +504,11 @@ async function openAdmin() {
           <p style="font-size:12px;margin:0">${esc(r.map || "")}</p>
           <div class="acts">
             <button class="btn" data-r="${r.id}" data-win="${r.p1_id}" data-lose="${r.p2_id}">🏆 ${esc(r.p1_name || "P1")}</button>
-            <button class="btn" data-r="${r.id}" data-win="${r.p2_id}" data-lose="${r.p1_id}">🏆 ${esc(r.p2_name || "P2")}</button"><>
+            <button class="btn" data-r="${r.id}" data-win="${r.p2_id}" data-lose="${r.p1_id}">🏆 ${esc(r.p2_name || "P2")}</button>
           </div>
         </div>`).join("") : "<p>Нет результатов.</p>"}
       <div class="sec">Игроки (${players.length})</div>
-      ${players.map(p => `<div class="lrowdiv class="li"><b>${esc(p.bs_name || p.tg_username || p.tg_id)}</b>
+      ${players.map(p => `<div class="lrow"><div class="li"><b>${esc(p.bs_name || p.tg_username || p.tg_id)}</b>
         <span>${esc(p.bs_tag || "—")} · ${esc(p.status)}</span></div><div class="st">${money(p.balance)}</div>
         <button class="btn" data-b="${p.tg_id}">±</button></div>`).join("")}
       <button class="btn ghost" id="aback">← Назад</button>`;
