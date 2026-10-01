@@ -77,6 +77,30 @@ input{-webkit-user-select:text;user-select:text}
 .mres.loss{background:rgba(255,107,107,.12);color:#ff6b6b;border:1px solid rgba(255,107,107,.35)}
 .minfo{flex:1}.minfo b{display:block;font-size:14px}.minfo span{color:var(--mut);font-size:12px}
 .mdelta{text-align:right;font-weight:800;font-size:16px}.mdelta small{display:block;color:var(--mut);font-weight:600;font-size:11px}
+.balrow{display:flex;justify-content:space-between;align-items:center;background:#0d0d0d;border:1px solid #262626;border-radius:14px;padding:12px 14px;margin-top:14px;color:var(--mut);font-size:13px}
+.balrow b{color:var(--tx);font-size:18px}
+.sec{text-align:left;font-size:11px;letter-spacing:2px;color:var(--mut);font-weight:800;text-transform:uppercase;margin:20px 2px 8px}
+.chips.three{grid-template-columns:repeat(3,1fr)}
+.lrow{display:flex;align-items:center;gap:12px;background:#0d0d0d;border:1px solid #262626;border-radius:16px;padding:12px;margin-top:8px;text-align:left}
+.lrow .av{width:42px;height:42px;flex:none}
+.lrow .li{flex:1;min-width:0}.lrow .li b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lrow .li span{color:var(--mut);font-size:12px}
+.lrow .st{font-weight:800;font-size:17px;color:var(--or)}
+.lrow .btn{width:auto;margin:0;padding:10px 16px;font-size:14px}
+.av{width:68px;height:68px;border-radius:50%;border:2px solid #333;background:#1a1a1a;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#666}
+.av img{width:100%;height:100%;object-fit:cover}
+.av svg{width:55%;height:55%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.av.ok{border-color:var(--or);box-shadow:0 0 16px rgba(255,122,0,.55)}
+.av.empty{border-style:dashed;background:transparent}
+.avs{display:flex;justify-content:center;gap:16px;margin-top:20px}
+.ringwrap{position:relative;width:200px;height:200px;margin:4px auto 0}
+.ringwrap svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ringwrap circle{fill:none;stroke-width:10}
+.r-bg{stroke:#222}.r-fg{stroke:var(--or);stroke-linecap:round;stroke-dasharray:565;filter:drop-shadow(0 0 8px rgba(255,122,0,.7))}
+.cd{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:64px;font-weight:800;color:var(--or);text-shadow:0 0 24px rgba(255,122,0,.5)}
+.big{font-size:26px;letter-spacing:.5px;text-transform:uppercase;margin-top:14px}
+.ready{margin-top:16px;color:var(--mut);font-weight:700}.ready b{color:var(--tx);font-size:22px}
+.toast{position:fixed;left:50%;top:96px;transform:translateX(-50%);background:#2a1200;border:1px solid var(--or);color:var(--tx);padding:10px 16px;border-radius:12px;font-size:14px;z-index:99;max-width:90%;text-align:center}
+.btn.ghost{background:none;border:1px solid #333;color:var(--mut);box-shadow:none}
 </style>
 </head>
 <body>
@@ -245,11 +269,12 @@ const ICONS = {
   top: '<svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4"/><path d="M12 13v4M10 17h4M8 21h8"/></svg>'
 };
 let curTab = "profile", cur = null;
-function profile(p) { cur = p; showTab(curTab); }
+function profile(p) { cur = p; showTab(curTab); startPoll(); }
 function showTab(t) {
   curTab = t;
   document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("on", b.dataset.t === t));
-  if (t === "matches" || t === "top") {
+  if (t === "matches") { renderMatches(); return; }
+  if (t === "top") {
     const title = t === "matches" ? "Матчи" : "Топ игроков";
     const text = t === "matches" ? "Здесь появятся твои матчи и результаты — когда запустим матчи на платформе." : "Здесь будет рейтинг лучших игроков платформы.";
     app.innerHTML = `<div class="icon ico">${ICONS[t]}</div><h1>${title}</h1><p>${text}</p><span class="soon">Скоро</span>`;
@@ -272,6 +297,84 @@ function showTab(t) {
 }
 
 const q = id => document.getElementById(id);
+
+// ---------- Матчи со ставками ----------
+const USER_SVG = '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>';
+const LERR = { no_balance: "Недостаточно средств на балансе", already_in_lobby: "Ты уже в лобби", lobby_unavailable: "Лобби уже недоступно",
+  bad_stake: "Неверная ставка", not_verified: "Аккаунт не верифицирован", not_in_lobby: "Тебя нет в этом лобби" };
+let snap = null, off = 0, pollT = null, cdT = null, lastKey = "", busy = false, pickStake = 100;
+const money = n => Number(n || 0).toLocaleString("ru-RU") + " ₽";
+
+function toast(t) {
+  const el = document.createElement("div"); el.className = "toast"; el.textContent = t;
+  document.body.appendChild(el); setTimeout(() => el.remove(), 2600);
+}
+function applySnap(sn) {
+  if (!sn) return;
+  snap = sn; off = new Date(sn.now).getTime() - Date.now();
+  if (cur) cur.balance = sn.balance;
+  const key = JSON.stringify([sn.mine, sn.open, sn.balance]);
+  if (key !== lastKey) { lastKey = key; if (curTab === "matches") renderMatches(); }
+  if (sn.mine && sn.mine.status === "confirming" && curTab !== "matches") showTab("matches");
+}
+async function poll() { if (busy) return; try { applySnap((await call("lobbies")).snap); } catch (e) {} }
+function startPoll() { if (pollT) return; poll(); pollT = setInterval(poll, 2500); cdT = setInterval(tick, 250); }
+async function lobbyCall(action, extra = {}) {
+  if (busy) return; busy = true;
+  try { const d = await call(action, extra); busy = false; applySnap(d.snap); if (d.error) toast(LERR[d.error] || d.error); if (d.snap) renderMatches(); }
+  catch (e) { busy = false; toast(errText(e)); }
+}
+function tick() {
+  const el = document.getElementById("cd");
+  if (!el || !snap || !snap.mine || snap.mine.status !== "confirming") return;
+  const total = snap.confirm_seconds * 1000;
+  const left = Math.max(0, new Date(snap.mine.deadline).getTime() - (Date.now() + off));
+  el.textContent = Math.ceil(left / 1000);
+  const ring = document.getElementById("ring"); if (ring) ring.style.strokeDashoffset = 565 * (1 - left / total);
+  if (left <= 0 && !tick.f) { tick.f = true; setTimeout(() => { tick.f = false; poll(); }, 700); }
+}
+const avatar = p => p ? `<div class="av ${p.confirmed ? "ok" : ""}">${p.photo ? `<img src="${p.photo}" alt="">` : USER_SVG}</div>` : '<div class="av empty"></div>';
+
+function renderMatches() {
+  if (curTab !== "matches") return;
+  if (!snap) { app.innerHTML = '<h1>Матчи</h1><p>Загрузка…</p>'; return; }
+  const m = snap.mine, bal = snap.balance;
+  if (m && m.status === "confirming") {
+    const me = m.players.find(p => p.me), ready = m.players.filter(p => p.confirmed).length;
+    app.innerHTML = `<div class="ringwrap"><svg viewBox="0 0 200 200"><circle class="r-bg" cx="100" cy="100" r="90"/><circle class="r-fg" id="ring" cx="100" cy="100" r="90"/></svg><div class="cd" id="cd"></div></div>
+    <h1 class="big">Матч найден</h1><p>Ставка <b style="color:var(--tx)">${money(m.stake)}</b> с каждого</p>
+    <div class="avs">${m.players.map(avatar).join("")}</div>
+    <div class="ready"><b>${ready}</b> / 2 готовы</div>
+    <button class="btn" id="conf" ${me && me.confirmed ? "disabled" : ""}>${me && me.confirmed ? "Ждём соперника…" : "✓ Подтвердить"}</button>`;
+    q("conf").onclick = () => lobbyCall("lobby_confirm", { id: m.id });
+    tick(); return;
+  }
+  if (m && m.status === "waiting") {
+    app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Лобби создано</h1><p>Ставка ${money(m.stake)}. Ждём соперника…</p>
+    <div class="avs">${avatar(m.players[0])}${avatar(null)}</div><div class="ready"><b>1</b> / 2</div>
+    <button class="btn ghost" id="leave">Выйти и вернуть ${money(m.stake)}</button>`;
+    q("leave").onclick = () => lobbyCall("lobby_leave", { id: m.id });
+    return;
+  }
+  if (m && m.status === "live") {
+    app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Матч создан</h1><p>Оба игрока подтвердили. Ставка ${money(m.stake)} с каждого.</p>
+    <div class="avs">${m.players.map(avatar).join("")}</div>`;
+    return;
+  }
+  const stakes = [50, 100, 200];
+  const open = snap.open.map(l => `<div class="lrow"><div class="av">${l.photo ? `<img src="${l.photo}" alt="">` : USER_SVG}</div>
+    <div class="li"><b>${l.name || "Игрок"}</b><span>1 / 2 · ждёт соперника</span></div><div class="st">${money(l.stake)}</div>
+    <button class="btn" data-j="${l.id}" ${bal < l.stake ? "disabled" : ""}>Войти</button></div>`).join("");
+  app.innerHTML = `<h1>Матчи</h1><p>Создай матч или войди в чужой</p>
+  <div class="balrow"><span>Баланс</span><b>${money(bal)}</b></div>
+  <div class="sec">Создать матч</div>
+  <div class="chips three">${stakes.map(x => `<button class="chip${x === pickStake ? " on" : ""}" data-s="${x}">${x} ₽</button>`).join("")}</div>
+  <button class="btn" id="mk" ${bal < pickStake ? "disabled" : ""}>${bal < pickStake ? "Не хватает баланса" : "Создать матч · " + money(pickStake)}</button>
+  <div class="sec">Открытые лобби</div>${open || "<p>Пока нет открытых лобби — создай своё.</p>"}`;
+  app.querySelectorAll(".chip").forEach(c => c.onclick = () => { pickStake = +c.dataset.s; renderMatches(); });
+  q("mk").onclick = () => lobbyCall("lobby_create", { stake: pickStake });
+  app.querySelectorAll("[data-j]").forEach(b => b.onclick = () => lobbyCall("lobby_join", { id: +b.dataset.j }));
+}
 
 function openTopup() {
   let amount = 300;
