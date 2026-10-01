@@ -146,15 +146,15 @@ async function call(action, extra = {}) {
 }
 
 const ERR_MAP = {
-  tag_not_found:"Тег не найден", tag_taken:"Этот аккаунт уже привязан", bad_auth:"Открой приложение из Telegram",
+  tag_not_found:"Тег не найден", tag_taken:"Этот аккаунт уже привязан", bad_auth:"Открой приложение через кнопку бота в Telegram",
   timeout:"Сервер не отвечает", network:"Нет связи с сервером", forbidden:"Нет доступа",
   no_balance:"Недостаточно средств", already_in_lobby:"Ты уже в лобби", lobby_unavailable:"Лобби уже недоступно",
   bad_stake:"Неверная ставка", not_verified:"Аккаунт не верифицирован", not_in_lobby:"Тебя нет в этом лобби",
   not_host:"Ссылку прикрепляет только выбранный игрок",
   bad_link:"Нужна ссылка вида link.brawlstars.com/invite/gameroom/…",
   no_link:"Сначала должна быть ссылка на лобби", already_result:"Скриншот уже отправлен по этому лобби",
-  bad_shot:"Некорректный скриншот (слишком маленький или большой)", shot_too_big:"Файл больше 10 МБ",
-  already_resolved:"Результат уже засчитан", unknown_action:"Сервер не знает это действие (обнови SQL-функцию)",
+  bad_shot:"Некорректный скриншот", shot_too_big:"Файл больше 10 МБ",
+  already_resolved:"Результат уже засчитан", unknown_action:"Сервер не знает это действие (обнови SQL)",
   bad_response:"Пустой ответ от сервера"
 };
 const errText = e => ERR_MAP[e && e.error] || (e && e.error) || (e && e.message) || "Ошибка, попробуй ещё раз";
@@ -341,11 +341,15 @@ function applySnap(sn) {
 }
 async function poll() {
   if (busy) return;
+  if (!tg.initData) {
+    pollErr = { error: "bad_auth", detail: "initData пустой — открой через кнопку бота" };
+    if (curTab === "matches") renderMatches();
+    return;
+  }
   try {
     const d = await call("lobbies");
     if (d && d.snap) { applySnap(d.snap); return; }
-    pollErr = { error: (d && d.error) || "bad_response",
-                detail: d ? JSON.stringify(d).slice(0, 200) : "" };
+    pollErr = { error: (d && d.error) || "bad_response", detail: d ? JSON.stringify(d).slice(0,200) : "" };
     if (curTab === "matches") renderMatches();
   } catch (e) {
     pollErr = e;
@@ -354,9 +358,10 @@ async function poll() {
 }
 function startPoll() {
   if (pollT) return;
+  if (!tg.initData) { poll(); return; }
   poll();
   pollT = setInterval(poll, 2500);
-  cdT = setInterval(tick, 250);
+  cdT  = setInterval(tick, 250);
 }
 async function lobbyCall(action, extra = {}) {
   if (busy) return; busy = true;
@@ -577,16 +582,27 @@ function openTopup() {
 }
 
 /* ---------------- Инициализация ---------------- */
-document.querySelectorAll("#nav button").forEach(b => b.onclick = () => { if (cur || b.dataset.t === "matches") showTab(b.dataset.t); });
+document.querySelectorAll("#nav button").forEach(b => b.onclick = () => {
+  if (cur || b.dataset.t === "matches") showTab(b.dataset.t);
+});
 ["gesturestart","gesturechange","gestureend"].forEach(ev => document.addEventListener(ev, e => e.preventDefault()));
 document.addEventListener("touchmove", e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
 document.addEventListener("dblclick", e => e.preventDefault());
 
 function boot() {
   app.innerHTML = "<h1>Загрузка…</h1>";
-  call("me").then(d => render(d.player)).catch(e => {
-    app.innerHTML = `<div class="icon">⚠️</div><h1>Не удалось загрузить</h1><p class="err">${errText(e)}</p><p style="font-size:12px">${esc([e.error, e.status, e.detail, e.message].filter(Boolean).join(" · "))}</p><button class="btn" onclick="boot()">Повторить</button>`;
-  });
+  // Ждём, пока WebApp проставит initData (iOS иногда отдаёт с задержкой)
+  let tries = 0;
+  const wait = () => {
+    if (tg.initData || tries++ > 20) {
+      call("me").then(d => render(d.player)).catch(e => {
+        app.innerHTML = `<div class="icon">⚠️</div><h1>Не удалось загрузить</h1><p class="err">${errText(e)}</p>
+          <p style="font-size:12px">${esc([e.error, e.status, e.detail, e.message].filter(Boolean).join(" · "))}</p>
+          <button class="btn" onclick="boot()">Повторить</button>`;
+      });
+    } else setTimeout(wait, 150);
+  };
+  wait();
 }
 boot();
 </script>
