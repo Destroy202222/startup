@@ -109,7 +109,6 @@ input{-webkit-user-select:text;user-select:text}
 <script>
 const EDGE = "https://wlhzcocwgmzcrtzhefic.supabase.co/functions/v1/api";
 const RPC  = "https://wlhzcocwgmzcrtzhefic.supabase.co/rest/v1/rpc/app_rpc";
-// ✅ lobby_* и lobbies идут в edge-функцию api (как было). В RPC app_rpc — только новые экшены.
 const SQL_ACTIONS = /^(lobby_attach_result|admin_)/;
 const ADMIN_TAG = "#QQQ09U2PJ";
 const isAdmin = p => !!p && p.status === "verified" && p.bs_tag === ADMIN_TAG;
@@ -346,8 +345,19 @@ async function poll() {
   try {
     const d = await call("lobbies");
     if (d && d.snap) { applySnap(d.snap); return; }
-    pollErr = { error: (d && d.error) || "bad_response", detail: d ? JSON.stringify(d).slice(0,200) : "" };
-    if (curTab === "matches") renderMatches();
+    if (d && d.error) {
+      pollErr = { error: d.error };
+      if (curTab === "matches") renderMatches();
+      return;
+    }
+    // сервер ответил корректно, но активного лобби нет (snap === null)
+    applySnap({
+      now: new Date().toISOString(),
+      balance: (cur && cur.balance) || 0,
+      confirm_seconds: 30,
+      mine: null,
+      open: []
+    });
   } catch (e) {
     pollErr = e;
     if (curTab === "matches") renderMatches();
@@ -366,8 +376,15 @@ async function lobbyCall(action, extra = {}) {
     const d = await call(action, extra);
     busy = false;
     if (d.error) { toast(errText(d)); return; }
-    applySnap(d.snap);
-    if (d.snap) renderMatches();
+    if (d.snap) { applySnap(d.snap); renderMatches(); }
+    else {
+      // snap === null — пустое состояние, перерисуем форму
+      applySnap({
+        now: new Date().toISOString(),
+        balance: (cur && cur.balance) || 0,
+        confirm_seconds: 30, mine: null, open: []
+      });
+    }
   } catch (e) { busy = false; toast(errText(e)); }
 }
 function tick() {
@@ -481,8 +498,14 @@ function pickResultShot(lobbyId) {
       const d = await call("lobby_attach_result", { id: lobbyId, screenshot: dataUrl });
       if (d.error) { toast(errText(d)); return; }
       toast("Скриншот отправлен админу");
-      applySnap(d.snap);
-      renderMatches();
+      if (d.snap) { applySnap(d.snap); renderMatches(); }
+      else {
+        applySnap({
+          now: new Date().toISOString(),
+          balance: (cur && cur.balance) || 0,
+          confirm_seconds: 30, mine: null, open: []
+        });
+      }
     } catch (e) { toast(errText(e)); }
   };
   f.click();
