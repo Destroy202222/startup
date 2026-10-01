@@ -150,11 +150,10 @@ const ERR_MAP = {
   timeout:"Сервер не отвечает", network:"Нет связи с сервером", forbidden:"Нет доступа",
   no_balance:"Недостаточно средств", already_in_lobby:"Ты уже в лобби", lobby_unavailable:"Лобби уже недоступно",
   bad_stake:"Неверная ставка", not_verified:"Аккаунт не верифицирован", not_in_lobby:"Тебя нет в этом лобби",
-  not_host:"Ссылку прикрепляет только выбранный игрок",
-  bad_link:"Нужна ссылка вида link.brawlstars.com/invite/gameroom/…",
-  no_link:"Сначала должна быть ссылка на лобби", already_result:"Скриншот уже отправлен по этому лобби",
+  not_host:"Ссылку прикрепляет только хост", bad_link:"Нужна ссылка вида link.brawlstars.com/invite/gameroom/…",
+  no_link:"Сначала должна быть ссылка на лобби", already_result:"Скриншот уже отправлен",
   bad_shot:"Некорректный скриншот", shot_too_big:"Файл больше 10 МБ",
-  already_resolved:"Результат уже засчитан", unknown_action:"Сервер не знает это действие (обнови SQL)",
+  already_resolved:"Результат уже засчитан", unknown_action:"Сервер не знает это действие",
   bad_response:"Пустой ответ от сервера"
 };
 const errText = e => ERR_MAP[e && e.error] || (e && e.error) || (e && e.message) || "Ошибка, попробуй ещё раз";
@@ -290,7 +289,6 @@ function profile(p) { cur = p; showTab(curTab); startPoll(); }
 function showTab(t) {
   curTab = t;
   document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("on", b.dataset.t === t));
-
   if (t === "matches") {
     if (!snap && !pollErr) poll();
     startPoll();
@@ -378,6 +376,7 @@ function tick() {
   if (!el || !snap || !snap.mine || snap.mine.status !== "confirming") return;
   const total = (snap.confirm_seconds || 30) * 1000;
   const left = Math.max(0, new Date(snap.mine.deadline).getTime() - (Date.now() + off));
+  if (!isFinite(left)) return;
   el.textContent = Math.ceil(left / 1000);
   const ring = document.getElementById("ring"); if (ring) ring.style.strokeDashoffset = 565 * (1 - left / total);
   if (left <= 0 && !tick.f) { tick.f = true; setTimeout(() => { tick.f = false; poll(); }, 700); }
@@ -400,23 +399,19 @@ function renderMatches() {
 
   if (m && m.status === "confirming") {
     const me = m.players.find(p => p.me), ready = m.players.filter(p => p.confirmed).length;
-    app.innerHTML = `<div class="ringwrap"><svg viewBox="0 0 200 200"><circle class="r-bg" cx="100" cy="100" r="90"/><circle class="r-fg" id="ring" cx="100" cy="100" r="90"/></svg><div class="cd" id="cd"></div></div>
-    <h1 class="big">Матч найден</h1><p>${esc(m.map || MAPS[0])} · ставка <b style="color:var(--tx)">${money(m.stake)}</b> с каждого</p>
-    <div class="avs">${m.players.map(avatar).join("")}</div>
-    <div class="ready"><b>${ready}</b> / 2 готовы</div>
+    app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Матч найден</h1><p>${esc(m.map)} · ставка ${money(m.stake)}</p>
+    <div class="avs">${m.players.map(avatar).join("")}</div><div class="ready"><b>${ready}</b> / 2 готовы</div>
     <button class="btn" id="conf" ${me && me.confirmed ? "disabled" : ""}>${me && me.confirmed ? "Ждём соперника…" : "✓ Подтвердить"}</button>`;
     q("conf").onclick = () => lobbyCall("lobby_confirm", { id: m.id });
-    tick(); return;
+    return;
   }
-
   if (m && m.status === "waiting") {
-    app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Лобби создано</h1><p>${esc(m.map || MAPS[0])} · ставка ${money(m.stake)}. Ждём соперника…</p>
-    <div class="avs">${avatar(m.players[0])}${avatar(null)}</div><div class="ready"><b>1</b> / 2</div>
-    <button class="btn ghost" id="leave">Выйти и вернуть ${money(m.stake)}</button>`;
+    app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Лобби создано</h1><p>${esc(m.map)} · ставка ${money(m.stake)}. Ждём соперника…</p>
+    <div class="avs">${m.players.map(avatar).join("")}${avatar(null)}</div><div class="ready"><b>1</b> / 2</div>
+    <button class="btn ghost" id="leave">Выйти</button>`;
     q("leave").onclick = () => lobbyCall("lobby_leave", { id: m.id });
     return;
   }
-
   if (m && m.status === "live") {
     let box;
     if (m.link) {
@@ -425,14 +420,14 @@ function renderMatches() {
         <button class="btn" id="shot">📷 Прикрепить скриншот результата</button>
         <p style="font-size:12px;color:var(--mut);margin-top:8px">После отправки скрина лобби закроется, админ определит победителя.</p>`;
     } else if (m.is_host) {
-      box = `<p>Ты создаёшь лобби. В Brawl Stars: Друзья → Создать комнату → Пригласить → Копировать ссылку. Вставь её сюда.</p>
+      box = `<p>В Brawl Stars: Друзья → Создать комнату → Пригласить → Копировать ссылку. Вставь её сюда.</p>
         <input type="text" id="rl" class="linkin" placeholder="https://link.brawlstars.com/invite/gameroom/…" value="${esc(linkDraft)}">
         <button class="btn" id="sendl">Отправить ссылку</button>`;
     } else {
-      box = `<p>Ждём, пока соперник пришлёт ссылку на лобби…</p>`;
+      box = `<p>Ждём, пока хост пришлёт ссылку на лобби…</p>`;
     }
     app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Матч создан</h1>
-      <p>${esc(m.map || MAPS[0])} · ставка ${money(m.stake)} с каждого</p>
+      <p>${esc(m.map)} · ставка ${money(m.stake)}</p>
       <div class="avs">${m.players.map(avatar).join("")}</div>${box}`;
     if (q("openl")) q("openl").onclick = () => tg.openLink(m.link);
     if (q("rl")) q("rl").oninput = e => linkDraft = e.target.value;
@@ -440,24 +435,23 @@ function renderMatches() {
     if (q("shot")) q("shot").onclick = () => pickResultShot(m.id);
     return;
   }
-
-  if (m && (m.status === "closed" || m.status === "review")) {
+  if (m && m.status === "closed") {
     app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Скриншот отправлен</h1>
-      <p>Результат на рассмотрении у админа. Как только он определит победителя — тебе начислят победу/поражение в профиль.</p>`;
+      <p>Результат на рассмотрении у админа.</p>`;
     return;
   }
 
   const stakes = [50, 100, 200];
-  const open = snap.open.map(l => `<div class="lrow"><div class="av">${l.photo ? `<img src="${esc(l.photo)}" alt="">` : USER_SVG}</div>
-    <div class="li"><b>${esc(l.name || "Игрок")}</b><span>${esc(l.map || MAPS[0])} · 1 / 2 · ждёт соперника</span></div><div class="st">${money(l.stake)}</div>
-    <button class="btn" data-j="${l.id}" ${bal < l.stake ? "disabled" : ""}>Войти</button></div>`).join("");
-  app.innerHTML = `<h1>Матчи</h1><p>Создай матч или войди в чужой</p>
+  const open = (snap.open || []).map(l => `<div class="lrow"><div class="av">${l.photo ? `<img src="${esc(l.photo)}" alt="">` : USER_SVG}</div>
+    <div class="li"><b>${esc(l.name || "Игрок")}</b><span>${esc(l.map || MAPS[0])}</span></div><div class="st">${money(l.stake)}</div>
+    <button class="btn" data-j="${l.id}">Войти</button></div>`).join("");
+  app.innerHTML = `<h1>Матчи</h1><p>Создай матч</p>
   <div class="balrow"><span>Баланс</span><b>${money(bal)}</b></div>
   <div class="sec">Карта</div>
   <div class="chips one">${MAPS.map(x => `<button class="chip${x === pickMap ? " on" : ""}" data-m="${x}">🐍 ${x}</button>`).join("")}</div>
   <div class="sec">Ставка</div>
   <div class="chips three">${stakes.map(x => `<button class="chip${x === pickStake ? " on" : ""}" data-s="${x}">${x} ₽</button>`).join("")}</div>
-  <button class="btn" id="mk" ${bal < pickStake ? "disabled" : ""}>${bal < pickStake ? "Не хватает баланса" : "Создать матч · " + money(pickStake)}</button>
+  <button class="btn" id="mk">Создать матч · ${money(pickStake)}</button>
   <div class="sec">Открытые лобби</div>${open || "<p>Пока нет открытых лобби — создай своё.</p>"}`;
   app.querySelectorAll("[data-s]").forEach(c => c.onclick = () => { pickStake = +c.dataset.s; renderMatches(); });
   app.querySelectorAll("[data-m]").forEach(c => c.onclick = () => { pickMap = c.dataset.m; renderMatches(); });
@@ -465,7 +459,7 @@ function renderMatches() {
   app.querySelectorAll("[data-j]").forEach(b => b.onclick = () => lobbyCall("lobby_join", { id: +b.dataset.j }));
 }
 
-/* ---------------- Скриншот результата ---------------- */
+/* ---------------- Скриншот ---------------- */
 async function compressShot(file, maxSide = 1600, quality = 0.82) {
   const img = await createImageBitmap(file);
   const k = Math.min(1, maxSide / Math.max(img.width, img.height));
@@ -487,7 +481,7 @@ function pickResultShot(lobbyId) {
       if (dataUrl.length > 6_500_000) { toast(LERR.shot_too_big); return; }
       const d = await call("lobby_attach_result", { id: lobbyId, screenshot: dataUrl });
       if (d.error) { toast(errText(d)); return; }
-      toast("Скриншот отправлен админу, лобби закрыто");
+      toast("Скриншот отправлен админу");
       applySnap(d.snap);
       renderMatches();
     } catch (e) { toast(errText(e)); }
@@ -495,7 +489,7 @@ function pickResultShot(lobbyId) {
   f.click();
 }
 
-/* ---------------- Админ-меню ---------------- */
+/* ---------------- Админ ---------------- */
 async function openAdmin() {
   app.innerHTML = "<h1>Админ-меню</h1><p>Загрузка…</p>";
   try {
@@ -503,17 +497,17 @@ async function openAdmin() {
     const players = pResp.players || [];
     const results = rResp.results || [];
     app.innerHTML = `<h1>Админ-меню</h1>
-      <div class="sec">Результаты на рассмотрении (${results.length})</div>
+      <div class="sec">Результаты (${results.length})</div>
       ${results.length ? results.map(r => `
         <div class="rrow">
           <img class="shot" src="${esc(r.screenshot)}" alt="screenshot">
           <div class="vs"><div>${esc(r.p1_name || r.p1_id)}</div><div><span>VS</span></div><div>${esc(r.p2_name || r.p2_id)}</div></div>
-          <p style="font-size:12px;margin:0">${esc(r.map || "")} · ставка ${money(r.stake)}</p>
+          <p style="font-size:12px;margin:0">${esc(r.map || "")}</p>
           <div class="acts">
             <button class="btn" data-r="${r.id}" data-win="${r.p1_id}" data-lose="${r.p2_id}">🏆 ${esc(r.p1_name || "P1")}</button>
             <button class="btn" data-r="${r.id}" data-win="${r.p2_id}" data-lose="${r.p1_id}">🏆 ${esc(r.p2_name || "P2")}</button>
           </div>
-        </div>`).join("") : "<p>Нет результатов на рассмотрении.</p>"}
+        </div>`).join("") : "<p>Нет результатов.</p>"}
       <div class="sec">Игроки (${players.length})</div>
       ${players.map(p => `<div class="lrow"><div class="li"><b>${esc(p.bs_name || p.tg_username || p.tg_id)}</b>
         <span>${esc(p.bs_tag || "—")} · ${esc(p.status)}</span></div><div class="st">${money(p.balance)}</div>
@@ -559,9 +553,9 @@ function openTopup() {
   const el = document.createElement("div");
   el.className = "sheet";
   el.innerHTML = `<div class="sheet-in">
-    <h1>Пополнение</h1><p>Выбери сумму в рублях</p>
+    <h1>Пополнение</h1><p>Выбери сумму</p>
     <div class="chips">${[100, 300, 500, 1000].map(a => `<button class="chip${a === 300 ? " on" : ""}" data-a="${a}">${a} ₽</button>`).join("")}</div>
-    <input type="text" id="amt" inputmode="numeric" value="300" placeholder="Своя сумма, ₽">
+    <input type="text" id="amt" inputmode="numeric" value="300">
     <p id="tst"></p>
     <button class="btn" id="pay">Перейти к оплате</button>
     <button class="link" id="cls">Отмена</button></div>`;
@@ -577,11 +571,11 @@ function openTopup() {
     if (!amount || amount < 50) { tst.textContent = "Минимальная сумма — 50 ₽"; tst.className = "err"; return; }
     tst.className = ""; tst.textContent = "Создаём счёт…";
     try { const d = await call("topup", { amount }); if (d.url) tg.openInvoice ? tg.openInvoice(d.url) : tg.openLink(d.url); }
-    catch (e) { tst.textContent = "Оплата ещё не подключена. Скоро добавим."; tst.className = "err"; }
+    catch (e) { tst.textContent = "Оплата ещё не подключена."; tst.className = "err"; }
   };
 }
 
-/* ---------------- Инициализация ---------------- */
+/* ---------------- Init ---------------- */
 document.querySelectorAll("#nav button").forEach(b => b.onclick = () => {
   if (cur || b.dataset.t === "matches") showTab(b.dataset.t);
 });
@@ -591,7 +585,6 @@ document.addEventListener("dblclick", e => e.preventDefault());
 
 function boot() {
   app.innerHTML = "<h1>Загрузка…</h1>";
-  // Ждём, пока WebApp проставит initData (iOS иногда отдаёт с задержкой)
   let tries = 0;
   const wait = () => {
     if (tg.initData || tries++ > 20) {
