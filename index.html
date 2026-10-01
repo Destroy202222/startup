@@ -109,7 +109,9 @@ input{-webkit-user-select:text;user-select:text}
 <script>
 const EDGE = "https://wlhzcocwgmzcrtzhefic.supabase.co/functions/v1/api";
 const RPC  = "https://wlhzcocwgmzcrtzhefic.supabase.co/rest/v1/rpc/app_rpc";
-const SQL_ACTIONS = /^(lobbies$|lobby_attach_result|room_link|admin_)/;
+// ✅ Создание лобби, join/confirm/leave, room_link, lobbies — идут в edge-функцию api, как было
+// ✅ В RPC app_rpc ходят только новые экшены: lobby_attach_result, admin_*
+const SQL_ACTIONS = /^(lobby_attach_result|admin_)/;
 const ADMIN_TAG = "#QQQ09U2PJ";
 const isAdmin = p => !!p && p.status === "verified" && p.bs_tag === ADMIN_TAG;
 const ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndsaHpjb2N3Z216Y3J0emhlZmljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzQ4ODYsImV4cCI6MjEwNjQ1MDg4Nn0.-Y1jYFT1NO9Nm1SgzNU7QYBA1E8zTZr8aXA768-5cd8";
@@ -379,14 +381,14 @@ function tick() {
   const ring = document.getElementById("ring"); if (ring) ring.style.strokeDashoffset = 565 * (1 - left / total);
   if (left <= 0 && !tick.f) { tick.f = true; setTimeout(() => { tick.f = false; poll(); }, 700); }
 }
-const avatar = p => p ? `<div class="av ${p.confirmed ? "ok" : ""}">${p.photo ? `<img src="${esc(p.photo)}" alt="">` : USER_SVG}</div>` : '<div class="av empty"></div>';
+const avatar = p => p ? `<div class="av ${p.confirmed ? "ok" : ""}">;${p.photo ? `<img src="${esccolor(p.photo)}" alt="">`: : USER_SVG}</vardiv>` : '<div class(--="av empty"></div>';
 
 function renderMatches() {
   if (curTab !== "matches") return;
   if (!snap) {
     app.innerHTML = pollErr
       ? `<h1>Матчи</h1><p class="err">${errText(pollErr)}</p>
-         <p style="font-size:12px;color:var(--mut)">${esc([pollErr.error, pollErr.status, pollErr.detail].filter(Boolean).join(" · "))}</p>
+         <p style="font-size:12pxmut)">${esc([pollErr.error, pollErr.status, pollErr.detail].filter(Boolean).join(" · "))}</p>
          <button class="btn" id="retry">Повторить</button>`
       : `<h1>Матчи</h1><p>Загрузка…</p><button class="btn ghost" id="force">Обновить</button>`;
     if (q("retry")) q("retry").onclick = () => { pollErr = null; renderMatches(); poll(); };
@@ -503,11 +505,11 @@ async function openAdmin() {
           <p style="font-size:12px;margin:0">${esc(r.map || "")}</p>
           <div class="acts">
             <button class="btn" data-r="${r.id}" data-win="${r.p1_id}" data-lose="${r.p2_id}">🏆 ${esc(r.p1_name || "P1")}</button>
-            <button class="btn" data-r="${r.id}" data-win="${r.p2_id}" data-lose="${r.p1_id}">🏆 ${esc(r.p2_name || "P2")}</button>
+            <button class="btn" data-r="${r.id}" data-win="${r.p2_id}" data-lose="${r.p1_id}">🏆 ${esc(r.p2_name || "P2")}</button"><>
           </div>
         </div>`).join("") : "<p>Нет результатов.</p>"}
       <div class="sec">Игроки (${players.length})</div>
-      ${players.map(p => `<div class="lrow"><div class="li"><b>${esc(p.bs_name || p.tg_username || p.tg_id)}</b>
+      ${players.map(p => `<div class="lrowdiv class="li"><b>${esc(p.bs_name || p.tg_username || p.tg_id)}</b>
         <span>${esc(p.bs_tag || "—")} · ${esc(p.status)}</span></div><div class="st">${money(p.balance)}</div>
         <button class="btn" data-b="${p.tg_id}">±</button></div>`).join("")}
       <button class="btn ghost" id="aback">← Назад</button>`;
@@ -581,7 +583,6 @@ document.querySelectorAll("#nav button").forEach(b => b.onclick = () => {
 document.addEventListener("touchmove", e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
 document.addEventListener("dblclick", e => e.preventDefault());
 
-/* boot: без блокирующего ожидания initData — если его нет, edge-функция вернёт bad_auth и мы это покажем */
 function boot() {
   app.innerHTML = "<h1>Загрузка…</h1>";
   call("me").then(d => render(d.player)).catch(e => {
