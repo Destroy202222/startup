@@ -230,7 +230,6 @@ function viewImg(src) {
   v.onclick = () => v.remove(); document.body.appendChild(v);
 }
 
-/* ============ OCR + верификация ============ */
 const WL = "#0289PYLQGRJCUVO";
 function makeCanvas(img, sx, sy, sw, sh, k, mode) {
   const c = document.createElement("canvas");
@@ -347,7 +346,6 @@ function render(p) {
   return upload();
 }
 
-/* ============ Профиль ============ */
 let curTab = "profile", cur = null;
 let isAdmin = false, isMain = false, adminSec = "games", adminGameId = null, adminKey = "";
 let snap = null, off = 0, pollT = null, cdT = null, lastKey = "", busy = false, pickStake = 100;
@@ -401,7 +399,6 @@ function showTab(t) {
   loadProfileHistory();
 }
 
-/* ============ Снапшот лобби ============ */
 function applySnap(sn) {
   if (!sn) return;
   snap = sn; off = new Date(sn.now).getTime() - Date.now();
@@ -446,7 +443,6 @@ function tick() {
   }
 }
 
-/* ============ Матчи ============ */
 function renderMatches() {
   if (curTab !== "matches") return;
   if (!snap) { app.innerHTML = '<h1>Матчи</h1><p>Загрузка…</p>'; return; }
@@ -508,24 +504,36 @@ function renderMatches() {
     return;
   }
   const stakes = [50, 100, 200];
-  const open = snap.open.map(l => `<div class="lrow"><div class="av">${l.photo ? `<img src="${l.photo}" alt="">` : USER_SVG}</div>
-    <div class="li"><b>${l.name || "Игрок"}</b><span><span class="tag-sd">${l.mode ? modeName(l.mode) : "Поиск…"}</span>${l.count}${l.capacity ? "/" + l.capacity : ""}</span></div><div class="st">${money(l.stake)}</div>
-    <button class="btn" data-j="${l.id}" ${bal < l.stake ? "disabled" : ""}>Войти</button></div>`).join("");
   const pend = (snap.pending || []).map(x => `<div class="lrow"><div class="li"><b>На проверке</b><span>${modeName(x.mode)}</span></div><div class="st">${money(x.stake)}</div></div>`).join("");
-  app.innerHTML = `<h1>Матчи</h1><p>Создай матч или войди в чужой</p>
+  const searching = {};
+  (snap.open || []).forEach(l => { searching[l.stake] = (searching[l.stake] || 0) + 1; });
+  app.innerHTML = `<h1>Матчи</h1><p>Нажми «Поиск» — подберём соперника автоматически</p>
   <div class="balrow"><span>Баланс</span><b>${money(bal)}</b></div>
-  <div class="sec">Создать матч</div>
-  <div class="chips three">${stakes.map(x => `<button class="chip${x === pickStake ? " on" : ""}" data-s="${x}">${x} ₽</button>`).join("")}</div>
+  <div class="sec">Найти матч</div>
+  <div class="chips three">${stakes.map(x => `<button class="chip${x === pickStake ? " on" : ""}" data-s="${x}">${x} ₽${searching[x] ? " · " + searching[x] + " ищут" : ""}</button>`).join("")}</div>
   <button class="btn" id="mk" ${bal < pickStake ? "disabled" : ""}>${bal < pickStake ? "Не хватает баланса" : "🔍 Поиск · " + money(pickStake)}</button>
-  ${pend ? `<div class="sec">Ждут решения</div>${pend}` : ""}
-  <div class="sec">Открытые лобби</div>${open || "<p>Пока нет открытых лобби — создай своё.</p>"}`;
+  ${pend ? `<div class="sec">Ждут решения</div>${pend}` : ""}`;
   app.querySelectorAll(".chip").forEach(c => c.onclick = () => { pickStake = +c.dataset.s; renderMatches(); });
   q("mk").onclick = async () => {
     q("mk").disabled = true;
-    try { await rpc("create", { stake: pickStake }); await poll(); renderMatches(); }
-    catch (e) { toast(eText(e)); await poll(); renderMatches(); }
+    try {
+      const target = (snap.open || []).find(l => l.stake === pickStake);
+      if (target) {
+        await rpc("lobby_join", { id: target.id });
+      } else {
+        await rpc("create", { stake: pickStake });
+      }
+      await poll();
+      renderMatches();
+    } catch (e) {
+      if (e && e.error === "lobby_unavailable") {
+        try { await rpc("create", { stake: pickStake }); await poll(); } catch (_) {}
+        renderMatches();
+      } else {
+        toast(eText(e)); await poll(); renderMatches();
+      }
+    }
   };
-  app.querySelectorAll("[data-j]").forEach(b => b.onclick = () => lobbyCall("lobby_join", { id: +b.dataset.j }));
 }
 async function shrink(file) {
   const img = await createImageBitmap(file);
@@ -535,7 +543,6 @@ async function shrink(file) {
   return c.toDataURL("image/jpeg", 0.62);
 }
 
-/* ============ История и график ============ */
 const fmtD = d => new Date(d).toLocaleDateString("ru-RU", { day: "numeric", month: "short" }).replace(".", "");
 const sgn = n => (n > 0 ? "+" : "") + n;
 function fillStats() {
@@ -601,7 +608,6 @@ function drawChart(box, msArr) {
   set(n - 1);
 }
 
-/* ============ Миссии ============ */
 async function renderMissions() {
   app.innerHTML = '<h1>Миссии</h1><p>Загрузка…</p>';
   let d; try { d = await ms("missions"); } catch (e) { if (curTab === "missions") app.innerHTML = `<h1>Миссии</h1><p class="err">${eText(e)}</p>`; return; }
@@ -639,7 +645,6 @@ async function renderMissions() {
   }
 }
 
-/* ============ Топ ============ */
 async function renderTop() {
   app.innerHTML = '<h1>Топ игроков</h1><p>Загрузка…</p>';
   let d; try { d = await rpc("top"); } catch (e) { if (curTab === "top") app.innerHTML = `<h1>Топ игроков</h1><p class="err">${eText(e)}</p>`; return; }
@@ -650,7 +655,6 @@ async function renderTop() {
   app.innerHTML = `<div class="icon ico">${ICONS.top}</div><h1>Топ игроков</h1><p>Рейтинг по победам</p><div class="mlist">${rows || "<p>Пока никого нет.</p>"}</div>`;
 }
 
-/* ============ Админ ============ */
 const adminSeg = () => `<div class="balrow" style="margin-top:10px"><span>Зарегистрировано</span><b id="astatv">${adminStats ? adminStats.verified : "…"}</b></div>
   <p id="astatt" style="font-size:12px;margin:6px 0 10px">${adminStats ? `За сутки +${adminStats.today} · всего открывали: ${adminStats.total}` : ""}</p>
   <div class="seg adm">
@@ -818,7 +822,6 @@ async function openGame(id) {
   }
 }
 
-/* ============ Пополнение / вывод ============ */
 function renderTopupBox() {
   const box = document.getElementById("tpbox"); if (!box) return;
   if (!topupPending) { box.innerHTML = ""; return; }
@@ -952,7 +955,6 @@ function openWithdraw() {
   };
 }
 
-/* ============ Старт ============ */
 document.querySelectorAll("#nav button").forEach(b => b.onclick = () => { if (cur) showTab(b.dataset.t); });
 ["gesturestart", "gesturechange", "gestureend"].forEach(ev => document.addEventListener(ev, e => e.preventDefault()));
 document.addEventListener("touchmove", e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
