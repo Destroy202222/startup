@@ -142,6 +142,15 @@ input{-webkit-user-select:text;user-select:text}
 .seg.adm{display:flex;flex-wrap:wrap;gap:6px}
 .seg.adm button{flex:1 1 30%;font-size:12px;padding:10px 4px}
 .copy{background:none;border:1px solid #333;color:var(--or2);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700;cursor:pointer;margin-left:8px}
+.mis{background:#0d0d0d;border:1px solid #262626;border-radius:16px;padding:14px;margin-top:10px;text-align:left}
+.mis.done{border-color:rgba(255,122,0,.55)}
+.mis .mh{display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:700;font-size:15px}
+.mis .rw{color:var(--or);font-weight:800;white-space:nowrap}
+.mis .pg{display:flex;justify-content:space-between;color:var(--mut);font-size:12px}
+.bar{height:8px;background:#222;border-radius:6px;overflow:hidden;margin:10px 0 6px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--or),var(--or2));border-radius:6px}
+.refbox{word-break:break-all;background:#0a0a0a;border:1px dashed rgba(255,122,0,.5);border-radius:12px;padding:10px;font-size:12px;color:var(--or2);margin-top:10px;-webkit-user-select:text;user-select:text}
+.row2{display:flex;gap:8px;margin-top:10px}.row2 .btn{flex:1;margin:0}
 </style>
 </head>
 <body>
@@ -153,6 +162,7 @@ input{-webkit-user-select:text;user-select:text}
   <button data-t="matches"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>Матчи</button>
   <button data-t="top"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4"/><path d="M12 13v4M10 17h4M8 21h8"/></svg>Топ</button>
   <button data-t="admin" id="navadmin" class="hidden"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg>Админ<i class="bdg hidden" id="admbdg"></i></button>
+  <button data-t="missions"><svg viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9L12 3z"/></svg>Миссии</button>
 </nav>
 <script>
 // ВСТАВЬ после деплоя функции:
@@ -320,6 +330,7 @@ function showTab(t) {
   curTab = t; app.dataset.adm = "0";
   document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("on", b.dataset.t === t));
   if (t === "matches") { renderMatches(); return; }
+  if (t === "missions") { renderMissions(); return; }
   if (t === "admin") { renderAdmin(); return; }
   if (t === "top") { renderTop(); return; }
   const w = cur.wins || 0, l = cur.losses || 0, g = w + l;
@@ -363,7 +374,7 @@ const q = id => document.getElementById(id);
 
 // ---------- Матчи со ставками ----------
 const USER_SVG = '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>';
-const LERR = { bad_amount_wd: "Минимальная сумма вывода — 50 ₽", bad_phone: "Введи российский номер: +7 900 000-00-00", bad_bank: "Укажи банк получателя", wd_gone: "Заявка уже обработана", bad_amount: "Сумма от 50 до 50 000 ₽", topup_pending: "У тебя уже есть заявка на пополнение", topup_gone: "Заявка уже обработана", promo_invalid: "Промокод не найден или отключён", promo_used_up: "Промокод уже закончился", promo_already: "Ты уже использовал этот промокод", too_many: "Слишком много попыток. Попробуй позже", bad_tag: "Неверный тег", bad_code: "Код: 3–32 символа (латиница, цифры, - _)", bad_promo: "Проверь сумму и количество использований", promo_exists: "Такой промокод уже есть", forbidden: "Нет доступа", bad_link: "Нужна ссылка вида https://link.brawlstars.com/…", no_link_yet: "Создатель ещё не прислал ссылку", bad_image: "Нужно изображение", image_too_big: "Файл слишком большой", auth_expired: "Сессия устарела — открой приложение заново", bad_auth: "Открой приложение из Telegram", no_bot_token: "Сервер не настроен (bot_token)", bad_winner: "Неверный победитель", no_balance: "Недостаточно средств на балансе", already_in_lobby: "Ты уже в лобби", lobby_unavailable: "Лобби уже недоступно",
+const LERR = { bad_mission: "Такой миссии нет", mission_not_ready: "Миссия ещё не выполнена", mission_claimed: "Награда уже получена", bad_amount_wd: "Минимальная сумма вывода — 50 ₽", bad_phone: "Введи российский номер: +7 900 000-00-00", bad_bank: "Укажи банк получателя", wd_gone: "Заявка уже обработана", bad_amount: "Сумма от 50 до 50 000 ₽", topup_pending: "У тебя уже есть заявка на пополнение", topup_gone: "Заявка уже обработана", promo_invalid: "Промокод не найден или отключён", promo_used_up: "Промокод уже закончился", promo_already: "Ты уже использовал этот промокод", too_many: "Слишком много попыток. Попробуй позже", bad_tag: "Неверный тег", bad_code: "Код: 3–32 символа (латиница, цифры, - _)", bad_promo: "Проверь сумму и количество использований", promo_exists: "Такой промокод уже есть", forbidden: "Нет доступа", bad_link: "Нужна ссылка вида https://link.brawlstars.com/…", no_link_yet: "Создатель ещё не прислал ссылку", bad_image: "Нужно изображение", image_too_big: "Файл слишком большой", auth_expired: "Сессия устарела — открой приложение заново", bad_auth: "Открой приложение из Telegram", no_bot_token: "Сервер не настроен (bot_token)", bad_winner: "Неверный победитель", no_balance: "Недостаточно средств на балансе", already_in_lobby: "Ты уже в лобби", lobby_unavailable: "Лобби уже недоступно",
   bad_stake: "Неверная ставка", bad_mode: "Неверный режим", no_maps: "Нет карт для ШД", not_verified: "Аккаунт не верифицирован", not_in_lobby: "Тебя нет в этом лобби" };
 let pickMode = "1v1", snap = null, off = 0, pollT = null, cdT = null, lastKey = "", busy = false, pickStake = 100;
 const money = n => Number(n || 0).toLocaleString("ru-RU") + " ₽";
@@ -410,6 +421,7 @@ const QR_IMG = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwMDA
 const rpc = (a, b) => rpcTo("tg_do", a, b);
 const pay = (a, b) => rpcTo("tg_pay", a, b);
 const wd = (a, b) => rpcTo("tg_wd", a, b);
+const ms = (a, b) => rpcTo("tg_ms", a, b);
 async function rpcTo(fn, action, args = {}) {
   const ac = new AbortController(), tm = setTimeout(() => ac.abort(), 25000);
   try {
@@ -586,6 +598,60 @@ function drawChart(box, ms) {
   set(n - 1);
 }
 
+// ---------- Админ: сколько пользователей ----------
+let adminStats = null;
+function adminStatHtml() {
+  const st = adminStats;
+  return `<div class="balrow" style="margin-top:10px"><span>Зарегистрировано пользователей</span><b id="astatv">${st ? st.verified : "…"}</b></div>
+  <p id="astatt" style="font-size:12px;margin:6px 0 10px">${st ? `За сутки +${st.today} · открывали приложение: ${st.total}` : ""}</p>`;
+}
+async function loadAdminStats() {
+  try {
+    adminStats = await ms("admin_stats");
+    const v = document.getElementById("astatv"), t = document.getElementById("astatt");
+    if (v) v.textContent = adminStats.verified;
+    if (t) t.textContent = `За сутки +${adminStats.today} · открывали приложение: ${adminStats.total}`;
+  } catch (e) {}
+}
+
+// ---------- Миссии и рефералы ----------
+async function renderMissions() {
+  app.innerHTML = '<h1>Миссии</h1><p>Загрузка…</p>';
+  let d; try { d = await ms("missions"); } catch (e) { if (curTab === "missions") app.innerHTML = `<h1>Миссии</h1><p class="err">${eText(e)}</p>`; return; }
+  if (curTab !== "missions") return;
+  cur.balance = d.balance;
+  const cards = d.missions.map(m => {
+    const done = m.progress >= m.target;
+    return `<div class="mis ${done && !m.claimed ? "done" : ""}"><div class="mh"><span>${m.title}: ${m.progress}/${m.target}</span><span class="rw">+${money(m.reward)}</span></div>
+      <div class="bar"><i style="width:${Math.min(100, m.progress / m.target * 100)}%"></i></div>
+      ${m.claimed ? '<div class="pg"><span>Награда получена ✓</span></div>'
+        : done ? `<button class="btn sm" data-claim="${m.id}">Забрать ${money(m.reward)}</button>`
+        : `<div class="pg"><span>Осталось: ${m.target - m.progress}</span></div>`}</div>`;
+  }).join("");
+  const r = d.ref;
+  app.innerHTML = `<div class="icon ico"><svg viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9L12 3z"/></svg></div>
+  <h1>Миссии</h1><p>Выполняй задания и получай ₽ на баланс</p>
+  <div class="sec">Задания</div>${cards}
+  <div class="sec">Пригласи друзей</div>
+  <div class="mis"><div class="mh"><span>За каждого нового игрока</span><span class="rw">+${money(1.5)}</span></div>
+    <p style="font-size:13px">Друг заходит по твоей ссылке и подтверждает аккаунт Brawl Stars, и тебе начисляется ${money(1.5)}.</p>
+    <div class="pg"><span>Приглашено: ${r.invited}</span><span>Ждут подтверждения: ${r.waiting}</span></div>
+    <div class="pg" style="margin-top:4px"><span>Заработано: ${money(r.invited * 1.5)}</span></div>
+    ${r.link ? `<div class="refbox">${r.link}</div><div class="row2"><button class="btn sm" id="rcopy">Копировать</button><button class="btn sm" id="rshare">Поделиться</button></div>`
+      : '<p class="err" style="font-size:12px">Реферальная ссылка ещё не настроена администратором.</p>'}</div>`;
+  app.querySelectorAll("[data-claim]").forEach(b => b.onclick = async () => {
+    b.disabled = true;
+    try {
+      const x = await ms("claim", { id: b.dataset.claim });
+      cur.balance = x.balance; toast("Награда получена: +" + money(x.reward)); renderMissions();
+    } catch (e) { toast(eText(e)); b.disabled = false; }
+  });
+  if (q("rcopy")) {
+    q("rcopy").onclick = () => { try { navigator.clipboard.writeText(r.link); toast("Ссылка скопирована"); } catch (_) {} };
+    q("rshare").onclick = () => tg.openTelegramLink("https://t.me/share/url?url=" + encodeURIComponent(r.link) + "&text=" + encodeURIComponent("Играй со мной в StartUp — Brawl Stars!"));
+  }
+}
+
 // ---------- Топ игроков по победам ----------
 async function renderTop() {
   app.innerHTML = '<h1>Топ игроков</h1><p>Загрузка…</p>';
@@ -598,7 +664,7 @@ async function renderTop() {
 }
 
 // ---------- Админ-меню ----------
-const adminSeg = () => `<div class="seg adm">
+const adminSeg = () => `${adminStatHtml()}<div class="seg adm">
   <button data-sec="games" class="${adminSec === "games" ? "on" : ""}">Игры</button>
   <button data-sec="topups" class="${adminSec === "topups" ? "on" : ""}">Пополнения${admTop ? " (" + admTop + ")" : ""}</button>
   <button data-sec="withdrawals" class="${adminSec === "withdrawals" ? "on" : ""}">Выводы${admWd ? " (" + admWd + ")" : ""}</button>
@@ -610,6 +676,7 @@ const askOk = (msg, go) => tg.showConfirm ? tg.showConfirm(msg, ok => ok && go()
 async function renderAdmin() {
   if (curTab !== "admin") return;
   if (!isAdmin) { app.innerHTML = "<h1>Нет доступа</h1>"; return; }
+  loadAdminStats();
   if (adminSec === "promo") return renderPromo();
   if (adminSec === "topups") return renderTopups();
   if (adminSec === "withdrawals") return renderWithdrawals();
@@ -840,6 +907,7 @@ function applyTopupState(st) {
 let admWd = 0;
 async function extraPoll() {
   if (isAdmin) {
+    loadAdminStats();
     try {
       const c = await pay("admin_counts"), w = await wd("admin_count");
       const n = Number(c.topups) + Number(c.games) + Number(w.withdrawals);
@@ -917,7 +985,7 @@ document.addEventListener("dblclick", e => e.preventDefault());
 
 function boot() {
   app.innerHTML = "<h1>Загрузка…</h1>";
-  call("me").then(d => render(d.player)).catch(e => {
+  call("me").then(d => { render(d.player); ms("ref_touch").catch(() => {}); }).catch(e => {
     app.innerHTML = `<div class="icon">⚠️</div><h1>Не удалось загрузить</h1><p class="err">${errText(e)}</p><p style="font-size:12px">${[e.error, e.status, e.detail, e.message].filter(Boolean).join(" · ")}</p><button class="btn" onclick="boot()">Повторить</button>`;
   });
 }
