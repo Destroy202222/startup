@@ -192,7 +192,18 @@ const rpc = (a, b) => rpcTo("tg_do", a, b);
 const pay = (a, b) => rpcTo("tg_pay", a, b);
 const wd  = (a, b) => rpcTo("tg_wd", a, b);
 const ms  = (a, b) => rpcTo("tg_ms", a, b);
-async function rpcTo(fn, action, args = {}) {
+// ==== Крипто-пополнение через clever-action ====
+async function cryptoTopup(amountCrypto, currency) {
+  const r = await fetch("https://wlhzcocwgmzcrtzhefic.supabase.co/functions/v1/clever-action", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", apikey: ANON, Authorization: "Bearer " + ANON },
+    body: JSON.stringify({ initData: tg.initData, amount: amountCrypto, currency })
+  });
+  const d = await r.json();
+  if (!r.ok || !d.url) throw { error: d.error || "crypto_error", detail: d };
+  return d.url;
+}
+  async function rpcTo(fn, action, args = {}) {
   const ac = new AbortController(), tm = setTimeout(() => ac.abort(), 25000);
   try {
     const r = await fetch(RPCB + fn, { method: "POST", signal: ac.signal,
@@ -899,12 +910,34 @@ function openTopup() {
     <input type="text" id="amt" inputmode="numeric" value="${def}" placeholder="Своя сумма">
     <p id="tst"></p>
     <button class="btn" id="pay">Перейти к оплате</button>
+    <button class="btn ghost" id="paycrypto">💎 Оплатить криптой</button>
     <button class="link" id="cls">Отмена</button>`;
     const inp = sh.querySelector("#amt"), tst = sh.querySelector("#tst");
     sh.querySelectorAll(".chip").forEach(c => c.onclick = () => {
       sh.querySelectorAll(".chip").forEach(x => x.classList.remove("on")); c.classList.add("on"); inp.value = c.dataset.a;
     });
     sh.querySelector("#cls").onclick = () => el.remove();
+   sh.querySelector("#paycrypto").onclick = async () => {
+      const amount = parseInt(inp.value.replace(/\D/g, ""), 10);
+      if (!amount || amount < 50 || amount > 50000) { tst.textContent = "Сумма от 50 до 50 000 ₽"; tst.className = "err"; return; }
+      const cur = (tg.showPopup && await new Promise(res => tg.showPopup({
+        title: "Валюта оплаты",
+        message: "Выбери валюту",
+        buttons: [{ id: "TONCOIN", type: "default", text: "TON" }, { id: "USDT", type: "default", text: "USDT" }]
+      }, (id) => res(id)))) || "TONCOIN";
+      // 1 TON = 500 RUB, 1 USDT = 100 RUB — меняй на свой курс
+      const rates = { TONCOIN: 500, USDT: 100 };
+      const amountCrypto = +(amount / rates[cur]).toFixed(4);
+      tst.className = ""; tst.textContent = "Создаём счёт…";
+      try {
+        const url = await cryptoTopup(amountCrypto, cur);
+        tg.openLink(url);
+        el.remove();
+        toast("Открой оплату в xRocket. Баланс пополнится автоматически после подтверждения");
+      } catch (e) {
+        tst.textContent = "Ошибка: " + (e.error || JSON.stringify(e).slice(0,80)); tst.className = "err";
+      }
+    };
     sh.querySelector("#pay").onclick = () => {
       const amount = parseInt(inp.value.replace(/\D/g, ""), 10);
       if (!amount || amount < 50 || amount > 50000) { tst.textContent = "Сумма от 50 до 50 000 ₽"; tst.className = "err"; return; }
