@@ -110,6 +110,23 @@ input{-webkit-user-select:text;user-select:text}
 .viewer{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:90;display:flex;align-items:center;justify-content:center}
 .viewer img{max-width:100%;max-height:100%;object-fit:contain}
 .btn.sm{padding:11px;font-size:14px;margin-top:10px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#0d0d0d;border:1px solid #262626;border-radius:14px;padding:5px;margin-top:14px}
+.seg button{background:none;border:0;color:var(--mut);font-weight:800;font-size:14px;padding:11px;border-radius:10px;cursor:pointer}
+.seg button.on{background:rgba(255,122,0,.15);color:var(--or);box-shadow:inset 0 0 0 1px rgba(255,122,0,.5)}
+.prize{margin-top:12px;color:var(--or2);font-size:13px;font-weight:600;line-height:1.5}
+.avs.many{flex-wrap:wrap;gap:10px}
+.avs.many .av{width:54px;height:54px}
+.tag-sd{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.5px;color:var(--or);border:1px solid rgba(255,122,0,.5);border-radius:6px;padding:2px 6px;margin-right:6px}
+.top-row{display:flex;align-items:center;gap:12px;background:#0d0d0d;border:1px solid #262626;border-radius:14px;padding:10px 12px;margin-top:8px;text-align:left}
+.top-row.me{border-color:rgba(255,122,0,.6);background:rgba(255,122,0,.06)}
+.top-row .pl{width:28px;text-align:center;font-weight:800;color:var(--mut)}
+.top-row.p1 .pl{color:#ffd54a}.top-row.p2 .pl{color:#cfd8dc}.top-row.p3 .pl{color:#d9925b}
+.top-row .av{width:40px;height:40px;flex:none}
+.top-row .li{flex:1;min-width:0}.top-row .li b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.top-row .li span{color:var(--mut);font-size:12px}
+.top-row .w{font-weight:800;font-size:18px;color:var(--or)}
+.pk{display:flex;gap:6px;margin-top:8px}.pk button{flex:1;margin:0}
+.pk button.on{background:linear-gradient(135deg,var(--or),var(--or2));color:#111}
+.pk button:not(.on){background:#161616;color:var(--tx);border:1px solid #333;box-shadow:none}
 </style>
 </head>
 <body>
@@ -289,12 +306,7 @@ function showTab(t) {
   document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("on", b.dataset.t === t));
   if (t === "matches") { renderMatches(); return; }
   if (t === "admin") { renderAdmin(); return; }
-  if (t === "top") {
-    const title = t === "matches" ? "Матчи" : "Топ игроков";
-    const text = t === "matches" ? "Здесь появятся твои матчи и результаты — когда запустим матчи на платформе." : "Здесь будет рейтинг лучших игроков платформы.";
-    app.innerHTML = `<div class="icon ico">${ICONS[t]}</div><h1>${title}</h1><p>${text}</p><span class="soon">Скоро</span>`;
-    return;
-  }
+  if (t === "top") { renderTop(); return; }
   const w = cur.wins || 0, l = cur.losses || 0, g = w + l;
   const wr = g ? Math.round(w / g * 100) + "%" : "—";
   const bal = Number(cur.balance || 0).toLocaleString("ru-RU");
@@ -318,8 +330,8 @@ const q = id => document.getElementById(id);
 // ---------- Матчи со ставками ----------
 const USER_SVG = '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>';
 const LERR = { forbidden: "Нет доступа", bad_link: "Нужна ссылка вида https://link.brawlstars.com/…", no_link_yet: "Создатель ещё не прислал ссылку", bad_image: "Нужно изображение", image_too_big: "Файл слишком большой", auth_expired: "Сессия устарела — открой приложение заново", bad_auth: "Открой приложение из Telegram", no_bot_token: "Сервер не настроен (bot_token)", bad_winner: "Неверный победитель", no_balance: "Недостаточно средств на балансе", already_in_lobby: "Ты уже в лобби", lobby_unavailable: "Лобби уже недоступно",
-  bad_stake: "Неверная ставка", not_verified: "Аккаунт не верифицирован", not_in_lobby: "Тебя нет в этом лобби" };
-let snap = null, off = 0, pollT = null, cdT = null, lastKey = "", busy = false, pickStake = 100;
+  bad_stake: "Неверная ставка", bad_mode: "Неверный режим", no_maps: "Нет карт для ШД", not_verified: "Аккаунт не верифицирован", not_in_lobby: "Тебя нет в этом лобби" };
+let pickMode = "1v1", snap = null, off = 0, pollT = null, cdT = null, lastKey = "", busy = false, pickStake = 100;
 const money = n => Number(n || 0).toLocaleString("ru-RU") + " ₽";
 
 function toast(t) {
@@ -384,7 +396,10 @@ function viewImg(src) {
   const v = document.createElement("div"); v.className = "viewer"; v.innerHTML = `<img src="${src}" alt="">`;
   v.onclick = () => v.remove(); document.body.appendChild(v);
 }
-const modeName = m => (m === "1v1" ? "1×1" : m);
+const modeName = m => (m === "1v1" ? "1×1" : m === "sd" ? "ШД" : m);
+const prizeText = (mode, s) => mode === "sd"
+  ? `ШД, 8 игроков. 1 место — ${money(s * 4)}, 2 место — ${money(s * 3)}`
+  : `Победитель получает ${money(Math.round(s * 17 / 10))}`;
 
 function renderMatches() {
   if (curTab !== "matches") return;
@@ -393,16 +408,16 @@ function renderMatches() {
   if (m && m.status === "confirming") {
     const me = m.players.find(p => p.me), ready = m.players.filter(p => p.confirmed).length;
     app.innerHTML = `<div class="ringwrap"><svg viewBox="0 0 200 200"><circle class="r-bg" cx="100" cy="100" r="90"/><circle class="r-fg" id="ring" cx="100" cy="100" r="90"/></svg><div class="cd" id="cd"></div></div>
-    <h1 class="big">Матч найден</h1><p>${modeName(m.mode)} · ${m.map}<br>Ставка <b style="color:var(--tx)">${money(m.stake)}</b> с каждого</p>
-    <div class="avs">${m.players.map(avatar).join("")}</div>
-    <div class="ready"><b>${ready}</b> / 2 готовы</div>
+    <h1 class="big">Матч найден</h1><p>${modeName(m.mode)} · ${m.map}<br>Ставка <b style="color:var(--tx)">${money(m.stake)}</b> с каждого</p><p style="font-size:12px">${prizeText(m.mode, m.stake)}</p>
+    <div class="avs ${m.capacity > 2 ? "many" : ""}">${m.players.map(avatar).join("")}</div>
+    <div class="ready"><b>${ready}</b> / ${m.capacity} готовы</div>
     <button class="btn" id="conf" ${me && me.confirmed ? "disabled" : ""}>${me && me.confirmed ? "Ждём соперника…" : "✓ Подтвердить"}</button>`;
     q("conf").onclick = () => lobbyCall("lobby_confirm", { id: m.id });
     tick(); return;
   }
   if (m && m.status === "waiting") {
-    app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Лобби создано</h1><p>${modeName(m.mode)} · ${m.map}<br>Ставка ${money(m.stake)}. Ждём соперника…</p>
-    <div class="avs">${avatar(m.players[0])}${avatar(null)}</div><div class="ready"><b>1</b> / 2</div>
+    app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Лобби создано</h1><p>${modeName(m.mode)} · ${m.map}<br>Ставка ${money(m.stake)}. ${m.capacity > 2 ? "Ждём игроков…" : "Ждём соперника…"}</p><p style="font-size:12px">${prizeText(m.mode, m.stake)}</p>
+    <div class="avs ${m.capacity > 2 ? "many" : ""}">${m.players.map(avatar).join("")}${Array.from({ length: m.capacity - m.players.length }, () => avatar(null)).join("")}</div><div class="ready"><b>${m.players.length}</b> / ${m.capacity}</div>
     <button class="btn ghost" id="leave">Выйти и вернуть ${money(m.stake)}</button>`;
     q("leave").onclick = () => lobbyCall("lobby_leave", { id: m.id });
     return;
@@ -410,19 +425,19 @@ function renderMatches() {
   if (m && (m.status === "live" || m.status === "review")) {
     let body;
     if (!m.link && m.creator) {
-      body = `<div class="note"><b>Ты создатель лобби.</b> Создай лобби в Brawl Stars на карте «${m.map}», скопируй ссылку-приглашение и вставь её сюда. Соперник увидит ссылку сразу, без перезагрузки.</div>
+      body = `<div class="note"><b>Ты создатель лобби.</b> Создай лобби в Brawl Stars на карте «${m.map}», скопируй ссылку-приглашение и вставь её сюда. Остальные игроки увидят ссылку сразу, без перезагрузки.</div>
       <input type="text" id="lk" placeholder="https://link.brawlstars.com/…" style="font-size:15px;letter-spacing:0">
       <button class="btn" id="sendlk">Отправить ссылку</button>`;
     } else if (!m.link) {
       body = `<div class="note"><span class="pulse"></span><b>Ждём ссылку на лобби.</b> Создатель лобби сейчас создаёт комнату в Brawl Stars на карте «${m.map}» и пришлёт ссылку. Она появится здесь автоматически — ничего перезагружать не нужно.</div>`;
     } else {
-      body = `<div class="note"><b>Ссылка на лобби получена.</b><br>1. Нажми «Открыть лобби» и зайди в комнату.<br>2. Сыграйте матч на карте «${m.map}».<br>3. После игры прикрепи скриншот с результатом — эта вкладка закроется, а администратор определит победителя.</div>
+      body = `<div class="note"><b>Ссылка на лобби получена.</b><br>1. Нажми «Открыть лобби» и зайди в комнату.<br>2. Сыграйте матч на карте «${m.map}» ${m.mode === "sd" ? "(все 8 игроков)" : ""}.<br>3. После игры прикрепи скриншот с результатом — эта вкладка закроется, а администратор определит победителя.</div>
       <button class="btn" id="openlk">Открыть лобби в Brawl Stars</button>
       <input type="file" id="shot" accept="image/*" class="hidden">
       <button class="drop" id="pickshot"><b>📷</b>Прикрепить результат матча<small>Скриншот экрана с итогом игры</small></button>`;
     }
     app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Матч создан</h1><p>${modeName(m.mode)} · ${m.map} · ставка ${money(m.stake)}</p>
-    <div class="avs">${m.players.map(avatar).join("")}</div>${body}`;
+    <div class="avs ${m.capacity > 2 ? "many" : ""}">${m.players.map(avatar).join("")}</div>${body}`;
     if (q("sendlk")) q("sendlk").onclick = async () => {
       q("sendlk").disabled = true;
       try { await rpc("set_link", { id: m.id, link: q("lk").value }); await poll(); }
@@ -445,18 +460,26 @@ function renderMatches() {
   }
   const stakes = [50, 100, 200];
   const open = snap.open.map(l => `<div class="lrow"><div class="av">${l.photo ? `<img src="${l.photo}" alt="">` : USER_SVG}</div>
-    <div class="li"><b>${l.name || "Игрок"}</b><span>${modeName(l.mode)} · ${l.map}</span></div><div class="st">${money(l.stake)}</div>
+    <div class="li"><b>${l.name || "Игрок"}</b><span><span class="tag-sd">${modeName(l.mode)}</span>${l.map} · ${l.count}/${l.capacity}</span></div><div class="st">${money(l.stake)}</div>
     <button class="btn" data-j="${l.id}" ${bal < l.stake ? "disabled" : ""}>Войти</button></div>`).join("");
-  const pend = (snap.pending || []).map(x => `<div class="lrow"><div class="li"><b>На проверке у администратора</b><span>${x.map}</span></div><div class="st">${money(x.stake)}</div></div>`).join("");
-  app.innerHTML = `<h1>Матчи</h1><p>Режим 1×1 · карта «Змеиное кольцо»</p>
+  const pend = (snap.pending || []).map(x => `<div class="lrow"><div class="li"><b>На проверке у администратора</b><span>${modeName(x.mode)} · ${x.map}</span></div><div class="st">${money(x.stake)}</div></div>`).join("");
+  app.innerHTML = `<h1>Матчи</h1><p>Создай матч или войди в чужой</p>
   <div class="balrow"><span>Баланс</span><b>${money(bal)}</b></div>
   <div class="sec">Создать матч</div>
+  <div class="seg"><button data-md="1v1" class="${pickMode === "1v1" ? "on" : ""}">1×1</button><button data-md="sd" class="${pickMode === "sd" ? "on" : ""}">ШД · 8 игроков</button></div>
+  <p style="margin-top:10px;font-size:13px">${pickMode === "sd" ? "Случайная карта Showdown" : "Карта «Змеиное кольцо»"}</p>
   <div class="chips three">${stakes.map(x => `<button class="chip${x === pickStake ? " on" : ""}" data-s="${x}">${x} ₽</button>`).join("")}</div>
+  <div class="prize">${prizeText(pickMode, pickStake)}</div>
   <button class="btn" id="mk" ${bal < pickStake ? "disabled" : ""}>${bal < pickStake ? "Не хватает баланса" : "Создать матч · " + money(pickStake)}</button>
   ${pend ? `<div class="sec">Ждут решения</div>${pend}` : ""}
   <div class="sec">Открытые лобби</div>${open || "<p>Пока нет открытых лобби — создай своё.</p>"}`;
+  app.querySelectorAll("[data-md]").forEach(c => c.onclick = () => { pickMode = c.dataset.md; renderMatches(); });
   app.querySelectorAll(".chip").forEach(c => c.onclick = () => { pickStake = +c.dataset.s; renderMatches(); });
-  q("mk").onclick = () => lobbyCall("lobby_create", { stake: pickStake });
+  q("mk").onclick = async () => {
+    q("mk").disabled = true;
+    try { await rpc("create", { stake: pickStake, mode: pickMode }); await poll(); renderMatches(); }
+    catch (e) { toast(eText(e)); await poll(); renderMatches(); }
+  };
   app.querySelectorAll("[data-j]").forEach(b => b.onclick = () => lobbyCall("lobby_join", { id: +b.dataset.j }));
 }
 
@@ -479,7 +502,7 @@ async function loadProfileHistory() {
     const w = m.result === "win";
     const dt = new Date(m.created_at).toLocaleString("ru-RU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
     return `<div class="mrow"><div class="mres ${w ? "win" : "loss"}">${w ? "Победа" : "Поражение"}</div>
-      <div class="minfo"><b>${modeName(m.mode)} · ${m.map || ""}</b><span>vs ${m.opponent || "—"} · ${dt}</span></div>
+      <div class="minfo"><b>${modeName(m.mode)} · ${m.map || ""}</b><span>${m.mode === "sd" ? (m.place ? m.place + " место" : "вне призов") : "vs " + (m.opponent || "—")} · ${dt}</span></div>
       <div class="mdelta ${m.delta >= 0 ? "up" : "down"}">${sgn(m.delta)}<small>${m.rating_after}</small></div></div>`;
   }).join("") : "<p>Матчей пока нет.</p>";
 }
@@ -526,6 +549,17 @@ function drawChart(box, ms) {
   set(n - 1);
 }
 
+// ---------- Топ игроков по победам ----------
+async function renderTop() {
+  app.innerHTML = '<h1>Топ игроков</h1><p>Загрузка…</p>';
+  let d; try { d = await rpc("top"); } catch (e) { if (curTab === "top") app.innerHTML = `<h1>Топ игроков</h1><p class="err">${eText(e)}</p>`; return; }
+  if (curTab !== "top") return;
+  const rows = d.players.map((p, i) => `<div class="top-row ${p.me ? "me" : ""} ${i < 3 ? "p" + (i + 1) : ""}"><div class="pl">${i + 1}</div>
+    <div class="av">${p.photo ? `<img src="${p.photo}" alt="">` : USER_SVG}</div>
+    <div class="li"><b>${p.name || "Игрок"}</b><span>Поражений: ${p.losses} · рейтинг ${p.rating}</span></div><div class="w">${p.wins}</div></div>`).join("");
+  app.innerHTML = `<div class="icon ico">${ICONS.top}</div><h1>Топ игроков</h1><p>Рейтинг по количеству побед</p><div class="mlist">${rows || "<p>Пока никого нет.</p>"}</div>`;
+}
+
 // ---------- Админ-меню ----------
 async function renderAdmin() {
   if (curTab !== "admin") return;
@@ -536,7 +570,7 @@ async function renderAdmin() {
   if (curTab !== "admin" || adminGameId) return;
   if (key === adminKey && app.dataset.adm === "1") return;
   adminKey = key; app.dataset.adm = "1";
-  const rows = d.games.map(g => `<div class="lrow" data-g="${g.id}" style="cursor:pointer"><div class="li"><b>${g.players.join(" vs ")}</b><span>${g.map} · скриншотов: ${g.shots}/2</span></div><div class="st">${money(g.stake)}</div></div>`).join("");
+  const rows = d.games.map(g => `<div class="lrow" data-g="${g.id}" style="cursor:pointer"><div class="li"><b>${g.mode === "sd" ? "ШД · " + g.players.length + " игроков" : g.players.join(" vs ")}</b><span>${g.map} · скриншотов: ${g.shots}/${g.players.length}</span></div><div class="st">${money(g.stake)}</div></div>`).join("");
   app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Админ-меню</h1><p>Игры, ожидающие выбора победителя</p>
   <div class="mlist">${rows || "<p>Сейчас нет игр на проверке.</p>"}</div>`;
   app.querySelectorAll("[data-g]").forEach(r => r.onclick = () => openGame(+r.dataset.g));
@@ -544,24 +578,42 @@ async function renderAdmin() {
 async function openGame(id) {
   adminGameId = id; app.dataset.adm = "0";
   let g; try { g = await rpc("admin_game", { id }); } catch (e) { toast(eText(e)); adminGameId = null; return renderAdmin(); }
+  const sd = g.mode === "sd", picks = [];   // picks[0] — 1 место, picks[1] — 2 место
   const ps = g.players.map(p => `<div class="sec" style="margin-top:14px">${p.name} · ${p.tag}</div>
-    ${p.img ? `<img class="shot" src="${p.img}" data-v="1" alt="">` : "<p>Скриншот не прикреплён</p>"}`).join("");
-  app.innerHTML = `<h1>Игра #${g.id}</h1><p>${g.map} · ставка ${money(g.stake)} · банк ${money(g.stake * 2)}</p>${ps}
-  <div class="sec">Кто победил?</div>
-  ${g.players.map(p => `<button class="btn" data-w="${p.tg_id}">Победил ${p.name}</button>`).join("")}
+    ${p.img ? `<img class="shot" src="${p.img}" data-v="1" alt="">` : "<p>Скриншот не прикреплён</p>"}
+    ${sd ? `<div class="pk"><button class="btn sm" data-p="1" data-id="${p.tg_id}">1 место</button><button class="btn sm" data-p="2" data-id="${p.tg_id}">2 место</button></div>` : ""}`).join("");
+  const bank = sd ? `1 место — ${money(g.stake * 4)}, 2 место — ${money(g.stake * 3)}` : `победителю ${money(Math.round(g.stake * 17 / 10))}`;
+  app.innerHTML = `<h1>Игра #${g.id}</h1><p>${modeName(g.mode)} · ${g.map} · ставка ${money(g.stake)}<br>Выплата: ${bank}</p>${ps}
+  <div class="sec">${sd ? "Выбери 1 и 2 место" : "Кто победил?"}</div>
+  ${sd ? '<button class="btn" id="done" disabled>Подтвердить результат</button>' : g.players.map(p => `<button class="btn" data-w="${p.tg_id}">Победил ${p.name}</button>`).join("")}
   <button class="btn ghost" id="back">← Назад</button>`;
   app.querySelectorAll("[data-v]").forEach(i => i.onclick = () => viewImg(i.src));
   q("back").onclick = () => { app.dataset.adm = "0"; renderAdmin(); };
-  app.querySelectorAll("[data-w]").forEach(b => b.onclick = () => {
-    const name = g.players.find(p => String(p.tg_id) === b.dataset.w).name;
-    const go = async () => {
-      try { await rpc("admin_pick", { id, winner: +b.dataset.w }); toast("Победитель выбран, выплата проведена"); }
-      catch (e) { toast(eText(e)); }
-      adminGameId = null; app.dataset.adm = "0"; renderAdmin();
+  const finish = async winners => {
+    try { await rpc("admin_pick", { id, winners }); toast("Результат подтверждён, выплаты проведены"); }
+    catch (e) { toast(eText(e)); }
+    adminGameId = null; app.dataset.adm = "0"; renderAdmin();
+  };
+  const ask = (msg, go) => tg.showConfirm ? tg.showConfirm(msg, ok => ok && go()) : (confirm(msg) && go());
+  if (sd) {
+    app.querySelectorAll("[data-p]").forEach(b => b.onclick = () => {
+      const place = +b.dataset.p - 1, pid = +b.dataset.id;
+      const other = 1 - place;
+      if (picks[other] === pid) picks[other] = undefined;     // один игрок не может занять оба места
+      picks[place] = pid;
+      app.querySelectorAll("[data-p]").forEach(x => x.classList.toggle("on", picks[+x.dataset.p - 1] === +x.dataset.id));
+      q("done").disabled = !(picks[0] && picks[1]);
+    });
+    q("done").onclick = () => {
+      const nm = id2 => g.players.find(p => p.tg_id === id2).name;
+      ask(`1 место: ${nm(picks[0])}\n2 место: ${nm(picks[1])}\nВыплатить призы?`, () => finish([picks[0], picks[1]]));
     };
-    const msg = `Победитель: ${name}. Выплатить банк?`;
-    tg.showConfirm ? tg.showConfirm(msg, ok => ok && go()) : (confirm(msg) && go());
-  });
+  } else {
+    app.querySelectorAll("[data-w]").forEach(b => b.onclick = () => {
+      const name = g.players.find(p => String(p.tg_id) === b.dataset.w).name;
+      ask(`Победитель: ${name}. Выплатить ${money(Math.round(g.stake * 17 / 10))}?`, () => finish([+b.dataset.w]));
+    });
+  }
 }
 
 function openTopup() {
