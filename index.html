@@ -192,18 +192,8 @@ const rpc = (a, b) => rpcTo("tg_do", a, b);
 const pay = (a, b) => rpcTo("tg_pay", a, b);
 const wd  = (a, b) => rpcTo("tg_wd", a, b);
 const ms  = (a, b) => rpcTo("tg_ms", a, b);
-// ==== Крипто-пополнение через clever-action ====
-async function cryptoTopup(amountCrypto, currency) {
-  const r = await fetch("https://wlhzcocwgmzcrtzhefic.supabase.co/functions/v1/clever-action", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", apikey: ANON, Authorization: "Bearer " + ANON },
-    body: JSON.stringify({ initData: tg.initData, amount: amountCrypto, currency })
-  });
-  const d = await r.json();
-  if (!r.ok || !d.url) throw { error: d.error || "crypto_error", detail: d };
-  return d.url;
-}
-  async function rpcTo(fn, action, args = {}) {
+
+async function rpcTo(fn, action, args = {}) {
   const ac = new AbortController(), tm = setTimeout(() => ac.abort(), 25000);
   try {
     const r = await fetch(RPCB + fn, { method: "POST", signal: ac.signal,
@@ -221,6 +211,18 @@ async function cryptoTopup(amountCrypto, currency) {
     if (e instanceof TypeError) throw { error: "network" };
     throw e;
   } finally { clearTimeout(tm); }
+}
+
+// ==== Крипто-пополнение через clever-action ====
+async function cryptoTopup(amountCrypto, currency) {
+  const r = await fetch("https://wlhzcocwgmzcrtzhefic.supabase.co/functions/v1/clever-action", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", apikey: ANON, Authorization: "Bearer " + ANON },
+    body: JSON.stringify({ initData: tg.initData, amount: amountCrypto, currency })
+  });
+  const d = await r.json();
+  if (!r.ok || !d.url) throw { error: d.error || "crypto_error", detail: d };
+  return d.url;
 }
 
 const LERR = { bad_mission: "Такой миссии нет", mission_not_ready: "Миссия ещё не выполнена", mission_claimed: "Награда уже получена", bad_amount_wd: "Минимальная сумма вывода — 50 ₽", bad_phone: "Введи российский номер: +7 900 000-00-00", bad_bank: "Укажи банк получателя", wd_gone: "Заявка уже обработана", bad_amount: "Сумма от 50 до 50 000 ₽", topup_pending: "У тебя уже есть заявка на пополнение", topup_gone: "Заявка уже обработана", promo_invalid: "Промокод не найден или отключён", promo_used_up: "Промокод уже закончился", promo_already: "Ты уже использовал этот промокод", too_many: "Слишком много попыток. Попробуй позже", bad_tag: "Неверный тег", bad_code: "Код: 3–32 символа", bad_promo: "Проверь сумму и количество использований", promo_exists: "Такой промокод уже есть", forbidden: "Нет доступа", bad_link: "Нужна ссылка вида https://link.brawlstars.com/…", no_link_yet: "Создатель ещё не прислал ссылку", bad_image: "Нужно изображение", image_too_big: "Файл слишком большой", auth_expired: "Сессия устарела — открой заново", bad_auth: "Открой из Telegram", no_bot_token: "Сервер не настроен", bad_winner: "Неверный победитель", no_balance: "Недостаточно средств", already_in_lobby: "Ты уже в лобби", lobby_unavailable: "Лобби уже недоступно", bad_stake: "Неверная ставка", bad_mode: "Неверный режим", no_maps: "Нет карт для ШД", not_verified: "Аккаунт не верифицирован", not_in_lobby: "Тебя нет в лобби", rpc_error: "Ошибка сервера" };
@@ -243,7 +245,6 @@ function viewImg(src) {
   const v = document.createElement("div"); v.className = "viewer"; v.innerHTML = `<img src="${src}" alt="">`;
   v.onclick = () => v.remove(); document.body.appendChild(v);
 }
-
 const WL = "#0289PYLQGRJCUVO";
 function makeCanvas(img, sx, sy, sw, sh, k, mode) {
   const c = document.createElement("canvas");
@@ -364,7 +365,6 @@ let curTab = "profile", cur = null;
 let isAdmin = false, isMain = false, adminSec = "games", adminGameId = null, adminKey = "";
 let snap = null, off = 0, pollT = null, cdT = null, lastKey = "", busy = false, pickStake = 100;
 let pollN = 0, admTop = 0, topupPending = null, admWd = 0, wdPending = [], adminStats = null;
-
 function profile(p) {
   cur = p; showTab(curTab); startPoll();
   rpc("whoami").then(d => { isAdmin = !!d.admin; isMain = !!d.main; document.getElementById("navadmin").classList.toggle("hidden", !isAdmin); }).catch(() => {});
@@ -432,13 +432,13 @@ function applySnap(sn) {
   const wbe = document.getElementById("wb"); if (wbe) wbe.textContent = money(sn.balance);
   const key = JSON.stringify([sn.mine, sn.open, sn.balance]);
   if (key !== lastKey) { lastKey = key; if (curTab === "matches") renderMatches(); }
-  if (sn.mine && sn.mine.status === "confirming" && curTab !== "matches") showTab("matches");
-}
+  if (sn.mine && sn.mine.status === "confirming" && curTab !== "matches0") showTab("matches");
+)}
 async function poll() {
-  if (busy) return;
-  if (++pollN % 3 === 0) extraPoll();
-  try { applySnap((await call("lobbies")).snap); } catch (e) {}
-  if (isAdmin && curTab === "admin" && !adminGameId && (adminSec === "games" || adminSec === "topups" || adminSec === "withdrawals")) renderAdmin();
+  extra if (busy) return;
+Poll  if (++pollN % 3();
+ ===   try { applySnap((await call("lobbies")).snap); } catch (e) {}
+  if (isAdmin && curTab === "admin" && !adminGameId && (adminSec === "games" || adminSec === "topups" || adminSec === "withdrawals" || adminSec === "stakes")) renderAdmin();
 }
 function startPoll() { if (pollT) return; poll(); pollT = setInterval(poll, 2500); cdT = setInterval(tick, 250); }
 async function lobbyCall(action, extra = {}) {
@@ -468,7 +468,6 @@ function tick() {
     if (left <= 0 && !tick.f) { tick.f = true; setTimeout(() => { tick.f = false; poll(); }, 700); }
   }
 }
-
 function renderMatches() {
   if (curTab !== "matches") return;
   if (!snap) { app.innerHTML = '<h1>Матчи</h1><p>Загрузка…</p>'; return; }
@@ -529,12 +528,15 @@ function renderMatches() {
     }
     return;
   }
-  const stakes = [50, 100, 200];
+  // ===== Ставки берутся из БД (админ задаёт в админке) =====
+  const stakes = (snap.stakes && snap.stakes.length) ? snap.stakes : [50, 100, 200];
+  if (!stakes.includes(pickStake)) pickStake = stakes[0];
   const pend = (snap.pending || []).map(x => `<div class="lrow"><div class="li"><b>На проверке</b><span>${modeName(x.mode)}</span></div><div class="st">${money(x.stake)}</div></div>`).join("");
+  const cols = Math.min(stakes.length, 4);
   app.innerHTML = `<h1>Матчи</h1><p>Нажми «Поиск» — подберём соперника автоматически</p>
   <div class="balrow"><span>Баланс</span><b>${money(bal)}</b></div>
   <div class="sec">Найти матч</div>
-  <div class="chips three">${stakes.map(x => `<button class="chip${x === pickStake ? " on" : ""}" data-s="${x}">${x} ₽</button>`).join("")}</div>
+  <div class="chips" style="grid-template-columns:repeat(${cols},1fr)">${stakes.map(x => `<button class="chip${x === pickStake ? " on" : ""}" data-s="${x}">${x} ₽</button>`).join("")}</div>
   <button class="btn" id="mk" ${(bal + (snap.bonus_balance || 0)) < pickStake ? "disabled" : ""}>${(bal + (snap.bonus_balance || 0)) < pickStake ? "Не хватает баланса" : "🔍 Поиск · " + money(pickStake)}</button>
   ${pend ? `<div class="sec">Ждут решения</div>${pend}` : ""}`;
   app.querySelectorAll(".chip").forEach(c => c.onclick = () => { pickStake = +c.dataset.s; renderMatches(); });
@@ -571,7 +573,6 @@ async function shrink(file) {
   c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
   return c.toDataURL("image/jpeg", 0.62);
 }
-
 const fmtD = d => new Date(d).toLocaleDateString("ru-RU", { day: "numeric", month: "short" }).replace(".", "");
 const sgn = n => (n > 0 ? "+" : "") + n;
 function fillStats() {
@@ -683,7 +684,6 @@ async function renderTop() {
     <div class="li"><b>${p.name || "Игрок"}</b><span>Поражений: ${p.losses}</span></div><div class="w">${p.wins}</div></div>`).join("");
   app.innerHTML = `<div class="icon ico">${ICONS.top}</div><h1>Топ игроков</h1><p>Рейтинг по победам</p><div class="mlist">${rows || "<p>Пока никого нет.</p>"}</div>`;
 }
-
 const adminSeg = () => `<div class="balrow" style="margin-top:10px"><span>Зарегистрировано</span><b id="astatv">${adminStats ? adminStats.verified : "…"}</b></div>
   <p id="astatt" style="font-size:12px;margin:6px 0 10px">${adminStats ? `За сутки +${adminStats.today} · всего открывали: ${adminStats.total}` : ""}</p>
   <div class="seg adm">
@@ -691,6 +691,7 @@ const adminSeg = () => `<div class="balrow" style="margin-top:10px"><span>Зар
   <button data-sec="topups" class="${adminSec === "topups" ? "on" : ""}">Пополнения${admTop ? " (" + admTop + ")" : ""}</button>
   <button data-sec="withdrawals" class="${adminSec === "withdrawals" ? "on" : ""}">Выводы${admWd ? " (" + admWd + ")" : ""}</button>
   <button data-sec="promo" class="${adminSec === "promo" ? "on" : ""}">Промокоды</button>
+  <button data-sec="stakes" class="${adminSec === "stakes" ? "on" : ""}">Ставки</button>
   ${isMain ? `<button data-sec="admins" class="${adminSec === "admins" ? "on" : ""}">Админы</button>` : ""}</div>`;
 const bindSeg = () => app.querySelectorAll("[data-sec]").forEach(b => b.onclick = () => { adminSec = b.dataset.sec; app.dataset.adm = "0"; adminKey = ""; renderAdmin(); });
 const askOk = (msg, go) => tg.showConfirm ? tg.showConfirm(msg, ok => ok && go()) : (confirm(msg) && go());
@@ -709,6 +710,7 @@ async function renderAdmin() {
   if (adminSec === "promo") return renderPromo();
   if (adminSec === "topups") return renderTopups();
   if (adminSec === "withdrawals") return renderWithdrawals();
+  if (adminSec === "stakes") return renderStakes();
   if (adminSec === "admins" && isMain) return renderAdmins();
   adminSec = "games"; adminGameId = null;
   let d; try { d = await rpc("admin_games"); } catch (e) { if (curTab === "admin") app.innerHTML = `<h1>Админ-меню</h1><p class="err">${eText(e)}</p>`; return; }
@@ -721,6 +723,30 @@ async function renderAdmin() {
   <div class="mlist">${rows || "<p>Нет игр на проверке.</p>"}</div>`;
   bindSeg();
   app.querySelectorAll("[data-g]").forEach(r => r.onclick = () => openGame(+r.dataset.g));
+}
+async function renderStakes() {
+  let d; try { d = await rpc("admin_stakes"); } catch (e) { toast(eText(e)); return; }
+  if (curTab !== "admin" || adminSec !== "stakes") return;
+  const current = (d.stakes || []).join(", ");
+  app.innerHTML = `<h1>Админ-меню</h1>${adminSeg()}
+    <div class="sec">Доступные ставки</div>
+    <p>Введи суммы через запятую. Игроки увидят только их.</p>
+    <input type="text" id="samounts" value="${current}" placeholder="50,100,200" style="text-transform:none">
+    <button class="btn" id="ssave">Сохранить</button>
+    <p style="font-size:12px;color:var(--mut);margin-top:8px;text-align:left">Пример: <b style="color:var(--or2)">50</b> — одна игра на 50₽. <b style="color:var(--or2)">50,250</b> — две игры. <b style="color:var(--or2)">50,100,200,500</b> — четыре.</p>`;
+  bindSeg();
+  q("ssave").onclick = async () => {
+    const raw = q("samounts").value.replace(/\s/g, "");
+    if (!raw) { toast("Введи хотя бы одну сумму"); return; }
+    const arr = raw.split(",").map(x => parseInt(x, 10)).filter(x => x > 0);
+    if (!arr.length) { toast("Некорректные суммы"); return; }
+    q("ssave").disabled = true;
+    try {
+      await rpc("admin_stakes_set", { stakes: arr.join(",") });
+      toast("Ставки сохранены: " + arr.join(", "));
+      renderStakes();
+    } catch (e) { toast(eText(e)); q("ssave").disabled = false; }
+  };
 }
 async function renderTopups() {
   adminGameId = null;
@@ -850,7 +876,6 @@ async function openGame(id) {
     });
   }
 }
-
 function renderTopupBox() {
   const box = document.getElementById("tpbox"); if (!box) return;
   if (!topupPending) { box.innerHTML = ""; return; }
@@ -910,23 +935,23 @@ function openTopup() {
     <input type="text" id="amt" inputmode="numeric" value="${def}" placeholder="Своя сумма">
     <p id="tst"></p>
     <button class="btn" id="pay">Перейти к оплате</button>
-    <button class="btn ghost" id="paycrypto">Оплатить Xrocket </button>
+    <button class="btn ghost" id="paycrypto">Оплатить Xrocket</button>
     <button class="link" id="cls">Отмена</button>`;
     const inp = sh.querySelector("#amt"), tst = sh.querySelector("#tst");
     sh.querySelectorAll(".chip").forEach(c => c.onclick = () => {
       sh.querySelectorAll(".chip").forEach(x => x.classList.remove("on")); c.classList.add("on"); inp.value = c.dataset.a;
     });
     sh.querySelector("#cls").onclick = () => el.remove();
-   sh.querySelector("#paycrypto").onclick = async () => {
+    sh.querySelector("#paycrypto").onclick = async () => {
       const amount = parseInt(inp.value.replace(/\D/g, ""), 10);
       if (!amount || amount < 50 || amount > 50000) { tst.textContent = "Сумма от 50 до 50 000 ₽"; tst.className = "err"; return; }
       const cur = (tg.showPopup && await new Promise(res => tg.showPopup({
         title: "Валюта оплаты",
         message: "Выбери валюту",
-        buttons: [{ id: "TONCOIN", type: "default", text: "TON" }, { id: "USDT", type: "default", text: "USDT" }]
-      }, (id) => res(id)))) || "TONCOIN";
-      // 1 TON = 500 RUB, 1 USDT = 100 RUB — меняй на свой курс
-      const rates = { TONCOIN: 500, USDT: 100 };
+        buttons: [{ id: "USDT", type: "default", text: "USDT" }]
+      }, (id) => res(id)))) || "USDT";
+      // 1 USDT = 100 RUB — меняй на свой курс
+      const rates = { USDT: 100 };
       const amountCrypto = +(amount / rates[cur]).toFixed(4);
       tst.className = ""; tst.textContent = "Создаём счёт…";
       try {
