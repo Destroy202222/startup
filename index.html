@@ -29,7 +29,6 @@ p{color:var(--mut);font-size:14px;line-height:1.55;margin:8px 0}
 .ava{width:116px;height:116px;border-radius:50%;border:3px solid var(--or);object-fit:cover;background:#222;box-shadow:0 0 30px rgba(255,122,0,.45)}
 .nick{font-size:26px;font-weight:800;margin-top:16px}
 .tag{color:var(--or);font-weight:700;letter-spacing:.5px}
-.badge{display:inline-block;background:rgba(255,122,0,.1);color:var(--or2);border:1px solid rgba(255,122,0,.5);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;margin-top:12px}
 .found{background:#0d0d0d;border:1px solid #2a2a2a;border-radius:14px;padding:12px;margin-top:14px}
 .found .tag{font-size:18px}
 input[type=text]{width:100%;background:#0c0c0c;border:1px solid #2e2e2e;color:var(--tx);border-radius:12px;padding:14px;margin-top:14px;font-size:18px;font-weight:700;letter-spacing:1px;text-align:center;outline:0}
@@ -42,7 +41,6 @@ body.shell{justify-content:flex-start;padding-top:90px;padding-bottom:120px}
 #nav button svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 #nav button.on{color:var(--or);background:rgba(255,122,0,.13)}
 #nav button.on svg{filter:drop-shadow(0 0 6px rgba(255,122,0,.8))}
-.soon{margin-top:14px;display:inline-block;border:1px dashed rgba(255,122,0,.4);color:var(--or2);border-radius:12px;padding:8px 14px;font-size:13px;font-weight:600}
 .ico svg{width:34px;height:34px;fill:none;stroke:#111;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 #nav.hidden{display:none}
 html{touch-action:manipulation;-webkit-text-size-adjust:100%}
@@ -53,10 +51,12 @@ input{-webkit-user-select:text;user-select:text}
 .stat b{display:block;font-size:24px;font-weight:800}
 .stat span{display:block;color:var(--mut);font-size:11px;margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
 .stat.w b{color:#4cd964}.stat.l b{color:#ff6b6b}.stat.r b{color:var(--or)}
-.wallet{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;background:linear-gradient(135deg,rgba(255,122,0,.16),rgba(255,122,0,.04));border:1px solid rgba(255,122,0,.35);border-radius:18px;padding:14px 16px;text-align:left}
+.wallet{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;background:linear-gradient(135deg,rgba(255,122,0,.16),rgba(255,122,0,.04));border:1px solid rgba(255,122,0,.35);border-radius:18px;padding:14px 16px;text-align:left;flex-wrap:wrap}
 .wallet span{display:block;color:var(--mut);font-size:12px}
 .wallet b{font-size:24px;font-weight:800}
 .wallet .btn{width:auto;margin:0;padding:11px 16px;font-size:14px}
+.wbtns{display:flex;gap:8px;width:100%}
+.wallet .wbtns .btn{flex:1;width:auto}
 .sheet{position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:flex-end;justify-content:center;z-index:50}
 .sheet-in{width:100%;max-width:440px;background:#141414;border:1px solid rgba(255,122,0,.3);border-bottom:0;border-radius:26px 26px 0 0;padding:22px 20px calc(24px + env(safe-area-inset-bottom,0px));text-align:center}
 .chips{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px}
@@ -113,7 +113,6 @@ input{-webkit-user-select:text;user-select:text}
 .seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#0d0d0d;border:1px solid #262626;border-radius:14px;padding:5px;margin-top:14px}
 .seg button{background:none;border:0;color:var(--mut);font-weight:800;font-size:14px;padding:11px;border-radius:10px;cursor:pointer}
 .seg button.on{background:rgba(255,122,0,.15);color:var(--or);box-shadow:inset 0 0 0 1px rgba(255,122,0,.5)}
-.prize{margin-top:12px;color:var(--or2);font-size:13px;font-weight:600;line-height:1.5}
 .avs.many{flex-wrap:wrap;gap:10px}
 .avs.many .av{width:54px;height:54px}
 .tag-sd{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.5px;color:var(--or);border:1px solid rgba(255,122,0,.5);border-radius:6px;padding:2px 6px;margin-right:6px}
@@ -133,12 +132,8 @@ input{-webkit-user-select:text;user-select:text}
 #nav button{position:relative}
 .bdg{position:absolute;top:2px;right:16%;min-width:18px;height:18px;border-radius:9px;background:#ff3b30;color:#fff;font-size:11px;font-style:normal;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 5px}
 .bdg.hidden{display:none}
-.qr{width:100%;max-width:260px;border-radius:16px;margin:14px auto 0;display:block;background:#fff;-webkit-touch-callout:default;-webkit-user-select:auto;user-select:auto}
+.qr{width:100%;max-width:260px;border-radius:16px;margin:14px auto 0;display:block;background:#fff}
 .refcode{display:inline-block;margin-top:10px;padding:6px 14px;border:1px dashed rgba(255,122,0,.6);border-radius:10px;color:var(--or2);font-weight:800;font-size:20px;letter-spacing:3px}
-.seg.four button{font-size:11.5px;padding:10px 2px}
-.wallet{flex-wrap:wrap}
-.wbtns{display:flex;gap:8px;width:100%}
-.wallet .wbtns .btn{flex:1;width:auto}
 .seg.adm{display:flex;flex-wrap:wrap;gap:6px}
 .seg.adm button{flex:1 1 30%;font-size:12px;padding:10px 4px}
 .copy{background:none;border:1px solid #333;color:var(--or2);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700;cursor:pointer;margin-left:8px}
@@ -174,6 +169,7 @@ tg.setHeaderColor("#0d0d0d"); tg.setBackgroundColor("#0d0d0d");
 const app = document.getElementById("app");
 const tgUser = tg.initDataUnsafe.user || {};
 const ava = tgUser.photo_url || "";
+const q = id => document.getElementById(id);
 
 async function call(action, extra = {}) {
   const ac = new AbortController(), tm = setTimeout(() => ac.abort(), 15000);
@@ -192,15 +188,49 @@ async function call(action, extra = {}) {
 }
 const errText = e => ({ tag_not_found: "Тег не найден", tag_taken: "Этот аккаунт уже привязан", bad_auth: "Открой приложение из Telegram", timeout: "Сервер не отвечает (таймаут)", network: "Нет связи с сервером" }[e.error] || "Ошибка, попробуй ещё раз");
 
-function render(p) {
-  const v = p.status === "verified";
-  document.body.classList.toggle("shell", v);
-  document.getElementById("nav").classList.toggle("hidden", !v);
-  if (p.status === "verified") return profile(p);
-  if (p.status === "pending") return pending(p);
-  return upload();
+const RPCB = "https://wlhzcocwgmzcrtzhefic.supabase.co/rest/v1/rpc/";
+const rpc = (a, b) => rpcTo("tg_do", a, b);
+const pay = (a, b) => rpcTo("tg_pay", a, b);
+const wd  = (a, b) => rpcTo("tg_wd", a, b);
+const ms  = (a, b) => rpcTo("tg_ms", a, b);
+async function rpcTo(fn, action, args = {}) {
+  const ac = new AbortController(), tm = setTimeout(() => ac.abort(), 25000);
+  try {
+    const r = await fetch(RPCB + fn, { method: "POST", signal: ac.signal,
+      headers: { "Content-Type": "application/json", apikey: ANON, Authorization: "Bearer " + ANON },
+      body: JSON.stringify({ p_init: tg.initData, p_action: action, p_args: args }) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw { error: d.message || "rpc_error" };
+    return d;
+  } catch (e) {
+    if (e.name === "AbortError") throw { error: "timeout" };
+    if (e instanceof TypeError) throw { error: "network" };
+    throw e;
+  } finally { clearTimeout(tm); }
 }
 
+const LERR = { bad_mission: "Такой миссии нет", mission_not_ready: "Миссия ещё не выполнена", mission_claimed: "Награда уже получена", bad_amount_wd: "Минимальная сумма вывода — 50 ₽", bad_phone: "Введи российский номер: +7 900 000-00-00", bad_bank: "Укажи банк получателя", wd_gone: "Заявка уже обработана", bad_amount: "Сумма от 50 до 50 000 ₽", topup_pending: "У тебя уже есть заявка на пополнение", topup_gone: "Заявка уже обработана", promo_invalid: "Промокод не найден или отключён", promo_used_up: "Промокод уже закончился", promo_already: "Ты уже использовал этот промокод", too_many: "Слишком много попыток. Попробуй позже", bad_tag: "Неверный тег", bad_code: "Код: 3–32 символа", bad_promo: "Проверь сумму и количество использований", promo_exists: "Такой промокод уже есть", forbidden: "Нет доступа", bad_link: "Нужна ссылка вида https://link.brawlstars.com/…", no_link_yet: "Создатель ещё не прислал ссылку", bad_image: "Нужно изображение", image_too_big: "Файл слишком большой", auth_expired: "Сессия устарела — открой заново", bad_auth: "Открой из Telegram", no_bot_token: "Сервер не настроен", bad_winner: "Неверный победитель", no_balance: "Недостаточно средств", already_in_lobby: "Ты уже в лобби", lobby_unavailable: "Лобби недоступно", bad_stake: "Неверная ставка", bad_mode: "Неверный режим", no_maps: "Нет карт для ШД", not_verified: "Аккаунт не верифицирован", not_in_lobby: "Тебя нет в лобби" };
+const eText = e => LERR[e.error] || errText(e);
+
+const USER_SVG = '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>';
+const money = n => Number(n || 0).toLocaleString("ru-RU") + " ₽";
+const modeName = m => (m === "1v1" ? "1×1" : m === "sd" ? "ШД" : (m || "Поиск…"));
+const avatar = p => p ? `<div class="av ${p.confirmed ? "ok" : ""}">${p.photo ? `<img src="${p.photo}" alt="">` : USER_SVG}</div>` : '<div class="av empty"></div>';
+const ICONS = {
+  matches: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>',
+  top: '<svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4"/><path d="M12 13v4M10 17h4M8 21h8"/></svg>'
+};
+
+function toast(t) {
+  const el = document.createElement("div"); el.className = "toast"; el.textContent = t;
+  document.body.appendChild(el); setTimeout(() => el.remove(), 2600);
+}
+function viewImg(src) {
+  const v = document.createElement("div"); v.className = "viewer"; v.innerHTML = `<img src="${src}" alt="">`;
+  v.onclick = () => v.remove(); document.body.appendChild(v);
+}
+
+/* ============ OCR + верификация ============ */
 const WL = "#0289PYLQGRJCUVO";
 function makeCanvas(img, sx, sy, sw, sh, k, mode) {
   const c = document.createElement("canvas");
@@ -217,7 +247,6 @@ function makeCanvas(img, sx, sy, sw, sh, k, mode) {
   x.putImageData(d, 0, 0);
   return c;
 }
-
 async function readTags(file) {
   const img = await createImageBitmap(file);
   const reads = [];
@@ -233,7 +262,7 @@ async function readTags(file) {
     for (const m of ["gray", "t100", "t90inv"]) {
       const { data } = await w.recognize(makeCanvas(img, 0, 0, img.width, img.height, sc, m));
       grab(data.text, true);
-      if (!box) { const wd = (data.words || []).find(q => q.text.includes("#")); if (wd) box = wd.bbox; }
+      if (!box) { const wd2 = (data.words || []).find(q => q.text.includes("#")); if (wd2) box = wd2.bbox; }
     }
     if (box) {
       await w.setParameters({ tessedit_pageseg_mode: "7" });
@@ -249,7 +278,6 @@ async function readTags(file) {
   const cnt = {}; reads.forEach(r => cnt[r] = (cnt[r] || 0) + 1);
   return Object.keys(cnt).sort((a, b) => cnt[b] - cnt[a] || Math.abs(a.length - 9) - Math.abs(b.length - 9)).slice(0, 8);
 }
-
 function withVariants(list) {
   const out = [];
   for (const t of list) {
@@ -258,7 +286,6 @@ function withVariants(list) {
   }
   return [...new Set(out)].slice(0, 20);
 }
-
 function upload() {
   app.innerHTML = `<div class="icon">🛡️</div><h1>Верификация аккаунта</h1>
   <p>Подтверди, что аккаунт Brawl Stars принадлежит тебе</p>
@@ -293,12 +320,11 @@ function upload() {
     st.textContent = errText(last || {}); st.className = "err"; q("go").disabled = false;
   };
 }
-
 function pending(p) {
   app.innerHTML = `<div class="icon">🔑</div><h1>Подтверди аккаунт</h1>
   <div class="steps"><i class="on"></i><i class="on"></i><i></i></div>
   <div class="found"><div style="font-weight:800;font-size:18px">${p.bs_name}</div><div class="tag">${p.bs_tag}</div></div>
-  <p>Зайди в Brawl Stars и <b style="color:var(--or2)">смени аватарку</b> на любую другую. Затем нажми кнопку ниже.</p>
+  <p>Зайди в Brawl Stars и <b style="color:var(--or2)">смени аватарку</b>. Затем нажми кнопку ниже.</p>
   <button class="btn" id="chk">Я сменил аватарку</button>
   <p id="st"></p><p><a href="#" id="back" style="color:var(--mut)">Другой аккаунт</a></p>`;
   q("chk").onclick = async () => {
@@ -306,19 +332,27 @@ function pending(p) {
     try {
       const d = await call("check");
       if (d.player.status === "verified") return render(d.player);
-      q("st").textContent = "Аватарка не изменилась. Подожди ~30 сек после смены и попробуй снова."; q("st").className = "err";
+      q("st").textContent = "Аватарка не изменилась. Подожди ~30 сек."; q("st").className = "err";
     } catch (e) { q("st").textContent = errText(e); q("st").className = "err"; }
     q("chk").disabled = false;
   };
   q("back").onclick = e => { e.preventDefault(); upload(); };
 }
+function render(p) {
+  const v = p.status === "verified";
+  document.body.classList.toggle("shell", v);
+  document.getElementById("nav").classList.toggle("hidden", !v);
+  if (p.status === "verified") return profile(p);
+  if (p.status === "pending") return pending(p);
+  return upload();
+}
 
-const ICONS = {
-  matches: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>',
-  top: '<svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4"/><path d="M12 13v4M10 17h4M8 21h8"/></svg>'
-};
+/* ============ Профиль ============ */
 let curTab = "profile", cur = null;
 let isAdmin = false, isMain = false, adminSec = "games", adminGameId = null, adminKey = "";
+let snap = null, off = 0, pollT = null, cdT = null, lastKey = "", busy = false, pickStake = 100;
+let pollN = 0, admTop = 0, topupPending = null, admWd = 0, wdPending = [], adminStats = null;
+
 function profile(p) {
   cur = p; showTab(curTab); startPoll();
   rpc("whoami").then(d => { isAdmin = !!d.admin; isMain = !!d.main; document.getElementById("navadmin").classList.toggle("hidden", !isAdmin); }).catch(() => {});
@@ -337,15 +371,15 @@ function showTab(t) {
   <div class="nick">${cur.bs_name}</div>
   <p class="tag">${cur.bs_tag}</p>
   <div class="stats">
-    <div class="stat w"><b id="sw">${w}</b><span>Победы</span></div>
-    <div class="stat l"><b id="sl">${l}</b><span>Поражения</span></div>
-    <div class="stat r"><b id="sr">${wr}</b><span>Винрейт</span></div>
+    <div class="stat w"><b>${w}</b><span>Победы</span></div>
+    <div class="stat l"><b>${l}</b><span>Поражения</span></div>
+    <div class="stat r"><b>${wr}</b><span>Винрейт</span></div>
   </div>
   <div class="wallet"><div><span>Баланс</span><b id="wb">${bal} ₽</b></div>
     <div class="wbtns"><button class="btn" id="topup">＋ Пополнить</button><button class="btn ghost" id="wdbtn">Вывод</button></div></div>
   <div id="tpbox"></div><div id="wdbox"></div>
   <div class="sec">Промокод</div>
-  <div class="promo"><input type="text" id="pc" placeholder="Введи промокод" autocapitalize="characters" autocomplete="off"><button class="btn" id="pb">Активировать</button></div>
+  <div class="promo"><input type="text" id="pc" placeholder="Введи промокод"><button class="btn" id="pb">Активировать</button></div>
   <div class="chart"><div class="ch-title">История выигрыша</div><div id="chbox"><p>Загрузка…</p></div></div>
   <div class="sec">История матчей</div><div id="hlist" class="mlist"></div>`;
   q("topup").onclick = openTopup;
@@ -367,18 +401,7 @@ function showTab(t) {
   loadProfileHistory();
 }
 
-const q = id => document.getElementById(id);
-const QR_IMG = "";
-const USER_SVG = '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>';
-const LERR = { bad_mission: "Такой миссии нет", mission_not_ready: "Миссия ещё не выполнена", mission_claimed: "Награда уже получена", bad_amount_wd: "Минимальная сумма вывода — 50 ₽", bad_phone: "Введи российский номер: +7 900 000-00-00", bad_bank: "Укажи банк получателя", wd_gone: "Заявка уже обработана", bad_amount: "Сумма от 50 до 50 000 ₽", topup_pending: "У тебя уже есть заявка на пополнение", topup_gone: "Заявка уже обработана", promo_invalid: "Промокод не найден или отключён", promo_used_up: "Промокод уже закончился", promo_already: "Ты уже использовал этот промокод", too_many: "Слишком много попыток. Попробуй позже", bad_tag: "Неверный тег", bad_code: "Код: 3–32 символа (латиница, цифры, - _)", bad_promo: "Проверь сумму и количество использований", promo_exists: "Такой промокод уже есть", forbidden: "Нет доступа", bad_link: "Нужна ссылка вида https://link.brawlstars.com/…", no_link_yet: "Создатель ещё не прислал ссылку", bad_image: "Нужно изображение", image_too_big: "Файл слишком большой", auth_expired: "Сессия устарела — открой приложение заново", bad_auth: "Открой приложение из Telegram", no_bot_token: "Сервер не настроен (bot_token)", bad_winner: "Неверный победитель", no_balance: "Недостаточно средств на балансе", already_in_lobby: "Ты уже в лобби", lobby_unavailable: "Лобби уже недоступно",
-  bad_stake: "Неверная ставка", bad_mode: "Неверный режим", no_maps: "Нет карт для ШД", not_verified: "Аккаунт не верифицирован", not_in_lobby: "Тебя нет в этом лобби" };
-let pickMode = "1v1", snap = null, off = 0, pollT = null, cdT = null, lastKey = "", busy = false, pickStake = 100;
-const money = n => Number(n || 0).toLocaleString("ru-RU") + " ₽";
-
-function toast(t) {
-  const el = document.createElement("div"); el.className = "toast"; el.textContent = t;
-  document.body.appendChild(el); setTimeout(() => el.remove(), 2600);
-}
+/* ============ Снапшот лобби ============ */
 function applySnap(sn) {
   if (!sn) return;
   snap = sn; off = new Date(sn.now).getTime() - Date.now();
@@ -388,7 +411,6 @@ function applySnap(sn) {
   if (key !== lastKey) { lastKey = key; if (curTab === "matches") renderMatches(); }
   if (sn.mine && sn.mine.status === "confirming" && curTab !== "matches") showTab("matches");
 }
-let pollN = 0, admTop = 0, topupPending = null;
 async function poll() {
   if (busy) return;
   if (++pollN % 3 === 0) extraPoll();
@@ -401,15 +423,11 @@ async function lobbyCall(action, extra = {}) {
   try { const d = await call(action, extra); busy = false; applySnap(d.snap); if (d.error) toast(LERR[d.error] || d.error); if (d.snap) renderMatches(); }
   catch (e) { busy = false; toast(errText(e)); }
 }
-
-// ПРАВКА 1: tick() — два таймера (поиск и подтверждение)
 function tick() {
   if (!snap || !snap.mine) return;
   const m = snap.mine;
-
   if (m.status === "waiting" && m.search_deadline) {
-    const el = document.getElementById("cd");
-    const ring = document.getElementById("ring");
+    const el = document.getElementById("cd"), ring = document.getElementById("ring");
     const total = (m.search_seconds || 150) * 1000;
     const left = Math.max(0, new Date(m.search_deadline).getTime() - (Date.now() + off));
     if (el) { const s = Math.ceil(left / 1000); el.textContent = Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }
@@ -417,10 +435,8 @@ function tick() {
     if (left <= 0 && !tick.f) { tick.f = true; setTimeout(() => { tick.f = false; poll(); }, 700); }
     return;
   }
-
   if (m.status === "confirming") {
-    const el = document.getElementById("cd");
-    if (!el) return;
+    const el = document.getElementById("cd"); if (!el) return;
     const total = (snap.confirm_seconds || 30) * 1000;
     const left = Math.max(0, new Date(m.deadline).getTime() - (Date.now() + off));
     el.textContent = Math.ceil(left / 1000);
@@ -429,42 +445,8 @@ function tick() {
     if (left <= 0 && !tick.f) { tick.f = true; setTimeout(() => { tick.f = false; poll(); }, 700); }
   }
 }
-const avatar = p => p ? `<div class="av ${p.confirmed ? "ok" : ""}">${p.photo ? `<img src="${p.photo}" alt="">` : USER_SVG}</div>` : '<div class="av empty"></div>';
 
-const RPCB = "https://wlhzcocwgmzcrtzhefic.supabase.co/rest/v1/rpc/";
-const rpc = (a, b) => rpcTo("tg_do", a, b);
-const pay = (a, b) => rpcTo("tg_pay", a, b);
-const wd  = (a, b) => rpcTo("tg_wd", a, b);
-const ms  = (a, b) => rpcTo("tg_ms", a, b);
-async function rpcTo(fn, action, args = {}) {
-  const ac = new AbortController(), tm = setTimeout(() => ac.abort(), 25000);
-  try {
-    const r = await fetch(RPCB + fn, { method: "POST", signal: ac.signal,
-      headers: { "Content-Type": "application/json", apikey: ANON, Authorization: "Bearer " + ANON },
-      body: JSON.stringify({ p_init: tg.initData, p_action: action, p_args: args }) });
-    const d = await r.json().catch(() => ({}));
-    if (!r.ok) throw { error: d.message || "rpc_error" };
-    return d;
-  } catch (e) {
-    if (e.name === "AbortError") throw { error: "timeout" };
-    if (e instanceof TypeError) throw { error: "network" };
-    throw e;
-  } finally { clearTimeout(tm); }
-}
-const eText = e => LERR[e.error] || errText(e);
-async function shrink(file) {
-  const img = await createImageBitmap(file);
-  const k = Math.min(1, 1100 / Math.max(img.width, img.height));
-  const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
-  c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
-  return c.toDataURL("image/jpeg", 0.62);
-}
-function viewImg(src) {
-  const v = document.createElement("div"); v.className = "viewer"; v.innerHTML = `<img src="${src}" alt="">`;
-  v.onclick = () => v.remove(); document.body.appendChild(v);
-}
-const modeName = m => (m === "1v1" ? "1×1" : m === "sd" ? "ШД" : (m ? m : "Поиск…"));
-
+/* ============ Матчи ============ */
 function renderMatches() {
   if (curTab !== "matches") return;
   if (!snap) { app.innerHTML = '<h1>Матчи</h1><p>Загрузка…</p>'; return; }
@@ -479,44 +461,31 @@ function renderMatches() {
     q("conf").onclick = () => lobbyCall("lobby_confirm", { id: m.id });
     tick(); return;
   }
-  // ПРАВКА 2: экран waiting — таймер поиска 2:30
   if (m && m.status === "waiting") {
     const cnt = m.players.length;
-    app.innerHTML = `
-      <div class="ringwrap">
-        <svg viewBox="0 0 200 200">
-          <circle class="r-bg" cx="100" cy="100" r="90"/>
-          <circle class="r-fg" id="ring" cx="100" cy="100" r="90"/>
-        </svg>
-        <div class="cd" id="cd">2:30</div>
-      </div>
-      <h1 class="big">Поиск соперника</h1>
-      <p>Ставка <b style="color:var(--tx)">${money(m.stake)}</b> с каждого<br>
-         Найдено игроков: <b style="color:var(--tx)">${cnt}</b></p>
-      <div class="avs ${cnt > 2 ? "many" : ""}">
-        ${m.players.map(avatar).join("")}
-        ${cnt === 1 ? '<div class="av empty"></div>' : ''}
-      </div>
-      <button class="btn ghost" id="leave">Отменить поиск (вернуть ${money(m.stake)})</button>`;
+    app.innerHTML = `<div class="ringwrap"><svg viewBox="0 0 200 200"><circle class="r-bg" cx="100" cy="100" r="90"/><circle class="r-fg" id="ring" cx="100" cy="100" r="90"/></svg><div class="cd" id="cd">2:30</div></div>
+    <h1 class="big">Поиск соперника</h1>
+    <p>Ставка <b style="color:var(--tx)">${money(m.stake)}</b> с каждого<br>Найдено игроков: <b style="color:var(--tx)">${cnt}</b></p>
+    <div class="avs ${cnt > 2 ? "many" : ""}">${m.players.map(avatar).join("")}${cnt === 1 ? '<div class="av empty"></div>' : ''}</div>
+    <button class="btn ghost" id="leave">Отменить поиск (вернуть ${money(m.stake)})</button>`;
     q("leave").onclick = () => lobbyCall("lobby_leave", { id: m.id });
-    tick();
-    return;
+    tick(); return;
   }
   if (m && (m.status === "live" || m.status === "review")) {
     let body;
     if (!m.link && m.creator) {
-      body = `<div class="note"><b>Ты создатель лобби.</b> Создай лобби в Brawl Stars на карте «${m.map}», скопируй ссылку-приглашение и вставь её сюда. Остальные игроки увидят ссылку сразу, без перезагрузки.</div>
+      body = `<div class="note"><b>Ты создатель лобби.</b> Создай лобби в Brawl Stars на карте «${m.map}», скопируй ссылку и вставь сюда.</div>
       <input type="text" id="lk" placeholder="https://link.brawlstars.com/…" style="font-size:15px;letter-spacing:0">
       <button class="btn" id="sendlk">Отправить ссылку</button>`;
     } else if (!m.link) {
-      body = `<div class="note"><span class="pulse"></span><b>Ждём ссылку на лобби.</b> Создатель лобби сейчас создаёт комнату в Brawl Stars на карте «${m.map}» и пришлёт ссылку. Она появится здесь автоматически — ничего перезагружать не нужно.</div>`;
+      body = `<div class="note"><span class="pulse"></span><b>Ждём ссылку на лобби.</b> Создатель сейчас создаёт комнату на карте «${m.map}».</div>`;
     } else {
-      body = `<div class="note"><b>Ссылка на лобби получена.</b><br>1. Нажми «Открыть лобби» и зайди в комнату.<br>2. Сыграйте матч на карте «${m.map}» ${m.mode === "sd" ? "(все 8 игроков)" : ""}.<br>3. После игры прикрепи скриншот с результатом — эта вкладка закроется, а администратор определит победителя.</div>
+      body = `<div class="note"><b>Ссылка на лобби получена.</b><br>1. Зайди в комнату.<br>2. Сыграйте матч на карте «${m.map}».<br>3. После игры прикрепи скриншот.</div>
       <button class="btn" id="openlk">Открыть лобби в Brawl Stars</button>
       <input type="file" id="shot" accept="image/*" class="hidden">
       <button class="drop" id="pickshot"><b>📷</b>Прикрепить результат матча<small>Скриншот экрана с итогом игры</small></button>`;
     }
-    app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Матч создан</h1><p>${modeName(m.mode)} · ${m.map} · ставка ${money(m.stake)}</p>
+    app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Матч создан</h1><p>${modeName(m.mode)} · ${m.map} · ${money(m.stake)}</p>
     <div class="avs ${(m.capacity || m.players.length) > 2 ? "many" : ""}">${m.players.map(avatar).join("")}</div>${body}`;
     if (q("sendlk")) q("sendlk").onclick = async () => {
       q("sendlk").disabled = true;
@@ -530,20 +499,19 @@ function renderMatches() {
         const f = ev.target.files[0]; if (!f) return;
         q("pickshot").disabled = true; q("pickshot").textContent = "Загружаем…";
         try {
-          await rpc("submit_result", { id: m.id, img: await shrink(f) });
-          toast("Результат отправлен. Ждём решения администратора");
-          await poll(); renderMatches();
+          const img = await shrink(f);
+          await rpc("submit_result", { id: m.id, img });
+          toast("Результат отправлен"); await poll(); renderMatches();
         } catch (e) { toast(eText(e)); renderMatches(); }
       };
     }
     return;
   }
   const stakes = [50, 100, 200];
-  // ПРАВКА 6: mode может быть null
   const open = snap.open.map(l => `<div class="lrow"><div class="av">${l.photo ? `<img src="${l.photo}" alt="">` : USER_SVG}</div>
     <div class="li"><b>${l.name || "Игрок"}</b><span><span class="tag-sd">${l.mode ? modeName(l.mode) : "Поиск…"}</span>${l.count}${l.capacity ? "/" + l.capacity : ""}</span></div><div class="st">${money(l.stake)}</div>
     <button class="btn" data-j="${l.id}" ${bal < l.stake ? "disabled" : ""}>Войти</button></div>`).join("");
-  const pend = (snap.pending || []).map(x => `<div class="lrow"><div class="li"><b>На проверке у администратора</b><span>${modeName(x.mode)}</span></div><div class="st">${money(x.stake)}</div></div>`).join("");
+  const pend = (snap.pending || []).map(x => `<div class="lrow"><div class="li"><b>На проверке</b><span>${modeName(x.mode)}</span></div><div class="st">${money(x.stake)}</div></div>`).join("");
   app.innerHTML = `<h1>Матчи</h1><p>Создай матч или войди в чужой</p>
   <div class="balrow"><span>Баланс</span><b>${money(bal)}</b></div>
   <div class="sec">Создать матч</div>
@@ -559,7 +527,15 @@ function renderMatches() {
   };
   app.querySelectorAll("[data-j]").forEach(b => b.onclick = () => lobbyCall("lobby_join", { id: +b.dataset.j }));
 }
+async function shrink(file) {
+  const img = await createImageBitmap(file);
+  const k = Math.min(1, 1100 / Math.max(img.width, img.height));
+  const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+  c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+  return c.toDataURL("image/jpeg", 0.62);
+}
 
+/* ============ История и график ============ */
 const fmtD = d => new Date(d).toLocaleDateString("ru-RU", { day: "numeric", month: "short" }).replace(".", "");
 const sgn = n => (n > 0 ? "+" : "") + n;
 function fillStats() {
@@ -571,7 +547,7 @@ async function loadProfileHistory() {
   let d = null; try { d = await rpc("history"); } catch (e) {}
   const box = document.getElementById("chbox"), hl = document.getElementById("hlist");
   if (!box || curTab !== "profile") return;
-  if (!d) { box.innerHTML = "<p>История пока недоступна.</p>"; return; }
+  if (!d) { box.innerHTML = "<p>История недоступна.</p>"; return; }
   cur.wins = d.wins; cur.losses = d.losses; fillStats();
   drawChart(box, d.matches);
   hl.innerHTML = d.matches.length ? d.matches.slice().reverse().slice(0, 20).map(m => {
@@ -582,16 +558,16 @@ async function loadProfileHistory() {
       <div class="mdelta ${m.profit >= 0 ? "up" : "down"}">${sgn(m.profit)} ₽</div></div>`;
   }).join("") : "<p>Матчей пока нет.</p>";
 }
-function drawChart(box, ms) {
-  if (!ms.length) { box.innerHTML = "<p>Пока нет матчей — график появится после первой игры.</p>"; return; }
-  const W = box.clientWidth || 320, H = 150, pt = 12, pb = 8, n = ms.length;
-  const vals = ms.map(m => Number(m.total));
+function drawChart(box, msArr) {
+  if (!msArr.length) { box.innerHTML = "<p>Пока нет матчей.</p>"; return; }
+  const W = box.clientWidth || 320, H = 150, pt = 12, pb = 8, n = msArr.length;
+  const vals = msArr.map(m => Number(m.total));
   let min = Math.min(...vals), max = Math.max(...vals);
   if (min === max) { min -= 10; max += 10; }
   const pad = (max - min) * 0.15; min -= pad; max += pad;
   const X = i => n === 1 ? W / 2 : i * (W / (n - 1));
   const Y = v => pt + (H - pt - pb) * (1 - (v - min) / (max - min));
-  const line = "M" + ms.map((m, i) => X(i).toFixed(1) + "," + Y(Number(m.total)).toFixed(1)).join(" L");
+  const line = "M" + msArr.map((m, i) => X(i).toFixed(1) + "," + Y(Number(m.total)).toFixed(1)).join(" L");
   const area = line + ` L${X(n - 1).toFixed(1)},${H} L${X(0).toFixed(1)},${H} Z`;
   const col = vals[n - 1] >= vals[0] ? "#6ee787" : "#ff6b6b";
   const grid = [0, 1, 2, 3].map(k => { const y = (pt + (H - pt - pb) * k / 3).toFixed(1); return `<line x1="0" x2="${W}" y1="${y}" y2="${y}" stroke="#222" stroke-width="1"/>`; }).join("");
@@ -603,10 +579,10 @@ function drawChart(box, ms) {
     <line id="cl" y1="0" y2="${H}" stroke="rgba(255,255,255,.45)" stroke-width="1.5" stroke-dasharray="4 4"/>
     <circle id="cc" r="6" fill="#0d0d0d" stroke="${col}" stroke-width="3"/>
   </svg>
-  <div class="ch-foot"><span>${fmtD(ms[0].created_at)}</span><span>${fmtD(ms[n - 1].created_at)}</span></div>`;
+  <div class="ch-foot"><span>${fmtD(msArr[0].created_at)}</span><span>${fmtD(msArr[n - 1].created_at)}</span></div>`;
   const svg = box.querySelector("#chsvg"), cl = box.querySelector("#cl"), cc = box.querySelector("#cc");
   const set = i => {
-    const m = ms[i], x = X(i);
+    const m = msArr[i], x = X(i);
     cl.setAttribute("x1", x); cl.setAttribute("x2", x);
     cc.setAttribute("cx", x); cc.setAttribute("cy", Y(Number(m.total)));
     box.querySelector("#chv").textContent = money(m.total);
@@ -625,21 +601,7 @@ function drawChart(box, ms) {
   set(n - 1);
 }
 
-let adminStats = null;
-function adminStatHtml() {
-  const st = adminStats;
-  return `<div class="balrow" style="margin-top:10px"><span>Зарегистрировано пользователей</span><b id="astatv">${st ? st.verified : "…"}</b></div>
-  <p id="astatt" style="font-size:12px;margin:6px 0 10px">${st ? `За сутки +${st.today} · открывали приложение: ${st.total}` : ""}</p>`;
-}
-async function loadAdminStats() {
-  try {
-    adminStats = await ms("admin_stats");
-    const v = document.getElementById("astatv"), t = document.getElementById("astatt");
-    if (v) v.textContent = adminStats.verified;
-    if (t) t.textContent = `За сутки +${adminStats.today} · открывали приложение: ${adminStats.total}`;
-  } catch (e) {}
-}
-
+/* ============ Миссии ============ */
 async function renderMissions() {
   app.innerHTML = '<h1>Миссии</h1><p>Загрузка…</p>';
   let d; try { d = await ms("missions"); } catch (e) { if (curTab === "missions") app.innerHTML = `<h1>Миссии</h1><p class="err">${eText(e)}</p>`; return; }
@@ -659,11 +621,11 @@ async function renderMissions() {
   <div class="sec">Задания</div>${cards}
   <div class="sec">Пригласи друзей</div>
   <div class="mis"><div class="mh"><span>За каждого нового игрока</span><span class="rw">+${money(1.5)}</span></div>
-    <p style="font-size:13px">Друг заходит по твоей ссылке и подтверждает аккаунт Brawl Stars, и тебе начисляется ${money(1.5)}.</p>
-    <div class="pg"><span>Приглашено: ${r.invited}</span><span>Ждут подтверждения: ${r.waiting}</span></div>
+    <p style="font-size:13px">Друг заходит по твоей ссылке и подтверждает аккаунт Brawl Stars.</p>
+    <div class="pg"><span>Приглашено: ${r.invited}</span><span>Ждут: ${r.waiting}</span></div>
     <div class="pg" style="margin-top:4px"><span>Заработано: ${money(r.invited * 1.5)}</span></div>
     ${r.link ? `<div class="refbox">${r.link}</div><div class="row2"><button class="btn sm" id="rcopy">Копировать</button><button class="btn sm" id="rshare">Поделиться</button></div>`
-      : '<p class="err" style="font-size:12px">Реферальная ссылка ещё не настроена администратором.</p>'}</div>`;
+      : '<p class="err" style="font-size:12px">Ссылка ещё не настроена.</p>'}</div>`;
   app.querySelectorAll("[data-claim]").forEach(b => b.onclick = async () => {
     b.disabled = true;
     try {
@@ -672,11 +634,12 @@ async function renderMissions() {
     } catch (e) { toast(eText(e)); b.disabled = false; }
   });
   if (q("rcopy")) {
-    q("rcopy").onclick = () => { try { navigator.clipboard.writeText(r.link); toast("Ссылка скопирована"); } catch (_) {} };
-    q("rshare").onclick = () => tg.openTelegramLink("https://t.me/share/url?url=" + encodeURIComponent(r.link) + "&text=" + encodeURIComponent("Играй со мной в StartUp — Brawl Stars!"));
+    q("rcopy").onclick = () => { try { navigator.clipboard.writeText(r.link); toast("Скопировано"); } catch (_) {} };
+    q("rshare").onclick = () => tg.openTelegramLink("https://t.me/share/url?url=" + encodeURIComponent(r.link) + "&text=" + encodeURIComponent("Играй со мной!"));
   }
 }
 
+/* ============ Топ ============ */
 async function renderTop() {
   app.innerHTML = '<h1>Топ игроков</h1><p>Загрузка…</p>';
   let d; try { d = await rpc("top"); } catch (e) { if (curTab === "top") app.innerHTML = `<h1>Топ игроков</h1><p class="err">${eText(e)}</p>`; return; }
@@ -684,10 +647,13 @@ async function renderTop() {
   const rows = d.players.map((p, i) => `<div class="top-row ${p.me ? "me" : ""} ${i < 3 ? "p" + (i + 1) : ""}"><div class="pl">${i + 1}</div>
     <div class="av">${p.photo ? `<img src="${p.photo}" alt="">` : USER_SVG}</div>
     <div class="li"><b>${p.name || "Игрок"}</b><span>Поражений: ${p.losses}</span></div><div class="w">${p.wins}</div></div>`).join("");
-  app.innerHTML = `<div class="icon ico">${ICONS.top}</div><h1>Топ игроков</h1><p>Рейтинг по количеству побед</p><div class="mlist">${rows || "<p>Пока никого нет.</p>"}</div>`;
+  app.innerHTML = `<div class="icon ico">${ICONS.top}</div><h1>Топ игроков</h1><p>Рейтинг по победам</p><div class="mlist">${rows || "<p>Пока никого нет.</p>"}</div>`;
 }
 
-const adminSeg = () => `${adminStatHtml()}<div class="seg adm">
+/* ============ Админ ============ */
+const adminSeg = () => `<div class="balrow" style="margin-top:10px"><span>Зарегистрировано</span><b id="astatv">${adminStats ? adminStats.verified : "…"}</b></div>
+  <p id="astatt" style="font-size:12px;margin:6px 0 10px">${adminStats ? `За сутки +${adminStats.today} · всего открывали: ${adminStats.total}` : ""}</p>
+  <div class="seg adm">
   <button data-sec="games" class="${adminSec === "games" ? "on" : ""}">Игры</button>
   <button data-sec="topups" class="${adminSec === "topups" ? "on" : ""}">Пополнения${admTop ? " (" + admTop + ")" : ""}</button>
   <button data-sec="withdrawals" class="${adminSec === "withdrawals" ? "on" : ""}">Выводы${admWd ? " (" + admWd + ")" : ""}</button>
@@ -695,7 +661,14 @@ const adminSeg = () => `${adminStatHtml()}<div class="seg adm">
   ${isMain ? `<button data-sec="admins" class="${adminSec === "admins" ? "on" : ""}">Админы</button>` : ""}</div>`;
 const bindSeg = () => app.querySelectorAll("[data-sec]").forEach(b => b.onclick = () => { adminSec = b.dataset.sec; app.dataset.adm = "0"; adminKey = ""; renderAdmin(); });
 const askOk = (msg, go) => tg.showConfirm ? tg.showConfirm(msg, ok => ok && go()) : (confirm(msg) && go());
-
+async function loadAdminStats() {
+  try {
+    adminStats = await ms("admin_stats");
+    const v = document.getElementById("astatv"), t = document.getElementById("astatt");
+    if (v) v.textContent = adminStats.verified;
+    if (t) t.textContent = `За сутки +${adminStats.today} · всего открывали: ${adminStats.total}`;
+  } catch (e) {}
+}
 async function renderAdmin() {
   if (curTab !== "admin") return;
   if (!isAdmin) { app.innerHTML = "<h1>Нет доступа</h1>"; return; }
@@ -710,113 +683,103 @@ async function renderAdmin() {
   if (curTab !== "admin" || adminGameId || adminSec !== "games") return;
   if (key === adminKey && app.dataset.adm === "1") return;
   adminKey = key; app.dataset.adm = "1";
-  const rows = d.games.map(g => `<div class="lrow" data-g="${g.id}" style="cursor:pointer"><div class="li"><b>${g.mode === "sd" ? "ШД · " + g.players.length + " игроков" : g.players.join(" vs ")}</b><span>${g.map} · скриншотов: ${g.shots}/${g.players.length}</span></div><div class="st">${money(g.stake)}</div></div>`).join("");
-  app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Админ-меню</h1>${adminSeg()}<p>Игры, ожидающие выбора победителя</p>
-  <div class="mlist">${rows || "<p>Сейчас нет игр на проверке.</p>"}</div>`;
+  const rows = d.games.map(g => `<div class="lrow" data-g="${g.id}" style="cursor:pointer"><div class="li"><b>${g.mode === "sd" ? "ШД · " + g.players.length : g.players.join(" vs ")}</b><span>${g.map} · скринов: ${g.shots}/${g.players.length}</span></div><div class="st">${money(g.stake)}</div></div>`).join("");
+  app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Админ-меню</h1>${adminSeg()}<p>Игры на проверке</p>
+  <div class="mlist">${rows || "<p>Нет игр на проверке.</p>"}</div>`;
   bindSeg();
   app.querySelectorAll("[data-g]").forEach(r => r.onclick = () => openGame(+r.dataset.g));
 }
-
 async function renderTopups() {
   adminGameId = null;
-  let d; try { d = await pay("admin_list"); } catch (e) { if (curTab === "admin" && adminSec === "topups") app.innerHTML = `<h1>Админ-меню</h1>${adminSeg()}<p class="err">${eText(e)}</p>`, bindSeg(); return; }
+  let d; try { d = await pay("admin_list"); } catch (e) { if (curTab === "admin" && adminSec === "topups") { app.innerHTML = `<h1>Админ-меню</h1>${adminSeg()}<p class="err">${eText(e)}</p>`; bindSeg(); } return; }
   if (curTab !== "admin" || adminSec !== "topups") return;
   const key = JSON.stringify(d.topups);
   if (key === adminKey && app.dataset.adm === "t") return;
-  adminKey = key; app.dataset.adm = "t";
-  admTop = d.topups.length;
+  adminKey = key; app.dataset.adm = "t"; admTop = d.topups.length;
   const rows = d.topups.map(t => {
     const dt = new Date(t.created_at).toLocaleString("ru-RU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
     return `<div class="lrow" style="flex-wrap:wrap"><div class="li"><b>${t.name || "Игрок"} · ${t.tag}</b><span>${dt}${t.ref ? " · код " + t.ref : ""}</span></div><div class="st">${money(t.amount)}</div>
       <div style="display:flex;gap:8px;width:100%;margin-top:8px"><button class="btn sm" style="margin:0" data-ok="${t.id}" data-n="${t.amount}">Пополнить</button><button class="btn sm ghost" style="margin:0" data-no="${t.id}" data-n="${t.amount}">Отклонить</button></div></div>`;
   }).join("");
-  app.innerHTML = `<h1>Админ-меню</h1>${adminSeg()}<p>Заявки на пополнение. Перед подтверждением проверь поступление в банке: сумму и код в комментарии.</p>
+  app.innerHTML = `<h1>Админ-меню</h1>${adminSeg()}<p>Заявки на пополнение</p>
   <div class="mlist">${rows || "<p>Новых заявок нет.</p>"}</div>`;
   bindSeg();
-  const decide = (id, approve, n) => askOk(approve ? `Пополнить баланс на ${money(+n)}?` : `Отклонить перевод на ${money(+n)}?`, async () => {
-    try { await pay("admin_decide", { id: +id, approve }); toast(approve ? "Баланс игрока пополнен" : "Заявка отклонена"); } catch (e) { toast(eText(e)); }
+  const decide = (id, approve, n) => askOk(approve ? `Пополнить на ${money(+n)}?` : `Отклонить перевод на ${money(+n)}?`, async () => {
+    try { await pay("admin_decide", { id: +id, approve }); toast(approve ? "Пополнено" : "Отклонено"); } catch (e) { toast(eText(e)); }
     app.dataset.adm = "0"; renderTopups();
   });
   app.querySelectorAll("[data-ok]").forEach(b => b.onclick = () => decide(b.dataset.ok, true, b.dataset.n));
   app.querySelectorAll("[data-no]").forEach(b => b.onclick = () => decide(b.dataset.no, false, b.dataset.n));
 }
-
 async function renderWithdrawals() {
   adminGameId = null;
   let d; try { d = await wd("admin_list"); } catch (e) { if (curTab === "admin" && adminSec === "withdrawals") { app.innerHTML = `<h1>Админ-меню</h1>${adminSeg()}<p class="err">${eText(e)}</p>`; bindSeg(); } return; }
   if (curTab !== "admin" || adminSec !== "withdrawals") return;
   const key = JSON.stringify(d.items);
   if (key === adminKey && app.dataset.adm === "w") return;
-  adminKey = key; app.dataset.adm = "w";
-  admWd = d.items.length;
+  adminKey = key; app.dataset.adm = "w"; admWd = d.items.length;
   const rows = d.items.map(t => {
     const dt = new Date(t.created_at).toLocaleString("ru-RU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
     return `<div class="lrow" style="flex-wrap:wrap"><div class="li"><b>${t.name || "Игрок"} · ${t.tag}</b><span>${dt}</span></div><div class="st">${money(t.amount)}</div>
       <div style="width:100%;margin-top:6px;font-size:14px">${t.phone}<button class="copy" data-cp="${t.phone}">Копировать</button><br><span style="color:var(--mut);font-size:13px">Банк: ${t.bank}</span></div>
       <div style="display:flex;gap:8px;width:100%;margin-top:8px"><button class="btn sm" style="margin:0" data-pay="${t.id}" data-n="${t.amount}" data-ph="${t.phone}">Вывести</button><button class="btn sm ghost" style="margin:0" data-rej="${t.id}" data-n="${t.amount}">Отменить</button></div></div>`;
   }).join("");
-  app.innerHTML = `<h1>Админ-меню</h1>${adminSeg()}<p>Заявки на вывод. Сначала отправь деньги по номеру в банке, потом нажми «Вывести». «Отменить» вернёт сумму игроку на баланс.</p>
-  <div class="mlist">${rows || "<p>Новых заявок на вывод нет.</p>"}</div>`;
+  app.innerHTML = `<h1>Админ-меню</h1>${adminSeg()}<p>Заявки на вывод</p>
+  <div class="mlist">${rows || "<p>Новых заявок нет.</p>"}</div>`;
   bindSeg();
-  app.querySelectorAll("[data-cp]").forEach(b => b.onclick = () => { try { navigator.clipboard.writeText(b.dataset.cp); toast("Номер скопирован"); } catch (_) {} });
+  app.querySelectorAll("[data-cp]").forEach(b => b.onclick = () => { try { navigator.clipboard.writeText(b.dataset.cp); toast("Скопировано"); } catch (_) {} });
   const decide = (id, pay_, msg) => askOk(msg, async () => {
-    try { await wd("admin_decide", { id: +id, pay: pay_ }); toast(pay_ ? "Вывод отмечен как выполненный" : "Вывод отменён, деньги возвращены игроку"); } catch (e) { toast(eText(e)); }
+    try { await wd("admin_decide", { id: +id, pay: pay_ }); toast(pay_ ? "Выполнено" : "Отменено"); } catch (e) { toast(eText(e)); }
     app.dataset.adm = "0"; renderWithdrawals();
   });
-  app.querySelectorAll("[data-pay]").forEach(b => b.onclick = () => decide(b.dataset.pay, true, `Ты уже отправил ${money(+b.dataset.n)} на ${b.dataset.ph}? Отметить вывод выполненным?`));
-  app.querySelectorAll("[data-rej]").forEach(b => b.onclick = () => decide(b.dataset.rej, false, `Отменить вывод и вернуть ${money(+b.dataset.n)} игроку на баланс?`));
+  app.querySelectorAll("[data-pay]").forEach(b => b.onclick = () => decide(b.dataset.pay, true, `Отметить вывод ${money(+b.dataset.n)} выполненным?`));
+  app.querySelectorAll("[data-rej]").forEach(b => b.onclick = () => decide(b.dataset.rej, false, `Вернуть ${money(+b.dataset.n)} игроку?`));
 }
-
 async function renderPromo() {
   let d; try { d = await rpc("promo_list"); } catch (e) { toast(eText(e)); return; }
   if (curTab !== "admin" || adminSec !== "promo") return;
-  const rows = d.codes.map(c => `<div class="lrow"><div class="li"><b>${c.code}</b><span>${money(c.amount)} · использовано ${c.used}/${c.max_uses}${c.active ? "" : " · выключен"}</span></div>
+  const rows = d.codes.map(c => `<div class="lrow"><div class="li"><b>${c.code}</b><span>${money(c.amount)} · ${c.used}/${c.max_uses}${c.active ? "" : " · выключен"}</span></div>
     <button class="btn" data-pc="${c.code}" style="${c.active ? "" : "opacity:.6"}">${c.active ? "Выкл" : "Вкл"}</button></div>`).join("");
   app.innerHTML = `<h1>Админ-меню</h1>${adminSeg()}
   <div class="sec">Создать промокод</div>
-  <input type="text" id="pcode" placeholder="Код (пусто — создать случайный)" style="font-size:15px;text-transform:uppercase">
-  <input type="text" id="pamt" inputmode="numeric" placeholder="Сумма на баланс, ₽">
-  <input type="text" id="pmax" inputmode="numeric" placeholder="Сколько человек смогут использовать">
+  <input type="text" id="pcode" placeholder="Код (пусто — случайный)" style="font-size:15px;text-transform:uppercase">
+  <input type="text" id="pamt" inputmode="numeric" placeholder="Сумма, ₽">
+  <input type="text" id="pmax" inputmode="numeric" placeholder="Кол-во использований">
   <button class="btn" id="pmk">Создать промокод</button>
-  <div class="sec">Промокоды</div><div class="mlist">${rows || "<p>Пока нет промокодов.</p>"}</div>`;
+  <div class="sec">Промокоды</div><div class="mlist">${rows || "<p>Пока нет.</p>"}</div>`;
   bindSeg();
   q("pmk").onclick = async () => {
     const amount = q("pamt").value.replace(/\D/g, ""), max = q("pmax").value.replace(/\D/g, "");
-    if (!amount || !max) { toast("Укажи сумму и количество использований"); return; }
+    if (!amount || !max) { toast("Укажи сумму и количество"); return; }
     q("pmk").disabled = true;
-    try {
-      const r = await rpc("promo_create", { code: q("pcode").value, amount, max_uses: max });
-      try { navigator.clipboard.writeText(r.code); } catch (_) {}
-      toast("Создан промокод " + r.code); renderPromo();
-    } catch (e) { toast(eText(e)); q("pmk").disabled = false; }
+    try { const r = await rpc("promo_create", { code: q("pcode").value, amount, max_uses: max }); try { navigator.clipboard.writeText(r.code); } catch (_) {} toast("Создан " + r.code); renderPromo(); }
+    catch (e) { toast(eText(e)); q("pmk").disabled = false; }
   };
   app.querySelectorAll("[data-pc]").forEach(b => b.onclick = async () => {
     try { await rpc("promo_toggle", { code: b.dataset.pc }); renderPromo(); } catch (e) { toast(eText(e)); }
   });
 }
-
 async function renderAdmins() {
   let d; try { d = await rpc("admins_list"); } catch (e) { toast(eText(e)); return; }
   if (curTab !== "admin" || adminSec !== "admins") return;
-  const rows = d.admins.map(a => `<div class="lrow"><div class="li"><b>${a.name || "Ещё не заходил"}</b><span>${a.tag}${a.main ? " · главный админ" : ""}</span></div>
+  const rows = d.admins.map(a => `<div class="lrow"><div class="li"><b>${a.name || "—"}</b><span>${a.tag}${a.main ? " · главный" : ""}</span></div>
     ${a.main ? "" : `<button class="btn" data-da="${a.tag}">Убрать</button>`}</div>`).join("");
   app.innerHTML = `<h1>Админ-меню</h1>${adminSeg()}
   <div class="sec">Добавить админа</div>
-  <input type="text" id="atag" placeholder="#ТЕГ Brawl Stars" style="text-transform:uppercase">
+  <input type="text" id="atag" placeholder="#ТЕГ" style="text-transform:uppercase">
   <button class="btn" id="aadd">Сделать админом</button>
   <div class="sec">Админы</div><div class="mlist">${rows}</div>`;
   bindSeg();
   q("aadd").onclick = async () => {
     if (!q("atag").value.trim()) return;
     q("aadd").disabled = true;
-    try { await rpc("admin_add", { tag: q("atag").value }); toast("Админ добавлен"); renderAdmins(); }
+    try { await rpc("admin_add", { tag: q("atag").value }); toast("Добавлен"); renderAdmins(); }
     catch (e) { toast(eText(e)); q("aadd").disabled = false; }
   };
-  app.querySelectorAll("[data-da]").forEach(b => b.onclick = () => askOk(`Убрать админа ${b.dataset.da}?`, async () => {
+  app.querySelectorAll("[data-da]").forEach(b => b.onclick = () => askOk(`Убрать ${b.dataset.da}?`, async () => {
     try { await rpc("admin_del", { tag: b.dataset.da }); renderAdmins(); } catch (e) { toast(eText(e)); }
   }));
 }
-
 async function openGame(id) {
   adminGameId = id; app.dataset.adm = "0";
   let g; try { g = await rpc("admin_game", { id }); } catch (e) { toast(eText(e)); adminGameId = null; return renderAdmin(); }
@@ -824,51 +787,95 @@ async function openGame(id) {
   const ps = g.players.map(p => `<div class="sec" style="margin-top:14px">${p.name} · ${p.tag}</div>
     ${p.img ? `<img class="shot" src="${p.img}" data-v="1" alt="">` : "<p>Скриншот не прикреплён</p>"}
     ${sd ? `<div class="pk"><button class="btn sm" data-p="1" data-id="${p.tg_id}">1 место</button><button class="btn sm" data-p="2" data-id="${p.tg_id}">2 место</button></div>` : ""}`).join("");
-  app.innerHTML = `<h1>Игра #${g.id}</h1><p>${modeName(g.mode)} · ${g.map} · ставка ${money(g.stake)}</p>${ps}
+  app.innerHTML = `<h1>Игра #${g.id}</h1><p>${modeName(g.mode)} · ${g.map} · ${money(g.stake)}</p>${ps}
   <div class="sec">${sd ? "Выбери 1 и 2 место" : "Кто победил?"}</div>
-  ${sd ? '<button class="btn" id="done" disabled>Подтвердить результат</button>' : g.players.map(p => `<button class="btn" data-w="${p.tg_id}">Победил ${p.name}</button>`).join("")}
+  ${sd ? '<button class="btn" id="done" disabled>Подтвердить</button>' : g.players.map(p => `<button class="btn" data-w="${p.tg_id}">Победил ${p.name}</button>`).join("")}
   <button class="btn ghost" id="back">← Назад</button>`;
   app.querySelectorAll("[data-v]").forEach(i => i.onclick = () => viewImg(i.src));
   q("back").onclick = () => { app.dataset.adm = "0"; renderAdmin(); };
   const finish = async winners => {
-    try { await rpc("admin_pick", { id, winners }); toast("Результат подтверждён"); }
-    catch (e) { toast(eText(e)); }
+    try { await rpc("admin_pick", { id, winners }); toast("Подтверждено"); } catch (e) { toast(eText(e)); }
     adminGameId = null; app.dataset.adm = "0"; renderAdmin();
   };
   const ask = (msg, go) => tg.showConfirm ? tg.showConfirm(msg, ok => ok && go()) : (confirm(msg) && go());
   if (sd) {
     app.querySelectorAll("[data-p]").forEach(b => b.onclick = () => {
       const place = +b.dataset.p - 1, pid = +b.dataset.id;
-      const other = 1 - place;
-      if (picks[other] === pid) picks[other] = undefined;
+      if (picks[1 - place] === pid) picks[1 - place] = undefined;
       picks[place] = pid;
       app.querySelectorAll("[data-p]").forEach(x => x.classList.toggle("on", picks[+x.dataset.p - 1] === +x.dataset.id));
       q("done").disabled = !(picks[0] && picks[1]);
     });
     q("done").onclick = () => {
       const nm = id2 => g.players.find(p => p.tg_id === id2).name;
-      ask(`1 место: ${nm(picks[0])}\n2 место: ${nm(picks[1])}\nПодтвердить результат?`, () => finish([picks[0], picks[1]]));
+      ask(`1 место: ${nm(picks[0])}\n2 место: ${nm(picks[1])}\nПодтвердить?`, () => finish([picks[0], picks[1]]));
     };
   } else {
     app.querySelectorAll("[data-w]").forEach(b => b.onclick = () => {
       const name = g.players.find(p => String(p.tg_id) === b.dataset.w).name;
-      ask(`Победитель: ${name}. Подтвердить результат?`, () => finish([+b.dataset.w]));
+      ask(`Победитель: ${name}. Подтвердить?`, () => finish([+b.dataset.w]));
     });
   }
 }
 
+/* ============ Пополнение / вывод ============ */
+function renderTopupBox() {
+  const box = document.getElementById("tpbox"); if (!box) return;
+  if (!topupPending) { box.innerHTML = ""; return; }
+  box.innerHTML = `<div class="note"><span class="pulse"></span><b>Ожидание оплаты</b> · ${money(topupPending.amount)}<br>Администратор проверит перевод.</div>
+  <button class="link" id="tpc">Отменить заявку</button>`;
+  q("tpc").onclick = async () => {
+    try { await pay("cancel"); topupPending = null; renderTopupBox(); toast("Отменено"); } catch (e) { toast(eText(e)); }
+  };
+}
+function applyTopupState(st) {
+  const prev = topupPending;
+  topupPending = st.pending ? { amount: st.pending.amount, ref: st.pending.ref } : null;
+  if (prev && !topupPending && st.last) {
+    toast(st.last.status === "approved" ? "Баланс пополнен на " + money(st.last.amount) : "Перевод отклонён");
+  }
+  renderTopupBox();
+}
+function renderWdBox() {
+  const box = document.getElementById("wdbox"); if (!box) return;
+  box.innerHTML = wdPending.map(w => `<div class="note"><span class="pulse"></span><b>Вывод в обработке</b> · ${money(w.amount)}${w.bank ? " · " + w.bank : ""}</div>`).join("");
+}
+function applyWdState(st) {
+  const prev = wdPending;
+  wdPending = st.pending || [];
+  prev.filter(p => !wdPending.some(n => n.id === p.id)).forEach(p => {
+    const r = (st.recent || []).find(x => x.id === p.id);
+    if (r) toast(r.status === "paid" ? "Вывод " + money(r.amount) + " выполнен" : "Вывод отменён, " + money(r.amount) + " вернулись");
+  });
+  renderWdBox();
+}
+async function extraPoll() {
+  if (isAdmin) {
+    loadAdminStats();
+    try {
+      const c = await pay("admin_counts"), w = await wd("admin_count");
+      const n = Number(c.topups) + Number(c.games) + Number(w.withdrawals);
+      const bdg = document.getElementById("admbdg");
+      bdg.textContent = n; bdg.classList.toggle("hidden", n === 0);
+      if (Number(c.topups) > admTop) toast("Новая заявка на пополнение");
+      if (Number(w.withdrawals) > admWd) toast("Новая заявка на вывод");
+      admTop = Number(c.topups); admWd = Number(w.withdrawals);
+    } catch (e) {}
+  }
+  if (cur && (topupPending || curTab === "profile")) { try { applyTopupState(await pay("status")); } catch (e) {} }
+  if (cur && (wdPending.length || curTab === "profile")) { try { applyWdState(await wd("status")); } catch (e) {} }
+}
 function openTopup() {
-  if (topupPending) { toast("У тебя уже есть заявка на пополнение"); return; }
-  const el = document.createElement("div");
-  el.className = "sheet";
+  if (topupPending) { toast("Уже есть заявка"); return; }
+  const el = document.createElement("div"); el.className = "sheet";
   el.innerHTML = `<div class="sheet-in" id="sh"></div>`;
   document.body.appendChild(el);
   el.onclick = e => { if (e.target === el) el.remove(); };
   const sh = el.querySelector("#sh");
   const stepAmount = (def = 300) => {
-    sh.innerHTML = `<h1>Пополнение</h1><p>Выбери сумму в рублях</p>
+    sh.innerHTML = `<h1>Пополнение</h1><p>Выбери сумму</p>
     <div class="chips">${[100, 300, 500, 1000].map(a => `<button class="chip${a === def ? " on" : ""}" data-a="${a}">${a} ₽</button>`).join("")}</div>
-    <input type="text" id="amt" inputmode="numeric" value="${def}" placeholder="Своя сумма, ₽">
+    <input type="text" id="amt" inputmode="numeric" value="${def}" placeholder="Своя сумма">
     <p id="tst"></p>
     <button class="btn" id="pay">Перейти к оплате</button>
     <button class="link" id="cls">Отмена</button>`;
@@ -886,9 +893,9 @@ function openTopup() {
   const stepQr = amount => {
     const ref = String(1000 + Math.floor(Math.random() * 9000));
     sh.innerHTML = `<h1>Переведи ${money(amount)}</h1>
-    <p>Отсканируй QR-код в приложении банка (с другого устройства или сохрани картинку долгим нажатием) и переведи ровно <b style="color:var(--tx)">${money(amount)}</b></p>
-    <img class="qr" src="${QR_IMG}" alt="QR для перевода">
-    <p style="margin-top:12px">В комментарии к переводу укажи код (если банк позволяет):</p>
+    <p>Отсканируй QR (или сохрани и открой в банке) и переведи ровно <b style="color:var(--tx)">${money(amount)}</b></p>
+    ${QR_IMG ? `<img class="qr" src="${QR_IMG}" alt="QR">` : `<div class="note" style="text-align:center"><b>QR не настроен.</b> Свяжись с админом.</div>`}
+    <p style="margin-top:12px">В комментарии укажи код:</p>
     <div class="refcode">${ref}</div>
     <p id="tst"></p>
     <button class="btn" id="ok">Подтвердить перевод</button>
@@ -896,83 +903,30 @@ function openTopup() {
     sh.querySelector("#back").onclick = () => stepAmount(amount);
     sh.querySelector("#ok").onclick = async () => {
       const ok = sh.querySelector("#ok"), tst = sh.querySelector("#tst");
-      ok.disabled = true; tst.className = ""; tst.textContent = "Отправляем заявку…";
+      ok.disabled = true; tst.className = ""; tst.textContent = "Отправляем…";
       try {
         await pay("request", { amount, ref });
-        el.remove();
-        topupPending = { amount, ref };
-        renderTopupBox();
-        toast("Заявка отправлена. Ждём подтверждения администратора");
+        el.remove(); topupPending = { amount, ref }; renderTopupBox();
+        toast("Заявка отправлена");
       } catch (e) { tst.textContent = eText(e); tst.className = "err"; ok.disabled = false; }
     };
   };
   stepAmount();
 }
-
-function renderTopupBox() {
-  const box = document.getElementById("tpbox"); if (!box) return;
-  if (!topupPending) { box.innerHTML = ""; return; }
-  box.innerHTML = `<div class="note"><span class="pulse"></span><b>Ожидание оплаты</b> · ${money(topupPending.amount)}<br>Администратор проверяет перевод и пополнит баланс.</div>
-  <button class="link" id="tpc">Отменить заявку</button>`;
-  q("tpc").onclick = async () => {
-    try { await pay("cancel"); topupPending = null; renderTopupBox(); toast("Заявка отменена"); } catch (e) { toast(eText(e)); }
-  };
-}
-function applyTopupState(st) {
-  const prev = topupPending;
-  topupPending = st.pending ? { amount: st.pending.amount, ref: st.pending.ref } : null;
-  if (prev && !topupPending && st.last) {
-    toast(st.last.status === "approved" ? "Баланс пополнен на " + money(st.last.amount) : "Перевод на " + money(st.last.amount) + " отклонён администратором");
-  }
-  renderTopupBox();
-}
-let admWd = 0;
-async function extraPoll() {
-  if (isAdmin) {
-    loadAdminStats();
-    try {
-      const c = await pay("admin_counts"), w = await wd("admin_count");
-      const n = Number(c.topups) + Number(c.games) + Number(w.withdrawals);
-      const bdg = document.getElementById("admbdg");
-      bdg.textContent = n; bdg.classList.toggle("hidden", n === 0);
-      if (Number(c.topups) > admTop) toast("Новая заявка на пополнение");
-      if (Number(w.withdrawals) > admWd) toast("Новая заявка на вывод");
-      admTop = Number(c.topups); admWd = Number(w.withdrawals);
-    } catch (e) {}
-  }
-  if (cur && (topupPending || curTab === "profile")) { try { applyTopupState(await pay("status")); } catch (e) {} }
-  if (cur && (wdPending.length || curTab === "profile")) { try { applyWdState(await wd("status")); } catch (e) {} }
-}
-
-let wdPending = [];
-function renderWdBox() {
-  const box = document.getElementById("wdbox"); if (!box) return;
-  box.innerHTML = wdPending.map(w => `<div class="note"><span class="pulse"></span><b>Вывод в обработке</b> · ${money(w.amount)}${w.bank ? " · " + w.bank : ""}<br>Администратор скоро отправит перевод. Если вывод отменят, деньги вернутся на баланс.</div>`).join("");
-}
-function applyWdState(st) {
-  const prev = wdPending;
-  wdPending = st.pending || [];
-  prev.filter(p => !wdPending.some(n => n.id === p.id)).forEach(p => {
-    const r = (st.recent || []).find(x => x.id === p.id);
-    if (r) toast(r.status === "paid" ? "Вывод " + money(r.amount) + " выполнен" : "Вывод отменён", " + money(r.amount) + " верну inputлись на баланс");
-  });
- mode renderWdBox();
-}
-const normPhone = v =>=" {
-  const d = v.replace(/\Dtel/g, "");
-  if (d.length === 11 && (d[0]" === "7" || d[0] === "8")) return "+7" + d.slice(1);
+const normPhone = v => {
+  const d = v.replace(/\D/g, "");
+  if (d.length === 11 && (d[0] === "7" || d[0] === "8")) return "+7" + d.slice(1);
   if (d.length === 10 && d[0] === "9") return "+7" + d;
   return null;
 };
 function openWithdraw() {
   const bal = Math.floor(Number(cur.balance || 0));
   const el = document.createElement("div"); el.className = "sheet";
-  el.innerHTML = `<div class="sheet-in"><h1>Вывод средств</h1><p>Доступно: <b style="color:var(--tx)">${money(bal)}</b></p>
-    <input type="text" id="wamt" inputmode="numeric" placeholder="Сумма вывода, ₽" autocomplete="off">
-    <input type="text" id="wph placeholder="Номер телефона получателя" value="+7" autocomplete="off">
-    <input type="text" id="wbank" list="banks" placeholder="Банк получателя" autocomplete="off">
-    <datalist id="banks"><option value="Сбербанк"><option value="Т-Банк"><option value="ВТБ"><option value="Альфа-Банк"><option value="Ozon Банк"><option value="Райффайзенбанк"><option value="Газпромбанк"><option value="Совкомбанк"><option value="Яндекс Банк"></datalist>
-    <p id="tst" style="font-size:12px">Сумма сразу спишется с баланса. Если вывод отменят, деньги вернутся.</p>
+  el.innerHTML = `<div class="sheet-in"><h1>Вывод</h1><p>Доступно: <b style="color:var(--tx)">${money(bal)}</b></p>
+    <input type="text" id="wamt" inputmode="numeric" placeholder="Сумма, ₽">
+    <input type="text" id="wph" inputmode="tel" placeholder="Телефон" value="+7">
+    <input type="text" id="wbank" placeholder="Банк">
+    <p id="tst" style="font-size:12px">Сумма спишется сразу. Если отменят — вернётся.</p>
     <button class="btn" id="ok">Подтвердить вывод</button><button class="link" id="cls">Отмена</button></div>`;
   document.body.appendChild(el);
   el.onclick = e => { if (e.target === el) el.remove(); };
@@ -983,31 +937,39 @@ function openWithdraw() {
     const amount = parseInt(el.querySelector("#wamt").value.replace(/\D/g, ""), 10);
     const phone = normPhone(el.querySelector("#wph").value);
     const bank = el.querySelector("#wbank").value.trim();
-    if (!amount || amount < 50) return bad("Минимальная сумма вывода — 50 ₽");
-    if (amount > bal) return bad("Недостаточно средств на балансе");
-    if (!phone) return bad("Введи российский номер: +7 900 000-00-00");
-    if (bank.length < 2) return bad("Укажи банк получателя");
-    ok.disabled = true; tst.className = ""; tst.textContent = "Создаём заявку…";
+    if (!amount || amount < 50) return bad("Минимум 50 ₽");
+    if (amount > bal) return bad("Недостаточно средств");
+    if (!phone) return bad("Введи номер +7 900 000-00-00");
+    if (bank.length < 2) return bad("Укажи банк");
+    ok.disabled = true; tst.className = ""; tst.textContent = "Создаём…";
     try {
       const d = await wd("request", { amount, phone, bank });
       cur.balance = d.balance;
       const wbe = document.getElementById("wb"); if (wbe) wbe.textContent = money(d.balance);
       wdPending.push({ id: d.id, amount, bank }); renderWdBox();
-      el.remove(); toast("Заявка на вывод создана");
+      el.remove(); toast("Заявка создана");
     } catch (e) { bad(eText(e)); ok.disabled = false; }
   };
 }
 
+/* ============ Старт ============ */
 document.querySelectorAll("#nav button").forEach(b => b.onclick = () => { if (cur) showTab(b.dataset.t); });
-
 ["gesturestart", "gesturechange", "gestureend"].forEach(ev => document.addEventListener(ev, e => e.preventDefault()));
 document.addEventListener("touchmove", e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
 document.addEventListener("dblclick", e => e.preventDefault());
 
 function boot() {
   app.innerHTML = "<h1>Загрузка…</h1>";
-  call("me").then(d => { render(d.player); ms("ref_touch").catch(() => {}); }).catch(e => {
-    app.innerHTML = `<div class="icon">⚠️</div><h1>Не удалось загрузить</h1><p class="err">${errText(e)}</p><p style="font-size:12px">${[e.error, e.status, e.detail, e.message].filter(Boolean).join(" · ")}</p><button class="btn" onclick="boot()">Повторить</button>`;
+  const t = setTimeout(() => {
+    app.innerHTML = `<div class="icon">⚠️</div><h1>Сервер не отвечает</h1><p>Через 15 сек ответа нет.</p><p style="font-size:12px;word-break:break-all">${API}</p><button class="btn" onclick="boot()">Повторить</button>`;
+  }, 15000);
+  call("me").then(d => {
+    clearTimeout(t);
+    render(d.player);
+    ms("ref_touch").catch(() => {});
+  }).catch(e => {
+    clearTimeout(t);
+    app.innerHTML = `<div class="icon">⚠️</div><h1>Ошибка загрузки</h1><p class="err">${errText(e)}</p><p style="font-size:12px;word-break:break-all">${JSON.stringify(e)}</p><button class="btn" onclick="boot()">Повторить</button>`;
   });
 }
 boot();
