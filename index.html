@@ -146,11 +146,25 @@ input{-webkit-user-select:text;user-select:text}
 .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--or),var(--or2));border-radius:6px}
 .refbox{word-break:break-all;background:#0a0a0a;border:1px dashed rgba(255,122,0,.5);border-radius:12px;padding:10px;font-size:12px;color:var(--or2);margin-top:10px;-webkit-user-select:text;user-select:text}
 .row2{display:flex;gap:8px;margin-top:10px}.row2 .btn{flex:1;margin:0}
+.sup{position:fixed;right:16px;bottom:calc(104px + env(safe-area-inset-bottom,0px));width:52px;height:52px;border-radius:50%;border:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 25%,#ffb066,var(--or) 60%,#c85a00);box-shadow:0 6px 20px rgba(255,122,0,.45);z-index:40;cursor:pointer}
+.sup.hidden{display:none}
+.sup svg{width:26px;height:26px;fill:none;stroke:#111;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sup .bdg{top:-4px;right:-4px}
+.smsgs{max-height:38vh;overflow-y:auto;margin-top:14px;text-align:left}
+.sb{max-width:82%;padding:9px 12px;border-radius:14px;margin-top:8px;font-size:14px;line-height:1.4;word-break:break-word;white-space:pre-wrap;-webkit-user-select:text;user-select:text}
+.sb small{display:block;color:var(--mut);font-size:10px;margin-top:3px}
+.sb.me{margin-left:auto;background:rgba(255,122,0,.16);border:1px solid rgba(255,122,0,.35)}
+.sb.them{margin-right:auto;background:#0d0d0d;border:1px solid #262626}
+.sta{width:100%;background:#0c0c0c;border:1px solid #2e2e2e;color:var(--tx);border-radius:12px;padding:12px;margin-top:12px;font-size:15px;font-family:inherit;outline:0;resize:none;-webkit-user-select:text;user-select:text}
+.sta:focus{border-color:var(--or)}
+.sheet-in .lrow .li span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 </style>
 </head>
 <body>
 <div class="brand">StartUp <span>—</span> Brawl Stars</div>
 <div id="app" class="card"><h1>Загрузка…</h1></div>
+
+<button class="sup hidden" id="sup"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1.1-4.6A8 8 0 1 1 21 12z"/></svg><i class="bdg hidden" id="supbdg"></i></button>
 
 <nav id="nav" class="hidden">
   <button data-t="profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Профиль</button>
@@ -225,7 +239,7 @@ async function cryptoTopup(amountCrypto, currency) {
   return d.url;
 }
 
-const LERR = { bad_mission: "Такой миссии нет", mission_not_ready: "Миссия ещё не выполнена", mission_claimed: "Награда уже получена", bad_amount_wd: "Минимальная сумма вывода — 50 ₽", bad_phone: "Введи российский номер: +7 900 000-00-00", bad_bank: "Укажи банк получателя", wd_gone: "Заявка уже обработана", bad_amount: "Сумма от 50 до 50 000 ₽", topup_pending: "У тебя уже есть заявка на пополнение", topup_gone: "Заявка уже обработана", promo_invalid: "Промокод не найден или отключён", promo_used_up: "Промокод уже закончился", promo_already: "Ты уже использовал этот промокод", too_many: "Слишком много попыток. Попробуй позже", bad_tag: "Неверный тег", bad_code: "Код: 3–32 символа", bad_promo: "Проверь сумму и количество использований", promo_exists: "Такой промокод уже есть", forbidden: "Нет доступа", bad_link: "Нужна ссылка вида https://link.brawlstars.com/…", no_link_yet: "Создатель ещё не прислал ссылку", bad_image: "Нужно изображение", image_too_big: "Файл слишком большой", auth_expired: "Сессия устарела — открой заново", bad_auth: "Открой из Telegram", no_bot_token: "Сервер не настроен", bad_winner: "Неверный победитель", no_balance: "Недостаточно средств", already_in_lobby: "Ты уже в лобби", lobby_unavailable: "Лобби уже недоступно", bad_stake: "Неверная ставка", bad_mode: "Неверный режим", no_maps: "Нет карт для ШД", not_verified: "Аккаунт не верифицирован", not_in_lobby: "Тебя нет в лобби", rpc_error: "Ошибка сервера" };
+const LERR = { bad_mission: "Такой миссии нет", mission_not_ready: "Миссия ещё не выполнена", mission_claimed: "Награда уже получена", bad_amount_wd: "Минимальная сумма вывода — 50 ₽", bad_phone: "Введи российский номер: +7 900 000-00-00", bad_bank: "Укажи банк получателя", wd_gone: "Заявка уже обработана", bad_amount: "Сумма от 50 до 50 000 ₽", topup_pending: "У тебя уже есть заявка на пополнение", topup_gone: "Заявка уже обработана", promo_invalid: "Промокод не найден или отключён", promo_used_up: "Промокод уже закончился", promo_already: "Ты уже использовал этот промокод", too_many: "Слишком много попыток. Попробуй позже", bad_tag: "Неверный тег", bad_code: "Код: 3–32 символа", bad_promo: "Проверь сумму и количество использований", promo_exists: "Такой промокод уже есть", forbidden: "Нет доступа", bad_link: "Нужна ссылка вида https://link.brawlstars.com/…", no_link_yet: "Создатель ещё не прислал ссылку", bad_image: "Нужно изображение", image_too_big: "Файл слишком большой", auth_expired: "Сессия устарела — открой заново", bad_auth: "Открой из Telegram", no_bot_token: "Сервер не настроен", bad_winner: "Неверный победитель", no_balance: "Недостаточно средств", already_in_lobby: "Ты уже в лобби", lobby_unavailable: "Лобби уже недоступно", bad_stake: "Неверная ставка", bad_mode: "Неверный режим", no_maps: "Нет карт для ШД", not_verified: "Аккаунт не верифицирован", not_in_lobby: "Тебя нет в лобби", rpc_error: "Ошибка сервера", bad_text: "Напиши сообщение" };
 const eText = e => LERR[e.error] || errText(e) || (e && e.error ? ("Ошибка: " + e.error) : "Ошибка");
 
 const USER_SVG = '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>';
@@ -356,6 +370,7 @@ function render(p) {
   const v = p.status === "verified";
   document.body.classList.toggle("shell", v);
   document.getElementById("nav").classList.toggle("hidden", !v);
+  document.getElementById("sup").classList.toggle("hidden", !v);
   if (p.status === "verified") return profile(p);
   if (p.status === "pending") return pending(p);
   return upload();
@@ -366,7 +381,7 @@ let isAdmin = false, isMain = false, adminSec = "games", adminGameId = null, adm
 let snap = null, off = 0, pollT = null, cdT = null, lastKey = "", busy = false, pickStake = 100;
 let pollN = 0, admTop = 0, topupPending = null, admWd = 0, wdPending = [], adminStats = null;
 function profile(p) {
-  cur = p; showTab(curTab); startPoll();
+  cur = p; showTab(curTab); startPoll(); supBadge();
   rpc("whoami").then(d => { isAdmin = !!d.admin; isMain = !!d.main; document.getElementById("navadmin").classList.toggle("hidden", !isAdmin); }).catch(() => {});
 }
 function showTab(t) {
@@ -907,6 +922,7 @@ function applyWdState(st) {
   renderWdBox();
 }
 async function extraPoll() {
+  supBadge();
   if (isAdmin) {
     loadAdminStats();
     try {
@@ -1030,6 +1046,76 @@ function openWithdraw() {
     } catch (e) { bad(eText(e)); ok.disabled = false; }
   };
 }
+
+// ===== Поддержка =====
+const sup = (a, b) => rpcTo("tg_support", a, b);
+let supN = -1;
+function setSupBadge(n) { const b = q("supbdg"); if (!b) return; b.textContent = n; b.classList.toggle("hidden", !n); }
+async function supBadge() {
+  try {
+    const d = await sup("badge"), n = Number(d.n) || 0;
+    if (supN >= 0 && n > supN) toast(d.admin ? "Новое обращение в поддержку" : "Ответ от поддержки");
+    supN = n; setSupBadge(n);
+  } catch (e) {}
+}
+const fmtT = t => new Date(t).toLocaleString("ru-RU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+const escH = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+function openSupport() {
+  const el = document.createElement("div"); el.className = "sheet";
+  el.innerHTML = '<div class="sheet-in" id="ssh"></div>';
+  document.body.appendChild(el);
+  el.onclick = e => { if (e.target === el) el.remove(); };
+  const sh = el.querySelector("#ssh");
+  let timer = null, peer = null;
+  const stop = () => { if (timer) { clearInterval(timer); timer = null; } };
+  const bubbles = ms => ms.length ? ms.map(m => `<div class="sb ${m.admin === isAdmin ? "me" : "them"}">${escH(m.text)}<small>${fmtT(m.at)}</small></div>`).join("") : "<p>Сообщений пока нет.</p>";
+  const loadThread = async force => {
+    const d = peer ? await sup("user_thread", { tg: peer.tg }) : await sup("thread");
+    const box = sh.querySelector("#smsgs"); if (!box) return;
+    const atEnd = force || box.scrollHeight - box.scrollTop - box.clientHeight < 40;
+    box.innerHTML = bubbles(d.messages);
+    if (atEnd) box.scrollTop = box.scrollHeight;
+    supBadge();
+  };
+  const threadView = () => {
+    sh.innerHTML = `<h1>${peer ? escH(peer.name) : "Поддержка"}</h1>
+      <p>${peer ? escH(peer.tag || "") : "Опиши проблему — мы ответим здесь"}</p>
+      <div class="smsgs" id="smsgs"><p>Загрузка…</p></div>
+      <textarea class="sta" id="stxt" rows="2" maxlength="1000" placeholder="Сообщение…"></textarea>
+      <button class="btn" id="ssend">Отправить</button>
+      ${peer ? '<button class="link" id="sback">← К обращениям</button>' : '<button class="link" id="scls">Закрыть</button>'}`;
+    if (peer) sh.querySelector("#sback").onclick = () => { stop(); inboxView(); };
+    else sh.querySelector("#scls").onclick = () => { stop(); el.remove(); };
+    sh.querySelector("#ssend").onclick = async () => {
+      const t = sh.querySelector("#stxt").value.trim(); if (!t) return;
+      const b = sh.querySelector("#ssend"); b.disabled = true;
+      try {
+        if (peer) await sup("reply", { tg: peer.tg, text: t }); else await sup("send", { text: t });
+        sh.querySelector("#stxt").value = "";
+        await loadThread(true);
+      } catch (e) { toast(eText(e)); }
+      b.disabled = false;
+    };
+    loadThread(true).catch(e => toast(eText(e)));
+    stop();
+    timer = setInterval(() => {
+      if (!document.body.contains(el)) { stop(); return; }
+      if (sh.querySelector("#smsgs")) loadThread(false).catch(() => {});
+    }, 4000);
+  };
+  const inboxView = async () => {
+    peer = null; stop();
+    sh.innerHTML = "<h1>Поддержка</h1><p>Загрузка…</p>";
+    let d; try { d = await sup("inbox"); } catch (e) { toast(eText(e)); el.remove(); return; }
+    const byTg = {}; d.items.forEach(x => byTg[x.tg] = x);
+    const rows = d.items.map(x => `<div class="lrow" data-u="${x.tg}" style="cursor:pointer"><div class="li"><b>${escH(x.name)}</b><span>${escH(x.last || "")}</span></div>${x.unread ? `<div class="st">${x.unread}</div>` : ""}</div>`).join("");
+    sh.innerHTML = `<h1>Поддержка</h1><p>Обращения игроков</p><div class="smsgs">${rows || "<p>Обращений пока нет.</p>"}</div><button class="link" id="scls">Закрыть</button>`;
+    sh.querySelector("#scls").onclick = () => el.remove();
+    sh.querySelectorAll("[data-u]").forEach(r => r.onclick = () => { peer = byTg[r.dataset.u]; threadView(); });
+  };
+  if (isAdmin) inboxView(); else threadView();
+}
+q("sup").onclick = openSupport;
 
 document.querySelectorAll("#nav button").forEach(b => b.onclick = () => { if (cur) showTab(b.dataset.t); });
 ["gesturestart", "gesturechange", "gestureend"].forEach(ev => document.addEventListener(ev, e => e.preventDefault()));
