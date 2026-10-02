@@ -101,6 +101,15 @@ input{-webkit-user-select:text;user-select:text}
 .ready{margin-top:16px;color:var(--mut);font-weight:700}.ready b{color:var(--tx);font-size:22px}
 .toast{position:fixed;left:50%;top:96px;transform:translateX(-50%);background:#2a1200;border:1px solid var(--or);color:var(--tx);padding:10px 16px;border-radius:12px;font-size:14px;z-index:99;max-width:90%;text-align:center}
 .btn.ghost{background:none;border:1px solid #333;color:var(--mut);box-shadow:none}
+#nav button.hidden{display:none}
+.note{background:rgba(255,122,0,.07);border:1px solid rgba(255,122,0,.3);border-radius:14px;padding:12px 14px;margin-top:16px;color:var(--tx);font-size:13px;line-height:1.55;text-align:left}
+.note b{color:var(--or2)}
+.pulse{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--or);margin-right:8px;animation:pl 1.2s infinite}
+@keyframes pl{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+.shot{width:100%;border-radius:12px;border:1px solid #2a2a2a;margin-top:8px;display:block}
+.viewer{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:90;display:flex;align-items:center;justify-content:center}
+.viewer img{max-width:100%;max-height:100%;object-fit:contain}
+.btn.sm{padding:11px;font-size:14px;margin-top:10px}
 </style>
 </head>
 <body>
@@ -111,6 +120,7 @@ input{-webkit-user-select:text;user-select:text}
   <button data-t="profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Профиль</button>
   <button data-t="matches"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>Матчи</button>
   <button data-t="top"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4"/><path d="M12 13v4M10 17h4M8 21h8"/></svg>Топ</button>
+  <button data-t="admin" id="navadmin" class="hidden"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg>Админ</button>
 </nav>
 <script>
 // ВСТАВЬ после деплоя функции:
@@ -269,11 +279,16 @@ const ICONS = {
   top: '<svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4"/><path d="M12 13v4M10 17h4M8 21h8"/></svg>'
 };
 let curTab = "profile", cur = null;
-function profile(p) { cur = p; showTab(curTab); startPoll(); }
+let isAdmin = false, adminGameId = null, adminKey = "";
+function profile(p) {
+  cur = p; showTab(curTab); startPoll();
+  rpc("whoami").then(d => { isAdmin = !!d.admin; document.getElementById("navadmin").classList.toggle("hidden", !isAdmin); }).catch(() => {});
+}
 function showTab(t) {
-  curTab = t;
+  curTab = t; app.dataset.adm = "0";
   document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("on", b.dataset.t === t));
   if (t === "matches") { renderMatches(); return; }
+  if (t === "admin") { renderAdmin(); return; }
   if (t === "top") {
     const title = t === "matches" ? "Матчи" : "Топ игроков";
     const text = t === "matches" ? "Здесь появятся твои матчи и результаты — когда запустим матчи на платформе." : "Здесь будет рейтинг лучших игроков платформы.";
@@ -286,21 +301,23 @@ function showTab(t) {
   app.innerHTML = `<img class="ava" src="${ava || cur.tg_photo_url || ""}" alt="">
   <div class="nick">${cur.bs_name}</div>
   <p class="tag">${cur.bs_tag}</p>
-  <span class="badge">✔ Аккаунт подтверждён</span>
   <div class="stats">
-    <div class="stat w"><b>${w}</b><span>Победы</span></div>
-    <div class="stat l"><b>${l}</b><span>Поражения</span></div>
-    <div class="stat r"><b>${wr}</b><span>Винрейт</span></div>
+    <div class="stat w"><b id="sw">${w}</b><span>Победы</span></div>
+    <div class="stat l"><b id="sl">${l}</b><span>Поражения</span></div>
+    <div class="stat r"><b id="sr">${wr}</b><span>Винрейт</span></div>
   </div>
-  <div class="wallet"><div><span>Баланс</span><b>${bal} ₽</b></div><button class="btn" id="topup">＋ Пополнить</button></div>`;
+  <div class="wallet"><div><span>Баланс</span><b>${bal} ₽</b></div><button class="btn" id="topup">＋ Пополнить</button></div>
+  <div class="chart"><div class="ch-title">История рейтинга</div><div id="chbox"><p>Загрузка…</p></div></div>
+  <div class="sec">История матчей</div><div id="hlist" class="mlist"></div>`;
   q("topup").onclick = openTopup;
+  loadProfileHistory();
 }
 
 const q = id => document.getElementById(id);
 
 // ---------- Матчи со ставками ----------
 const USER_SVG = '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>';
-const LERR = { no_balance: "Недостаточно средств на балансе", already_in_lobby: "Ты уже в лобби", lobby_unavailable: "Лобби уже недоступно",
+const LERR = { forbidden: "Нет доступа", bad_link: "Нужна ссылка вида https://link.brawlstars.com/…", no_link_yet: "Создатель ещё не прислал ссылку", bad_image: "Нужно изображение", image_too_big: "Файл слишком большой", auth_expired: "Сессия устарела — открой приложение заново", bad_auth: "Открой приложение из Telegram", no_bot_token: "Сервер не настроен (bot_token)", bad_winner: "Неверный победитель", no_balance: "Недостаточно средств на балансе", already_in_lobby: "Ты уже в лобби", lobby_unavailable: "Лобби уже недоступно",
   bad_stake: "Неверная ставка", not_verified: "Аккаунт не верифицирован", not_in_lobby: "Тебя нет в этом лобби" };
 let snap = null, off = 0, pollT = null, cdT = null, lastKey = "", busy = false, pickStake = 100;
 const money = n => Number(n || 0).toLocaleString("ru-RU") + " ₽";
@@ -317,7 +334,11 @@ function applySnap(sn) {
   if (key !== lastKey) { lastKey = key; if (curTab === "matches") renderMatches(); }
   if (sn.mine && sn.mine.status === "confirming" && curTab !== "matches") showTab("matches");
 }
-async function poll() { if (busy) return; try { applySnap((await call("lobbies")).snap); } catch (e) {} }
+async function poll() {
+  if (busy) return;
+  try { applySnap((await call("lobbies")).snap); } catch (e) {}
+  if (isAdmin && curTab === "admin" && !adminGameId) renderAdmin();
+}
 function startPoll() { if (pollT) return; poll(); pollT = setInterval(poll, 2500); cdT = setInterval(tick, 250); }
 async function lobbyCall(action, extra = {}) {
   if (busy) return; busy = true;
@@ -335,6 +356,36 @@ function tick() {
 }
 const avatar = p => p ? `<div class="av ${p.confirmed ? "ok" : ""}">${p.photo ? `<img src="${p.photo}" alt="">` : USER_SVG}</div>` : '<div class="av empty"></div>';
 
+const RPC = "https://wlhzcocwgmzcrtzhefic.supabase.co/rest/v1/rpc/tg_do";
+async function rpc(action, args = {}) {
+  const ac = new AbortController(), tm = setTimeout(() => ac.abort(), 25000);
+  try {
+    const r = await fetch(RPC, { method: "POST", signal: ac.signal,
+      headers: { "Content-Type": "application/json", apikey: ANON, Authorization: "Bearer " + ANON },
+      body: JSON.stringify({ p_init: tg.initData, p_action: action, p_args: args }) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw { error: d.message || "rpc_error" };
+    return d;
+  } catch (e) {
+    if (e.name === "AbortError") throw { error: "timeout" };
+    if (e instanceof TypeError) throw { error: "network" };
+    throw e;
+  } finally { clearTimeout(tm); }
+}
+const eText = e => LERR[e.error] || errText(e);
+async function shrink(file) {   // сжимаем скриншот перед отправкой
+  const img = await createImageBitmap(file);
+  const k = Math.min(1, 1100 / Math.max(img.width, img.height));
+  const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+  c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+  return c.toDataURL("image/jpeg", 0.62);
+}
+function viewImg(src) {
+  const v = document.createElement("div"); v.className = "viewer"; v.innerHTML = `<img src="${src}" alt="">`;
+  v.onclick = () => v.remove(); document.body.appendChild(v);
+}
+const modeName = m => (m === "1v1" ? "1×1" : m);
+
 function renderMatches() {
   if (curTab !== "matches") return;
   if (!snap) { app.innerHTML = '<h1>Матчи</h1><p>Загрузка…</p>'; return; }
@@ -342,7 +393,7 @@ function renderMatches() {
   if (m && m.status === "confirming") {
     const me = m.players.find(p => p.me), ready = m.players.filter(p => p.confirmed).length;
     app.innerHTML = `<div class="ringwrap"><svg viewBox="0 0 200 200"><circle class="r-bg" cx="100" cy="100" r="90"/><circle class="r-fg" id="ring" cx="100" cy="100" r="90"/></svg><div class="cd" id="cd"></div></div>
-    <h1 class="big">Матч найден</h1><p>Ставка <b style="color:var(--tx)">${money(m.stake)}</b> с каждого</p>
+    <h1 class="big">Матч найден</h1><p>${modeName(m.mode)} · ${m.map}<br>Ставка <b style="color:var(--tx)">${money(m.stake)}</b> с каждого</p>
     <div class="avs">${m.players.map(avatar).join("")}</div>
     <div class="ready"><b>${ready}</b> / 2 готовы</div>
     <button class="btn" id="conf" ${me && me.confirmed ? "disabled" : ""}>${me && me.confirmed ? "Ждём соперника…" : "✓ Подтвердить"}</button>`;
@@ -350,30 +401,167 @@ function renderMatches() {
     tick(); return;
   }
   if (m && m.status === "waiting") {
-    app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Лобби создано</h1><p>Ставка ${money(m.stake)}. Ждём соперника…</p>
+    app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Лобби создано</h1><p>${modeName(m.mode)} · ${m.map}<br>Ставка ${money(m.stake)}. Ждём соперника…</p>
     <div class="avs">${avatar(m.players[0])}${avatar(null)}</div><div class="ready"><b>1</b> / 2</div>
     <button class="btn ghost" id="leave">Выйти и вернуть ${money(m.stake)}</button>`;
     q("leave").onclick = () => lobbyCall("lobby_leave", { id: m.id });
     return;
   }
-  if (m && m.status === "live") {
-    app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Матч создан</h1><p>Оба игрока подтвердили. Ставка ${money(m.stake)} с каждого.</p>
-    <div class="avs">${m.players.map(avatar).join("")}</div>`;
+  if (m && (m.status === "live" || m.status === "review")) {
+    let body;
+    if (!m.link && m.creator) {
+      body = `<div class="note"><b>Ты создатель лобби.</b> Создай лобби в Brawl Stars на карте «${m.map}», скопируй ссылку-приглашение и вставь её сюда. Соперник увидит ссылку сразу, без перезагрузки.</div>
+      <input type="text" id="lk" placeholder="https://link.brawlstars.com/…" style="font-size:15px;letter-spacing:0">
+      <button class="btn" id="sendlk">Отправить ссылку</button>`;
+    } else if (!m.link) {
+      body = `<div class="note"><span class="pulse"></span><b>Ждём ссылку на лобби.</b> Создатель лобби сейчас создаёт комнату в Brawl Stars на карте «${m.map}» и пришлёт ссылку. Она появится здесь автоматически — ничего перезагружать не нужно.</div>`;
+    } else {
+      body = `<div class="note"><b>Ссылка на лобби получена.</b><br>1. Нажми «Открыть лобби» и зайди в комнату.<br>2. Сыграйте матч на карте «${m.map}».<br>3. После игры прикрепи скриншот с результатом — эта вкладка закроется, а администратор определит победителя.</div>
+      <button class="btn" id="openlk">Открыть лобби в Brawl Stars</button>
+      <input type="file" id="shot" accept="image/*" class="hidden">
+      <button class="drop" id="pickshot"><b>📷</b>Прикрепить результат матча<small>Скриншот экрана с итогом игры</small></button>`;
+    }
+    app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Матч создан</h1><p>${modeName(m.mode)} · ${m.map} · ставка ${money(m.stake)}</p>
+    <div class="avs">${m.players.map(avatar).join("")}</div>${body}`;
+    if (q("sendlk")) q("sendlk").onclick = async () => {
+      q("sendlk").disabled = true;
+      try { await rpc("set_link", { id: m.id, link: q("lk").value }); await poll(); }
+      catch (e) { toast(eText(e)); q("sendlk").disabled = false; }
+    };
+    if (q("openlk")) q("openlk").onclick = () => tg.openLink(m.link);
+    if (q("pickshot")) {
+      q("pickshot").onclick = () => q("shot").click();
+      q("shot").onchange = async ev => {
+        const f = ev.target.files[0]; if (!f) return;
+        q("pickshot").disabled = true; q("pickshot").textContent = "Загружаем…";
+        try {
+          await rpc("submit_result", { id: m.id, img: await shrink(f) });
+          toast("Результат отправлен. Ждём решения администратора");
+          await poll(); renderMatches();
+        } catch (e) { toast(eText(e)); renderMatches(); }
+      };
+    }
     return;
   }
   const stakes = [50, 100, 200];
   const open = snap.open.map(l => `<div class="lrow"><div class="av">${l.photo ? `<img src="${l.photo}" alt="">` : USER_SVG}</div>
-    <div class="li"><b>${l.name || "Игрок"}</b><span>1 / 2 · ждёт соперника</span></div><div class="st">${money(l.stake)}</div>
+    <div class="li"><b>${l.name || "Игрок"}</b><span>${modeName(l.mode)} · ${l.map}</span></div><div class="st">${money(l.stake)}</div>
     <button class="btn" data-j="${l.id}" ${bal < l.stake ? "disabled" : ""}>Войти</button></div>`).join("");
-  app.innerHTML = `<h1>Матчи</h1><p>Создай матч или войди в чужой</p>
+  const pend = (snap.pending || []).map(x => `<div class="lrow"><div class="li"><b>На проверке у администратора</b><span>${x.map}</span></div><div class="st">${money(x.stake)}</div></div>`).join("");
+  app.innerHTML = `<h1>Матчи</h1><p>Режим 1×1 · карта «Змеиное кольцо»</p>
   <div class="balrow"><span>Баланс</span><b>${money(bal)}</b></div>
   <div class="sec">Создать матч</div>
   <div class="chips three">${stakes.map(x => `<button class="chip${x === pickStake ? " on" : ""}" data-s="${x}">${x} ₽</button>`).join("")}</div>
   <button class="btn" id="mk" ${bal < pickStake ? "disabled" : ""}>${bal < pickStake ? "Не хватает баланса" : "Создать матч · " + money(pickStake)}</button>
+  ${pend ? `<div class="sec">Ждут решения</div>${pend}` : ""}
   <div class="sec">Открытые лобби</div>${open || "<p>Пока нет открытых лобби — создай своё.</p>"}`;
   app.querySelectorAll(".chip").forEach(c => c.onclick = () => { pickStake = +c.dataset.s; renderMatches(); });
   q("mk").onclick = () => lobbyCall("lobby_create", { stake: pickStake });
   app.querySelectorAll("[data-j]").forEach(b => b.onclick = () => lobbyCall("lobby_join", { id: +b.dataset.j }));
+}
+
+// ---------- Профиль: график рейтинга и история ----------
+const fmtD = d => new Date(d).toLocaleDateString("ru-RU", { day: "numeric", month: "short" }).replace(".", "");
+const sgn = n => (n > 0 ? "+" : "") + n;
+function fillStats() {
+  const w = cur.wins || 0, l = cur.losses || 0, g = w + l;
+  const set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+  set("sw", w); set("sl", l); set("sr", g ? Math.round(w / g * 100) + "%" : "—");
+}
+async function loadProfileHistory() {
+  let d = null; try { d = await rpc("history"); } catch (e) {}
+  const box = document.getElementById("chbox"), hl = document.getElementById("hlist");
+  if (!box || curTab !== "profile") return;
+  if (!d) { box.innerHTML = "<p>История пока недоступна.</p>"; return; }
+  cur.wins = d.wins; cur.losses = d.losses; fillStats();
+  drawChart(box, d.matches);
+  hl.innerHTML = d.matches.length ? d.matches.slice().reverse().slice(0, 20).map(m => {
+    const w = m.result === "win";
+    const dt = new Date(m.created_at).toLocaleString("ru-RU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+    return `<div class="mrow"><div class="mres ${w ? "win" : "loss"}">${w ? "Победа" : "Поражение"}</div>
+      <div class="minfo"><b>${modeName(m.mode)} · ${m.map || ""}</b><span>vs ${m.opponent || "—"} · ${dt}</span></div>
+      <div class="mdelta ${m.delta >= 0 ? "up" : "down"}">${sgn(m.delta)}<small>${m.rating_after}</small></div></div>`;
+  }).join("") : "<p>Матчей пока нет.</p>";
+}
+function drawChart(box, ms) {
+  if (!ms.length) { box.innerHTML = "<p>Пока нет матчей — график появится после первой игры.</p>"; return; }
+  const W = box.clientWidth || 320, H = 150, pt = 12, pb = 8, n = ms.length;
+  const vals = ms.map(m => m.rating_after);
+  let min = Math.min(...vals), max = Math.max(...vals);
+  if (min === max) { min -= 10; max += 10; }
+  const pad = (max - min) * 0.15; min -= pad; max += pad;
+  const X = i => n === 1 ? W / 2 : i * (W / (n - 1));
+  const Y = v => pt + (H - pt - pb) * (1 - (v - min) / (max - min));
+  const line = "M" + ms.map((m, i) => X(i).toFixed(1) + "," + Y(m.rating_after).toFixed(1)).join(" L");
+  const area = line + ` L${X(n - 1).toFixed(1)},${H} L${X(0).toFixed(1)},${H} Z`;
+  const col = vals[n - 1] >= vals[0] ? "#6ee787" : "#ff6b6b";
+  const grid = [0, 1, 2, 3].map(k => { const y = (pt + (H - pt - pb) * k / 3).toFixed(1); return `<line x1="0" x2="${W}" y1="${y}" y2="${y}" stroke="#222" stroke-width="1"/>`; }).join("");
+  box.innerHTML = `<div class="ch-head"><div><b id="chv"></b><span id="chd"></span></div><span id="cht"></span></div>
+  <svg id="chsvg" viewBox="0 0 ${W} ${H}" height="${H}">
+    <defs><linearGradient id="gf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".35"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>
+    ${grid}<path d="${area}" fill="url(#gf)"/>
+    <path d="${line}" fill="none" stroke="${col}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+    <line id="cl" y1="0" y2="${H}" stroke="rgba(255,255,255,.45)" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <circle id="cc" r="6" fill="#0d0d0d" stroke="${col}" stroke-width="3"/>
+  </svg>
+  <div class="ch-foot"><span>${fmtD(ms[0].created_at)}</span><span>${fmtD(ms[n - 1].created_at)}</span></div>`;
+  const svg = box.querySelector("#chsvg"), cl = box.querySelector("#cl"), cc = box.querySelector("#cc");
+  const set = i => {
+    const m = ms[i], x = X(i);
+    cl.setAttribute("x1", x); cl.setAttribute("x2", x);
+    cc.setAttribute("cx", x); cc.setAttribute("cy", Y(m.rating_after));
+    box.querySelector("#chv").textContent = m.rating_after;
+    const d = box.querySelector("#chd"); d.textContent = sgn(m.delta); d.className = m.delta >= 0 ? "up" : "down";
+    box.querySelector("#cht").textContent = fmtD(m.created_at);
+  };
+  let drag = false;
+  const move = e => {
+    const r = svg.getBoundingClientRect();
+    const i = n === 1 ? 0 : Math.round((e.clientX - r.left) / r.width * (n - 1));
+    set(Math.max(0, Math.min(n - 1, i)));
+  };
+  svg.addEventListener("pointerdown", e => { drag = true; svg.setPointerCapture(e.pointerId); move(e); });
+  svg.addEventListener("pointermove", e => { if (drag) move(e); });
+  ["pointerup", "pointercancel"].forEach(ev => svg.addEventListener(ev, () => drag = false));
+  set(n - 1);
+}
+
+// ---------- Админ-меню ----------
+async function renderAdmin() {
+  if (curTab !== "admin") return;
+  if (!isAdmin) { app.innerHTML = "<h1>Нет доступа</h1>"; return; }
+  adminGameId = null;
+  let d; try { d = await rpc("admin_games"); } catch (e) { if (curTab === "admin") app.innerHTML = `<h1>Админ-меню</h1><p class="err">${eText(e)}</p>`; return; }
+  const key = JSON.stringify(d.games);
+  if (curTab !== "admin" || adminGameId) return;
+  if (key === adminKey && app.dataset.adm === "1") return;
+  adminKey = key; app.dataset.adm = "1";
+  const rows = d.games.map(g => `<div class="lrow" data-g="${g.id}" style="cursor:pointer"><div class="li"><b>${g.players.join(" vs ")}</b><span>${g.map} · скриншотов: ${g.shots}/2</span></div><div class="st">${money(g.stake)}</div></div>`).join("");
+  app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Админ-меню</h1><p>Игры, ожидающие выбора победителя</p>
+  <div class="mlist">${rows || "<p>Сейчас нет игр на проверке.</p>"}</div>`;
+  app.querySelectorAll("[data-g]").forEach(r => r.onclick = () => openGame(+r.dataset.g));
+}
+async function openGame(id) {
+  adminGameId = id; app.dataset.adm = "0";
+  let g; try { g = await rpc("admin_game", { id }); } catch (e) { toast(eText(e)); adminGameId = null; return renderAdmin(); }
+  const ps = g.players.map(p => `<div class="sec" style="margin-top:14px">${p.name} · ${p.tag}</div>
+    ${p.img ? `<img class="shot" src="${p.img}" data-v="1" alt="">` : "<p>Скриншот не прикреплён</p>"}`).join("");
+  app.innerHTML = `<h1>Игра #${g.id}</h1><p>${g.map} · ставка ${money(g.stake)} · банк ${money(g.stake * 2)}</p>${ps}
+  <div class="sec">Кто победил?</div>
+  ${g.players.map(p => `<button class="btn" data-w="${p.tg_id}">Победил ${p.name}</button>`).join("")}
+  <button class="btn ghost" id="back">← Назад</button>`;
+  app.querySelectorAll("[data-v]").forEach(i => i.onclick = () => viewImg(i.src));
+  q("back").onclick = () => { app.dataset.adm = "0"; renderAdmin(); };
+  app.querySelectorAll("[data-w]").forEach(b => b.onclick = () => {
+    const name = g.players.find(p => String(p.tg_id) === b.dataset.w).name;
+    const go = async () => {
+      try { await rpc("admin_pick", { id, winner: +b.dataset.w }); toast("Победитель выбран, выплата проведена"); }
+      catch (e) { toast(eText(e)); }
+      adminGameId = null; app.dataset.adm = "0"; renderAdmin();
+    };
+    const msg = `Победитель: ${name}. Выплатить банк?`;
+    tg.showConfirm ? tg.showConfirm(msg, ok => ok && go()) : (confirm(msg) && go());
+  });
 }
 
 function openTopup() {
