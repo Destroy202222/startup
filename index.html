@@ -200,7 +200,11 @@ async function rpcTo(fn, action, args = {}) {
       headers: { "Content-Type": "application/json", apikey: ANON, Authorization: "Bearer " + ANON },
       body: JSON.stringify({ p_init: tg.initData, p_action: action, p_args: args }) });
     const d = await r.json().catch(() => ({}));
-    if (!r.ok) throw { error: d.message || "rpc_error" };
+    if (!r.ok) {
+      let msg = (d && (d.message || d.error || d.hint || d.details)) || "rpc_error";
+      msg = String(msg).replace(/^P\d{4}:\s*/, "").trim();
+      throw { error: msg };
+    }
     return d;
   } catch (e) {
     if (e.name === "AbortError") throw { error: "timeout" };
@@ -209,8 +213,8 @@ async function rpcTo(fn, action, args = {}) {
   } finally { clearTimeout(tm); }
 }
 
-const LERR = { bad_mission: "Такой миссии нет", mission_not_ready: "Миссия ещё не выполнена", mission_claimed: "Награда уже получена", bad_amount_wd: "Минимальная сумма вывода — 50 ₽", bad_phone: "Введи российский номер: +7 900 000-00-00", bad_bank: "Укажи банк получателя", wd_gone: "Заявка уже обработана", bad_amount: "Сумма от 50 до 50 000 ₽", topup_pending: "У тебя уже есть заявка на пополнение", topup_gone: "Заявка уже обработана", promo_invalid: "Промокод не найден или отключён", promo_used_up: "Промокод уже закончился", promo_already: "Ты уже использовал этот промокод", too_many: "Слишком много попыток. Попробуй позже", bad_tag: "Неверный тег", bad_code: "Код: 3–32 символа", bad_promo: "Проверь сумму и количество использований", promo_exists: "Такой промокод уже есть", forbidden: "Нет доступа", bad_link: "Нужна ссылка вида https://link.brawlstars.com/…", no_link_yet: "Создатель ещё не прислал ссылку", bad_image: "Нужно изображение", image_too_big: "Файл слишком большой", auth_expired: "Сессия устарела — открой заново", bad_auth: "Открой из Telegram", no_bot_token: "Сервер не настроен", bad_winner: "Неверный победитель", no_balance: "Недостаточно средств", already_in_lobby: "Ты уже в лобби", lobby_unavailable: "Лобби недоступно", bad_stake: "Неверная ставка", bad_mode: "Неверный режим", no_maps: "Нет карт для ШД", not_verified: "Аккаунт не верифицирован", not_in_lobby: "Тебя нет в лобби" };
-const eText = e => LERR[e.error] || errText(e);
+const LERR = { bad_mission: "Такой миссии нет", mission_not_ready: "Миссия ещё не выполнена", mission_claimed: "Награда уже получена", bad_amount_wd: "Минимальная сумма вывода — 50 ₽", bad_phone: "Введи российский номер: +7 900 000-00-00", bad_bank: "Укажи банк получателя", wd_gone: "Заявка уже обработана", bad_amount: "Сумма от 50 до 50 000 ₽", topup_pending: "У тебя уже есть заявка на пополнение", topup_gone: "Заявка уже обработана", promo_invalid: "Промокод не найден или отключён", promo_used_up: "Промокод уже закончился", promo_already: "Ты уже использовал этот промокод", too_many: "Слишком много попыток. Попробуй позже", bad_tag: "Неверный тег", bad_code: "Код: 3–32 символа", bad_promo: "Проверь сумму и количество использований", promo_exists: "Такой промокод уже есть", forbidden: "Нет доступа", bad_link: "Нужна ссылка вида https://link.brawlstars.com/…", no_link_yet: "Создатель ещё не прислал ссылку", bad_image: "Нужно изображение", image_too_big: "Файл слишком большой", auth_expired: "Сессия устарела — открой заново", bad_auth: "Открой из Telegram", no_bot_token: "Сервер не настроен", bad_winner: "Неверный победитель", no_balance: "Недостаточно средств", already_in_lobby: "Ты уже в лобби", lobby_unavailable: "Лобби уже недоступно", bad_stake: "Неверная ставка", bad_mode: "Неверный режим", no_maps: "Нет карт для ШД", not_verified: "Аккаунт не верифицирован", not_in_lobby: "Тебя нет в лобби", rpc_error: "Ошибка сервера" };
+const eText = e => LERR[e.error] || errText(e) || (e && e.error ? ("Ошибка: " + e.error) : "Ошибка");
 
 const USER_SVG = '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>';
 const money = n => Number(n || 0).toLocaleString("ru-RU") + " ₽";
@@ -505,19 +509,17 @@ function renderMatches() {
   }
   const stakes = [50, 100, 200];
   const pend = (snap.pending || []).map(x => `<div class="lrow"><div class="li"><b>На проверке</b><span>${modeName(x.mode)}</span></div><div class="st">${money(x.stake)}</div></div>`).join("");
-  const searching = {};
-  (snap.open || []).forEach(l => { searching[l.stake] = (searching[l.stake] || 0) + 1; });
   app.innerHTML = `<h1>Матчи</h1><p>Нажми «Поиск» — подберём соперника автоматически</p>
   <div class="balrow"><span>Баланс</span><b>${money(bal)}</b></div>
   <div class="sec">Найти матч</div>
-  <div class="chips three">${stakes.map(x => `<button class="chip${x === pickStake ? " on" : ""}" data-s="${x}">${x} ₽${searching[x] ? " · " + searching[x] + " ищут" : ""}</button>`).join("")}</div>
+  <div class="chips three">${stakes.map(x => `<button class="chip${x === pickStake ? " on" : ""}" data-s="${x}">${x} ₽</button>`).join("")}</div>
   <button class="btn" id="mk" ${bal < pickStake ? "disabled" : ""}>${bal < pickStake ? "Не хватает баланса" : "🔍 Поиск · " + money(pickStake)}</button>
   ${pend ? `<div class="sec">Ждут решения</div>${pend}` : ""}`;
   app.querySelectorAll(".chip").forEach(c => c.onclick = () => { pickStake = +c.dataset.s; renderMatches(); });
   q("mk").onclick = async () => {
     q("mk").disabled = true;
+    const target = (snap.open || []).find(l => l.stake === pickStake);
     try {
-      const target = (snap.open || []).find(l => l.stake === pickStake);
       if (target) {
         await rpc("lobby_join", { id: target.id });
       } else {
@@ -526,12 +528,13 @@ function renderMatches() {
       await poll();
       renderMatches();
     } catch (e) {
-      if (e && e.error === "lobby_unavailable") {
-        try { await rpc("create", { stake: pickStake }); await poll(); } catch (_) {}
-        renderMatches();
-      } else {
-        toast(eText(e)); await poll(); renderMatches();
+      const msg = (e && (e.error || e.message || "")).toString().toLowerCase();
+      if (target && (msg.includes("lobby_unavailable") || msg.includes("already_in_lobby") || msg.includes("not_verified") === false)) {
+        try { await rpc("create", { stake: pickStake }); await poll(); renderMatches(); return; }
+        catch (e2) { toast(eText(e2)); await poll(); renderMatches(); return; }
       }
+      toast(eText(e));
+      await poll(); renderMatches();
     }
   };
 }
