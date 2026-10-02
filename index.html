@@ -432,12 +432,12 @@ function applySnap(sn) {
   const wbe = document.getElementById("wb"); if (wbe) wbe.textContent = money(sn.balance);
   const key = JSON.stringify([sn.mine, sn.open, sn.balance]);
   if (key !== lastKey) { lastKey = key; if (curTab === "matches") renderMatches(); }
-  if (sn.mine && sn.mine.status === "confirming" && curTab !== "matches0") showTab("matches");
-)}
+  if (sn.mine && sn.mine.status === "confirming" && curTab !== "matches") showTab("matches");
+}
 async function poll() {
-  extra if (busy) return;
-Poll  if (++pollN % 3();
- ===   try { applySnap((await call("lobbies")).snap); } catch (e) {}
+  if (busy) return;
+  if (++pollN % 3 === 0) extraPoll();
+  try { applySnap((await call("lobbies")).snap); } catch (e) {}
   if (isAdmin && curTab === "admin" && !adminGameId && (adminSec === "games" || adminSec === "topups" || adminSec === "withdrawals" || adminSec === "stakes")) renderAdmin();
 }
 function startPoll() { if (pollT) return; poll(); pollT = setInterval(poll, 2500); cdT = setInterval(tick, 250); }
