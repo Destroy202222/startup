@@ -517,8 +517,10 @@ function renderMatches() {
   app.querySelectorAll(".chip").forEach(c => c.onclick = () => { pickStake = +c.dataset.s; renderMatches(); });
   q("mk").onclick = async () => {
     q("mk").disabled = true;
-    const target = (snap.open || []).find(l => l.stake === pickStake);
     try {
+      const fresh = (await call("lobbies")).snap;
+      if (fresh) applySnap(fresh);
+      const target = (snap.open || []).find(l => l.stake === pickStake);
       if (target) {
         await rpc("lobby_join", { id: target.id });
       } else {
@@ -528,7 +530,7 @@ function renderMatches() {
       renderMatches();
     } catch (e) {
       const msg = (e && (e.error || e.message || "")).toString().toLowerCase();
-      if (target && (msg.includes("lobby_unavailable") || msg.includes("already_in_lobby") || msg.includes("not_verified") === false)) {
+      if (msg.includes("lobby_unavailable") || msg.includes("already_in_lobby")) {
         try { await rpc("create", { stake: pickStake }); await poll(); renderMatches(); return; }
         catch (e2) { toast(eText(e2)); await poll(); renderMatches(); return; }
       }
