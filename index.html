@@ -438,7 +438,7 @@ async function poll() {
   if (busy) return;
   if (++pollN % 3 === 0) extraPoll();
   try { applySnap((await call("lobbies")).snap); } catch (e) {}
-  if (isAdmin && curTab === "admin" && !adminGameId && (adminSec === "games" || adminSec === "topups" || adminSec === "withdrawals" || adminSec === "stakes")) renderAdmin();
+  if (isAdmin && curTab === "admin" && !adminGameId && (adminSec === "games" || adminSec === "topups" || adminSec === "withdrawals")) renderAdmin();
 }
 function startPoll() { if (pollT) return; poll(); pollT = setInterval(poll, 2500); cdT = setInterval(tick, 250); }
 async function lobbyCall(action, extra = {}) {
