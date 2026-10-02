@@ -520,7 +520,9 @@ function renderMatches() {
     try {
       const fresh = (await call("lobbies")).snap;
       if (fresh) applySnap(fresh);
-      const target = (snap.open || []).find(l => l.stake === pickStake);
+      const openList = snap.open || [];
+      const target = openList.find(l => l.stake === pickStake);
+      toast("Открытых: " + openList.length + " | target: " + (target ? "id=" + target.id : "нет"));
       if (target) {
         await rpc("lobby_join", { id: target.id });
       } else {
@@ -529,12 +531,13 @@ function renderMatches() {
       await poll();
       renderMatches();
     } catch (e) {
-      const msg = (e && (e.error || e.message || "")).toString().toLowerCase();
+      const detail = (e && (e.error || e.message)) || JSON.stringify(e).slice(0,150);
+      toast("Причина: " + detail);
+      const msg = String(detail).toLowerCase();
       if (msg.includes("lobby_unavailable") || msg.includes("already_in_lobby")) {
         try { await rpc("create", { stake: pickStake }); await poll(); renderMatches(); return; }
-        catch (e2) { toast(eText(e2)); await poll(); renderMatches(); return; }
+        catch (e2) { toast("Повтор не удался: " + ((e2 && (e2.error || e2.message)) || "?")); await poll(); renderMatches(); return; }
       }
-      toast(eText(e));
       await poll(); renderMatches();
     }
   };
