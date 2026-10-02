@@ -63,11 +63,24 @@ input{-webkit-user-select:text;user-select:text}
 .chip{background:#0d0d0d;border:1px solid #2e2e2e;color:var(--tx);border-radius:12px;padding:12px 0;font-weight:700;font-size:15px;cursor:pointer}
 .chip.on{border-color:var(--or);color:var(--or);background:rgba(255,122,0,.1)}
 .link{background:none;border:0;color:var(--mut);margin-top:12px;font-size:14px;cursor:pointer}
+.chart{margin-top:12px;background:#0d0d0d;border:1px solid #262626;border-radius:18px;padding:16px 14px 12px;text-align:left}
+.ch-title{font-size:11px;letter-spacing:2px;color:var(--mut);font-weight:800;text-transform:uppercase}
+.ch-head{display:flex;justify-content:space-between;align-items:baseline;margin:10px 0 6px}
+#chv{font-size:30px;font-weight:800}#chd{font-weight:800;font-size:15px;margin-left:8px}#cht{color:var(--mut);font-size:13px}
+#chsvg{display:block;width:100%;touch-action:pan-y;cursor:ew-resize}
+.ch-foot{display:flex;justify-content:space-between;color:var(--mut);font-size:12px;margin-top:6px}
+.up{color:#6ee787}.down{color:#ff6b6b}
+.mlist{text-align:left;margin-top:14px}
+.mrow{display:flex;align-items:center;gap:12px;background:#0d0d0d;border:1px solid #262626;border-radius:14px;padding:12px;margin-top:8px}
+.mres{font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;border-radius:8px;padding:6px 8px;min-width:84px;text-align:center}
+.mres.win{background:rgba(110,231,135,.12);color:#6ee787;border:1px solid rgba(110,231,135,.35)}
+.mres.loss{background:rgba(255,107,107,.12);color:#ff6b6b;border:1px solid rgba(255,107,107,.35)}
+.minfo{flex:1}.minfo b{display:block;font-size:14px}.minfo span{color:var(--mut);font-size:12px}
+.mdelta{text-align:right;font-weight:800;font-size:16px}.mdelta small{display:block;color:var(--mut);font-weight:600;font-size:11px}
 .balrow{display:flex;justify-content:space-between;align-items:center;background:#0d0d0d;border:1px solid #262626;border-radius:14px;padding:12px 14px;margin-top:14px;color:var(--mut);font-size:13px}
 .balrow b{color:var(--tx);font-size:18px}
 .sec{text-align:left;font-size:11px;letter-spacing:2px;color:var(--mut);font-weight:800;text-transform:uppercase;margin:20px 2px 8px}
 .chips.three{grid-template-columns:repeat(3,1fr)}
-.chips.one{grid-template-columns:1fr}
 .lrow{display:flex;align-items:center;gap:12px;background:#0d0d0d;border:1px solid #262626;border-radius:16px;padding:12px;margin-top:8px;text-align:left}
 .lrow .av{width:42px;height:42px;flex:none}
 .lrow .li{flex:1;min-width:0}.lrow .li b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lrow .li span{color:var(--mut);font-size:12px}
@@ -88,13 +101,6 @@ input{-webkit-user-select:text;user-select:text}
 .ready{margin-top:16px;color:var(--mut);font-weight:700}.ready b{color:var(--tx);font-size:22px}
 .toast{position:fixed;left:50%;top:96px;transform:translateX(-50%);background:#2a1200;border:1px solid var(--or);color:var(--tx);padding:10px 16px;border-radius:12px;font-size:14px;z-index:99;max-width:90%;text-align:center}
 .btn.ghost{background:none;border:1px solid #333;color:var(--mut);box-shadow:none}
-.linkin{font-size:13px;letter-spacing:0;font-weight:600}
-.shot{width:100%;max-height:320px;object-fit:contain;background:#000;border-radius:12px;border:1px solid #2a2a2a}
-.rrow{background:#0d0d0d;border:1px solid rgba(255,122,0,.35);border-radius:16px;padding:12px;margin-top:10px;text-align:left}
-.rrow .vs{display:flex;justify-content:space-between;font-weight:800;margin:8px 0;font-size:14px}
-.rrow .vs span{color:var(--mut);font-weight:600}
-.rrow .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-.rrow .acts .btn{margin:0;padding:12px;font-size:14px}
 </style>
 </head>
 <body>
@@ -107,11 +113,8 @@ input{-webkit-user-select:text;user-select:text}
   <button data-t="top"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4"/><path d="M12 13v4M10 17h4M8 21h8"/></svg>Топ</button>
 </nav>
 <script>
-const EDGE = "https://wlhzcocwgmzcrtzhefic.supabase.co/functions/v1/api";
-const RPC  = "https://wlhzcocwgmzcrtzhefic.supabase.co/rest/v1/rpc/app_rpc";
-const SQL_ACTIONS = /^(lobby_attach_result|admin_)/;
-const ADMIN_TAG = "#QQQ09U2PJ";
-const isAdmin = p => !!p && p.status === "verified" && p.bs_tag === ADMIN_TAG;
+// ВСТАВЬ после деплоя функции:
+const API = "https://wlhzcocwgmzcrtzhefic.supabase.co/functions/v1/api";
 const ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndsaHpjb2N3Z216Y3J0emhlZmljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NzQ4ODYsImV4cCI6MjEwNjQ1MDg4Nn0.-Y1jYFT1NO9Nm1SgzNU7QYBA1E8zTZr8aXA768-5cd8";
 
 const tg = Telegram.WebApp; tg.ready(); tg.expand();
@@ -119,56 +122,34 @@ tg.setHeaderColor("#0d0d0d"); tg.setBackgroundColor("#0d0d0d");
 const app = document.getElementById("app");
 const tgUser = tg.initDataUnsafe.user || {};
 const ava = tgUser.photo_url || "";
-const q = id => document.getElementById(id);
-const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 async function call(action, extra = {}) {
   const ac = new AbortController(), tm = setTimeout(() => ac.abort(), 15000);
   try {
-    const sql = SQL_ACTIONS.test(action);
-    const body = sql ? { p_action: action, p_init: tg.initData, p_args: extra }
-                     : { action, initData: tg.initData, ...extra };
-    const r = await fetch(sql ? RPC : EDGE, { method: "POST", signal: ac.signal,
+    const r = await fetch(API, { method: "POST", signal: ac.signal,
       headers: { "Content-Type": "application/json", apikey: ANON, Authorization: "Bearer " + ANON },
-      body: JSON.stringify(body) });
-    let d = {};
-    try { d = await r.json(); } catch (_) { d = { message: "http_" + r.status }; }
-    if (!r.ok) {
-      throw { error: d.error || d.message || "http_" + r.status, status: r.status,
-              detail: d.details || d.hint || d.code };
-    }
+      body: JSON.stringify({ action, initData: tg.initData, ...extra }) });
+    let d = {}; try { d = await r.json(); } catch (_) { d = { error: "http_" + r.status }; }
+    if (!r.ok) { d.status = d.status || r.status; throw d; }
     return d;
   } catch (e) {
-    if (e.name === "AbortError") throw { error: "timeout", detail: "edge-функция не ответила за 15 сек" };
+    if (e.name === "AbortError") throw { error: "timeout" };
     if (e instanceof TypeError) throw { error: "network", detail: e.message };
     throw e;
   } finally { clearTimeout(tm); }
 }
-
-const ERR_MAP = {
-  tag_not_found:"Тег не найден", tag_taken:"Этот аккаунт уже привязан", bad_auth:"Открой приложение через кнопку бота в Telegram",
-  timeout:"Сервер не отвечает. Edge-функция api не запущена или упала.",
-  network:"Нет связи с сервером", forbidden:"Нет доступа",
-  no_balance:"Недостаточно средств", already_in_lobby:"Ты уже в лобби", lobby_unavailable:"Лобби уже недоступно",
-  bad_stake:"Неверная ставка", not_verified:"Аккаунт не верифицирован", not_in_lobby:"Тебя нет в этом лобби",
-  not_host:"Ссылку прикрепляет только хост", bad_link:"Нужна ссылка вида link.brawlstars.com/invite/gameroom/…",
-  no_link:"Сначала должна быть ссылка на лобби", already_result:"Скриншот уже отправлен",
-  bad_shot:"Некорректный скриншот", shot_too_big:"Файл больше 10 МБ",
-  already_resolved:"Результат уже засчитан", unknown_action:"Сервер не знает это действие",
-  unknown:"Сервер не знает это действие", bad_response:"Пустой ответ от сервера"
-};
-const errText = e => ERR_MAP[e && e.error] || (e && e.error) || (e && e.message) || "Ошибка, попробуй ещё раз";
+const errText = e => ({ tag_not_found: "Тег не найден", tag_taken: "Этот аккаунт уже привязан", bad_auth: "Открой приложение из Telegram", timeout: "Сервер не отвечает (таймаут)", network: "Нет связи с сервером" }[e.error] || "Ошибка, попробуй ещё раз");
 
 function render(p) {
   const v = p.status === "verified";
   document.body.classList.toggle("shell", v);
   document.getElementById("nav").classList.toggle("hidden", !v);
   if (p.status === "verified") return profile(p);
-  if (p.status === "pending")  return pending(p);
+  if (p.status === "pending") return pending(p);
   return upload();
 }
 
-/* ---------------- Верификация ---------------- */
+
 const WL = "#0289PYLQGRJCUVO";
 function makeCanvas(img, sx, sy, sw, sh, k, mode) {
   const c = document.createElement("canvas");
@@ -185,6 +166,8 @@ function makeCanvas(img, sx, sy, sw, sh, k, mode) {
   x.putImageData(d, 0, 0);
   return c;
 }
+
+// Возвращает список вероятных тегов (самый частый — первый)
 async function readTags(file) {
   const img = await createImageBitmap(file);
   const reads = [];
@@ -202,7 +185,7 @@ async function readTags(file) {
       grab(data.text, true);
       if (!box) { const wd = (data.words || []).find(q => q.text.includes("#")); if (wd) box = wd.bbox; }
     }
-    if (box) {
+    if (box) {   // повторное чтение только строки с тегом, крупно
       await w.setParameters({ tessedit_pageseg_mode: "7" });
       const h = box.y1 - box.y0, pad = h * 0.6;
       const sx = Math.max(0, (box.x0 - pad) / sc), sy = Math.max(0, (box.y0 - pad) / sc);
@@ -216,7 +199,8 @@ async function readTags(file) {
   const cnt = {}; reads.forEach(r => cnt[r] = (cnt[r] || 0) + 1);
   return Object.keys(cnt).sort((a, b) => cnt[b] - cnt[a] || Math.abs(a.length - 9) - Math.abs(b.length - 9)).slice(0, 8);
 }
-function withVariants(list) {
+
+function withVariants(list) {   // + варианты без задвоенного символа (00 → 0)
   const out = [];
   for (const t of list) {
     out.push(t);
@@ -224,6 +208,7 @@ function withVariants(list) {
   }
   return [...new Set(out)].slice(0, 20);
 }
+
 function upload() {
   app.innerHTML = `<div class="icon">🛡️</div><h1>Верификация аккаунта</h1>
   <p>Подтверди, что аккаунт Brawl Stars принадлежит тебе</p>
@@ -248,6 +233,7 @@ function upload() {
   q("go").onclick = async () => {
     q("go").disabled = true; st.className = "";
     const raw = q("manual").value.toUpperCase().replace(/^#/, "").replace(/O/g, "0").replace(/[^0289PYLQGRJCUV]/g, "");
+    // если тег не правили руками — пробуем все варианты, найденные OCR
     const cands = withVariants(raw === found[0] ? found : [raw]);
     let last;
     for (const t of cands) {
@@ -258,10 +244,11 @@ function upload() {
     st.textContent = errText(last || {}); st.className = "err"; q("go").disabled = false;
   };
 }
+
 function pending(p) {
   app.innerHTML = `<div class="icon">🔑</div><h1>Подтверди аккаунт</h1>
   <div class="steps"><i class="on"></i><i class="on"></i><i></i></div>
-  <div class="found"><div style="font-weight:800;font-size:18px">${esc(p.bs_name)}</div><div class="tag">${esc(p.bs_tag)}</div></div>
+  <div class="found"><div style="font-weight:800;font-size:18px">${p.bs_name}</div><div class="tag">${p.bs_tag}</div></div>
   <p>Зайди в Brawl Stars и <b style="color:var(--or2)">смени аватарку</b> на любую другую. Затем нажми кнопку ниже.</p>
   <button class="btn" id="chk">Я сменил аватарку</button>
   <p id="st"></p><p><a href="#" id="back" style="color:var(--mut)">Другой аккаунт</a></p>`;
@@ -270,14 +257,13 @@ function pending(p) {
     try {
       const d = await call("check");
       if (d.player.status === "verified") return render(d.player);
-      q("st").textContent = "Аватарка не изменилась. Подожди ~30 сек и попробуй снова."; q("st").className = "err";
+      q("st").textContent = "Аватарка не изменилась. Подожди ~30 сек после смены и попробуй снова."; q("st").className = "err";
     } catch (e) { q("st").textContent = errText(e); q("st").className = "err"; }
     q("chk").disabled = false;
   };
   q("back").onclick = e => { e.preventDefault(); upload(); };
 }
 
-/* ---------------- Профиль / Табы ---------------- */
 const ICONS = {
   matches: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>',
   top: '<svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4"/><path d="M12 13v4M10 17h4M8 21h8"/></svg>'
@@ -287,40 +273,36 @@ function profile(p) { cur = p; showTab(curTab); startPoll(); }
 function showTab(t) {
   curTab = t;
   document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("on", b.dataset.t === t));
-  if (t === "matches") {
-    if (!snap && !pollErr) poll();
-    startPoll();
-    renderMatches();
-    return;
-  }
+  if (t === "matches") { renderMatches(); return; }
   if (t === "top") {
-    app.innerHTML = `<div class="icon ico">${ICONS.top}</div><h1>Топ игроков</h1><p>Здесь будет рейтинг лучших игроков платформы.</p><span class="soon">Скоро</span>`;
+    const title = t === "matches" ? "Матчи" : "Топ игроков";
+    const text = t === "matches" ? "Здесь появятся твои матчи и результаты — когда запустим матчи на платформе." : "Здесь будет рейтинг лучших игроков платформы.";
+    app.innerHTML = `<div class="icon ico">${ICONS[t]}</div><h1>${title}</h1><p>${text}</p><span class="soon">Скоро</span>`;
     return;
   }
-  if (!cur) { app.innerHTML = "<h1>Профиль</h1><p>Сначала пройди верификацию.</p>"; return; }
   const w = cur.wins || 0, l = cur.losses || 0, g = w + l;
   const wr = g ? Math.round(w / g * 100) + "%" : "—";
   const bal = Number(cur.balance || 0).toLocaleString("ru-RU");
-  app.innerHTML = `<img class="ava" src="${esc(ava || cur.tg_photo_url || "")}" alt="">
-  <div class="nick">${esc(cur.bs_name)}</div>
-  <p class="tag">${esc(cur.bs_tag)}</p>
+  app.innerHTML = `<img class="ava" src="${ava || cur.tg_photo_url || ""}" alt="">
+  <div class="nick">${cur.bs_name}</div>
+  <p class="tag">${cur.bs_tag}</p>
   <span class="badge">✔ Аккаунт подтверждён</span>
   <div class="stats">
     <div class="stat w"><b>${w}</b><span>Победы</span></div>
     <div class="stat l"><b>${l}</b><span>Поражения</span></div>
     <div class="stat r"><b>${wr}</b><span>Винрейт</span></div>
   </div>
-  <div class="wallet"><div><span>Баланс</span><b>${bal} ₽</b></div><button class="btn" id="topup">＋ Пополнить</button></div>
-  ${isAdmin(cur) ? '<button class="btn ghost" id="adm">🛠 Админ-меню</button>' : ""}`;
+  <div class="wallet"><div><span>Баланс</span><b>${bal} ₽</b></div><button class="btn" id="topup">＋ Пополнить</button></div>`;
   q("topup").onclick = openTopup;
-  if (q("adm")) q("adm").onclick = openAdmin;
 }
 
-/* ---------------- Матчи ---------------- */
+const q = id => document.getElementById(id);
+
+// ---------- Матчи со ставками ----------
 const USER_SVG = '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>';
-const MAPS = ["Змеиное кольцо"];
-let snap = null, off = 0, pollT = null, cdT = null, lastKey = "", busy = false,
-    pickStake = 100, pickMap = MAPS[0], linkDraft = "", pollErr = null;
+const LERR = { no_balance: "Недостаточно средств на балансе", already_in_lobby: "Ты уже в лобби", lobby_unavailable: "Лобби уже недоступно",
+  bad_stake: "Неверная ставка", not_verified: "Аккаунт не верифицирован", not_in_lobby: "Тебя нет в этом лобби" };
+let snap = null, off = 0, pollT = null, cdT = null, lastKey = "", busy = false, pickStake = 100;
 const money = n => Number(n || 0).toLocaleString("ru-RU") + " ₽";
 
 function toast(t) {
@@ -329,254 +311,79 @@ function toast(t) {
 }
 function applySnap(sn) {
   if (!sn) return;
-  snap = sn; pollErr = null; off = new Date(sn.now).getTime() - Date.now();
+  snap = sn; off = new Date(sn.now).getTime() - Date.now();
   if (cur) cur.balance = sn.balance;
   const key = JSON.stringify([sn.mine, sn.open, sn.balance]);
   if (key !== lastKey) { lastKey = key; if (curTab === "matches") renderMatches(); }
   if (sn.mine && sn.mine.status === "confirming" && curTab !== "matches") showTab("matches");
 }
-async function poll() {
-  if (busy) return;
-  if (!tg.initData) {
-    pollErr = { error: "bad_auth", detail: "initData пустой" };
-    if (curTab === "matches") renderMatches();
-    return;
-  }
-  try {
-    const d = await call("lobbies");
-    if (d && d.snap) { applySnap(d.snap); return; }
-    if (d && d.error) {
-      pollErr = { error: d.error };
-      if (curTab === "matches") renderMatches();
-      return;
-    }
-    applySnap({
-      now: new Date().toISOString(),
-      balance: (cur && cur.balance) || 0,
-      confirm_seconds: 30,
-      mine: null,
-      open: []
-    });
-  } catch (e) {
-    pollErr = e;
-    if (curTab === "matches") renderMatches();
-  }
-}
-function startPoll() {
-  if (pollT) return;
-  if (!tg.initData) { poll(); return; }
-  poll();
-  pollT = setInterval(poll, 2500);
-  cdT  = setInterval(tick, 250);
-}
+async function poll() { if (busy) return; try { applySnap((await call("lobbies")).snap); } catch (e) {} }
+function startPoll() { if (pollT) return; poll(); pollT = setInterval(poll, 2500); cdT = setInterval(tick, 250); }
 async function lobbyCall(action, extra = {}) {
   if (busy) return; busy = true;
-  try {
-    const d = await call(action, extra);
-    busy = false;
-    if (d.error) { toast(errText(d)); return; }
-    if (d.snap) { applySnap(d.snap); renderMatches(); }
-    else {
-      applySnap({
-        now: new Date().toISOString(),
-        balance: (cur && cur.balance) || 0,
-        confirm_seconds: 30, mine: null, open: []
-      });
-    }
-  } catch (e) { busy = false; toast(errText(e)); }
+  try { const d = await call(action, extra); busy = false; applySnap(d.snap); if (d.error) toast(LERR[d.error] || d.error); if (d.snap) renderMatches(); }
+  catch (e) { busy = false; toast(errText(e)); }
 }
 function tick() {
   const el = document.getElementById("cd");
   if (!el || !snap || !snap.mine || snap.mine.status !== "confirming") return;
-  const total = (snap.confirm_seconds || 30) * 1000;
+  const total = snap.confirm_seconds * 1000;
   const left = Math.max(0, new Date(snap.mine.deadline).getTime() - (Date.now() + off));
-  if (!isFinite(left)) return;
   el.textContent = Math.ceil(left / 1000);
   const ring = document.getElementById("ring"); if (ring) ring.style.strokeDashoffset = 565 * (1 - left / total);
   if (left <= 0 && !tick.f) { tick.f = true; setTimeout(() => { tick.f = false; poll(); }, 700); }
 }
-const avatar = p => p ? `<div class="av ${p.confirmed ? "ok" : ""}">${p.photo ? `<img src="${esc(p.photo)}" alt="">` : USER_SVG}</div>` : '<div class="av empty"></div>';
-const avatarsTwo = players => [0,1].map(i => avatar(players && players[i] ? players[i] : null)).join("");
+const avatar = p => p ? `<div class="av ${p.confirmed ? "ok" : ""}">${p.photo ? `<img src="${p.photo}" alt="">` : USER_SVG}</div>` : '<div class="av empty"></div>';
 
 function renderMatches() {
   if (curTab !== "matches") return;
-  if (!snap) {
-    app.innerHTML = pollErr
-      ? `<h1>Матчи</h1><p class="err">${errText(pollErr)}</p>
-         <p style="font-size:12px;color:var(--mut)">${esc([pollErr.error, pollErr.status, pollErr.detail].filter(Boolean).join(" · "))}</p>
-         <button class="btn" id="retry">Повторить</button>`
-      : `<h1>Матчи</h1><p>Загрузка…</p><button class="btn ghost" id="force">Обновить</button>`;
-    if (q("retry")) q("retry").onclick = () => { pollErr = null; renderMatches(); poll(); };
-    if (q("force")) q("force").onclick = () => { pollErr = null; renderMatches(); poll(); };
-    return;
-  }
+  if (!snap) { app.innerHTML = '<h1>Матчи</h1><p>Загрузка…</p>'; return; }
   const m = snap.mine, bal = snap.balance;
-
   if (m && m.status === "confirming") {
     const me = m.players.find(p => p.me), ready = m.players.filter(p => p.confirmed).length;
-    app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Матч найден</h1><p>${esc(m.map)} · ставка ${money(m.stake)}</p>
-    <div class="avs">${avatarsTwo(m.players)}</div><div class="ready"><b>${ready}</b> / 2 готовы</div>
+    app.innerHTML = `<div class="ringwrap"><svg viewBox="0 0 200 200"><circle class="r-bg" cx="100" cy="100" r="90"/><circle class="r-fg" id="ring" cx="100" cy="100" r="90"/></svg><div class="cd" id="cd"></div></div>
+    <h1 class="big">Матч найден</h1><p>Ставка <b style="color:var(--tx)">${money(m.stake)}</b> с каждого</p>
+    <div class="avs">${m.players.map(avatar).join("")}</div>
+    <div class="ready"><b>${ready}</b> / 2 готовы</div>
     <button class="btn" id="conf" ${me && me.confirmed ? "disabled" : ""}>${me && me.confirmed ? "Ждём соперника…" : "✓ Подтвердить"}</button>`;
     q("conf").onclick = () => lobbyCall("lobby_confirm", { id: m.id });
-    return;
+    tick(); return;
   }
   if (m && m.status === "waiting") {
-    app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Лобби создано</h1><p>${esc(m.map)} · ставка ${money(m.stake)}. Ждём соперника…</p>
-    <div class="avs">${avatarsTwo(m.players)}</div><div class="ready"><b>1</b> / 2</div>
-    <button class="btn ghost" id="leave">Выйти</button>`;
+    app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Лобби создано</h1><p>Ставка ${money(m.stake)}. Ждём соперника…</p>
+    <div class="avs">${avatar(m.players[0])}${avatar(null)}</div><div class="ready"><b>1</b> / 2</div>
+    <button class="btn ghost" id="leave">Выйти и вернуть ${money(m.stake)}</button>`;
     q("leave").onclick = () => lobbyCall("lobby_leave", { id: m.id });
     return;
   }
   if (m && m.status === "live") {
-    let box;
-    if (m.link) {
-      box = `<div class="found"><div class="tag" style="font-size:14px">Ссылка на лобби получена</div></div>
-        <button class="btn" id="openl">Открыть в Brawl Stars</button>
-        <button class="btn" id="shot">📷 Прикрепить скриншот результата</button>
-        <p style="font-size:12px;color:var(--mut);margin-top:8px">После отправки скрина лобби закроется, админ определит победителя.</p>`;
-    } else if (m.is_host) {
-      box = `<p>В Brawl Stars: Друзья → Создать комнату → Пригласить → Копировать ссылку. Вставь её сюда.</p>
-        <input type="text" id="rl" class="linkin" placeholder="https://link.brawlstars.com/invite/gameroom/…" value="${esc(linkDraft)}">
-        <button class="btn" id="sendl">Отправить ссылку</button>`;
-    } else {
-      box = `<p>Ждём, пока хост пришлёт ссылку на лобби…</p>`;
-    }
-    app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Матч создан</h1>
-      <p>${esc(m.map)} · ставка ${money(m.stake)}</p>
-      <div class="avs">${avatarsTwo(m.players)}</div>${box}`;
-    if (q("openl")) q("openl").onclick = () => tg.openLink(m.link);
-    if (q("rl")) q("rl").oninput = e => linkDraft = e.target.value;
-    if (q("sendl")) q("sendl").onclick = () => lobbyCall("room_link", { id: m.id, link: q("rl").value.trim() });
-    if (q("shot")) q("shot").onclick = () => pickResultShot(m.id);
+    app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Матч создан</h1><p>Оба игрока подтвердили. Ставка ${money(m.stake)} с каждого.</p>
+    <div class="avs">${m.players.map(avatar).join("")}</div>`;
     return;
   }
-  if (m && m.status === "closed") {
-    app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Скриншот отправлен</h1>
-      <p>Результат на рассмотрении у админа.</p>`;
-    return;
-  }
-
   const stakes = [50, 100, 200];
-  const open = (snap.open || []).map(l => `<div class="lrow"><div class="av">${l.photo ? `<img src="${esc(l.photo)}" alt="">` : USER_SVG}</div>
-    <div class="li"><b>${esc(l.name || "Игрок")}</b><span>${esc(l.map || MAPS[0])}</span></div><div class="st">${money(l.stake)}</div>
-    <button class="btn" data-j="${l.id}">Войти</button></div>`).join("");
-  app.innerHTML = `<h1>Матчи</h1><p>Создай матч</p>
+  const open = snap.open.map(l => `<div class="lrow"><div class="av">${l.photo ? `<img src="${l.photo}" alt="">` : USER_SVG}</div>
+    <div class="li"><b>${l.name || "Игрок"}</b><span>1 / 2 · ждёт соперника</span></div><div class="st">${money(l.stake)}</div>
+    <button class="btn" data-j="${l.id}" ${bal < l.stake ? "disabled" : ""}>Войти</button></div>`).join("");
+  app.innerHTML = `<h1>Матчи</h1><p>Создай матч или войди в чужой</p>
   <div class="balrow"><span>Баланс</span><b>${money(bal)}</b></div>
-  <div class="sec">Карта</div>
-  <div class="chips one">${MAPS.map(x => `<button class="chip${x === pickMap ? " on" : ""}" data-m="${x}">🐍 ${x}</button>`).join("")}</div>
-  <div class="sec">Ставка</div>
+  <div class="sec">Создать матч</div>
   <div class="chips three">${stakes.map(x => `<button class="chip${x === pickStake ? " on" : ""}" data-s="${x}">${x} ₽</button>`).join("")}</div>
-  <button class="btn" id="mk">Создать матч · ${money(pickStake)}</button>
+  <button class="btn" id="mk" ${bal < pickStake ? "disabled" : ""}>${bal < pickStake ? "Не хватает баланса" : "Создать матч · " + money(pickStake)}</button>
   <div class="sec">Открытые лобби</div>${open || "<p>Пока нет открытых лобби — создай своё.</p>"}`;
-  app.querySelectorAll("[data-s]").forEach(c => c.onclick = () => { pickStake = +c.dataset.s; renderMatches(); });
-  app.querySelectorAll("[data-m]").forEach(c => c.onclick = () => { pickMap = c.dataset.m; renderMatches(); });
-  q("mk").onclick = () => lobbyCall("lobby_create", { stake: pickStake, map: pickMap });
+  app.querySelectorAll(".chip").forEach(c => c.onclick = () => { pickStake = +c.dataset.s; renderMatches(); });
+  q("mk").onclick = () => lobbyCall("lobby_create", { stake: pickStake });
   app.querySelectorAll("[data-j]").forEach(b => b.onclick = () => lobbyCall("lobby_join", { id: +b.dataset.j }));
 }
 
-/* ---------------- Скриншот ---------------- */
-async function compressShot(file, maxSide = 1600, quality = 0.82) {
-  const img = await createImageBitmap(file);
-  const k = Math.min(1, maxSide / Math.max(img.width, img.height));
-  const c = document.createElement("canvas");
-  c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
-  c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
-  return c.toDataURL("image/jpeg", quality);
-}
-function pickResultShot(lobbyId) {
-  const f = document.createElement("input");
-  f.type = "file"; f.accept = "image/*";
-  f.onchange = async () => {
-    if (!f.files[0]) return;
-    const file = f.files[0];
-    if (file.size > 10 * 1024 * 1024) { toast(ERR_MAP.shot_too_big); return; }
-    toast("Обрабатываем скриншот…");
-    try {
-      const dataUrl = await compressShot(file);
-      if (dataUrl.length > 6_500_000) { toast(ERR_MAP.shot_too_big); return; }
-      const d = await call("lobby_attach_result", { id: lobbyId, screenshot: dataUrl });
-      if (d.error) { toast(errText(d)); return; }
-      toast("Скриншот отправлен админу");
-      if (d.snap) { applySnap(d.snap); renderMatches(); }
-      else {
-        applySnap({
-          now: new Date().toISOString(),
-          balance: (cur && cur.balance) || 0,
-          confirm_seconds: 30, mine: null, open: []
-        });
-      }
-    } catch (e) { toast(errText(e)); }
-  };
-  f.click();
-}
-
-/* ---------------- Админ ---------------- */
-async function openAdmin() {
-  app.innerHTML = "<h1>Админ-меню</h1><p>Загрузка…</p>";
-  try {
-    const [pResp, rResp] = await Promise.all([ call("admin_players"), call("admin_results") ]);
-    const players = pResp.players || [];
-    const results = rResp.results || [];
-    app.innerHTML = `<h1>Админ-меню</h1>
-      <div class="sec">Результаты (${results.length})</div>
-      ${results.length ? results.map(r => `
-        <div class="rrow">
-          <img class="shot" src="${esc(r.screenshot)}" alt="screenshot">
-          <div class="vs"><div>${esc(r.p1_name || r.p1_id)}</div><div><span>VS</span></div><div>${esc(r.p2_name || r.p2_id)}</div></div>
-          <p style="font-size:12px;margin:0">${esc(r.map || "")}</p>
-          <div class="acts">
-            <button class="btn" data-r="${r.id}" data-win="${r.p1_id}" data-lose="${r.p2_id}">🏆 ${esc(r.p1_name || "P1")}</button>
-            <button class="btn" data-r="${r.id}" data-win="${r.p2_id}" data-lose="${r.p1_id}">🏆 ${esc(r.p2_name || "P2")}</button>
-          </div>
-        </div>`).join("") : "<p>Нет результатов.</p>"}
-      <div class="sec">Игроки (${players.length})</div>
-      ${players.map(p => `<div class="lrow"><div class="li"><b>${esc(p.bs_name || p.tg_username || p.tg_id)}</b>
-        <span>${esc(p.bs_tag || "—")} · ${esc(p.status)}</span></div><div class="st">${money(p.balance)}</div>
-        <button class="btn" data-b="${p.tg_id}">±</button></div>`).join("")}
-      <button class="btn ghost" id="aback">← Назад</button>`;
-    q("aback").onclick = () => showTab("profile");
-    app.querySelectorAll("[data-b]").forEach(b => b.onclick = () => adminBalance(players.find(p => String(p.tg_id) === b.dataset.b)));
-    app.querySelectorAll("[data-r]").forEach(b => b.onclick = () => adminResolve(+b.dataset.r, +b.dataset.win, +b.dataset.lose));
-  } catch (e) {
-    app.innerHTML = `<h1>Админ-меню</h1><p class="err">${errText(e)}</p><button class="btn ghost" id="aback">← Назад</button>`;
-    q("aback").onclick = () => showTab("profile");
-  }
-}
-async function adminResolve(resultId, winnerTg, loserTg) {
-  try {
-    await call("admin_resolve_result", { id: resultId, winner: winnerTg, loser: loserTg });
-    toast("Результат засчитан");
-    openAdmin();
-  } catch (e) { toast(errText(e)); }
-}
-function adminBalance(p) {
-  const el = document.createElement("div"); el.className = "sheet";
-  el.innerHTML = `<div class="sheet-in"><h1>${esc(p.bs_name || p.tg_id)}</h1><p>Баланс: ${money(p.balance)}</p>
-    <input type="text" id="ab" inputmode="numeric" placeholder="Сумма, ₽"><p id="at"></p>
-    <button class="btn" id="aplus">Начислить</button><button class="btn ghost" id="aminus">Списать</button>
-    <button class="link" id="acl">Отмена</button></div>`;
-  document.body.appendChild(el);
-  const go = async sign => {
-    const n = parseInt(el.querySelector("#ab").value.replace(/\D/g, ""), 10);
-    if (!n) { el.querySelector("#at").textContent = "Введи сумму"; return; }
-    try { await call("admin_balance", { target: p.tg_id, amount: sign * n }); el.remove(); openAdmin(); }
-    catch (e) { el.querySelector("#at").textContent = errText(e); el.querySelector("#at").className = "err"; }
-  };
-  el.querySelector("#aplus").onclick = () => go(1);
-  el.querySelector("#aminus").onclick = () => go(-1);
-  el.querySelector("#acl").onclick = () => el.remove();
-  el.onclick = e => { if (e.target === el) el.remove(); };
-}
-
-/* ---------------- Пополнение ---------------- */
 function openTopup() {
   let amount = 300;
   const el = document.createElement("div");
   el.className = "sheet";
   el.innerHTML = `<div class="sheet-in">
-    <h1>Пополнение</h1><p>Выбери сумму</p>
+    <h1>Пополнение</h1><p>Выбери сумму в рублях</p>
     <div class="chips">${[100, 300, 500, 1000].map(a => `<button class="chip${a === 300 ? " on" : ""}" data-a="${a}">${a} ₽</button>`).join("")}</div>
-    <input type="text" id="amt" inputmode="numeric" value="300">
+    <input type="text" id="amt" inputmode="numeric" value="300" placeholder="Своя сумма, ₽">
     <p id="tst"></p>
     <button class="btn" id="pay">Перейти к оплате</button>
     <button class="link" id="cls">Отмена</button></div>`;
@@ -592,24 +399,20 @@ function openTopup() {
     if (!amount || amount < 50) { tst.textContent = "Минимальная сумма — 50 ₽"; tst.className = "err"; return; }
     tst.className = ""; tst.textContent = "Создаём счёт…";
     try { const d = await call("topup", { amount }); if (d.url) tg.openInvoice ? tg.openInvoice(d.url) : tg.openLink(d.url); }
-    catch (e) { tst.textContent = "Оплата ещё не подключена."; tst.className = "err"; }
+    catch (e) { tst.textContent = "Оплата ещё не подключена. Скоро добавим."; tst.className = "err"; }
   };
 }
 
-/* ---------------- Init ---------------- */
-document.querySelectorAll("#nav button").forEach(b => b.onclick = () => {
-  if (cur || b.dataset.t === "matches") showTab(b.dataset.t);
-});
-["gesturestart","gesturechange","gestureend"].forEach(ev => document.addEventListener(ev, e => e.preventDefault()));
+document.querySelectorAll("#nav button").forEach(b => b.onclick = () => { if (cur) showTab(b.dataset.t); });
+
+["gesturestart", "gesturechange", "gestureend"].forEach(ev => document.addEventListener(ev, e => e.preventDefault()));
 document.addEventListener("touchmove", e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
 document.addEventListener("dblclick", e => e.preventDefault());
 
 function boot() {
   app.innerHTML = "<h1>Загрузка…</h1>";
   call("me").then(d => render(d.player)).catch(e => {
-    app.innerHTML = `<div class="icon">⚠️</div><h1>Не удалось загрузить</h1><p class="err">${errText(e)}</p>
-      <p style="font-size:12px">${esc([e.error, e.status, e.detail, e.message].filter(Boolean).join(" · "))}</p>
-      <button class="btn" onclick="boot()">Повторить</button>`;
+    app.innerHTML = `<div class="icon">⚠️</div><h1>Не удалось загрузить</h1><p class="err">${errText(e)}</p><p style="font-size:12px">${[e.error, e.status, e.detail, e.message].filter(Boolean).join(" · ")}</p><button class="btn" onclick="boot()">Повторить</button>`;
   });
 }
 boot();
