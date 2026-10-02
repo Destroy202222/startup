@@ -376,8 +376,18 @@ function showTab(t) {
     <div class="stat l"><b>${l}</b><span>Поражения</span></div>
     <div class="stat r"><b>${wr}</b><span>Винрейт</span></div>
   </div>
-  <div class="wallet"><div><span>Баланс</span><b id="wb">${bal} ₽</b></div>
-    <div class="wbtns"><button class="btn" id="topup">＋ Пополнить</button><button class="btn ghost" id="wdbtn">Вывод</button></div></div>
+  <div class="wallet">
+    <div style="width:100%">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <span>Основной</span><b id="wb" style="font-size:20px">${bal} ₽</b>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <span>Бонусный <small id="bg" style="color:var(--mut)">${cur.bonus_games || 0}/50</small></span>
+        <b id="wbb" style="font-size:20px;color:var(--or2)">${Number(cur.bonus_balance || 0).toLocaleString("ru-RU")} ₽</b>
+      </div>
+    </div>
+    <div class="wbtns"><button class="btn" id="topup">＋ Пополнить</button><button class="btn ghost" id="wdbtn">Вывод</button></div>
+  </div>
   <div id="tpbox"></div><div id="wdbox"></div>
   <div class="sec">Промокод</div>
   <div class="promo"><input type="text" id="pc" placeholder="Введи промокод"><button class="btn" id="pb">Активировать</button></div>
@@ -405,7 +415,9 @@ function showTab(t) {
 function applySnap(sn) {
   if (!sn) return;
   snap = sn; off = new Date(sn.now).getTime() - Date.now();
-  if (cur) cur.balance = sn.balance;
+  if (cur) { cur.balance = sn.balance; cur.bonus_balance = sn.bonus_balance; cur.bonus_games = sn.bonus_games; }
+  const wbb = document.getElementById("wbb"); if (wbb) wbb.textContent = money(sn.bonus_balance);
+  const bg = document.getElementById("bg"); if (bg) bg.textContent = (sn.bonus_games || 0) + "/50";
   const wbe = document.getElementById("wb"); if (wbe) wbe.textContent = money(sn.balance);
   const key = JSON.stringify([sn.mine, sn.open, sn.balance]);
   if (key !== lastKey) { lastKey = key; if (curTab === "matches") renderMatches(); }
@@ -512,7 +524,7 @@ function renderMatches() {
   <div class="balrow"><span>Баланс</span><b>${money(bal)}</b></div>
   <div class="sec">Найти матч</div>
   <div class="chips three">${stakes.map(x => `<button class="chip${x === pickStake ? " on" : ""}" data-s="${x}">${x} ₽</button>`).join("")}</div>
-  <button class="btn" id="mk" ${bal < pickStake ? "disabled" : ""}>${bal < pickStake ? "Не хватает баланса" : "🔍 Поиск · " + money(pickStake)}</button>
+  <button class="btn" id="mk" ${(bal + (snap.bonus_balance || 0)) < pickStake ? "disabled" : ""}>${(bal + (snap.bonus_balance || 0)) < pickStake ? "Не хватает баланса" : "🔍 Поиск · " + money(pickStake)}</button>
   ${pend ? `<div class="sec">Ждут решения</div>${pend}` : ""}`;
   app.querySelectorAll(".chip").forEach(c => c.onclick = () => { pickStake = +c.dataset.s; renderMatches(); });
   q("mk").onclick = async () => {
@@ -946,7 +958,7 @@ function openWithdraw() {
     const amount = parseInt(el.querySelector("#wamt").value.replace(/\D/g, ""), 10);
     const phone = normPhone(el.querySelector("#wph").value);
     const bank = el.querySelector("#wbank").value.trim();
-    if (!amount || amount < 50) return bad("Минимум 50 ₽");
+    if (!amount || amount < 300) return bad("Минимум 300 ₽");
     if (amount > bal) return bad("Недостаточно средств");
     if (!phone) return bad("Введи номер +7 900 000-00-00");
     if (bank.length < 2) return bad("Укажи банк");
