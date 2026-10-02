@@ -522,7 +522,6 @@ function renderMatches() {
       if (fresh) applySnap(fresh);
       const openList = snap.open || [];
       const target = openList.find(l => l.stake === pickStake);
-      toast("Открытых: " + openList.length + " | target: " + (target ? "id=" + target.id : "нет"));
       if (target) {
         await call("lobby_join", { id: target.id });
       } else {
