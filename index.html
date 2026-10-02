@@ -930,7 +930,7 @@ function openTopup() {
       const amountCrypto = +(amount / rates[cur]).toFixed(4);
       tst.className = ""; tst.textContent = "Создаём счёт…";
       try {
-        const url = await cryptoTopup(amountCrypto, cur);
+        const url = await cryptoTopup(amount, cur);
         tg.openLink(url);
         el.remove();
         toast("Открой оплату в xRocket. Баланс пополнится автоматически после подтверждения");
