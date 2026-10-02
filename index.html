@@ -524,7 +524,7 @@ function renderMatches() {
       const target = openList.find(l => l.stake === pickStake);
       toast("Открытых: " + openList.length + " | target: " + (target ? "id=" + target.id : "нет"));
       if (target) {
-        await rpc("lobby_join", { id: target.id });
+        await call("lobby_join", { id: target.id });
       } else {
         await rpc("create", { stake: pickStake });
       }
