@@ -12,8 +12,8 @@
 body{background-color:var(--bg);background-image:linear-gradient(rgba(255,122,0,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(255,122,0,.08) 1px,transparent 1px);background-size:28px 28px;background-position:center top;color:var(--tx);font-family:system-ui,-apple-system,sans-serif;min-height:100vh;padding:80px 20px 40px;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .brand{font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--or);text-align:center;opacity:.95}
 .brand span{color:var(--mut)}
-.card{position:relative;background:linear-gradient(180deg,#191919,#101010);border:1px solid rgba(255,122,0,.25);border-radius:26px;padding:30px 22px 24px;width:100%;max-width:400px;text-align:center;margin-top:18px;box-shadow:0 0 0 1px #000,0 18px 50px rgba(0,0,0,.65),0 0 60px rgba(255,122,0,.10)}
-.card::before{content:"";position:absolute;left:20%;right:20%;top:-1px;height:2px;background:linear-gradient(90deg,transparent,var(--or),transparent);border-radius:2px}
+.card{position:relative;background:linear-gradient(180deg,#191919,#101010);border:1px solid rgba(255,122,0,.25);border-radius:26px;padding:30px 22px 24px;width:100%;max-width:400px;text-align:center;margin-top:18px;box-shadow:0 0 0 1px #000,0 18px 50px rgba(0,0,0,.65),0 0 60px rgba(255,122,0,.10);overflow:hidden}
+.card::before{content:"";position:absolute;left:20%;right:20%;top:-1px;height:2px;background:linear-gradient(90deg,transparent,var(--or),transparent);border-radius:2px;z-index:2}
 .icon{width:68px;height:68px;margin:0 auto 14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;background:radial-gradient(circle at 30% 25%,#ffb066,var(--or) 60%,#c85a00);box-shadow:0 0 28px rgba(255,122,0,.45)}
 h1{color:var(--tx);font-size:22px;font-weight:800;margin-bottom:6px}
 p{color:var(--mut);font-size:14px;line-height:1.55;margin:8px 0}
@@ -158,30 +158,37 @@ input{-webkit-user-select:text;user-select:text}
 .sta{width:100%;background:#0c0c0c;border:1px solid #2e2e2e;color:var(--tx);border-radius:12px;padding:12px;margin-top:12px;font-size:15px;font-family:inherit;outline:0;resize:none;-webkit-user-select:text;user-select:text}
 .sta:focus{border-color:var(--or)}
 .sheet-in .lrow .li span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Иконки аватарки */
 .avw{position:relative;display:inline-block;width:116px;height:116px;border-radius:50%}
 .avw::before{content:"";position:absolute;border-radius:50%;pointer-events:none}
 .avw .ava{position:relative;z-index:1;display:block}
 .avw.sm{width:64px;height:64px}.avw.sm .ava{width:64px;height:64px;border-width:2px}
 .avw[class*=pic]::before{inset:-7px;z-index:0}.avw.sm[class*=pic]::before{inset:-5px}
-.pic1 .ava{animation:g1 1.5s ease-in-out infinite}
-@keyframes g1{0%,100%{box-shadow:0 0 14px #ff7a00}50%{box-shadow:0 0 34px 6px #ffb347}}
-.pic2::before{background:conic-gradient(#ff7a00,#ff2d95,#7a5cff,#00d4ff,#ff7a00);animation:sp 3s linear infinite}
-@keyframes sp{to{transform:rotate(360deg)}}
-.pic3 .ava{border-color:#00e5ff;animation:g3 2s ease-in-out infinite}
-@keyframes g3{0%,100%{box-shadow:0 0 10px #00e5ff,0 0 24px #7a5cff}50%{box-shadow:0 0 22px #ff2d95,0 0 40px #00e5ff}}
-.pic4::before{border:3px dashed #ffd54a;animation:sp 6s linear infinite}
-.pic5 .ava{border-color:#ff6fa5;animation:hb 1.2s ease-in-out infinite}
-@keyframes hb{0%,100%{transform:scale(1);box-shadow:0 0 14px #ff6fa5}50%{transform:scale(1.07);box-shadow:0 0 30px #ff9ac0}}
-.pbg1{background:radial-gradient(circle at 18% 14%,rgba(255,170,210,.55) 0 5%,transparent 6%),radial-gradient(circle at 82% 26%,rgba(255,170,210,.4) 0 3.5%,transparent 4.5%),radial-gradient(circle at 60% 8%,rgba(255,200,225,.35) 0 2.5%,transparent 3.5%),linear-gradient(160deg,#4a1238,#1c0a26 62%,#0e0a16)}
-.pbg2{background:radial-gradient(circle at 80% 16%,#fff6d0 0 5%,rgba(255,246,208,.18) 6% 13%,transparent 14%),radial-gradient(1.5px 1.5px at 15% 25%,#fff,transparent),radial-gradient(1.5px 1.5px at 35% 12%,#fff,transparent),radial-gradient(1.5px 1.5px at 55% 32%,#fff,transparent),radial-gradient(1px 1px at 70% 55%,#fff,transparent),radial-gradient(1.5px 1.5px at 25% 60%,#fff,transparent),linear-gradient(180deg,#070b26,#1a2a6c 70%,#4b2f87)}
-.pbg3{background:radial-gradient(circle at 50% 70%,#fff0b0 0 13%,rgba(255,200,120,.35) 14% 22%,transparent 23%),linear-gradient(180deg,#2a1050 0%,#c2306b 48%,#ff9a62 72%,#150a22 72.5%)}
-.pbg4{background:linear-gradient(rgba(0,255,230,.18) 1px,transparent 1px) 0 0/22px 22px,linear-gradient(90deg,rgba(255,0,200,.18) 1px,transparent 1px) 0 0/22px 22px,linear-gradient(160deg,#08001c,#1a0845 70%,#2b0a5c)}
-.pbg5{background:repeating-conic-gradient(from 0deg at 50% 38%,rgba(255,255,255,.09) 0 4deg,transparent 4deg 9deg),radial-gradient(circle at 50% 38%,#ff9a3d,#c2185b 52%,#2a0a3a 90%)}
-.shg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.shi{background:#0d0d0d;border:1px solid #262626;border-radius:14px;padding:12px 6px 8px;display:flex;flex-direction:column;align-items:center}
-.shi.on{border-color:var(--or)}
-.shi .btn{margin-top:10px;padding:9px 4px;font-size:13px}
-.bgp{width:100%;height:64px;border-radius:10px;border:1px solid #333}
+.pic1 .ava{border-color:#ff7a00;animation:neonPulse 1.8s ease-in-out infinite}
+@keyframes neonPulse{0%,100%{box-shadow:0 0 12px #ff7a00,0 0 24px rgba(255,122,0,.4)}50%{box-shadow:0 0 24px #ffb347,0 0 48px rgba(255,122,0,.7)}}
+.pic2::before{background:conic-gradient(#ff7a00,#ff2d95,#7a5cff,#00d4ff,#ff7a00);animation:spinGlow 4s linear infinite;filter:blur(4px);opacity:.85}
+@keyframes spinGlow{to{transform:rotate(360deg)}}
+.pic3 .ava{border-color:#00e5ff;animation:iceGlow 2.2s ease-in-out infinite}
+@keyframes iceGlow{0%,100%{box-shadow:0 0 10px #00e5ff,inset 0 0 15px rgba(0,229,255,.2)}50%{box-shadow:0 0 30px #7a5cff,0 0 50px #00e5ff,inset 0 0 25px rgba(122,92,255,.3)}}
+.pic4::before{border:3px solid transparent;border-top-color:#ffd54a;border-right-color:#ff9a56;animation:orbitSpin 2s linear infinite}
+@keyframes orbitSpin{to{transform:rotate(360deg)}}
+.pic5 .ava{border-color:#ff6fa5;animation:heartBeat 1s ease-in-out infinite}
+@keyframes heartBeat{0%,100%{transform:scale(1);box-shadow:0 0 14px #ff6fa5,0 0 30px rgba(255,111,165,.5)}50%{transform:scale(1.06);box-shadow:0 0 30px #ff9ac0,0 0 60px rgba(255,111,165,.8)}}
+
+/* Аниме-фоны */
+.card.pbg1,.card.pbg2,.card.pbg3,.card.pbg4,.card.pbg5{
+  background-size:cover;background-position:center;background-repeat:no-repeat;
+  animation:bgZoom 20s ease-in-out infinite alternate;
+}
+@keyframes bgZoom{from{background-size:100%}to{background-size:118%}}
+.pbg1{background-image:url("https://i.ibb.co/vCc4KzhS/IMG-1838.jpg")}
+.pbg2{background-image:url("https://i.ibb.co/B5T2J1p6/IMG-1839.jpg")}
+.pbg3{background-image:url("https://i.ibb.co/pjRbVqRt/IMG-1840.jpg")}
+.pbg4{background-image:url("https://i.ibb.co/xKJ9xMtf/IMG-1841.jpg")}
+.pbg5{background-image:url("https://i.ibb.co/Z6VhFTYb/IMG-1842.jpg")}
+.card[class*="pbg"]::after{content:"";position:absolute;inset:0;border-radius:26px;background:linear-gradient(180deg,rgba(0,0,0,.55) 0%,rgba(0,0,0,.72) 55%,rgba(0,0,0,.85) 100%);z-index:0;pointer-events:none}
+.card[class*="pbg"] > *{position:relative;z-index:1}
 </style>
 </head>
 <body>
@@ -194,7 +201,6 @@ input{-webkit-user-select:text;user-select:text}
   <button data-t="profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Профиль</button>
   <button data-t="matches"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>Матчи</button>
   <button data-t="top"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4"/><path d="M12 13v4M10 17h4M8 21h8"/></svg>Топ</button>
-  <button data-t="shop"><svg viewBox="0 0 24 24"><path d="M6 7h12l1 13H5L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>Шоп</button>
   <button data-t="admin" id="navadmin" class="hidden"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg>Админ<i class="bdg hidden" id="admbdg"></i></button>
   <button data-t="missions"><svg viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9L12 3z"/></svg>Миссии</button>
 </nav>
@@ -252,7 +258,6 @@ async function rpcTo(fn, action, args = {}) {
   } finally { clearTimeout(tm); }
 }
 
-// ==== Крипто-пополнение через clever-action ====
 async function cryptoTopup(amountCrypto, currency) {
   const r = await fetch("https://wlhzcocwgmzcrtzhefic.supabase.co/functions/v1/clever-action", {
     method: "POST",
@@ -340,6 +345,7 @@ function withVariants(list) {
   return [...new Set(out)].slice(0, 20);
 }
 function upload() {
+  app.className = "card";
   app.innerHTML = `<div class="icon">🛡️</div><h1>Верификация аккаунта</h1>
   <p>Подтверди, что аккаунт Brawl Stars принадлежит тебе</p>
   <div class="steps"><i class="on"></i><i></i><i></i></div>
@@ -374,6 +380,7 @@ function upload() {
   };
 }
 function pending(p) {
+  app.className = "card";
   app.innerHTML = `<div class="icon">🔑</div><h1>Подтверди аккаунт</h1>
   <div class="steps"><i class="on"></i><i class="on"></i><i></i></div>
   <div class="found"><div style="font-weight:800;font-size:18px">${p.bs_name}</div><div class="tag">${p.bs_tag}</div></div>
@@ -415,7 +422,6 @@ function showTab(t) {
   if (t === "matches") { renderMatches(); return; }
   if (t === "missions") { renderMissions(); return; }
   if (t === "admin") { renderAdmin(); return; }
-  if (t === "shop") { renderShop(); return; }
   if (t === "top") { renderTop(); return; }
   const w = cur.wins || 0, l = cur.losses || 0, g = w + l;
   const wr = g ? Math.round(w / g * 100) + "%" : "—";
@@ -462,7 +468,6 @@ function showTab(t) {
     q("pb").disabled = false;
   };
   loadProfileHistory();
-  shop("list").then(st => { applyShop(st); decorateProfile(); }).catch(() => {});
 }
 
 function applySnap(sn) {
@@ -512,6 +517,7 @@ function tick() {
 }
 function renderMatches() {
   if (curTab !== "matches") return;
+  app.className = "card";
   if (!snap) { app.innerHTML = '<h1>Матчи</h1><p>Загрузка…</p>'; return; }
   const m = snap.mine, bal = snap.balance;
   if (m && m.status === "confirming") {
@@ -570,7 +576,6 @@ function renderMatches() {
     }
     return;
   }
-  // ===== Ставки берутся из БД (админ задаёт в админке) =====
   const stakes = (snap.stakes && snap.stakes.length) ? snap.stakes : [50, 100, 200];
   if (!stakes.includes(pickStake)) pickStake = stakes[0];
   const pend = (snap.pending || []).map(x => `<div class="lrow"><div class="li"><b>На проверке</b><span>${modeName(x.mode)}</span></div><div class="st">${money(x.stake)}</div></div>`).join("");
@@ -589,13 +594,9 @@ function renderMatches() {
       if (fresh) applySnap(fresh);
       const openList = snap.open || [];
       const target = openList.find(l => l.stake === pickStake);
-      if (target) {
-        await call("lobby_join", { id: target.id });
-      } else {
-        await rpc("create", { stake: pickStake });
-      }
-      await poll();
-      renderMatches();
+      if (target) await call("lobby_join", { id: target.id });
+      else await rpc("create", { stake: pickStake });
+      await poll(); renderMatches();
     } catch (e) {
       const detail = (e && (e.error || e.message)) || JSON.stringify(e).slice(0,150);
       toast("Причина: " + detail);
@@ -681,6 +682,7 @@ function drawChart(box, msArr) {
 }
 
 async function renderMissions() {
+  app.className = "card";
   app.innerHTML = '<h1>Миссии</h1><p>Загрузка…</p>';
   let d; try { d = await ms("missions"); } catch (e) { if (curTab === "missions") app.innerHTML = `<h1>Миссии</h1><p class="err">${eText(e)}</p>`; return; }
   if (curTab !== "missions") return;
@@ -718,6 +720,7 @@ async function renderMissions() {
 }
 
 async function renderTop() {
+  app.className = "card";
   app.innerHTML = '<h1>Топ игроков</h1><p>Загрузка…</p>';
   let d; try { d = await rpc("top"); } catch (e) { if (curTab === "top") app.innerHTML = `<h1>Топ игроков</h1><p class="err">${eText(e)}</p>`; return; }
   if (curTab !== "top") return;
@@ -726,6 +729,7 @@ async function renderTop() {
     <div class="li"><b>${p.name || "Игрок"}</b><span>Поражений: ${p.losses}</span></div><div class="w">${p.wins}</div></div>`).join("");
   app.innerHTML = `<div class="icon ico">${ICONS.top}</div><h1>Топ игроков</h1><p>Рейтинг по победам</p><div class="mlist">${rows || "<p>Пока никого нет.</p>"}</div>`;
 }
+
 const adminSeg = () => `<div class="balrow" style="margin-top:10px"><span>Зарегистрировано</span><b id="astatv">${adminStats ? adminStats.verified : "…"}</b></div>
   <p id="astatt" style="font-size:12px;margin:6px 0 10px">${adminStats ? `За сутки +${adminStats.today} · всего открывали: ${adminStats.total}` : ""}</p>
   <div class="seg adm">
@@ -989,11 +993,9 @@ function openTopup() {
       const amount = parseInt(inp.value.replace(/\D/g, ""), 10);
       if (!amount || amount < 50 || amount > 50000) { tst.textContent = "Сумма от 50 до 50 000 ₽"; tst.className = "err"; return; }
       const cur = (tg.showPopup && await new Promise(res => tg.showPopup({
-        title: "Валюта оплаты",
-        message: "Выбери валюту",
+        title: "Валюта оплаты", message: "Выбери валюту",
         buttons: [{ id: "USDT", type: "default", text: "USDT" }]
       }, (id) => res(id)))) || "USDT";
-      // 1 USDT = 100 RUB — меняй на свой курс
       const rates = { USDT: 100 };
       const amountCrypto = +(amount / rates[cur]).toFixed(4);
       tst.className = ""; tst.textContent = "Создаём счёт…";
@@ -1002,9 +1004,7 @@ function openTopup() {
         tg.openLink(url);
         el.remove();
         toast("Открой оплату в xRocket. Баланс пополнится автоматически после подтверждения");
-      } catch (e) {
-        tst.textContent = "Ошибка: " + (e.error || JSON.stringify(e).slice(0,80)); tst.className = "err";
-      }
+      } catch (e) { tst.textContent = "Ошибка: " + (e.error || JSON.stringify(e).slice(0,80)); tst.className = "err"; }
     };
     sh.querySelector("#pay").onclick = () => {
       const amount = parseInt(inp.value.replace(/\D/g, ""), 10);
@@ -1072,43 +1072,6 @@ function openWithdraw() {
       el.remove(); toast("Заявка создана");
     } catch (e) { bad(eText(e)); ok.disabled = false; }
   };
-}
-
-// ===== Шоп =====
-const shop = (a, b) => rpcTo("tg_shop", a, b);
-let shopSt = { owned: [], bg: null, icon: null };
-const bgCls = id => id ? "pbg" + id.slice(2) : "";
-const icCls = id => id ? "pic" + id.slice(2) : "";
-function applyShop(st) { shopSt = st; if (cur) cur.balance = st.balance; }
-function decorateProfile() {
-  if (curTab !== "profile") return;
-  app.className = "card " + bgCls(shopSt.bg);
-  const w = document.querySelector(".avw"); if (w) w.className = "avw " + icCls(shopSt.icon);
-}
-async function renderShop() {
-  app.innerHTML = "<h1>Шоп</h1><p>Загрузка…</p>";
-  let st; try { st = await shop("list"); } catch (e) { if (curTab === "shop") app.innerHTML = `<h1>Шоп</h1><p class="err">${eText(e)}</p>`; return; }
-  if (curTab !== "shop") return;
-  applyShop(st);
-  const src = ava || cur.tg_photo_url || "";
-  const btn = (id, price, eq) => st.owned.includes(id)
-    ? `<button class="btn sm ${eq ? "" : "ghost"}" data-eq="${id}">${eq ? "Снять" : "Надеть"}</button>`
-    : `<button class="btn sm" data-buy="${id}" data-p="${price}">${price} ₽</button>`;
-  const icons = [1, 2, 3, 4, 5].map(i => { const id = "ic" + i, eq = st.icon === id; return `<div class="shi ${eq ? "on" : ""}"><div class="avw sm ${icCls(id)}"><img class="ava" src="${src}" alt=""></div>${btn(id, 25, eq)}</div>`; }).join("");
-  const bgs = [1, 2, 3, 4, 5].map(i => { const id = "bg" + i, eq = st.bg === id; return `<div class="shi ${eq ? "on" : ""}"><div class="bgp ${bgCls(id)}"></div>${btn(id, 50, eq)}</div>`; }).join("");
-  app.innerHTML = `<div class="icon ico"><svg viewBox="0 0 24 24"><path d="M6 7h12l1 13H5L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg></div><h1>Шоп</h1>
-  <div class="balrow"><span>Баланс</span><b>${money(st.balance)}</b></div>
-  <div class="sec">Иконки для аватарки · 25 ₽</div><div class="shg">${icons}</div>
-  <div class="sec">Фоны профиля · 50 ₽</div><div class="shg">${bgs}</div>`;
-  app.querySelectorAll("[data-buy]").forEach(b => b.onclick = () => askOk(`Купить за ${b.dataset.p} ₽?`, async () => {
-    try { applyShop(await shop("buy", { id: b.dataset.buy })); toast("Куплено"); } catch (e) { toast(eText(e)); }
-    renderShop();
-  }));
-  app.querySelectorAll("[data-eq]").forEach(b => b.onclick = async () => {
-    const id = b.dataset.eq, on = shopSt.bg === id || shopSt.icon === id;
-    try { applyShop(await shop("equip", on ? { id: "", slot: id.startsWith("bg") ? "bg" : "icon" } : { id })); } catch (e) { toast(eText(e)); }
-    renderShop();
-  });
 }
 
 // ===== Поддержка =====
