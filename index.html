@@ -561,7 +561,7 @@ function renderMatches() {
       const fresh = (await call("lobbies")).snap;
       if (fresh) applySnap(fresh);
       const openList = snap.open || [];
-      const target = openList.find(l => l.stake === pickStake);
+      const target = openList.find(l => l.stake === pickStake && (l.count || 0) < 8);
       if (target) {
         await call("lobby_join", { id: target.id });
       } else {
