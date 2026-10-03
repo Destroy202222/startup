@@ -668,7 +668,7 @@ async function renderMissions() {
   }).join("");
   const r = d.ref;
   app.innerHTML = `<div class="icon ico"><svg viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9L12 3z"/></svg></div>
-  <h1>Миссии</h1><p>Выполняй задания и получай ₽ на баланс</p>
+  <h1>Миссии</h1><p>Выполняй задания и получай ₽ на бонусный баланс</p>
   <div class="sec">Задания</div>${cards}
   <div class="sec">Пригласи друзей</div>
   <div class="mis"><div class="mh"><span>За каждого нового игрока</span><span class="rw">+${money(1.5)}</span></div>
@@ -681,7 +681,7 @@ async function renderMissions() {
     b.disabled = true;
     try {
       const x = await ms("claim", { id: b.dataset.claim });
-      cur.balance = x.balance; toast("Награда получена: +" + money(x.reward)); renderMissions();
+      cur.bonus_balance = x.bonus_balance; toast("Награда получена: +" + money(x.reward) + " на бонусный баланс"); renderMissions();
     } catch (e) { toast(eText(e)); b.disabled = false; }
   });
   if (q("rcopy")) {
