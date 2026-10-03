@@ -958,12 +958,12 @@ async function openPlayer(tg) {
 async function openGame(id) {
   adminGameId = id; app.dataset.adm = "0";
   let g; try { g = await rpc("admin_game", { id }); } catch (e) { toast(eText(e)); adminGameId = null; return renderAdmin(); }
-  const sd = g.mode === "sd", picks = [];
+  const sd = g.mode === "sd", picks = [], need = sd ? (g.players.length <= 4 ? 2 : 3) : 1;
   const ps = g.players.map(p => `<div class="sec" style="margin-top:14px">${p.name} · ${p.tag}</div>
     ${p.img ? `<img class="shot" src="${p.img}" data-v="1" alt="">` : "<p>Скриншот не прикреплён</p>"}
-    ${sd ? `<div class="pk"><button class="btn sm" data-p="1" data-id="${p.tg_id}">1 место</button><button class="btn sm" data-p="2" data-id="${p.tg_id}">2 место</button></div>` : ""}`).join("");
+    ${sd ? `<div class="pk">${Array.from({ length: need }, (_, k) => `<button class="btn sm" data-p="${k + 1}" data-id="${p.tg_id}">${k + 1} место</button>`).join("")}</div>` : ""}`).join("");
   app.innerHTML = `<h1>Игра #${g.id}</h1><p>${modeName(g.mode)} · ${g.map} · ${money(g.stake)}</p>${ps}
-  <div class="sec">${sd ? "Выбери 1 и 2 место" : "Кто победил?"}</div>
+  <div class="sec">${sd ? "Выбери призёров (" + need + ")" : "Кто победил?"}</div>
   ${sd ? '<button class="btn" id="done" disabled>Подтвердить</button>' : g.players.map(p => `<button class="btn" data-w="${p.tg_id}">Победил ${p.name}</button>`).join("")}
   <button class="btn ghost" id="back">← Назад</button>`;
   app.querySelectorAll("[data-v]").forEach(i => i.onclick = () => viewImg(i.src));
@@ -976,14 +976,15 @@ async function openGame(id) {
   if (sd) {
     app.querySelectorAll("[data-p]").forEach(b => b.onclick = () => {
       const place = +b.dataset.p - 1, pid = +b.dataset.id;
-      if (picks[1 - place] === pid) picks[1 - place] = undefined;
+      for (let k = 0; k < need; k++) if (picks[k] === pid) picks[k] = undefined;
       picks[place] = pid;
       app.querySelectorAll("[data-p]").forEach(x => x.classList.toggle("on", picks[+x.dataset.p - 1] === +x.dataset.id));
-      q("done").disabled = !(picks[0] && picks[1]);
+      q("done").disabled = !Array.from({ length: need }, (_, k) => picks[k]).every(Boolean);
     });
     q("done").onclick = () => {
       const nm = id2 => g.players.find(p => p.tg_id === id2).name;
-      ask(`1 место: ${nm(picks[0])}\n2 место: ${nm(picks[1])}\nПодтвердить?`, () => finish([picks[0], picks[1]]));
+      const w = picks.slice(0, need);
+      ask(w.map((id3, k) => `${k + 1} место: ${nm(id3)}`).join("\n") + "\nПодтвердить?", () => finish(w));
     };
   } else {
     app.querySelectorAll("[data-w]").forEach(b => b.onclick = () => {
