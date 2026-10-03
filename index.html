@@ -707,6 +707,7 @@ const adminSeg = () => `<div class="balrow" style="margin-top:10px"><span>Зар
   <button data-sec="withdrawals" class="${adminSec === "withdrawals" ? "on" : ""}">Выводы${admWd ? " (" + admWd + ")" : ""}</button>
   <button data-sec="promo" class="${adminSec === "promo" ? "on" : ""}">Промокоды</button>
   <button data-sec="stakes" class="${adminSec === "stakes" ? "on" : ""}">Ставки</button>
+  <button data-sec="players" class="${adminSec === "players" ? "on" : ""}">Игроки</button>
   ${isMain ? `<button data-sec="admins" class="${adminSec === "admins" ? "on" : ""}">Админы</button>` : ""}</div>`;
 const bindSeg = () => app.querySelectorAll("[data-sec]").forEach(b => b.onclick = () => { adminSec = b.dataset.sec; app.dataset.adm = "0"; adminKey = ""; renderAdmin(); });
 const askOk = (msg, go) => tg.showConfirm ? tg.showConfirm(msg, ok => ok && go()) : (confirm(msg) && go());
@@ -726,6 +727,7 @@ async function renderAdmin() {
   if (adminSec === "topups") return renderTopups();
   if (adminSec === "withdrawals") return renderWithdrawals();
   if (adminSec === "stakes") return renderStakes();
+  if (adminSec === "players") return renderPlayers();
   if (adminSec === "admins" && isMain) return renderAdmins();
   adminSec = "games"; adminGameId = null;
   let d; try { d = await rpc("admin_games"); } catch (e) { if (curTab === "admin") app.innerHTML = `<h1>Админ-меню</h1><p class="err">${eText(e)}</p>`; return; }
@@ -853,6 +855,47 @@ async function renderAdmins() {
   app.querySelectorAll("[data-da]").forEach(b => b.onclick = () => askOk(`Убрать ${b.dataset.da}?`, async () => {
     try { await rpc("admin_del", { tag: b.dataset.da }); renderAdmins(); } catch (e) { toast(eText(e)); }
   }));
+}
+// ===== Админ: профили игроков =====
+const adm = (a, b) => rpcTo("tg_admin", a, b);
+const KIND = { topup: "Пополнения", withdraw: "Выводы", withdraw_refund: "Возвраты вывода", win: "Выигрыши", stake: "Ставки", refund: "Возвраты ставок", promo: "Промокоды", mission: "Миссии", referral: "Рефералы", bonus_settle: "Перенос бонуса" };
+let plQ = "";
+async function renderPlayers() {
+  app.innerHTML = `<h1>Админ-меню</h1>${adminSeg()}<input type="text" id="plq" placeholder="Имя, #ТЕГ, @ник или ID" style="text-transform:none;font-size:15px"><div class="mlist" id="pllist"><p>Загрузка…</p></div>`;
+  bindSeg();
+  const inp = q("plq"); inp.value = plQ;
+  let t = null;
+  inp.oninput = () => { clearTimeout(t); t = setTimeout(() => { plQ = inp.value.trim(); loadPlayers(); }, 400); };
+  loadPlayers();
+}
+async function loadPlayers() {
+  const box = q("pllist"); if (!box) return;
+  let d; try { d = await adm("players", { q: plQ }); } catch (e) { box.innerHTML = `<p class="err">${eText(e)}</p>`; return; }
+  const b2 = q("pllist"); if (!b2) return;
+  b2.innerHTML = d.players.map(p => `<div class="lrow" data-pl="${p.tg_id}" style="cursor:pointer"><div class="av ${p.status === "verified" ? "ok" : ""}">${p.photo ? `<img src="${escH(p.photo)}" alt="">` : USER_SVG}</div><div class="li"><b>${escH(p.name || "Игрок")}</b><span>${escH(p.tag || "")} · ${p.wins || 0} П / ${p.losses || 0} Пр</span></div><div class="st">${money(p.balance)}</div></div>`).join("") || "<p>Никого не найдено.</p>";
+  b2.querySelectorAll("[data-pl]").forEach(r => r.onclick = () => openPlayer(+r.dataset.pl));
+}
+async function openPlayer(tg) {
+  let d; try { d = await adm("player", { tg }); } catch (e) { toast(eText(e)); return; }
+  if (!d.p) { toast("Игрок не найден"); return; }
+  const p = d.p, w = p.wins || 0, l = p.losses || 0, g = w + l, wr = g ? Math.round(w / g * 100) + "%" : "—";
+  const dt = t => new Date(t).toLocaleString("ru-RU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+  const av = p.photo ? `<img class="ava" src="${escH(p.photo)}" alt="">` : `<div class="av" style="width:116px;height:116px;margin:0 auto">${USER_SVG}</div>`;
+  const kinds = d.kinds.map(k => `<div class="balrow"><span>${KIND[k.kind] || escH(k.kind)} · ${k.n}</span><b>${money(k.sum)}</b></div>`).join("");
+  const ops = (arr, label) => arr.map(x => `<div class="lrow"><div class="li"><b>${label}${x.bank ? " · " + escH(x.bank) : ""}</b><span>${dt(x.created_at)} · ${escH(x.status)}</span></div><div class="st">${money(x.amount)}</div></div>`).join("");
+  const ms = d.matches.map(m => { const win = m.result === "win"; return `<div class="mrow"><div class="mres ${win ? "win" : "loss"}">${win ? "Победа" : "Поражение"}</div><div class="minfo"><b>${modeName(m.mode)} · ${escH(m.map || "")}</b><span>${m.mode === "sd" ? (m.place ? m.place + " место" : "вне призов") : "vs " + escH(m.opponent || "—")} · ${dt(m.created_at)}</span></div><div class="mdelta ${m.profit >= 0 ? "up" : "down"}">${sgn(m.profit)} ₽</div></div>`; }).join("");
+  app.innerHTML = `${av}<div class="nick">${escH(p.name || "Игрок")}</div><p class="tag">${escH(p.tag || "")}</p>
+  <p style="font-size:12px">ID ${p.tg_id}${p.username ? " · @" + escH(p.username) : ""} · ${p.status === "verified" ? "верифицирован" : escH(p.status || "")}${p.verified_at ? " с " + dt(p.verified_at) : ""}</p>
+  <div class="stats"><div class="stat w"><b>${w}</b><span>Победы</span></div><div class="stat l"><b>${l}</b><span>Поражения</span></div><div class="stat r"><b>${wr}</b><span>Винрейт</span></div></div>
+  <div class="balrow"><span>Основной</span><b>${money(p.balance)}</b></div>
+  <div class="balrow"><span>Бонусный · ${p.bonus_games || 0}/50</span><b>${money(p.bonus_balance)}</b></div>
+  <div class="balrow"><span>Приглашено · ждут${d.refs.by ? " · пригласил " + escH(d.refs.by) : ""}</span><b>${d.refs.invited} · ${d.refs.waiting}</b></div>
+  <div class="sec">Операции по типам</div>${kinds || "<p>Операций нет.</p>"}
+  <div class="sec">Последние пополнения</div>${ops(d.topups, "Пополнение") || "<p>Нет.</p>"}
+  <div class="sec">Последние выводы</div>${ops(d.wds, "Вывод") || "<p>Нет.</p>"}
+  <div class="sec">Матчи (последние 30)</div><div class="mlist">${ms || "<p>Матчей нет.</p>"}</div>
+  <button class="btn ghost" id="plback">← К игрокам</button>`;
+  q("plback").onclick = () => { adminSec = "players"; renderPlayers(); };
 }
 async function openGame(id) {
   adminGameId = id; app.dataset.adm = "0";
