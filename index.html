@@ -216,6 +216,22 @@ input[type=text]:focus,.sta:focus{border-color:var(--or);box-shadow:0 0 0 4px rg
 .tip .tt span{display:block;font-size:11.5px;font-weight:600;color:var(--or2)}
 .tip .tx{width:28px;height:28px;flex:none;border-radius:50%;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;color:#c9c9ce;padding:0;cursor:pointer}
 .tip .tx svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.pod{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:8px;align-items:end;margin-top:20px}
+.pod-i{position:relative;text-align:center;border-radius:18px;padding:16px 6px 12px;background:var(--panel2);border:1px solid var(--line);min-width:0}
+.pod-i.p1{padding-top:24px;padding-bottom:16px;border-color:rgba(255,213,74,.5);background:linear-gradient(180deg,rgba(255,213,74,.12),transparent 70%),var(--panel2);box-shadow:0 0 30px rgba(255,213,74,.12)}
+.pod-i.p2{border-color:rgba(207,216,220,.35)}
+.pod-i.p3{border-color:rgba(217,146,91,.4)}
+.pod-i.me{box-shadow:0 0 0 2px rgba(255,122,0,.6)}
+.pod-i .av{width:56px;height:56px;margin:0 auto}
+.pod-i.p1 .av{width:70px;height:70px;border-color:#ffd54a;box-shadow:0 0 22px rgba(255,213,74,.45)}
+.pod-i .rk{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:22px;height:22px;border-radius:50%;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;color:#111}
+.pod-i.p1 .rk{background:#ffd54a}.pod-i.p2 .rk{background:#cfd8dc}.pod-i.p3 .rk{background:#d9925b}
+.pod-i b{display:block;font-size:12.5px;margin-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pod-i .w{font-size:20px;font-weight:800;color:var(--or);margin-top:2px}
+.pod-i small{color:var(--mut);font-size:10.5px}
+.bonusbar{height:6px;border-radius:6px;background:rgba(255,255,255,.08);overflow:hidden;margin:2px 0 8px}
+.bonusbar i{display:block;height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,var(--or),var(--or2));box-shadow:0 0 10px rgba(255,122,0,.6);transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.bonushint{margin:0;font-size:12px;line-height:1.45;color:var(--mut)}
 </style>
 </head>
 <body>
@@ -469,6 +485,7 @@ function showTab(t) {
         <span>Бонусный <small id="bg" style="color:var(--mut)">${cur.bonus_games || 0}/50</small></span>
         <b id="wbb" style="font-size:20px;color:var(--or2)">${Number(cur.bonus_balance || 0).toLocaleString("ru-RU")} ₽</b>
       </div>
+      <div class="bonusbar"><i id="bgbar"></i></div><p class="bonushint" id="bgh"></p>
     </div>
     <div class="wbtns"><button class="btn" id="topup">＋ Пополнить</button><button class="btn ghost" id="wdbtn">Вывод</button></div>
   </div>
@@ -477,6 +494,7 @@ function showTab(t) {
   <div class="promo"><input type="text" id="pc" placeholder="Введи промокод"><button class="btn" id="pb">Активировать</button></div>
   <div class="chart"><div class="ch-title">История выигрыша</div><div id="chbox"><p>Загрузка…</p></div></div>
   <div class="sec">История матчей</div><div id="hlist" class="mlist"></div>`;
+  fillBonus(cur.bonus_games || 0);
   q("topup").onclick = openTopup;
   q("wdbtn").onclick = openWithdraw;
   renderWdBox();
@@ -489,8 +507,8 @@ function showTab(t) {
     try {
       const d = await rpc("promo_redeem", { code });
       if (d.error) toast(LERR[d.error] || d.error);
-      else { cur.bonus_balance = d.bonus_balance; const wbb = q("wbb"); if (wbb) wbb.textContent = money(d.bonus_balance); q("pc").value = ""; toast("Промокод активирован: +" + money(d.amount) + " на бонусный баланс"); }
-    } catch (e) { toast(eText(e)); }
+      else { cur.bonus_balance = d.bonus_balance; const wbb = q("wbb"); if (wbb) wbb.textContent = money(d.bonus_balance); q("pc").value = ""; hap("success"); toast("Промокод активирован: +" + money(d.amount) + " на бонусный баланс"); }
+    } catch (e) { toastE(eText(e)); }
     q("pb").disabled = false;
   };
   loadProfileHistory();
@@ -498,10 +516,13 @@ function showTab(t) {
 
 function applySnap(sn) {
   if (!sn) return;
+  const ms0 = snap && snap.mine ? snap.mine.status : null;
   snap = sn; off = new Date(sn.now).getTime() - Date.now();
+  const ms1 = sn.mine ? sn.mine.status : null;
+  if (ms1 !== ms0 && (ms1 === "confirming" || ms1 === "live")) hap(ms1 === "confirming" ? "warning" : "success");
   if (cur) { cur.balance = sn.balance; cur.bonus_balance = sn.bonus_balance; cur.bonus_games = sn.bonus_games; }
   const wbb = document.getElementById("wbb"); if (wbb) wbb.textContent = money(sn.bonus_balance);
-  const bg = document.getElementById("bg"); if (bg) bg.textContent = (sn.bonus_games || 0) + "/50";
+  fillBonus(sn.bonus_games || 0);
   const wbe = document.getElementById("wb"); if (wbe) wbe.textContent = money(sn.balance);
   const key = JSON.stringify([sn.mine, sn.open, sn.balance]);
   if (key !== lastKey) { lastKey = key; if (curTab === "matches") renderMatches(); }
@@ -517,7 +538,7 @@ function startPoll() { if (pollT) return; poll(); pollT = setInterval(poll, 2500
 async function lobbyCall(action, extra = {}) {
   if (busy) return; busy = true;
   try { const d = await call(action, extra); busy = false; applySnap(d.snap); if (d.error) toast(LERR[d.error] || d.error); if (d.snap) renderMatches(); }
-  catch (e) { busy = false; toast(errText(e)); }
+  catch (e) { busy = false; toastE(errText(e)); }
 }
 function tick() {
   if (!snap || !snap.mine) return;
@@ -584,7 +605,7 @@ function renderMatches() {
     if (q("sendlk")) q("sendlk").onclick = async () => {
       q("sendlk").disabled = true;
       try { await rpc("set_link", { id: m.id, link: q("lk").value }); await poll(); }
-      catch (e) { toast(eText(e)); q("sendlk").disabled = false; }
+      catch (e) { toastE(eText(e)); q("sendlk").disabled = false; }
     };
     if (q("openlk")) q("openlk").onclick = () => tg.openLink(m.link);
     if (q("pickshot")) {
@@ -595,8 +616,8 @@ function renderMatches() {
         try {
           const img = await shrink(f);
           await rpc("submit_result", { id: m.id, img });
-          toast("Результат отправлен"); await poll(); renderMatches();
-        } catch (e) { toast(eText(e)); renderMatches(); }
+          hap("success"); toast("Результат отправлен"); await poll(); renderMatches();
+        } catch (e) { toastE(eText(e)); renderMatches(); }
       };
     }
     return;
@@ -739,8 +760,8 @@ async function renderMissions() {
     b.disabled = true;
     try {
       const x = await ms("claim", { id: b.dataset.claim });
-      cur.bonus_balance = x.bonus_balance; toast("Награда получена: +" + money(x.reward) + " на бонусный баланс"); renderMissions();
-    } catch (e) { toast(eText(e)); b.disabled = false; }
+      cur.bonus_balance = x.bonus_balance; hap("success"); toast("Награда получена: +" + money(x.reward) + " на бонусный баланс"); renderMissions();
+    } catch (e) { toastE(eText(e)); b.disabled = false; }
   });
   if (q("rcopy")) {
     q("rcopy").onclick = () => { try { navigator.clipboard.writeText(r.link); toast("Скопировано"); } catch (_) {} };
@@ -752,10 +773,12 @@ async function renderTop() {
   app.innerHTML = '<h1>Топ игроков</h1><p>Загрузка…</p>';
   let d; try { d = await rpc("top"); } catch (e) { if (curTab === "top") app.innerHTML = `<h1>Топ игроков</h1><p class="err">${eText(e)}</p>`; return; }
   if (curTab !== "top") return;
-  const rows = d.players.map((p, i) => `<div class="top-row ${p.me ? "me" : ""} ${i < 3 ? "p" + (i + 1) : ""}"><div class="pl">${i + 1}</div>
-    <div class="av">${p.photo ? `<img src="${p.photo}" alt="">` : USER_SVG}</div>
-    <div class="li"><b>${p.name || "Игрок"}</b><span>Поражений: ${p.losses}</span></div><div class="w">${p.wins}</div></div>`).join("");
-  app.innerHTML = `<div class="icon ico">${ICONS.top}</div><h1>Топ игроков</h1><p>Рейтинг по победам</p><div class="mlist">${rows || "<p>Пока никого нет.</p>"}</div>`;
+  const pl = d.players;
+  const pod = pl.length ? `<div class="pod">${[1, 0, 2].filter(i => pl[i]).map(i => { const p = pl[i]; return `<div class="pod-i p${i + 1} ${p.me ? "me" : ""}"><span class="rk">${i + 1}</span><div class="av">${p.photo ? `<img src="${escH(p.photo)}" alt="">` : USER_SVG}</div><b>${escH(p.name || "Игрок")}</b><div class="w">${p.wins}</div><small>побед</small></div>`; }).join("")}</div>` : "";
+  const rows = pl.slice(3).map((p, k) => `<div class="top-row ${p.me ? "me" : ""}"><div class="pl">${k + 4}</div>
+    <div class="av">${p.photo ? `<img src="${escH(p.photo)}" alt="">` : USER_SVG}</div>
+    <div class="li"><b>${escH(p.name || "Игрок")}</b><span>Поражений: ${p.losses}</span></div><div class="w">${p.wins}</div></div>`).join("");
+  app.innerHTML = `<div class="icon ico">${ICONS.top}</div><h1>Топ игроков</h1><p>Рейтинг по победам</p>${pod}<div class="mlist">${rows}${pl.length ? "" : "<p>Пока никого нет.</p>"}</div>`;
 }
 const adminSeg = () => `<div class="balrow" style="margin-top:10px"><span>Зарегистрировано</span><b id="astatv">${adminStats ? adminStats.verified : "…"}</b></div>
   <p id="astatt" style="font-size:12px;margin:6px 0 10px">${adminStats ? `За сутки +${adminStats.today} · всего открывали: ${adminStats.total}` : ""}</p>
@@ -800,7 +823,7 @@ async function renderAdmin() {
   app.querySelectorAll("[data-g]").forEach(r => r.onclick = () => openGame(+r.dataset.g));
 }
 async function renderStakes() {
-  let d; try { d = await rpc("admin_stakes"); } catch (e) { toast(eText(e)); return; }
+  let d; try { d = await rpc("admin_stakes"); } catch (e) { toastE(eText(e)); return; }
   if (curTab !== "admin" || adminSec !== "stakes") return;
   const current = (d.stakes || []).join(", ");
   app.innerHTML = `<h1>Админ-меню</h1>${adminSeg()}
@@ -820,7 +843,7 @@ async function renderStakes() {
       await rpc("admin_stakes_set", { stakes: arr.join(",") });
       toast("Ставки сохранены: " + arr.join(", "));
       renderStakes();
-    } catch (e) { toast(eText(e)); q("ssave").disabled = false; }
+    } catch (e) { toastE(eText(e)); q("ssave").disabled = false; }
   };
 }
 async function renderTopups() {
@@ -839,7 +862,7 @@ async function renderTopups() {
   <div class="mlist">${rows || "<p>Новых заявок нет.</p>"}</div>`;
   bindSeg();
   const decide = (id, approve, n) => askOk(approve ? `Пополнить на ${money(+n)}?` : `Отклонить перевод на ${money(+n)}?`, async () => {
-    try { await pay("admin_decide", { id: +id, approve }); toast(approve ? "Пополнено" : "Отклонено"); } catch (e) { toast(eText(e)); }
+    try { await pay("admin_decide", { id: +id, approve }); toast(approve ? "Пополнено" : "Отклонено"); } catch (e) { toastE(eText(e)); }
     app.dataset.adm = "0"; renderTopups();
   });
   app.querySelectorAll("[data-ok]").forEach(b => b.onclick = () => decide(b.dataset.ok, true, b.dataset.n));
@@ -863,14 +886,14 @@ async function renderWithdrawals() {
   bindSeg();
   app.querySelectorAll("[data-cp]").forEach(b => b.onclick = () => { try { navigator.clipboard.writeText(b.dataset.cp); toast("Скопировано"); } catch (_) {} });
   const decide = (id, pay_, msg) => askOk(msg, async () => {
-    try { await wd("admin_decide", { id: +id, pay: pay_ }); toast(pay_ ? "Выполнено" : "Отменено"); } catch (e) { toast(eText(e)); }
+    try { await wd("admin_decide", { id: +id, pay: pay_ }); toast(pay_ ? "Выполнено" : "Отменено"); } catch (e) { toastE(eText(e)); }
     app.dataset.adm = "0"; renderWithdrawals();
   });
   app.querySelectorAll("[data-pay]").forEach(b => b.onclick = () => decide(b.dataset.pay, true, `Отметить вывод ${money(+b.dataset.n)} выполненным?`));
   app.querySelectorAll("[data-rej]").forEach(b => b.onclick = () => decide(b.dataset.rej, false, `Вернуть ${money(+b.dataset.n)} игроку?`));
 }
 async function renderPromo() {
-  let d; try { d = await rpc("promo_list"); } catch (e) { toast(eText(e)); return; }
+  let d; try { d = await rpc("promo_list"); } catch (e) { toastE(eText(e)); return; }
   if (curTab !== "admin" || adminSec !== "promo") return;
   const rows = d.codes.map(c => `<div class="lrow"><div class="li"><b>${c.code}</b><span>${money(c.amount)} · ${c.used}/${c.max_uses}${c.active ? "" : " · выключен"}</span></div>
     <button class="btn" data-pc="${c.code}" style="${c.active ? "" : "opacity:.6"}">${c.active ? "Выкл" : "Вкл"}</button></div>`).join("");
@@ -887,14 +910,14 @@ async function renderPromo() {
     if (!amount || !max) { toast("Укажи сумму и количество"); return; }
     q("pmk").disabled = true;
     try { const r = await rpc("promo_create", { code: q("pcode").value, amount, max_uses: max }); try { navigator.clipboard.writeText(r.code); } catch (_) {} toast("Создан " + r.code); renderPromo(); }
-    catch (e) { toast(eText(e)); q("pmk").disabled = false; }
+    catch (e) { toastE(eText(e)); q("pmk").disabled = false; }
   };
   app.querySelectorAll("[data-pc]").forEach(b => b.onclick = async () => {
-    try { await rpc("promo_toggle", { code: b.dataset.pc }); renderPromo(); } catch (e) { toast(eText(e)); }
+    try { await rpc("promo_toggle", { code: b.dataset.pc }); renderPromo(); } catch (e) { toastE(eText(e)); }
   });
 }
 async function renderAdmins() {
-  let d; try { d = await rpc("admins_list"); } catch (e) { toast(eText(e)); return; }
+  let d; try { d = await rpc("admins_list"); } catch (e) { toastE(eText(e)); return; }
   if (curTab !== "admin" || adminSec !== "admins") return;
   const rows = d.admins.map(a => `<div class="lrow"><div class="li"><b>${a.name || "—"}</b><span>${a.tag}${a.main ? " · главный" : ""}</span></div>
     ${a.main ? "" : `<button class="btn" data-da="${a.tag}">Убрать</button>`}</div>`).join("");
@@ -908,10 +931,10 @@ async function renderAdmins() {
     if (!q("atag").value.trim()) return;
     q("aadd").disabled = true;
     try { await rpc("admin_add", { tag: q("atag").value }); toast("Добавлен"); renderAdmins(); }
-    catch (e) { toast(eText(e)); q("aadd").disabled = false; }
+    catch (e) { toastE(eText(e)); q("aadd").disabled = false; }
   };
   app.querySelectorAll("[data-da]").forEach(b => b.onclick = () => askOk(`Убрать ${b.dataset.da}?`, async () => {
-    try { await rpc("admin_del", { tag: b.dataset.da }); renderAdmins(); } catch (e) { toast(eText(e)); }
+    try { await rpc("admin_del", { tag: b.dataset.da }); renderAdmins(); } catch (e) { toastE(eText(e)); }
   }));
 }
 // ===== Админ: профили игроков =====
@@ -934,7 +957,7 @@ async function loadPlayers() {
   b2.querySelectorAll("[data-pl]").forEach(r => r.onclick = () => openPlayer(+r.dataset.pl));
 }
 async function openPlayer(tg) {
-  let d; try { d = await adm("player", { tg }); } catch (e) { toast(eText(e)); return; }
+  let d; try { d = await adm("player", { tg }); } catch (e) { toastE(eText(e)); return; }
   if (!d.p) { toast("Игрок не найден"); return; }
   const p = d.p, w = p.wins || 0, l = p.losses || 0, g = w + l, wr = g ? Math.round(w / g * 100) + "%" : "—";
   const dt = t => new Date(t).toLocaleString("ru-RU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
@@ -957,7 +980,7 @@ async function openPlayer(tg) {
 }
 async function openGame(id) {
   adminGameId = id; app.dataset.adm = "0";
-  let g; try { g = await rpc("admin_game", { id }); } catch (e) { toast(eText(e)); adminGameId = null; return renderAdmin(); }
+  let g; try { g = await rpc("admin_game", { id }); } catch (e) { toastE(eText(e)); adminGameId = null; return renderAdmin(); }
   const sd = g.mode === "sd", picks = [], need = sd ? (g.players.length <= 4 ? 2 : 3) : 1;
   const ps = g.players.map(p => `<div class="sec" style="margin-top:14px">${p.name} · ${p.tag}</div>
     ${p.img ? `<img class="shot" src="${p.img}" data-v="1" alt="">` : "<p>Скриншот не прикреплён</p>"}
@@ -969,7 +992,7 @@ async function openGame(id) {
   app.querySelectorAll("[data-v]").forEach(i => i.onclick = () => viewImg(i.src));
   q("back").onclick = () => { app.dataset.adm = "0"; renderAdmin(); };
   const finish = async winners => {
-    try { await rpc("admin_pick", { id, winners }); toast("Подтверждено"); } catch (e) { toast(eText(e)); }
+    try { await rpc("admin_pick", { id, winners }); toast("Подтверждено"); } catch (e) { toastE(eText(e)); }
     adminGameId = null; app.dataset.adm = "0"; renderAdmin();
   };
   const ask = (msg, go) => tg.showConfirm ? tg.showConfirm(msg, ok => ok && go()) : (confirm(msg) && go());
@@ -999,7 +1022,7 @@ function renderTopupBox() {
   box.innerHTML = `<div class="note"><span class="pulse"></span><b>Ожидание оплаты</b> · ${money(topupPending.amount)}<br>Администратор проверит перевод.</div>
   <button class="link" id="tpc">Отменить заявку</button>`;
   q("tpc").onclick = async () => {
-    try { await pay("cancel"); topupPending = null; renderTopupBox(); toast("Отменено"); } catch (e) { toast(eText(e)); }
+    try { await pay("cancel"); topupPending = null; renderTopupBox(); toast("Отменено"); } catch (e) { toastE(eText(e)); }
   };
 }
 function applyTopupState(st) {
@@ -1104,7 +1127,7 @@ function openTopup() {
       try {
         await pay("request", { amount, ref });
         el.remove(); topupPending = { amount, ref }; renderTopupBox();
-        toast("Заявка отправлена");
+        hap("success"); toast("Заявка отправлена");
       } catch (e) { tst.textContent = eText(e); tst.className = "err"; ok.disabled = false; }
     };
   };
@@ -1144,9 +1167,25 @@ function openWithdraw() {
       cur.balance = d.balance;
       const wbe = document.getElementById("wb"); if (wbe) wbe.textContent = money(d.balance);
       wdPending.push({ id: d.id, amount, bank }); renderWdBox();
-      el.remove(); toast("Заявка создана");
+      el.remove(); hap("success"); toast("Заявка создана");
     } catch (e) { bad(eText(e)); ok.disabled = false; }
   };
+}
+
+// ===== Вибрация, бонусная шкала =====
+const hap = k => { try { const h = tg.HapticFeedback; if (!h) return; if (k === "success" || k === "error" || k === "warning") h.notificationOccurred(k); else if (k === "select") h.selectionChanged(); else h.impactOccurred(k || "light"); } catch (_) {} };
+const toastE = t => { hap("error"); toast(t); };
+document.addEventListener("click", e => {
+  const t = e.target.closest && e.target.closest(".btn,.chip,.seg button,#nav button,.sup,.lrow[data-g],.lrow[data-u],.lrow[data-pl]");
+  if (t && !t.disabled) hap(t.matches("#nav button,.seg button,.chip") ? "select" : "light");
+});
+function fillBonus(g) {
+  const bg = document.getElementById("bg"); if (bg) bg.textContent = g + "/50";
+  const bar = document.getElementById("bgbar"); if (bar) bar.style.width = Math.min(100, g / 50 * 100) + "%";
+  const h = document.getElementById("bgh"); if (!h) return;
+  if (g >= 50) { h.textContent = "Условие выполнено: бонусный баланс автоматически перейдёт в основной."; return; }
+  const n = 50 - g, one = n % 10 === 1 && n % 100 !== 11, few = [2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100);
+  h.textContent = (one ? "Осталась " : "Осталось ") + n + " " + (one ? "игра" : few ? "игры" : "игр") + " до того, как бонусный баланс перейдёт в основной. Игра засчитывается после проверки матча.";
 }
 
 // ===== Поддержка =====
@@ -1195,10 +1234,10 @@ function openSupport() {
         if (peer) await sup("reply", { tg: peer.tg, text: t }); else await sup("send", { text: t });
         sh.querySelector("#stxt").value = "";
         await loadThread(true);
-      } catch (e) { toast(eText(e)); }
+      } catch (e) { toastE(eText(e)); }
       b.disabled = false;
     };
-    loadThread(true).catch(e => toast(eText(e)));
+    loadThread(true).catch(e => toastE(eText(e)));
     stop();
     timer = setInterval(() => {
       if (!document.body.contains(el)) { stop(); return; }
@@ -1208,7 +1247,7 @@ function openSupport() {
   const inboxView = async () => {
     peer = null; stop();
     sh.innerHTML = "<h1>Поддержка</h1><p>Загрузка…</p>";
-    let d; try { d = await sup("inbox"); } catch (e) { toast(eText(e)); el.remove(); return; }
+    let d; try { d = await sup("inbox"); } catch (e) { toastE(eText(e)); el.remove(); return; }
     const byTg = {}; d.items.forEach(x => byTg[x.tg] = x);
     const rows = d.items.map(x => `<div class="lrow" data-u="${x.tg}" style="cursor:pointer"><div class="li"><b>${escH(x.name)}</b><span>${escH(x.last || "")}</span></div>${x.unread ? `<div class="st">${x.unread}</div>` : ""}</div>`).join("");
     sh.innerHTML = `<h1>Поддержка</h1><p>Обращения игроков</p><div class="smsgs">${rows || "<p>Обращений пока нет.</p>"}</div><button class="link" id="scls">Закрыть</button>`;
