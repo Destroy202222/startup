@@ -12,8 +12,8 @@
 body{background-color:var(--bg);background-image:linear-gradient(rgba(255,122,0,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(255,122,0,.08) 1px,transparent 1px);background-size:28px 28px;background-position:center top;color:var(--tx);font-family:system-ui,-apple-system,sans-serif;min-height:100vh;padding:80px 20px 40px;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .brand{font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--or);text-align:center;opacity:.95}
 .brand span{color:var(--mut)}
-.card{position:relative;background:linear-gradient(180deg,#191919,#101010);border:1px solid rgba(255,122,0,.25);border-radius:26px;padding:30px 22px 24px;width:100%;max-width:400px;text-align:center;margin-top:18px;box-shadow:0 0 0 1px #000,0 18px 50px rgba(0,0,0,.65),0 0 60px rgba(255,122,0,.10)}
-.card::before{content:"";position:absolute;left:20%;right:20%;top:-1px;height:2px;background:linear-gradient(90deg,transparent,var(--or),transparent);border-radius:2px}
+.card{position:relative;background:linear-gradient(180deg,#191919,#101010);border:1px solid rgba(255,122,0,.25);border-radius:26px;padding:30px 22px 24px;width:100%;max-width:400px;text-align:center;margin-top:18px;box-shadow:0 0 0 1px #000,0 18px 50px rgba(0,0,0,.65),0 0 60px rgba(255,122,0,.10);overflow:hidden}
+.card::before{content:"";position:absolute;left:20%;right:20%;top:-1px;height:2px;background:linear-gradient(90deg,transparent,var(--or),transparent);border-radius:2px;z-index:2}
 .icon{width:68px;height:68px;margin:0 auto 14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;background:radial-gradient(circle at 30% 25%,#ffb066,var(--or) 60%,#c85a00);box-shadow:0 0 28px rgba(255,122,0,.45)}
 h1{color:var(--tx);font-size:22px;font-weight:800;margin-bottom:6px}
 p{color:var(--mut);font-size:14px;line-height:1.55;margin:8px 0}
@@ -164,67 +164,52 @@ input{-webkit-user-select:text;user-select:text}
 .avw.sm{width:64px;height:64px}.avw.sm .ava{width:64px;height:64px;border-width:2px}
 .avw[class*=pic]::before{inset:-7px;z-index:0}.avw.sm[class*=pic]::before{inset:-5px}
 
-/* ===== ИКОНКИ АВАТАРОК (обновлено) ===== */
-.pic1 .ava {
-  border-color: #ff7a00;
-  animation: neonPulse 1.8s ease-in-out infinite;
-}
-@keyframes neonPulse {
-  0%, 100% { box-shadow: 0 0 12px #ff7a00, 0 0 24px rgba(255,122,0,.4); }
-  50%      { box-shadow: 0 0 24px #ffb347, 0 0 48px rgba(255,122,0,.7); }
-}
-.pic2::before {
-  background: conic-gradient(#ff7a00, #ff2d95, #7a5cff, #00d4ff, #ff7a00);
-  animation: spinGlow 4s linear infinite;
-  filter: blur(4px);
-  opacity: .85;
-}
-@keyframes spinGlow { to { transform: rotate(360deg); } }
-.pic3 .ava {
-  border-color: #00e5ff;
-  animation: iceGlow 2.2s ease-in-out infinite;
-}
-@keyframes iceGlow {
-  0%, 100% { box-shadow: 0 0 10px #00e5ff, inset 0 0 15px rgba(0,229,255,.2); }
-  50%      { box-shadow: 0 0 30px #7a5cff, 0 0 50px #00e5ff, inset 0 0 25px rgba(122,92,255,.3); }
-}
-.pic4::before {
-  border: 3px solid transparent;
-  border-top-color: #ffd54a;
-  border-right-color: #ff9a56;
-  animation: orbitSpin 2s linear infinite;
-}
-@keyframes orbitSpin { to { transform: rotate(360deg); } }
-.pic5 .ava {
-  border-color: #ff6fa5;
-  animation: heartBeat 1s ease-in-out infinite;
-}
-@keyframes heartBeat {
-  0%, 100% { transform: scale(1); box-shadow: 0 0 14px #ff6fa5, 0 0 30px rgba(255,111,165,.5); }
-  50%      { transform: scale(1.06); box-shadow: 0 0 30px #ff9ac0, 0 0 60px rgba(255,111,165,.8); }
-}
+/* ===== ИКОНКИ АВАТАРОК ===== */
+.pic1 .ava{border-color:#ff7a00;animation:neonPulse 1.8s ease-in-out infinite}
+@keyframes neonPulse{0%,100%{box-shadow:0 0 12px #ff7a00,0 0 24px rgba(255,122,0,.4)}50%{box-shadow:0 0 24px #ffb347,0 0 48px rgba(255,122,0,.7)}}
+.pic2::before{background:conic-gradient(#ff7a00,#ff2d95,#7a5cff,#00d4ff,#ff7a00);animation:spinGlow 4s linear infinite;filter:blur(4px);opacity:.85}
+@keyframes spinGlow{to{transform:rotate(360deg)}}
+.pic3 .ava{border-color:#00e5ff;animation:iceGlow 2.2s ease-in-out infinite}
+@keyframes iceGlow{0%,100%{box-shadow:0 0 10px #00e5ff,inset 0 0 15px rgba(0,229,255,.2)}50%{box-shadow:0 0 30px #7a5cff,0 0 50px #00e5ff,inset 0 0 25px rgba(122,92,255,.3)}}
+.pic4::before{border:3px solid transparent;border-top-color:#ffd54a;border-right-color:#ff9a56;animation:orbitSpin 2s linear infinite}
+@keyframes orbitSpin{to{transform:rotate(360deg)}}
+.pic5 .ava{border-color:#ff6fa5;animation:heartBeat 1s ease-in-out infinite}
+@keyframes heartBeat{0%,100%{transform:scale(1);box-shadow:0 0 14px #ff6fa5,0 0 30px rgba(255,111,165,.5)}50%{transform:scale(1.06);box-shadow:0 0 30px #ff9ac0,0 0 60px rgba(255,111,165,.8)}}
 
-/* ===== ФОНЫ ПРОФИЛЯ (обновлено, анимированные градиенты) ===== */
-.pbg1, .pbg2, .pbg3, .pbg4, .pbg5 {
-  background-size: 400% 400%;
-  animation: bgShift 12s ease infinite;
+/* ===== АНИМЕ-ФОНЫ ПРОФИЛЯ ===== */
+.card.pbg1,.card.pbg2,.card.pbg3,.card.pbg4,.card.pbg5{
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  animation:bgZoom 20s ease-in-out infinite alternate;
 }
-@keyframes bgShift {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+@keyframes bgZoom{from{background-size:100%}to{background-size:118%}}
+.pbg1{background-image:url("https://i.ibb.co/vCc4KzhS/IMG-1838.jpg")}
+.pbg2{background-image:url("https://i.ibb.co/B5T2J1p6/IMG-1839.jpg")}
+.pbg3{background-image:url("https://i.ibb.co/pjRbVqRt/IMG-1840.jpg")}
+.pbg4{background-image:url("https://i.ibb.co/xKJ9xMtf/IMG-1841.jpg")}
+.pbg5{background-image:url("https://i.ibb.co/Z6VhFTYb/IMG-1842.jpg")}
+
+/* Затемнение поверх фона, чтобы текст читался */
+.card[class*="pbg"]::after{
+  content:"";position:absolute;inset:0;border-radius:26px;
+  background:linear-gradient(180deg,rgba(0,0,0,.55) 0%,rgba(0,0,0,.72) 55%,rgba(0,0,0,.85) 100%);
+  z-index:0;pointer-events:none;
 }
-.pbg1 { background: linear-gradient(-45deg, #ff6b6b, #ee5a24, #f368e0, #5f27cd, #341f97); }
-.pbg2 { background: linear-gradient(135deg, #0c0c1d, #1a1a4e, #4a2c7a, #00d4ff, #0c0c1d); }
-.pbg3 { background: linear-gradient(160deg, #ffdde1, #ee9ca7, #c9a7eb, #fbc2eb, #ffdde1); }
-.pbg4 { background: linear-gradient(45deg, #ff00ff, #00ffff, #39ff14, #ff00ff); }
-.pbg5 { background: linear-gradient(-135deg, #ff9a56, #ffd93d, #ff6b6b, #ff9a56); }
+.card[class*="pbg"] > *{position:relative;z-index:1}
+
+/* Превью в шопе */
+.bgp{width:100%;height:64px;border-radius:10px;border:1px solid #333;background-size:cover;background-position:center}
+.bgp.pbg1{background-image:url("https://i.ibb.co/vCc4KzhS/IMG-1838.jpg")}
+.bgp.pbg2{background-image:url("https://i.ibb.co/B5T2J1p6/IMG-1839.jpg")}
+.bgp.pbg3{background-image:url("https://i.ibb.co/pjRbVqRt/IMG-1840.jpg")}
+.bgp.pbg4{background-image:url("https://i.ibb.co/xKJ9xMtf/IMG-1841.jpg")}
+.bgp.pbg5{background-image:url("https://i.ibb.co/Z6VhFTYb/IMG-1842.jpg")}
 
 .shg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .shi{background:#0d0d0d;border:1px solid #262626;border-radius:14px;padding:12px 6px 8px;display:flex;flex-direction:column;align-items:center}
 .shi.on{border-color:var(--or)}
 .shi .btn{margin-top:10px;padding:9px 4px;font-size:13px}
-.bgp{width:100%;height:64px;border-radius:10px;border:1px solid #333}
 </style>
 </head>
 <body>
@@ -383,6 +368,7 @@ function withVariants(list) {
   return [...new Set(out)].slice(0, 20);
 }
 function upload() {
+  app.className = "card";
   app.innerHTML = `<div class="icon">🛡️</div><h1>Верификация аккаунта</h1>
   <p>Подтверди, что аккаунт Brawl Stars принадлежит тебе</p>
   <div class="steps"><i class="on"></i><i></i><i></i></div>
@@ -417,6 +403,7 @@ function upload() {
   };
 }
 function pending(p) {
+  app.className = "card";
   app.innerHTML = `<div class="icon">🔑</div><h1>Подтверди аккаунт</h1>
   <div class="steps"><i class="on"></i><i class="on"></i><i></i></div>
   <div class="found"><div style="font-weight:800;font-size:18px">${p.bs_name}</div><div class="tag">${p.bs_tag}</div></div>
@@ -555,6 +542,7 @@ function tick() {
 }
 function renderMatches() {
   if (curTab !== "matches") return;
+  app.className = "card";
   if (!snap) { app.innerHTML = '<h1>Матчи</h1><p>Загрузка…</p>'; return; }
   const m = snap.mine, bal = snap.balance;
   if (m && m.status === "confirming") {
@@ -613,7 +601,6 @@ function renderMatches() {
     }
     return;
   }
-  // ===== Ставки берутся из БД (админ задаёт в админке) =====
   const stakes = (snap.stakes && snap.stakes.length) ? snap.stakes : [50, 100, 200];
   if (!stakes.includes(pickStake)) pickStake = stakes[0];
   const pend = (snap.pending || []).map(x => `<div class="lrow"><div class="li"><b>На проверке</b><span>${modeName(x.mode)}</span></div><div class="st">${money(x.stake)}</div></div>`).join("");
@@ -724,6 +711,7 @@ function drawChart(box, msArr) {
 }
 
 async function renderMissions() {
+  app.className = "card";
   app.innerHTML = '<h1>Миссии</h1><p>Загрузка…</p>';
   let d; try { d = await ms("missions"); } catch (e) { if (curTab === "missions") app.innerHTML = `<h1>Миссии</h1><p class="err">${eText(e)}</p>`; return; }
   if (curTab !== "missions") return;
@@ -761,6 +749,7 @@ async function renderMissions() {
 }
 
 async function renderTop() {
+  app.className = "card";
   app.innerHTML = '<h1>Топ игроков</h1><p>Загрузка…</p>';
   let d; try { d = await rpc("top"); } catch (e) { if (curTab === "top") app.innerHTML = `<h1>Топ игроков</h1><p class="err">${eText(e)}</p>`; return; }
   if (curTab !== "top") return;
@@ -1036,7 +1025,6 @@ function openTopup() {
         message: "Выбери валюту",
         buttons: [{ id: "USDT", type: "default", text: "USDT" }]
       }, (id) => res(id)))) || "USDT";
-      // 1 USDT = 100 RUB — меняй на свой курс
       const rates = { USDT: 100 };
       const amountCrypto = +(amount / rates[cur]).toFixed(4);
       tst.className = ""; tst.textContent = "Создаём счёт…";
