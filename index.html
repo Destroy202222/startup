@@ -431,7 +431,7 @@ function showTab(t) {
     try {
       const d = await rpc("promo_redeem", { code });
       if (d.error) toast(LERR[d.error] || d.error);
-      else { cur.balance = d.balance; q("wb").textContent = money(d.balance); q("pc").value = ""; toast("Промокод активирован: +" + money(d.amount)); }
+      else { cur.bonus_balance = d.bonus_balance; const wbb = q("wbb"); if (wbb) wbb.textContent = money(d.bonus_balance); q("pc").value = ""; toast("Промокод активирован: +" + money(d.amount) + " на бонусный баланс"); }
     } catch (e) { toast(eText(e)); }
     q("pb").disabled = false;
   };
