@@ -206,6 +206,16 @@ input[type=text]:focus,.sta:focus{border-color:var(--or);box-shadow:0 0 0 4px rg
 .sb.them{background:var(--panel2)}
 :focus-visible{outline:2px solid var(--or2);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.tip{position:fixed;left:14px;bottom:calc(100px + env(safe-area-inset-bottom,0px));max-width:calc(100vw - 100px);z-index:45;display:flex;align-items:center;gap:10px;padding:8px 8px 8px 10px;border-radius:18px;background:rgba(22,22,24,.9);border:1px solid rgba(255,122,0,.3);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 12px 32px rgba(0,0,0,.55),0 0 24px rgba(255,122,0,.12);transform:translateX(130%);transition:transform .5s cubic-bezier(.2,.9,.25,1.05);touch-action:pan-y;cursor:pointer}
+.tip.in{transform:none}
+.tip.out{transform:translateX(130%);opacity:0;transition:transform .38s cubic-bezier(.5,0,.8,.4),opacity .38s}
+.tip .ti{width:32px;height:32px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 25%,#ffb066,var(--or) 65%,#c85a00)}
+.tip .ti svg{width:16px;height:16px;fill:none;stroke:#160b00;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tip .tt{min-width:0;line-height:1.25;text-align:left}
+.tip .tt b{display:block;font-size:12.5px;font-weight:700;color:var(--tx)}
+.tip .tt span{display:block;font-size:11.5px;font-weight:600;color:var(--or2)}
+.tip .tx{width:28px;height:28px;flex:none;border-radius:50%;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;color:#c9c9ce;padding:0;cursor:pointer}
+.tip .tx svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 </style>
 </head>
 <body>
@@ -1227,6 +1237,23 @@ function boot() {
     app.innerHTML = `<div class="icon">⚠️</div><h1>Ошибка загрузки</h1><p class="err">${errText(e)}</p><p style="font-size:12px;word-break:break-all">${JSON.stringify(e)}</p><button class="btn" onclick="boot()">Повторить</button>`;
   });
 }
+// ===== Подсказка про канал =====
+function showChannelTip() {
+  const CH = "https://t.me/BsCrHub";
+  const el = document.createElement("div"); el.className = "tip";
+  el.innerHTML = '<div class="ti"><svg viewBox="0 0 24 24"><path d="M21 3L10 14"/><path d="M21 3l-7 18-4-7-7-4 18-7z"/></svg></div><div class="tt"><b>Подпишитесь на Telegram-канал</b><span>t.me/BsCrHub</span></div><button class="tx" aria-label="Скрыть"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>';
+  document.body.appendChild(el);
+  let gone = false, timer = null, x0 = null;
+  const hide = () => { if (gone) return; gone = true; clearTimeout(timer); el.classList.remove("in"); el.classList.add("out"); setTimeout(() => el.remove(), 450); };
+  el.onclick = () => { try { tg.openTelegramLink(CH); } catch (_) { tg.openLink(CH); } };
+  el.querySelector(".tx").onclick = e => { e.stopPropagation(); hide(); };
+  el.addEventListener("touchstart", e => { x0 = e.touches[0].clientX; }, { passive: true });
+  el.addEventListener("touchend", e => { if (x0 !== null && e.changedTouches[0].clientX - x0 > 40) hide(); x0 = null; }, { passive: true });
+  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add("in")));
+  timer = setTimeout(hide, 12000);
+}
+setTimeout(showChannelTip, 900);
+
 boot();
 </script>
 </body>
