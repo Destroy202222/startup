@@ -232,6 +232,19 @@ input[type=text]:focus,.sta:focus{border-color:var(--or);box-shadow:0 0 0 4px rg
 .bonusbar{height:6px;border-radius:6px;background:rgba(255,255,255,.08);overflow:hidden;margin:2px 0 8px}
 .bonusbar i{display:block;height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,var(--or),var(--or2));box-shadow:0 0 10px rgba(255,122,0,.6);transition:width .6s cubic-bezier(.2,.8,.2,1)}
 .bonushint{margin:0;font-size:12px;line-height:1.45;color:var(--mut)}
+.balrow.dual{padding:12px 6px}
+.balrow.dual>div{flex:1;text-align:center}
+.balrow.dual span{display:block;font-size:12px;color:var(--mut);margin-bottom:2px}
+.balrow.dual b{font-size:20px}
+.balrow.dual>div:first-child b{color:var(--or2)}
+.balrow.dual i{width:1px;align-self:stretch;background:var(--line)}
+.ftcard{background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:10px;text-align:left}
+.ftcard>b{display:block;font-size:15px}
+.ftcard>span{display:block;color:var(--or2);font-size:12.5px;font-weight:700;margin-top:4px}
+.ftcard .avs{margin-top:12px}
+.ftrow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px}
+.ftrow em{font-style:normal;color:var(--mut);font-weight:700}
+.ftrow .btn{width:auto;margin:0;padding:10px 16px;font-size:14px}
 </style>
 </head>
 <body>
@@ -302,35 +315,24 @@ async function rpcTo(fn, action, args = {}) {
 }
 
 // ==== Крипто-пополнение через clever-action ====
-async function cryptoTopupOnce(amountCrypto, currency) {
-  const ac = new AbortController(), tm = setTimeout(() => ac.abort(), 25000);
+async function cryptoTopup(amountCrypto, currency) {
+  const ac = new AbortController(), tm = setTimeout(() => ac.abort(), 20000);
   try {
     const r = await fetch("https://wlhzcocwgmzcrtzhefic.supabase.co/functions/v1/clever-action", {
       method: "POST", signal: ac.signal,
       headers: { "Content-Type": "application/json", apikey: ANON, Authorization: "Bearer " + ANON },
       body: JSON.stringify({ initData: tg.initData, amount: amountCrypto, currency })
     });
-    const d = await r.json().catch(() => ({}));
-    if (!r.ok || !d.url) throw { error: d.error || ("http_" + r.status), detail: d };
+    const d = await r.json();
+    if (!r.ok || !d.url) throw { error: d.error || "crypto_error", detail: d };
     return d.url;
   } catch (e) {
     if (e && e.name === "AbortError") throw { error: "timeout" };
-    if (e instanceof TypeError) throw { error: "network" };
     throw e;
   } finally { clearTimeout(tm); }
 }
-async function cryptoTopup(a, c) {
-  try { return await cryptoTopupOnce(a, c); }
-  catch (e) {
-    if (e.error === "timeout" || e.error === "network" || /^http_5/.test(e.error || "")) {
-      await new Promise(r => setTimeout(r, 1500));
-      return cryptoTopupOnce(a, c);
-    }
-    throw e;
-  }
-}
 
-const LERR = { bad_mission: "Такой миссии нет", mission_not_ready: "Миссия ещё не выполнена", mission_claimed: "Награда уже получена", bad_amount_wd: "Минимальная сумма вывода — 50 ₽", bad_phone: "Введи российский номер: +7 900 000-00-00", bad_bank: "Укажи банк получателя", wd_gone: "Заявка уже обработана", bad_amount: "Сумма от 50 до 50 000 ₽", topup_pending: "У тебя уже есть заявка на пополнение", topup_gone: "Заявка уже обработана", promo_invalid: "Промокод не найден или отключён", promo_used_up: "Промокод уже закончился", promo_already: "Ты уже использовал этот промокод", too_many: "Слишком много попыток. Попробуй позже", bad_tag: "Неверный тег", bad_code: "Код: 3–32 символа", bad_promo: "Проверь сумму и количество использований", promo_exists: "Такой промокод уже есть", forbidden: "Нет доступа", bad_link: "Нужна ссылка вида https://link.brawlstars.com/…", no_link_yet: "Создатель ещё не прислал ссылку", bad_image: "Нужно изображение", image_too_big: "Файл слишком большой", auth_expired: "Сессия устарела — открой заново", bad_auth: "Открой из Telegram", no_bot_token: "Сервер не настроен", bad_winner: "Неверный победитель", no_balance: "Недостаточно средств", already_in_lobby: "Ты уже в лобби", lobby_unavailable: "Лобби уже недоступно", bad_stake: "Неверная ставка", bad_mode: "Неверный режим", no_maps: "Нет карт для ШД", not_verified: "Аккаунт не верифицирован", not_in_lobby: "Тебя нет в лобби", rpc_error: "Ошибка сервера", bad_text: "Напиши сообщение" };
+const LERR = { bad_mission: "Такой миссии нет", mission_not_ready: "Миссия ещё не выполнена", mission_claimed: "Награда уже получена", bad_amount_wd: "Минимальная сумма вывода — 50 ₽", bad_phone: "Введи российский номер: +7 900 000-00-00", bad_bank: "Укажи банк получателя", wd_gone: "Заявка уже обработана", bad_amount: "Сумма от 50 до 50 000 ₽", topup_pending: "У тебя уже есть заявка на пополнение", topup_gone: "Заявка уже обработана", promo_invalid: "Промокод не найден или отключён", promo_used_up: "Промокод уже закончился", promo_already: "Ты уже использовал этот промокод", too_many: "Слишком много попыток. Попробуй позже", bad_tag: "Неверный тег", bad_code: "Код: 3–32 символа", bad_promo: "Проверь сумму и количество использований", promo_exists: "Такой промокод уже есть", forbidden: "Нет доступа", bad_link: "Нужна ссылка вида https://link.brawlstars.com/…", no_link_yet: "Создатель ещё не прислал ссылку", bad_image: "Нужно изображение", image_too_big: "Файл слишком большой", auth_expired: "Сессия устарела — открой заново", bad_auth: "Открой из Telegram", no_bot_token: "Сервер не настроен", bad_winner: "Неверный победитель", no_balance: "Недостаточно средств", already_in_lobby: "Ты уже в лобби", lobby_unavailable: "Лобби уже недоступно", bad_stake: "Неверная ставка", bad_mode: "Неверный режим", no_maps: "Нет карт для ШД", not_verified: "Аккаунт не верифицирован", not_in_lobby: "Тебя нет в лобби", rpc_error: "Ошибка сервера", bad_text: "Напиши сообщение", ft_gone: "Турнир уже недоступен", ft_in: "Ты уже участвуешь в турнире", ft_full: "Турнир заполнен", ft_not_member: "Ты не участник турнира", bad_map: "Укажи карту (до 60 символов)", bad_prizes: "Проверь призы: от 1 до 10 призёров, суммы больше 0" };
 const eText = e => LERR[e.error] || errText(e) || (e && e.error ? ("Ошибка: " + e.error) : "Ошибка");
 
 const USER_SVG = '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>';
@@ -548,6 +550,7 @@ function applySnap(sn) {
 async function poll() {
   if (busy) return;
   if (++pollN % 3 === 0) extraPoll();
+  if (curTab === "matches" && pollN % 2 === 0) ftLoad();
   try { applySnap((await call("lobbies")).snap); } catch (e) {}
   if (isAdmin && curTab === "admin" && !adminGameId && (adminSec === "games" || adminSec === "topups" || adminSec === "withdrawals")) renderAdmin();
 }
@@ -645,11 +648,13 @@ function renderMatches() {
   const pend = (snap.pending || []).map(x => `<div class="lrow"><div class="li"><b>На проверке</b><span>${modeName(x.mode)}</span></div><div class="st">${money(x.stake)}</div></div>`).join("");
   const cols = Math.min(stakes.length, 4);
   app.innerHTML = `<h1>Матчи</h1><p>Нажми «Поиск» — подберём соперника автоматически</p>
-  <div class="balrow"><span>Баланс</span><b>${money(bal)}</b></div>
+  <div class="balrow dual"><div><span>Бонусный</span><b>${money(snap.bonus_balance || 0)}</b></div><i></i><div><span>Основной</span><b>${money(bal)}</b></div></div>
   <div class="sec">Найти матч</div>
   <div class="chips" style="grid-template-columns:repeat(${cols},1fr)">${stakes.map(x => `<button class="chip${x === pickStake ? " on" : ""}" data-s="${x}">${x} ₽</button>`).join("")}</div>
   <button class="btn" id="mk" ${(bal + (snap.bonus_balance || 0)) < pickStake ? "disabled" : ""}>${(bal + (snap.bonus_balance || 0)) < pickStake ? "Не хватает баланса" : "🔍 Поиск · " + money(pickStake)}</button>
-  ${pend ? `<div class="sec">Ждут решения</div>${pend}` : ""}`;
+  ${pend ? `<div class="sec">Ждут решения</div>${pend}` : ""}
+  <div id="ftbox"></div>`;
+  renderFt(); ftLoad();
   app.querySelectorAll(".chip").forEach(c => c.onclick = () => { pickStake = +c.dataset.s; renderMatches(); });
   q("mk").onclick = async () => {
     q("mk").disabled = true;
@@ -806,6 +811,7 @@ const adminSeg = () => `<div class="balrow" style="margin-top:10px"><span>Зар
   <button data-sec="promo" class="${adminSec === "promo" ? "on" : ""}">Промокоды</button>
   <button data-sec="stakes" class="${adminSec === "stakes" ? "on" : ""}">Ставки</button>
   <button data-sec="players" class="${adminSec === "players" ? "on" : ""}">Игроки</button>
+  <button data-sec="ft" class="${adminSec === "ft" ? "on" : ""}">Турниры</button>
   ${isMain ? `<button data-sec="admins" class="${adminSec === "admins" ? "on" : ""}">Админы</button>` : ""}</div>`;
 const bindSeg = () => app.querySelectorAll("[data-sec]").forEach(b => b.onclick = () => { adminSec = b.dataset.sec; app.dataset.adm = "0"; adminKey = ""; renderAdmin(); });
 const askOk = (msg, go) => tg.showConfirm ? tg.showConfirm(msg, ok => ok && go()) : (confirm(msg) && go());
@@ -826,6 +832,7 @@ async function renderAdmin() {
   if (adminSec === "withdrawals") return renderWithdrawals();
   if (adminSec === "stakes") return renderStakes();
   if (adminSec === "players") return renderPlayers();
+  if (adminSec === "ft") return renderFtAdmin();
   if (adminSec === "admins" && isMain) return renderAdmins();
   adminSec = "games"; adminGameId = null;
   let d; try { d = await rpc("admin_games"); } catch (e) { if (curTab === "admin") app.innerHTML = `<h1>Админ-меню</h1><p class="err">${eText(e)}</p>`; return; }
@@ -1079,6 +1086,7 @@ function applyWdState(st) {
 }
 async function extraPoll() {
   supBadge();
+  ftLoad();
   if (cryptoWait > Date.now()) cryptoCheck();
   if (isAdmin) {
     loadAdminStats();
@@ -1129,12 +1137,12 @@ function openTopup() {
       tst.className = ""; tst.textContent = "Создаём счёт…";
       try {
         const url = await cryptoTopup(amountCrypto, cur);
-        if (url.startsWith("https://t.me/")) tg.openTelegramLink(url); else tg.openLink(url);
+        tg.openLink(url);
         cryptoWait = Date.now() + 40 * 60 * 1000;
         el.remove();
         toast("Открой оплату в xRocket. Баланс пополнится автоматически после подтверждения");
       } catch (e) {
-        tst.textContent = e.error === "timeout" ? "Сервер не ответил. Попробуй ещё раз." : e.error === "network" ? "Нет связи с сервером. Проверь интернет." : "Ошибка: " + (e.error || "unknown") + (e.detail ? " " + JSON.stringify(e.detail).slice(0, 140) : ""); tst.className = "err";
+        tst.textContent = e.error === "timeout" ? "Сервер не ответил за 20 секунд. Попробуй ещё раз." : "Ошибка: " + (e.error || "unknown") + (e.detail ? " " + JSON.stringify(e.detail).slice(0, 140) : ""); tst.className = "err";
       }
     };
     sh.querySelector("#pay").onclick = () => {
@@ -1228,7 +1236,7 @@ async function cryptoCheck() {
   cryptoBusy = true;
   try {
     const r = await fetch("https://wlhzcocwgmzcrtzhefic.supabase.co/functions/v1/clever-action", {
-      method: "POST", signal: AbortSignal.timeout(15000),
+      method: "POST",
       headers: { "Content-Type": "application/json", apikey: ANON, Authorization: "Bearer " + ANON },
       body: JSON.stringify({ initData: tg.initData, action: "check" })
     });
@@ -1239,6 +1247,127 @@ async function cryptoCheck() {
   cryptoBusy = false;
 }
 document.addEventListener("visibilitychange", () => { if (!document.hidden && cur) cryptoCheck(); });
+
+// ===== Бесплатные турниры =====
+const ft = (a, b) => rpcTo("tg_ft", a, b);
+let ftSt = null, ftKey = "", ftBusy = false, ftDraft = "";
+const prizeStr = pr => (pr || []).map((x, i) => `${["🥇", "🥈", "🥉"][i] || (i + 1) + "."} ${money(x)}`).join(" · ");
+async function ftLoad(force) {
+  if ((ftBusy && !force) || !cur) return;
+  if (force) ftKey = "";
+  ftBusy = true;
+  try {
+    const d = await ft("list");
+    const prev = ftSt && ftSt.mine ? ftSt.mine.status : null;
+    ftSt = d;
+    if (prev === "open" && d.mine && d.mine.status === "live") { hap("warning"); toast("Турнир начался! Открой «Матчи»"); }
+    const key = JSON.stringify(d);
+    if (key !== ftKey) { ftKey = key; renderFt(); }
+  } catch (e) { /* повторим позже */ }
+  ftBusy = false;
+}
+const ftAct = async (a, args, msg) => {
+  try { await ft(a, args); if (msg) { hap("success"); toast(msg); } } catch (e) { toastE(eText(e)); }
+  ftLoad(true);
+};
+function renderFt() {
+  const box = q("ftbox"); if (!box || curTab !== "matches") return;
+  if (!ftSt) { box.innerHTML = '<div class="sec">Бесплатные турниры</div><p>Загрузка…</p>'; ftLoad(); return; }
+  const m = ftSt.mine;
+  let html = '<div class="sec">Бесплатные турниры</div>';
+  if (m) {
+    const ava = (m.players || []).map(p => `<div class="av ${p.me ? "ok" : ""}">${p.photo ? `<img src="${escH(p.photo)}" alt="">` : USER_SVG}</div>`).join("");
+    let body;
+    if (m.status === "open") body = `<p>Ждём игроков: <b style="color:var(--tx)">${m.count}/${m.capacity}</b>. Турнир начнётся, когда наберётся ${m.capacity}.</p><button class="btn ghost" id="ftleave">Выйти из турнира</button>`;
+    else if (!m.link && m.creator) body = `<div class="note"><b>Ты создаёшь лобби.</b> Создай лобби в Brawl Stars на карте «${escH(m.map)}», скопируй ссылку и вставь сюда.</div><input type="text" id="ftlk" placeholder="https://link.brawlstars.com/…" style="font-size:15px;letter-spacing:0"><button class="btn" id="ftsend">Отправить ссылку</button>`;
+    else if (!m.link) body = `<div class="note"><span class="pulse"></span><b>Ждём ссылку на лобби.</b> Создатель создаёт комнату на карте «${escH(m.map)}».</div>`;
+    else body = `<div class="note"><b>Ссылка получена.</b><br>1. Зайди в комнату.<br>2. Сыграйте на карте «${escH(m.map)}».<br>3. После игры прикрепи скриншот.</div><button class="btn" id="ftopen">Открыть лобби в Brawl Stars</button>` + (m.submitted ? '<div class="note"><b>Скриншот отправлен ✓</b> Ждём решения администратора.</div>' : `<input type="file" id="ftshot" accept="image/*" class="hidden"><button class="drop" id="ftpick"><b>📷</b>Прикрепить результат<small>Скриншот экрана с итогом игры</small></button>`);
+    html += `<div class="ftcard"><b>${m.status === "open" ? "Ты в турнире" : "Турнир идёт"} · ${escH(m.map)}</b><span>${prizeStr(m.prizes)}</span><div class="avs many">${ava}</div>${body}</div>`;
+  } else {
+    const items = ftSt.items || [];
+    html += `<p style="font-size:12px;margin-top:0">Без ставки. Призы зачисляются на бонусный баланс.</p>`;
+    html += items.length ? items.map(t => `<div class="ftcard"><b>${escH(t.map)}</b><span>${prizeStr(t.prizes)}</span><div class="ftrow"><em>${t.count}/${t.capacity} игроков</em><button class="btn sm" data-fj="${t.id}">Участвовать</button></div></div>`).join("") : "<p>Сейчас нет открытых турниров.</p>";
+  }
+  box.innerHTML = html;
+  box.querySelectorAll("[data-fj]").forEach(b => b.onclick = () => { b.disabled = true; ftAct("join", { id: +b.dataset.fj }); });
+  if (q("ftleave")) q("ftleave").onclick = () => ftAct("leave", { id: m.id });
+  if (q("ftlk")) { q("ftlk").value = ftDraft; q("ftlk").oninput = e => { ftDraft = e.target.value; }; }
+  if (q("ftsend")) q("ftsend").onclick = () => { q("ftsend").disabled = true; ftAct("set_link", { id: m.id, link: q("ftlk").value }, "Ссылка отправлена"); };
+  if (q("ftopen")) q("ftopen").onclick = () => tg.openLink(m.link);
+  if (q("ftpick")) {
+    q("ftpick").onclick = () => q("ftshot").click();
+    q("ftshot").onchange = async ev => {
+      const f = ev.target.files[0]; if (!f) return;
+      q("ftpick").disabled = true; q("ftpick").textContent = "Загружаем…";
+      try { await ft("submit", { id: m.id, img: await shrink(f) }); hap("success"); toast("Результат отправлен"); } catch (e) { toastE(eText(e)); }
+      ftLoad(true);
+    };
+  }
+}
+// ----- админка турниров -----
+async function renderFtAdmin() {
+  let d; try { d = await ft("a_list"); } catch (e) { toastE(eText(e)); return; }
+  if (curTab !== "admin" || adminSec !== "ft") return;
+  const rows = d.items.map(t => `<div class="lrow" data-ft="${t.id}" style="cursor:pointer"><div class="li"><b>${escH(t.map)} · ${t.status === "open" ? "набор" : "идёт"}</b><span>${prizeStr(t.prizes)} · скринов ${t.shots}/${t.capacity}</span></div><div class="st">${t.count}/${t.capacity}</div></div>`).join("");
+  app.innerHTML = `<h1>Админ-меню</h1>${adminSeg()}
+  <div class="sec">Создать бесплатный турнир (ШД, 10 игроков)</div>
+  <input type="text" id="ftmap" placeholder="Карта" maxlength="60" style="text-transform:none;font-size:15px">
+  <input type="text" id="ftn" inputmode="numeric" value="3" placeholder="Сколько победителей (1–10)" style="font-size:15px">
+  <div id="ftpz"></div>
+  <button class="btn" id="ftmk">Создать турнир</button>
+  <div class="sec">Активные турниры</div><div class="mlist">${rows || "<p>Нет активных турниров.</p>"}</div>`;
+  bindSeg();
+  const drawPz = () => {
+    const n = Math.max(1, Math.min(10, parseInt(q("ftn").value.replace(/\D/g, ""), 10) || 1));
+    const old = [...document.querySelectorAll("#ftpz input")].map(i => i.value);
+    q("ftpz").innerHTML = Array.from({ length: n }, (_, i) => `<input type="text" inputmode="numeric" data-pz placeholder="${i + 1} место, ₽" value="${escH(old[i] || "")}" style="font-size:15px">`).join("");
+  };
+  q("ftn").oninput = drawPz; drawPz();
+  q("ftmk").onclick = async () => {
+    const map = q("ftmap").value.trim();
+    const prizes = [...document.querySelectorAll("#ftpz [data-pz]")].map(i => parseInt(i.value.replace(/\D/g, ""), 10));
+    if (!map) { toast("Укажи карту"); return; }
+    if (prizes.some(x => !x || x <= 0)) { toast("Укажи приз для каждого места"); return; }
+    q("ftmk").disabled = true;
+    try { await ft("a_create", { map, prizes }); hap("success"); toast("Турнир создан"); renderFtAdmin(); }
+    catch (e) { toastE(eText(e)); q("ftmk").disabled = false; }
+  };
+  app.querySelectorAll("[data-ft]").forEach(r => r.onclick = () => openFtAdmin(+r.dataset.ft));
+}
+async function openFtAdmin(id) {
+  let d; try { d = await ft("a_get", { id }); } catch (e) { toastE(eText(e)); return; }
+  const t = d.t, pl = d.players, need = t.prizes.length, picks = [], live = t.status === "live";
+  const ps = pl.map(p => `<div class="sec" style="margin-top:14px">${escH(p.name || "Игрок")} · ${escH(p.tag || "")}${p.creator ? " · создатель лобби" : ""}</div>
+    ${p.img ? `<img class="shot" src="${escH(p.img)}" data-v="1" alt="">` : "<p>Скриншот не прикреплён</p>"}
+    ${live ? `<div class="pk" style="flex-wrap:wrap">${t.prizes.map((z, k) => `<button class="btn sm" data-p="${k + 1}" data-id="${p.tg}">${k + 1} · ${money(z)}</button>`).join("")}</div>` : ""}`).join("");
+  app.innerHTML = `<h1>Турнир #${t.id}</h1><p>${escH(t.map)} · ${live ? "идёт" : "набор"} · ${pl.length}/${t.capacity}<br>${prizeStr(t.prizes)}</p>${ps || "<p>Игроков пока нет.</p>"}
+  ${live ? `<div class="sec">Выбери победителей (${need})</div><button class="btn" id="ftdone" disabled>Подтвердить и выдать призы</button>` : ""}
+  <button class="btn ghost" id="ftcancel">Отменить турнир</button>
+  <button class="btn ghost" id="ftback">← Назад</button>`;
+  app.querySelectorAll("[data-v]").forEach(i => i.onclick = () => viewImg(i.src));
+  q("ftback").onclick = () => renderFtAdmin();
+  q("ftcancel").onclick = () => askOk("Отменить турнир? Игроки получат уведомление.", async () => {
+    try { await ft("a_cancel", { id }); toast("Турнир отменён"); } catch (e) { toastE(eText(e)); }
+    renderFtAdmin();
+  });
+  if (live) {
+    app.querySelectorAll("[data-p]").forEach(b => b.onclick = () => {
+      const place = +b.dataset.p - 1, pid = +b.dataset.id;
+      for (let k = 0; k < need; k++) if (picks[k] === pid) picks[k] = undefined;
+      picks[place] = pid;
+      app.querySelectorAll("[data-p]").forEach(x => x.classList.toggle("on", picks[+x.dataset.p - 1] === +x.dataset.id));
+      q("ftdone").disabled = !Array.from({ length: need }, (_, k) => picks[k]).every(Boolean);
+    });
+    q("ftdone").onclick = () => {
+      const nm = tg2 => (pl.find(p => p.tg === tg2) || {}).name || "Игрок";
+      const w = picks.slice(0, need);
+      askOk(w.map((x, k) => `${k + 1} место: ${nm(x)} (+${money(t.prizes[k])})`).join("\n") + "\nВыдать призы на бонусный баланс?", async () => {
+        try { await ft("a_settle", { id, winners: w }); hap("success"); toast("Призы выданы"); } catch (e) { toastE(eText(e)); }
+        renderFtAdmin();
+      });
+    };
+  }
+}
 
 // ===== Поддержка =====
 const sup = (a, b) => rpcTo("tg_support", a, b);
