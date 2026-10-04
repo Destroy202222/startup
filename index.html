@@ -302,21 +302,32 @@ async function rpcTo(fn, action, args = {}) {
 }
 
 // ==== Крипто-пополнение через clever-action ====
-async function cryptoTopup(amountCrypto, currency) {
-  const ac = new AbortController(), tm = setTimeout(() => ac.abort(), 20000);
+async function cryptoTopupOnce(amountCrypto, currency) {
+  const ac = new AbortController(), tm = setTimeout(() => ac.abort(), 25000);
   try {
     const r = await fetch("https://wlhzcocwgmzcrtzhefic.supabase.co/functions/v1/clever-action", {
       method: "POST", signal: ac.signal,
       headers: { "Content-Type": "application/json", apikey: ANON, Authorization: "Bearer " + ANON },
       body: JSON.stringify({ initData: tg.initData, amount: amountCrypto, currency })
     });
-    const d = await r.json();
-    if (!r.ok || !d.url) throw { error: d.error || "crypto_error", detail: d };
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok || !d.url) throw { error: d.error || ("http_" + r.status), detail: d };
     return d.url;
   } catch (e) {
     if (e && e.name === "AbortError") throw { error: "timeout" };
+    if (e instanceof TypeError) throw { error: "network" };
     throw e;
   } finally { clearTimeout(tm); }
+}
+async function cryptoTopup(a, c) {
+  try { return await cryptoTopupOnce(a, c); }
+  catch (e) {
+    if (e.error === "timeout" || e.error === "network" || /^http_5/.test(e.error || "")) {
+      await new Promise(r => setTimeout(r, 1500));
+      return cryptoTopupOnce(a, c);
+    }
+    throw e;
+  }
 }
 
 const LERR = { bad_mission: "Такой миссии нет", mission_not_ready: "Миссия ещё не выполнена", mission_claimed: "Награда уже получена", bad_amount_wd: "Минимальная сумма вывода — 50 ₽", bad_phone: "Введи российский номер: +7 900 000-00-00", bad_bank: "Укажи банк получателя", wd_gone: "Заявка уже обработана", bad_amount: "Сумма от 50 до 50 000 ₽", topup_pending: "У тебя уже есть заявка на пополнение", topup_gone: "Заявка уже обработана", promo_invalid: "Промокод не найден или отключён", promo_used_up: "Промокод уже закончился", promo_already: "Ты уже использовал этот промокод", too_many: "Слишком много попыток. Попробуй позже", bad_tag: "Неверный тег", bad_code: "Код: 3–32 символа", bad_promo: "Проверь сумму и количество использований", promo_exists: "Такой промокод уже есть", forbidden: "Нет доступа", bad_link: "Нужна ссылка вида https://link.brawlstars.com/…", no_link_yet: "Создатель ещё не прислал ссылку", bad_image: "Нужно изображение", image_too_big: "Файл слишком большой", auth_expired: "Сессия устарела — открой заново", bad_auth: "Открой из Telegram", no_bot_token: "Сервер не настроен", bad_winner: "Неверный победитель", no_balance: "Недостаточно средств", already_in_lobby: "Ты уже в лобби", lobby_unavailable: "Лобби уже недоступно", bad_stake: "Неверная ставка", bad_mode: "Неверный режим", no_maps: "Нет карт для ШД", not_verified: "Аккаунт не верифицирован", not_in_lobby: "Тебя нет в лобби", rpc_error: "Ошибка сервера", bad_text: "Напиши сообщение" };
@@ -1118,12 +1129,12 @@ function openTopup() {
       tst.className = ""; tst.textContent = "Создаём счёт…";
       try {
         const url = await cryptoTopup(amountCrypto, cur);
-        tg.openLink(url);
+        if (url.startsWith("https://t.me/")) tg.openTelegramLink(url); else tg.openLink(url);
         cryptoWait = Date.now() + 40 * 60 * 1000;
         el.remove();
         toast("Открой оплату в xRocket. Баланс пополнится автоматически после подтверждения");
       } catch (e) {
-        tst.textContent = e.error === "timeout" ? "Сервер не ответил за 20 секунд. Попробуй ещё раз." : "Ошибка: " + (e.error || "unknown") + (e.detail ? " " + JSON.stringify(e.detail).slice(0, 140) : ""); tst.className = "err";
+        tst.textContent = e.error === "timeout" ? "Сервер не ответил. Попробуй ещё раз." : e.error === "network" ? "Нет связи с сервером. Проверь интернет." : "Ошибка: " + (e.error || "unknown") + (e.detail ? " " + JSON.stringify(e.detail).slice(0, 140) : ""); tst.className = "err";
       }
     };
     sh.querySelector("#pay").onclick = () => {
@@ -1217,7 +1228,7 @@ async function cryptoCheck() {
   cryptoBusy = true;
   try {
     const r = await fetch("https://wlhzcocwgmzcrtzhefic.supabase.co/functions/v1/clever-action", {
-      method: "POST",
+      method: "POST", signal: AbortSignal.timeout(15000),
       headers: { "Content-Type": "application/json", apikey: ANON, Authorization: "Bearer " + ANON },
       body: JSON.stringify({ initData: tg.initData, action: "check" })
     });
