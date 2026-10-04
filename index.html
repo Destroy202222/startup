@@ -861,6 +861,7 @@ async function renderTopups() {
   app.innerHTML = `<h1>Админ-меню</h1>${adminSeg()}<p>Заявки на пополнение</p>
   <div class="mlist">${rows || "<p>Новых заявок нет.</p>"}</div>`;
   bindSeg();
+  loadCrypto();
   const decide = (id, approve, n) => askOk(approve ? `Пополнить на ${money(+n)}?` : `Отклонить перевод на ${money(+n)}?`, async () => {
     try { await pay("admin_decide", { id: +id, approve }); toast(approve ? "Пополнено" : "Отклонено"); } catch (e) { toastE(eText(e)); }
     app.dataset.adm = "0"; renderTopups();
@@ -977,6 +978,19 @@ async function openPlayer(tg) {
   <div class="sec">Матчи (последние 30)</div><div class="mlist">${ms || "<p>Матчей нет.</p>"}</div>
   <button class="btn ghost" id="plback">← К игрокам</button>`;
   q("plback").onclick = () => { adminSec = "players"; renderPlayers(); };
+}
+// ===== Админ: крипто-счета без зачисления =====
+const cry = (a, b) => rpcTo("tg_crypto", a, b);
+async function loadCrypto() {
+  let d; try { d = await cry("list"); } catch (e) { return; }
+  if (curTab !== "admin" || adminSec !== "topups") return;
+  const old = q("crsec"); if (old) old.remove();
+  const rows = d.items.map(c => `<div class="lrow" style="flex-wrap:wrap"><div class="li"><b>${escH(c.name || "Игрок")} · ${escH(c.tag || "")}</b><span>Счёт ${escH(c.id)} · ${fmtT(c.created_at)}</span></div><div class="st">${money(c.amount)}</div><div style="width:100%;margin-top:8px"><button class="btn sm" style="margin:0" data-cr="${escH(c.id)}" data-n="${c.amount}">Зачислить</button></div></div>`).join("");
+  app.insertAdjacentHTML("beforeend", `<div id="crsec"><div class="sec">Крипто-счета xRocket без зачисления</div><p style="font-size:12px">Зачисляй только если оплата видна в чате xRocket.</p><div class="mlist">${rows || "<p>Неоплаченных счетов нет.</p>"}</div></div>`);
+  app.querySelectorAll("[data-cr]").forEach(b => b.onclick = () => askOk(`Счёт ${b.dataset.cr}: зачислить ${money(+b.dataset.n)}? Сначала проверь оплату в xRocket.`, async () => {
+    try { const r = await cry("credit", { id: b.dataset.cr }); hap("success"); toast(r.credited ? "Зачислено" : "Уже зачислено"); } catch (e) { toastE(eText(e)); }
+    loadCrypto();
+  }));
 }
 async function openGame(id) {
   adminGameId = id; app.dataset.adm = "0";
