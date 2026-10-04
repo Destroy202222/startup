@@ -245,6 +245,7 @@ input[type=text]:focus,.sta:focus{border-color:var(--or);box-shadow:0 0 0 4px rg
 .ftrow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px}
 .ftrow em{font-style:normal;color:var(--mut);font-weight:700}
 .ftrow .btn{width:auto;margin:0;padding:10px 16px;font-size:14px}
+.bc{margin:12px 0 6px;text-align:left}.bc .sec{margin:0 2px 8px}.bc .sta{margin-top:0}.bc .btn{margin-top:8px}
 </style>
 </head>
 <body>
@@ -804,6 +805,7 @@ async function renderTop() {
 }
 const adminSeg = () => `<div class="balrow" style="margin-top:10px"><span>Зарегистрировано</span><b id="astatv">${adminStats ? adminStats.verified : "…"}</b></div>
   <p id="astatt" style="font-size:12px;margin:6px 0 10px">${adminStats ? `За сутки +${adminStats.today} · всего открывали: ${adminStats.total}` : ""}</p>
+  <div class="bc"><div class="sec">Рассылка в бота</div><textarea class="sta" id="bctxt" rows="2" maxlength="1000" placeholder="Текст сообщения для всех игроков…"></textarea><button class="btn sm" id="bcsend">Отправить рассылку</button></div>
   <div class="seg adm">
   <button data-sec="games" class="${adminSec === "games" ? "on" : ""}">Игры</button>
   <button data-sec="topups" class="${adminSec === "topups" ? "on" : ""}">Пополнения${admTop ? " (" + admTop + ")" : ""}</button>
@@ -813,7 +815,10 @@ const adminSeg = () => `<div class="balrow" style="margin-top:10px"><span>Зар
   <button data-sec="players" class="${adminSec === "players" ? "on" : ""}">Игроки</button>
   <button data-sec="ft" class="${adminSec === "ft" ? "on" : ""}">Турниры</button>
   ${isMain ? `<button data-sec="admins" class="${adminSec === "admins" ? "on" : ""}">Админы</button>` : ""}</div>`;
-const bindSeg = () => app.querySelectorAll("[data-sec]").forEach(b => b.onclick = () => { adminSec = b.dataset.sec; app.dataset.adm = "0"; adminKey = ""; renderAdmin(); });
+const bindSeg = () => {
+  app.querySelectorAll("[data-sec]").forEach(b => b.onclick = () => { adminSec = b.dataset.sec; app.dataset.adm = "0"; adminKey = ""; renderAdmin(); });
+  bindBc();
+};
 const askOk = (msg, go) => tg.showConfirm ? tg.showConfirm(msg, ok => ok && go()) : (confirm(msg) && go());
 async function loadAdminStats() {
   try {
@@ -1156,7 +1161,7 @@ function openTopup() {
     sh.innerHTML = `<h1>Переведи ${money(amount)}</h1>
     <p>Отсканируй QR (или сохрани и открой в банке) и переведи ровно <b style="color:var(--tx)">${money(amount)}</b></p>
     ${QR_IMG ? `<img class="qr" src="${QR_IMG}" alt="QR">` : `<div class="note" style="text-align:center"><b>QR не настроен.</b> Свяжись с админом.</div>`}
-    <p style="margin-top:12px">В комментарии укажи код:</p>
+    <p style="margin-top:12px">Если есть возможность, оставьте в комментарии к переводу этот код:</p>
     <div class="refcode">${ref}</div>
     <p id="tst"></p>
     <button class="btn" id="ok">Подтвердить перевод</button>
@@ -1272,8 +1277,9 @@ const ftAct = async (a, args, msg) => {
 };
 function renderFt() {
   const box = q("ftbox"); if (!box || curTab !== "matches") return;
-  if (!ftSt) { box.innerHTML = '<div class="sec">Бесплатные турниры</div><p>Загрузка…</p>'; ftLoad(); return; }
+  if (!ftSt) { box.innerHTML = ""; ftLoad(); return; }
   const m = ftSt.mine;
+  if (!m && !(ftSt.items || []).length) { box.innerHTML = ""; return; }
   let html = '<div class="sec">Бесплатные турниры</div>';
   if (m) {
     const ava = (m.players || []).map(p => `<div class="av ${p.me ? "ok" : ""}">${p.photo ? `<img src="${escH(p.photo)}" alt="">` : USER_SVG}</div>`).join("");
@@ -1285,8 +1291,7 @@ function renderFt() {
     html += `<div class="ftcard"><b>${m.status === "open" ? "Ты в турнире" : "Турнир идёт"} · ${escH(m.map)}</b><span>${prizeStr(m.prizes)}</span><div class="avs many">${ava}</div>${body}</div>`;
   } else {
     const items = ftSt.items || [];
-    html += `<p style="font-size:12px;margin-top:0">Без ставки. Призы зачисляются на бонусный баланс.</p>`;
-    html += items.length ? items.map(t => `<div class="ftcard"><b>${escH(t.map)}</b><span>${prizeStr(t.prizes)}</span><div class="ftrow"><em>${t.count}/${t.capacity} игроков</em><button class="btn sm" data-fj="${t.id}">Участвовать</button></div></div>`).join("") : "<p>Сейчас нет открытых турниров.</p>";
+    html += items.map(t => `<div class="ftcard"><b>${escH(t.map)}</b><span>${prizeStr(t.prizes)}</span><div class="ftrow"><em>${t.count}/${t.capacity} игроков</em><button class="btn sm" data-fj="${t.id}">Участвовать</button></div></div>`).join("");
   }
   box.innerHTML = html;
   box.querySelectorAll("[data-fj]").forEach(b => b.onclick = () => { b.disabled = true; ftAct("join", { id: +b.dataset.fj }); });
@@ -1367,6 +1372,25 @@ async function openFtAdmin(id) {
       });
     };
   }
+}
+
+// ===== Админ: рассылка =====
+const bc = (a, b) => rpcTo("tg_bc", a, b);
+let bcDraft = "";
+function bindBc() {
+  const t = q("bctxt"), b = q("bcsend"); if (!t || !b) return;
+  t.value = bcDraft;
+  t.oninput = () => { bcDraft = t.value; };
+  b.onclick = () => {
+    const text = t.value.trim();
+    if (!text) { toast("Напиши текст рассылки"); return; }
+    askOk("Отправить сообщение всем игрокам в боте?\n\n" + text.slice(0, 150), async () => {
+      b.disabled = true;
+      try { const r = await bc("send", { text }); bcDraft = ""; t.value = ""; hap("success"); toast("Рассылка отправляется: " + r.n + " получателей"); }
+      catch (e) { toastE(eText(e)); }
+      b.disabled = false;
+    });
+  };
 }
 
 // ===== Поддержка =====
