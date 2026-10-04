@@ -455,7 +455,7 @@ let isAdmin = false, isMain = false, adminSec = "games", adminGameId = null, adm
 let snap = null, off = 0, pollT = null, cdT = null, lastKey = "", busy = false, pickStake = 100;
 let pollN = 0, admTop = 0, topupPending = null, admWd = 0, wdPending = [], adminStats = null;
 function profile(p) {
-  cur = p; showTab(curTab); startPoll(); supBadge();
+  cur = p; showTab(curTab); startPoll(); supBadge(); cryptoCheck();
   rpc("whoami").then(d => { isAdmin = !!d.admin; isMain = !!d.main; document.getElementById("navadmin").classList.toggle("hidden", !isAdmin); }).catch(() => {});
 }
 function showTab(t) {
@@ -1048,6 +1048,7 @@ function applyWdState(st) {
 }
 async function extraPoll() {
   supBadge();
+  if (cryptoWait > Date.now()) cryptoCheck();
   if (isAdmin) {
     loadAdminStats();
     try {
@@ -1098,6 +1099,7 @@ function openTopup() {
       try {
         const url = await cryptoTopup(amountCrypto, cur);
         tg.openLink(url);
+        cryptoWait = Date.now() + 40 * 60 * 1000;
         el.remove();
         toast("Открой оплату в xRocket. Баланс пополнится автоматически после подтверждения");
       } catch (e) {
@@ -1187,6 +1189,25 @@ function fillBonus(g) {
   const n = 50 - g, one = n % 10 === 1 && n % 100 !== 11, few = [2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100);
   h.textContent = (one ? "Осталась " : "Осталось ") + n + " " + (one ? "игра" : few ? "игры" : "игр") + " до того, как бонусный баланс перейдёт в основной. Игра засчитывается после проверки матча.";
 }
+
+// ===== Крипто: проверка оплаты без вебхука =====
+let cryptoWait = 0, cryptoBusy = false;
+async function cryptoCheck() {
+  if (cryptoBusy || !cur) return;
+  cryptoBusy = true;
+  try {
+    const r = await fetch("https://wlhzcocwgmzcrtzhefic.supabase.co/functions/v1/clever-action", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", apikey: ANON, Authorization: "Bearer " + ANON },
+      body: JSON.stringify({ initData: tg.initData, action: "check" })
+    });
+    const d = await r.json();
+    if (d.credited > 0) { hap("success"); toast("Баланс пополнен через xRocket"); }
+    cryptoWait = d.pending > 0 ? (cryptoWait || Date.now() + 40 * 60 * 1000) : 0;
+  } catch (e) { /* повторим позже */ }
+  cryptoBusy = false;
+}
+document.addEventListener("visibilitychange", () => { if (!document.hidden && cur) cryptoCheck(); });
 
 // ===== Поддержка =====
 const sup = (a, b) => rpcTo("tg_support", a, b);
