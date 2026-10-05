@@ -1025,15 +1025,21 @@ async function openGame(id) {
   adminGameId = id; app.dataset.adm = "0";
   let g; try { g = await rpc("admin_game", { id }); } catch (e) { toastE(eText(e)); adminGameId = null; return renderAdmin(); }
   const sd = g.mode === "sd", picks = [], need = sd ? (g.players.length <= 4 ? 2 : 3) : 1;
+  let au = null; try { au = (await rpcTo("tg_auto", "get", { id })).r; } catch (e) {}
+  const auBox = au && !au.applied ? `<div class="note"><b>Результат из журнала Brawl Stars</b><br>${au.winners.map((w, k) => `${k + 1} место: ${escH(w.name)}`).join("<br>")}<button class="btn sm" id="aubtn">Применить результат</button></div>` : "";
   const ps = g.players.map(p => `<div class="sec" style="margin-top:14px">${p.name} · ${p.tag}</div>
     ${p.img ? `<img class="shot" src="${p.img}" data-v="1" alt="">` : "<p>Скриншот не прикреплён</p>"}
     ${sd ? `<div class="pk">${Array.from({ length: need }, (_, k) => `<button class="btn sm" data-p="${k + 1}" data-id="${p.tg_id}">${k + 1} место</button>`).join("")}</div>` : ""}`).join("");
-  app.innerHTML = `<h1>Игра #${g.id}</h1><p>${modeName(g.mode)} · ${g.map} · ${money(g.stake)}</p>${ps}
+  app.innerHTML = `<h1>Игра #${g.id}</h1><p>${modeName(g.mode)} · ${g.map} · ${money(g.stake)}</p>${auBox}${ps}
   <div class="sec">${sd ? "Выбери призёров (" + need + ")" : "Кто победил?"}</div>
   ${sd ? '<button class="btn" id="done" disabled>Подтвердить</button>' : g.players.map(p => `<button class="btn" data-w="${p.tg_id}">Победил ${p.name}</button>`).join("")}
   <button class="btn ghost" id="back">← Назад</button>`;
   app.querySelectorAll("[data-v]").forEach(i => i.onclick = () => viewImg(i.src));
   q("back").onclick = () => { app.dataset.adm = "0"; renderAdmin(); };
+  if (q("aubtn")) q("aubtn").onclick = () => askOk("Применить результат из журнала Brawl Stars и выдать призы?", async () => {
+    try { await rpcTo("tg_auto", "apply", { id }); hap("success"); toast("Матч засчитан"); } catch (e) { toastE(eText(e)); }
+    adminGameId = null; app.dataset.adm = "0"; renderAdmin();
+  });
   const finish = async winners => {
     try { await rpc("admin_pick", { id, winners }); toast("Подтверждено"); } catch (e) { toastE(eText(e)); }
     adminGameId = null; app.dataset.adm = "0"; renderAdmin();
