@@ -293,6 +293,13 @@ const RPCB = "https://wlhzcocwgmzcrtzhefic.supabase.co/rest/v1/rpc/";
 const rpc = (a, b) => rpcTo("tg_do", a, b);
 const pay = (a, b) => rpcTo("tg_pay", a, b);
 const wd  = (a, b) => rpcTo("tg_wd", a, b);
+const cwd = (a, b) => rpcTo("tg_wdc", a, b);
+async function wdStatus() {
+  const a = await wd("status");
+  let c = { pending: [], recent: [] };
+  try { c = await cwd("status"); } catch (_) {}
+  return { ...a, pending: [...(a.pending || []), ...(c.pending || [])], recent: [...(a.recent || []), ...(c.recent || [])] };
+}
 const ms  = (a, b) => rpcTo("tg_ms", a, b);
 
 async function rpcTo(fn, action, args = {}) {
@@ -333,7 +340,7 @@ async function cryptoTopup(amountCrypto, currency) {
   } finally { clearTimeout(tm); }
 }
 
-const LERR = { bad_mission: "Такой миссии нет", mission_not_ready: "Миссия ещё не выполнена", mission_claimed: "Награда уже получена", bad_amount_wd: "Минимальная сумма вывода — 50 ₽", bad_phone: "Введи российский номер: +7 900 000-00-00", bad_bank: "Укажи банк получателя", wd_gone: "Заявка уже обработана", bad_amount: "Сумма от 50 до 50 000 ₽", topup_pending: "У тебя уже есть заявка на пополнение", topup_gone: "Заявка уже обработана", promo_invalid: "Промокод не найден или отключён", promo_used_up: "Промокод уже закончился", promo_already: "Ты уже использовал этот промокод", too_many: "Слишком много попыток. Попробуй позже", bad_tag: "Неверный тег", bad_code: "Код: 3–32 символа", bad_promo: "Проверь сумму и количество использований", promo_exists: "Такой промокод уже есть", forbidden: "Нет доступа", bad_link: "Нужна ссылка вида https://link.brawlstars.com/…", no_link_yet: "Создатель ещё не прислал ссылку", bad_image: "Нужно изображение", image_too_big: "Файл слишком большой", auth_expired: "Сессия устарела — открой заново", bad_auth: "Открой из Telegram", no_bot_token: "Сервер не настроен", bad_winner: "Неверный победитель", no_balance: "Недостаточно средств", already_in_lobby: "Ты уже в лобби", lobby_unavailable: "Лобби уже недоступно", bad_stake: "Неверная ставка", bad_mode: "Неверный режим", no_maps: "Нет карт для ШД", not_verified: "Аккаунт не верифицирован", not_in_lobby: "Тебя нет в лобби", rpc_error: "Ошибка сервера", bad_text: "Напиши сообщение", ft_gone: "Турнир уже недоступен", ft_in: "Ты уже участвуешь в турнире", ft_full: "Турнир заполнен", ft_not_member: "Ты не участник турнира", bad_map: "Укажи карту (до 60 символов)", bad_prizes: "Проверь призы: от 1 до 10 призёров, суммы больше 0" };
+const LERR = { bad_mission: "Такой миссии нет", mission_not_ready: "Миссия ещё не выполнена", mission_claimed: "Награда уже получена", bad_amount_wd: "Минимальная сумма вывода — 50 ₽", bad_phone: "Введи российский номер: +7 900 000-00-00", bad_bank: "Укажи банк получателя", wd_gone: "Заявка уже обработана", bad_amount: "Сумма от 50 до 50 000 ₽", topup_pending: "У тебя уже есть заявка на пополнение", topup_gone: "Заявка уже обработана", promo_invalid: "Промокод не найден или отключён", promo_used_up: "Промокод уже закончился", promo_already: "Ты уже использовал этот промокод", too_many: "Слишком много попыток. Попробуй позже", bad_tag: "Неверный тег", bad_code: "Код: 3–32 символа", bad_promo: "Проверь сумму и количество использований", promo_exists: "Такой промокод уже есть", forbidden: "Нет доступа", bad_link: "Нужна ссылка вида https://link.brawlstars.com/…", no_link_yet: "Создатель ещё не прислал ссылку", bad_image: "Нужно изображение", image_too_big: "Файл слишком большой", auth_expired: "Сессия устарела — открой заново", bad_auth: "Открой из Telegram", no_bot_token: "Сервер не настроен", bad_winner: "Неверный победитель", no_balance: "Недостаточно средств", already_in_lobby: "Ты уже в лобби", lobby_unavailable: "Лобби уже недоступно", bad_stake: "Неверная ставка", bad_mode: "Неверный режим", no_maps: "Нет карт для ШД", not_verified: "Аккаунт не верифицирован", not_in_lobby: "Тебя нет в лобби", rpc_error: "Ошибка сервера", bad_text: "Напиши сообщение", ft_gone: "Турнир уже недоступен", ft_in: "Ты уже участвуешь в турнире", ft_full: "Турнир заполнен", ft_not_member: "Ты не участник турнира", bad_map: "Укажи карту (до 60 символов)", bad_prizes: "Проверь призы: от 1 до 10 призёров, суммы больше 0", banned: "Аккаунт заблокирован администратором", muted: "Тебе временно запрещён поиск матчей", bad_network: "Выбери сеть", bad_address: "Проверь адрес кошелька" };
 const eText = e => LERR[e.error] || errText(e) || (e && e.error ? ("Ошибка: " + e.error) : "Ошибка");
 
 const USER_SVG = '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>';
@@ -518,7 +525,7 @@ function showTab(t) {
   q("topup").onclick = openTopup;
   q("wdbtn").onclick = openWithdraw;
   renderWdBox();
-  wd("status").then(applyWdState).catch(() => {});
+  wdStatus().then(applyWdState).catch(() => {});
   renderTopupBox();
   pay("status").then(applyTopupState).catch(() => {});
   q("pb").onclick = async () => {
@@ -818,6 +825,7 @@ const adminSeg = () => `<div class="balrow" style="margin-top:10px"><span>Зар
 const bindSeg = () => {
   app.querySelectorAll("[data-sec]").forEach(b => b.onclick = () => { adminSec = b.dataset.sec; app.dataset.adm = "0"; adminKey = ""; renderAdmin(); });
   bindBc();
+  loadTotals();
 };
 const askOk = (msg, go) => tg.showConfirm ? tg.showConfirm(msg, ok => ok && go()) : (confirm(msg) && go());
 async function loadAdminStats() {
@@ -902,6 +910,7 @@ async function renderWithdrawals() {
   adminGameId = null;
   let d; try { d = await wd("admin_list"); } catch (e) { if (curTab === "admin" && adminSec === "withdrawals") { app.innerHTML = `<h1>Админ-меню</h1>${adminSeg()}<p class="err">${eText(e)}</p>`; bindSeg(); } return; }
   if (curTab !== "admin" || adminSec !== "withdrawals") return;
+  loadCryptoWd();
   const key = JSON.stringify(d.items);
   if (key === adminKey && app.dataset.adm === "w") return;
   adminKey = key; app.dataset.adm = "w"; admWd = d.items.length;
@@ -915,12 +924,33 @@ async function renderWithdrawals() {
   <div class="mlist">${rows || "<p>Новых заявок нет.</p>"}</div>`;
   bindSeg();
   app.querySelectorAll("[data-cp]").forEach(b => b.onclick = () => { try { navigator.clipboard.writeText(b.dataset.cp); toast("Скопировано"); } catch (_) {} });
+  cwKey = ""; loadCryptoWd();
   const decide = (id, pay_, msg) => askOk(msg, async () => {
     try { await wd("admin_decide", { id: +id, pay: pay_ }); toast(pay_ ? "Выполнено" : "Отменено"); } catch (e) { toastE(eText(e)); }
     app.dataset.adm = "0"; renderWithdrawals();
   });
   app.querySelectorAll("[data-pay]").forEach(b => b.onclick = () => decide(b.dataset.pay, true, `Отметить вывод ${money(+b.dataset.n)} выполненным?`));
   app.querySelectorAll("[data-rej]").forEach(b => b.onclick = () => decide(b.dataset.rej, false, `Вернуть ${money(+b.dataset.n)} игроку?`));
+}
+let cwKey = "";
+async function loadCryptoWd() {
+  let d; try { d = await cwd("admin_list"); } catch (e) { return; }
+  if (curTab !== "admin" || adminSec !== "withdrawals") return;
+  const k = JSON.stringify(d.items);
+  if (k === cwKey && q("cwsec")) return;
+  cwKey = k;
+  const old = q("cwsec"); if (old) old.remove();
+  const rows = d.items.map(t => `<div class="lrow" style="flex-wrap:wrap"><div class="li"><b>${escH(t.name || "Игрок")} · ${escH(t.tag || "")}</b><span>${fmtT(t.created_at)} · ${escH(t.network)}</span></div><div class="st">${Number(t.usdt).toFixed(2)} USDT</div>
+    <div style="width:100%;margin-top:6px;font-size:13px;word-break:break-all">${escH(t.address)}<button class="copy" data-cpa="${escH(t.address)}">Копировать</button><br><span style="color:var(--mut)">${money(t.amount)}</span></div>
+    <div style="display:flex;gap:8px;width:100%;margin-top:8px"><button class="btn sm" style="margin:0" data-cwp="${escH(t.id)}" data-n="${t.usdt}">Отправил</button><button class="btn sm ghost" style="margin:0" data-cwr="${escH(t.id)}" data-n="${t.amount}">Отклонить</button></div></div>`).join("");
+  addSec(`<div id="cwsec"><div class="sec">Крипто-выводы (USDT)</div><p style="font-size:12px">Отправь USDT вручную по адресу, затем нажми «Отправил».</p><div class="mlist">${rows || "<p>Заявок нет.</p>"}</div></div>`);
+  app.querySelectorAll("[data-cpa]").forEach(b => b.onclick = () => { try { navigator.clipboard.writeText(b.dataset.cpa); toast("Скопировано"); } catch (_) {} });
+  const dec = (id, pay_, msg) => askOk(msg, async () => {
+    try { await cwd("admin_decide", { id, pay: pay_ }); hap("success"); toast(pay_ ? "Вывод отмечен выполненным" : "Отклонено, деньги вернулись"); } catch (e) { toastE(eText(e)); }
+    cwKey = ""; loadCryptoWd();
+  });
+  app.querySelectorAll("[data-cwp]").forEach(b => b.onclick = () => dec(b.dataset.cwp, true, `Ты отправил ${Number(b.dataset.n).toFixed(2)} USDT?`));
+  app.querySelectorAll("[data-cwr]").forEach(b => b.onclick = () => dec(b.dataset.cwr, false, `Отклонить и вернуть ${money(+b.dataset.n)} игроку?`));
 }
 async function renderPromo() {
   let d; try { d = await rpc("promo_list"); } catch (e) { toastE(eText(e)); return; }
@@ -1005,8 +1035,10 @@ async function openPlayer(tg) {
   <div class="sec">Последние пополнения</div>${ops(d.topups, "Пополнение") || "<p>Нет.</p>"}
   <div class="sec">Последние выводы</div>${ops(d.wds, "Вывод") || "<p>Нет.</p>"}
   <div class="sec">Матчи (последние 30)</div><div class="mlist">${ms || "<p>Матчей нет.</p>"}</div>
+  <div class="sec">Модерация</div><div id="modbox"><p>Загрузка…</p></div>
   <button class="btn ghost" id="plback">← К игрокам</button>`;
   q("plback").onclick = () => { adminSec = "players"; renderPlayers(); };
+  renderMod(tg);
 }
 // ===== Админ: крипто-счета без зачисления =====
 const cry = (a, b) => rpcTo("tg_crypto", a, b);
@@ -1015,7 +1047,7 @@ async function loadCrypto() {
   if (curTab !== "admin" || adminSec !== "topups") return;
   const old = q("crsec"); if (old) old.remove();
   const rows = d.items.map(c => `<div class="lrow" style="flex-wrap:wrap"><div class="li"><b>${escH(c.name || "Игрок")} · ${escH(c.tag || "")}</b><span>Счёт ${escH(c.id)} · ${fmtT(c.created_at)}</span></div><div class="st">${money(c.amount)}</div><div style="width:100%;margin-top:8px"><button class="btn sm" style="margin:0" data-cr="${escH(c.id)}" data-n="${c.amount}">Зачислить</button></div></div>`).join("");
-  app.insertAdjacentHTML("beforeend", `<div id="crsec"><div class="sec">Крипто-счета xRocket без зачисления</div><p style="font-size:12px">Зачисляй только если оплата видна в чате xRocket.</p><div class="mlist">${rows || "<p>Неоплаченных счетов нет.</p>"}</div></div>`);
+  addSec(`<div id="crsec"><div class="sec">Крипто-счета xRocket без зачисления</div><p style="font-size:12px">Зачисляй только если оплата видна в чате xRocket.</p><div class="mlist">${rows || "<p>Неоплаченных счетов нет.</p>"}</div></div>`);
   app.querySelectorAll("[data-cr]").forEach(b => b.onclick = () => askOk(`Счёт ${b.dataset.cr}: зачислить ${money(+b.dataset.n)}? Сначала проверь оплату в xRocket.`, async () => {
     try { const r = await cry("credit", { id: b.dataset.cr }); hap("success"); toast(r.credited ? "Зачислено" : "Уже зачислено"); } catch (e) { toastE(eText(e)); }
     loadCrypto();
@@ -1112,7 +1144,7 @@ async function extraPoll() {
     } catch (e) {}
   }
   if (cur && (topupPending || curTab === "profile")) { try { applyTopupState(await pay("status")); } catch (e) {} }
-  if (cur && (wdPending.length || curTab === "profile")) { try { applyWdState(await wd("status")); } catch (e) {} }
+  if (cur && (wdPending.length || curTab === "profile")) { try { applyWdState(await wdStatus()); } catch (e) {} }
 }
 function openTopup() {
   if (topupPending) { toast("Уже есть заявка"); return; }
@@ -1195,30 +1227,61 @@ function openWithdraw() {
   const bal = Math.floor(Number(cur.balance || 0));
   const el = document.createElement("div"); el.className = "sheet";
   el.innerHTML = `<div class="sheet-in"><h1>Вывод</h1><p>Доступно: <b style="color:var(--tx)">${money(bal)}</b></p>
+    <div class="seg"><button class="on" data-m="bank">Карта / СБП</button><button data-m="crypto">Криптовалюта</button></div>
     <input type="text" id="wamt" inputmode="numeric" placeholder="Сумма, ₽">
-    <input type="text" id="wph" inputmode="tel" placeholder="Телефон" value="+7">
-    <input type="text" id="wbank" placeholder="Банк">
+    <div id="wbk">
+      <input type="text" id="wph" inputmode="tel" placeholder="Телефон" value="+7">
+      <input type="text" id="wbank" placeholder="Банк">
+    </div>
+    <div id="wcr" class="hidden">
+      <div class="chips" style="grid-template-columns:repeat(4,1fr)">${["TON", "TRC20", "BEP20", "xRocket"].map((n, i) => `<button class="chip${i ? "" : " on"}" data-net="${n}">${n}</button>`).join("")}</div>
+      <input type="text" id="waddr" placeholder="Адрес кошелька или @username в xRocket" style="font-size:14px;letter-spacing:0;text-transform:none">
+      <p id="wusdt" style="font-size:12px"></p>
+    </div>
     <p id="tst" style="font-size:12px">Сумма спишется сразу. Если отменят — вернётся.</p>
     <button class="btn" id="ok">Подтвердить вывод</button><button class="link" id="cls">Отмена</button></div>`;
   document.body.appendChild(el);
   el.onclick = e => { if (e.target === el) el.remove(); };
-  const tst = el.querySelector("#tst"), ok = el.querySelector("#ok");
+  const tst = el.querySelector("#tst"), ok = el.querySelector("#ok"), amtEl = el.querySelector("#wamt");
   const bad = t => { tst.textContent = t; tst.className = "err"; };
+  let mode = "bank", net = "TON";
   el.querySelector("#cls").onclick = () => el.remove();
+  el.querySelectorAll("[data-m]").forEach(b => b.onclick = () => {
+    mode = b.dataset.m;
+    el.querySelectorAll("[data-m]").forEach(x => x.classList.toggle("on", x === b));
+    el.querySelector("#wbk").classList.toggle("hidden", mode !== "bank");
+    el.querySelector("#wcr").classList.toggle("hidden", mode !== "crypto");
+  });
+  el.querySelectorAll("[data-net]").forEach(b => b.onclick = () => {
+    net = b.dataset.net;
+    el.querySelectorAll("[data-net]").forEach(x => x.classList.toggle("on", x === b));
+  });
+  amtEl.oninput = () => {
+    const a = parseInt(amtEl.value.replace(/\D/g, ""), 10) || 0;
+    el.querySelector("#wusdt").textContent = a ? "≈ " + (a / 100).toFixed(2) + " USDT (курс 1 USDT = 100 ₽)" : "";
+  };
   ok.onclick = async () => {
-    const amount = parseInt(el.querySelector("#wamt").value.replace(/\D/g, ""), 10);
-    const phone = normPhone(el.querySelector("#wph").value);
-    const bank = el.querySelector("#wbank").value.trim();
+    const amount = parseInt(amtEl.value.replace(/\D/g, ""), 10);
     if (!amount || amount < 300) return bad("Минимум 300 ₽");
     if (amount > bal) return bad("Недостаточно средств");
-    if (!phone) return bad("Введи номер +7 900 000-00-00");
-    if (bank.length < 2) return bad("Укажи банк");
+    let doReq, label;
+    if (mode === "bank") {
+      const phone = normPhone(el.querySelector("#wph").value);
+      const bank = el.querySelector("#wbank").value.trim();
+      if (!phone) return bad("Введи номер +7 900 000-00-00");
+      if (bank.length < 2) return bad("Укажи банк");
+      doReq = () => wd("request", { amount, phone, bank }); label = bank;
+    } else {
+      const address = el.querySelector("#waddr").value.trim();
+      if (address.length < 3) return bad("Укажи адрес кошелька");
+      doReq = () => rpcTo("tg_wdc", "request", { amount, address, network: net }); label = "USDT " + net;
+    }
     ok.disabled = true; tst.className = ""; tst.textContent = "Создаём…";
     try {
-      const d = await wd("request", { amount, phone, bank });
+      const d = await doReq();
       cur.balance = d.balance;
       const wbe = document.getElementById("wb"); if (wbe) wbe.textContent = money(d.balance);
-      wdPending.push({ id: d.id, amount, bank }); renderWdBox();
+      wdPending.push({ id: d.id, amount, bank: label }); renderWdBox();
       el.remove(); hap("success"); toast("Заявка создана");
     } catch (e) { bad(eText(e)); ok.disabled = false; }
   };
@@ -1397,6 +1460,35 @@ function bindBc() {
       b.disabled = false;
     });
   };
+}
+
+// ===== Админ: статистика, бан и мут =====
+const modRpc = (a, b) => rpcTo("tg_mod", a, b);
+const adStat = (a, b) => rpcTo("tg_stat", a, b);
+const addSec = html => { const tb = q("totbox"); if (tb) tb.insertAdjacentHTML("beforebegin", html); else app.insertAdjacentHTML("beforeend", html); };
+async function loadTotals() {
+  if (!q("totbox")) app.insertAdjacentHTML("beforeend", '<div id="totbox"></div>');
+  let d; try { d = await adStat("get"); } catch (e) { return; }
+  const box = q("totbox"); if (!box) return;
+  box.innerHTML = `<div class="sec">Статистика</div>
+  <div class="balrow"><span>Пополнено всего · ${d.topups_n}</span><b>${money(d.topups)}</b></div>
+  <div class="balrow"><span>Выведено всего · ${d.wd_paid_n}</span><b>${money(d.wd_paid)}</b></div>
+  <div class="balrow"><span>Ждут вывода</span><b>${money(d.wd_wait)}</b></div>`;
+}
+async function renderMod(tg) {
+  const box = q("modbox"); if (!box) return;
+  let s; try { s = await modRpc("get", { tg }); } catch (e) { box.innerHTML = `<p class="err">${eText(e)}</p>`; return; }
+  const until = s.mute_until ? new Date(s.mute_until) : null;
+  const forever = until && until.getFullYear() >= 2900;
+  box.innerHTML = `<div class="balrow"><span>Статус</span><b style="font-size:15px">${s.banned ? "⛔ Забанен" : until ? "🔇 Мут " + (forever ? "навсегда" : "до " + fmtT(s.mute_until)) : "Без ограничений"}</b></div>
+  <button class="btn sm ${s.banned ? "" : "ghost"}" id="mdban">${s.banned ? "Разбанить" : "Забанить"}</button>
+  <div class="sec">Мут: нельзя начать поиск матча</div>
+  <div class="chips" style="grid-template-columns:repeat(4,1fr)">${[[1, "1 ч"], [24, "24 ч"], [168, "7 д"], [0, "Навсегда"]].map(x => `<button class="chip" data-mh="${x[0]}">${x[1]}</button>`).join("")}</div>
+  ${until ? '<button class="btn sm ghost" id="mdun">Снять мут</button>' : ""}`;
+  const run = async (a, args, msg) => { try { await modRpc(a, { tg, ...args }); hap("success"); toast(msg); } catch (e) { toastE(eText(e)); } renderMod(tg); };
+  q("mdban").onclick = () => askOk(s.banned ? "Разбанить игрока?" : "Забанить игрока? Он не сможет пользоваться приложением.", () => run("ban", { on: !s.banned }, s.banned ? "Разбанен" : "Забанен"));
+  box.querySelectorAll("[data-mh]").forEach(b => b.onclick = () => run("mute", { hours: +b.dataset.mh || null }, "Мут выдан"));
+  if (q("mdun")) q("mdun").onclick = () => run("mute", { off: true }, "Мут снят");
 }
 
 // ===== Поддержка =====
