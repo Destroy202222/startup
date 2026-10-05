@@ -738,7 +738,6 @@ async function loadProfileHistory() {
       <div class="minfo"><b>${modeName(m.mode)} · ${escH(m.map || "")}</b><span>${m.mode === "sd" ? (m.place ? m.place + " место" : "вне призов") : "vs " + escH(m.opponent || "—")} · ${dt}</span></div>
       <div class="mdelta ${m.profit >= 0 ? "up" : "down"}">
         ${w ? "+" + gross + " ₽" : sgn(m.profit) + " ₽"}
-        ${w ? `<small>чистыми +${m.profit} ₽</small>` : ""}
       </div></div>`;
   }).join("") : "<p>Матчей пока нет.</p>";
 }
