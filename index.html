@@ -671,7 +671,7 @@ function renderMatches() {
     }
     return;
   }
-const stakes = (snap.stakes && snap.stakes.length) ? snap.stakes : [50, 100, 200];
+  const stakes = (snap.stakes && snap.stakes.length) ? snap.stakes : [50, 100, 200];
   if (!stakes.includes(pickStake)) pickStake = stakes[0];
   const pend = (snap.pending || []).map(x => `<div class="lrow"><div class="li"><b>На проверке</b><span>${modeName(x.mode)}</span></div><div class="st">${money(x.stake)}</div></div>`).join("");
   const cols = Math.min(stakes.length, 4);
@@ -784,6 +784,7 @@ function drawChart(box, msArr) {
   ["pointerup", "pointercancel"].forEach(ev => svg.addEventListener(ev, () => drag = false));
   set(n - 1);
 }
+
 async function renderMissions() {
   app.innerHTML = '<h1>Миссии</h1><p>Загрузка…</p>';
   let d; try { d = await ms("missions"); } catch (e) { if (curTab === "missions") app.innerHTML = `<h1>Миссии</h1><p class="err">${eText(e)}</p>`; return; }
@@ -1019,7 +1020,6 @@ async function renderAdmins() {
     try { await rpc("admin_del", { tag: b.dataset.da }); renderAdmins(); } catch (e) { toastE(eText(e)); }
   }));
 }
-// ===== Админ: профили игроков =====
 const adm = (a, b) => rpcTo("tg_admin", a, b);
 const KIND = { topup: "Пополнения", withdraw: "Выводы", withdraw_refund: "Возвраты вывода", win: "Выигрыши", stake: "Ставки", refund: "Возвраты ставок", promo: "Промокоды", mission: "Миссии", referral: "Рефералы", bonus_settle: "Перенос бонуса" };
 let plQ = "";
@@ -1062,7 +1062,6 @@ async function openPlayer(tg) {
   q("plback").onclick = () => { adminSec = "players"; renderPlayers(); };
   renderMod(tg);
 }
-// ===== Админ: крипто-счета без зачисления =====
 const cry = (a, b) => rpcTo("tg_crypto", a, b);
 async function loadCrypto() {
   let d; try { d = await cry("list"); } catch (e) { return; }
@@ -1308,7 +1307,6 @@ function openWithdraw() {
   };
 }
 
-// ===== Вибрация, бонусная шкала =====
 const hap = k => { try { const h = tg.HapticFeedback; if (!h) return; if (k === "success" || k === "error" || k === "warning") h.notificationOccurred(k); else if (k === "select") h.selectionChanged(); else h.impactOccurred(k || "light"); } catch (_) {} };
 const toastE = t => { hap("error"); toast(t); };
 document.addEventListener("click", e => {
@@ -1324,7 +1322,6 @@ function fillBonus(g) {
   h.textContent = (one ? "Осталась " : "Осталось ") + n + " " + (one ? "игра" : few ? "игры" : "игр") + " до того, как бонусный баланс перейдёт в основной. Игра засчитывается после проверки матча.";
 }
 
-// ===== Крипто: проверка оплаты без вебхука =====
 let cryptoWait = 0, cryptoBusy = false;
 async function cryptoCheck() {
   if (cryptoBusy || !cur) return;
@@ -1343,7 +1340,6 @@ async function cryptoCheck() {
 }
 document.addEventListener("visibilitychange", () => { if (!document.hidden && cur) cryptoCheck(); });
 
-// ===== Бесплатные турниры =====
 const ft = (a, b) => rpcTo("tg_ft", a, b);
 let ftSt = null, ftKey = "", ftBusy = false, ftDraft = "";
 const prizeStr = pr => (pr || []).map((x, i) => `${["🥇", "🥈", "🥉"][i] || (i + 1) + "."} ${money(x)}`).join(" · ");
@@ -1468,7 +1464,6 @@ async function openFtAdmin(id) {
   }
 }
 
-// ===== Админ: рассылка =====
 const bc = (a, b) => rpcTo("tg_bc", a, b);
 let bcDraft = "";
 function bindBc() {
@@ -1487,7 +1482,6 @@ function bindBc() {
   };
 }
 
-// ===== Админ: статистика, бан и мут =====
 const modRpc = (a, b) => rpcTo("tg_mod", a, b);
 const adStat = (a, b) => rpcTo("tg_stat", a, b);
 const addSec = html => { const tb = q("totbox"); if (tb) tb.insertAdjacentHTML("beforebegin", html); else app.insertAdjacentHTML("beforeend", html); };
@@ -1516,7 +1510,6 @@ async function renderMod(tg) {
   if (q("mdun")) q("mdun").onclick = () => run("mute", { off: true }, "Мут снят");
 }
 
-// ===== Поддержка =====
 const sup = (a, b) => rpcTo("tg_support", a, b);
 let supN = -1;
 function setSupBadge(n) { const b = q("supbdg"); if (!b) return; b.textContent = n; b.classList.toggle("hidden", !n); }
