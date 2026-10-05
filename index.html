@@ -634,7 +634,7 @@ function renderMatches() {
     let body;
     if (!m.link && m.creator) {
       body = `<div class="note"><b>Ты создатель лобби.</b> Создай лобби в Brawl Stars на карте «${escH(m.map)}», скопируй ссылку и вставь сюда (можно вместе с текстом).</div>
-      <input type="text" id="lk" placeholder="привет, зайди в лобби https://link.brawlstars.com/…" style="font-size:14px;letter-spacing:0;text-transform:none">
+      <input type="text" id="lk" placeholder="https://link.brawlstars.com/…" style="font-size:14px;letter-spacing:0;text-transform:none">
       <p id="lkerr" class="err hidden" style="font-size:12px"></p>
       <button class="btn" id="sendlk">Отправить ссылку</button>`;
     } else if (!m.link) {
