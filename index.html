@@ -158,7 +158,6 @@ input{-webkit-user-select:text;user-select:text}
 .sta{width:100%;background:#0c0c0c;border:1px solid #2e2e2e;color:var(--tx);border-radius:12px;padding:12px;margin-top:12px;font-size:15px;font-family:inherit;outline:0;resize:none;-webkit-user-select:text;user-select:text}
 .sta:focus{border-color:var(--or)}
 .sheet-in .lrow .li span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-/* ===== Визуальное обновление ===== */
 :root{--panel:#131315;--panel2:#0e0e10;--line:rgba(255,255,255,.07)}
 *{-webkit-tap-highlight-color:transparent}
 html{scrollbar-width:none}
@@ -246,6 +245,8 @@ input[type=text]:focus,.sta:focus{border-color:var(--or);box-shadow:0 0 0 4px rg
 .ftrow em{font-style:normal;color:var(--mut);font-weight:700}
 .ftrow .btn{width:auto;margin:0;padding:10px 16px;font-size:14px}
 .bc{margin:12px 0 6px;text-align:left}.bc .sec{margin:0 2px 8px}.bc .sta{margin-top:0}.bc .btn{margin-top:8px}
+.chatmsg{background:#141414;border:1px solid #222;border-radius:10px;padding:6px 10px;margin:4px 0;font-size:13px;word-break:break-word}
+.chatmsg b{color:var(--or2);font-size:11px;display:block}
 </style>
 </head>
 <body>
@@ -339,7 +340,7 @@ async function cryptoTopup(amountCrypto, currency) {
   } finally { clearTimeout(tm); }
 }
 
-const LERR = { bad_mission: "Такой миссии нет", mission_not_ready: "Миссия ещё не выполнена", mission_claimed: "Награда уже получена", bad_amount_wd: "Минимальная сумма вывода — 50 ₽", bad_phone: "Введи российский номер: +7 900 000-00-00", bad_bank: "Укажи банк получателя", wd_gone: "Заявка уже обработана", bad_amount: "Сумма от 50 до 50 000 ₽", topup_pending: "У тебя уже есть заявка на пополнение", topup_gone: "Заявка уже обработана", promo_invalid: "Промокод не найден или отключён", promo_used_up: "Промокод уже закончился", promo_already: "Ты уже использовал этот промокод", too_many: "Слишком много попыток. Попробуй позже", bad_tag: "Неверный тег", bad_code: "Код: 3–32 символа", bad_promo: "Проверь сумму и количество использований", promo_exists: "Такой промокод уже есть", forbidden: "Нет доступа", bad_link: "Нужна ссылка вида https://link.brawlstars.com/…", no_link_yet: "Создатель ещё не прислал ссылку", bad_image: "Нужно изображение", image_too_big: "Файл слишком большой", auth_expired: "Сессия устарела — открой заново", bad_auth: "Открой из Telegram", no_bot_token: "Сервер не настроен", bad_winner: "Неверный победитель", no_balance: "Недостаточно средств", already_in_lobby: "Ты уже в лобби", lobby_unavailable: "Лобби уже недоступно", bad_stake: "Неверная ставка", bad_mode: "Неверный режим", no_maps: "Нет карт для ШД", not_verified: "Аккаунт не верифицирован", not_in_lobby: "Тебя нет в лобби", rpc_error: "Ошибка сервера", bad_text: "Напиши сообщение", ft_gone: "Турнир уже недоступен", ft_in: "Ты уже участвуешь в турнире", ft_full: "Турнир заполнен", ft_not_member: "Ты не участник турнира", bad_map: "Укажи карту (до 60 символов)", bad_prizes: "Проверь призы: от 1 до 10 призёров, суммы больше 0", banned: "Аккаунт заблокирован администратором", muted: "Тебе временно запрещён поиск матчей", bad_network: "Выбери сеть", bad_address: "Проверь адрес кошелька" };
+const LERR = { bad_mission: "Такой миссии нет", mission_not_ready: "Миссия ещё не выполнена", mission_claimed: "Награда уже получена", bad_amount_wd: "Минимальная сумма вывода — 50 ₽", bad_phone: "Введи российский номер: +7 900 000-00-00", bad_bank: "Укажи банк получателя", wd_gone: "Заявка уже обработана", bad_amount: "Сумма от 50 до 50 000 ₽", topup_pending: "У тебя уже есть заявка на пополнение", topup_gone: "Заявка уже обработана", promo_invalid: "Промокод не найден или отключён", promo_used_up: "Промокод уже закончился", promo_already: "Ты уже использовал этот промокод", too_many: "Слишком много попыток. Попробуй позже", bad_tag: "Неверный тег", bad_code: "Код: 3–32 символа", bad_promo: "Проверь сумму и количество использований", promo_exists: "Такой промокод уже есть", forbidden: "Нет доступа", bad_link: "Нужна ссылка вида https://link.brawlstars.com/…", no_link_yet: "Создатель ещё не прислал ссылку", bad_image: "Нужно изображение", image_too_big: "Файл слишком большой", auth_expired: "Сессия устарела — открой заново", bad_auth: "Открой из Telegram", no_bot_token: "Сервер не настроен", bad_winner: "Неверный победитель", no_balance: "Недостаточно средств", already_in_lobby: "Ты уже в лобби", lobby_unavailable: "Лобби уже недоступно", bad_stake: "Неверная ставка", bad_mode: "Неверный режим", no_maps: "Нет карт для ШД", not_verified: "Аккаунт не верифицирован", not_in_lobby: "Тебя нет в лобби", rpc_error: "Ошибка сервера", bad_text: "Напиши сообщение", ft_gone: "Турнир уже недоступен", ft_in: "Ты уже участвуешь в турнире", ft_full: "Турнир заполнен", ft_not_member: "Ты не участник турнира", bad_map: "Укажи карту (до 60 символов)", bad_prizes: "Проверь призы: от 1 до 10 призёров, суммы больше 0", banned: "Аккаунт заблокирован администратором", muted: "Тебе временно запрещён поиск матчей", bad_network: "Выбери сеть", bad_address: "Проверь адрес кошелька", already_submitted: "Ты уже прикрепил скриншот" };
 const eText = e => LERR[e.error] || errText(e) || (e && e.error ? ("Ошибка: " + e.error) : "Ошибка");
 
 const USER_SVG = '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>';
@@ -634,7 +635,7 @@ function renderMatches() {
     let body;
     if (!m.link && m.creator) {
       body = `<div class="note"><b>Ты создатель лобби.</b> Создай лобби в Brawl Stars на карте «${escH(m.map)}», скопируй ссылку и вставь сюда (можно вместе с текстом).</div>
-      <input type="text" id="lk" placeholder="https://link.brawlstars.com/…" style="font-size:14px;letter-spacing:0;text-transform:none">
+      <input type="text" id="lk" placeholder="https://link.brawlstars.com/invite/..." style="font-size:14px;letter-spacing:0;text-transform:none">
       <p id="lkerr" class="err hidden" style="font-size:12px"></p>
       <button class="btn" id="sendlk">Отправить ссылку</button>`;
     } else if (!m.link) {
@@ -643,10 +644,19 @@ function renderMatches() {
       body = `<div class="note"><b>Ссылка на лобби получена.</b><br>1. Зайди в комнату.<br>2. Сыграйте матч на карте «${escH(m.map)}».<br>3. После игры прикрепи скриншот.</div>
       <button class="btn" id="openlk">Открыть лобби в Brawl Stars</button>
       <input type="file" id="shot" accept="image/*" class="hidden">
-      <button class="drop" id="pickshot"><b>📷</b>Прикрепить результат матча<small>Скриншот экрана с итогом игры</small></button>`;
+      <button class="drop" id="pickshot"><b>📷</b>Прикрепить результат матча<small>Скриншот экрана с итогом игры</small></button>
+      <button class="btn ghost" id="skipshot" style="margin-top:10px;opacity:.65">Я не сделал скриншот</button>`;
     }
     app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Матч создан</h1><p>${modeName(m.mode)} · ${escH(m.map)} · ${money(m.stake)}</p>
     <div class="avs ${(m.capacity || m.players.length) > 2 ? "many" : ""}">${m.players.map(avatar).join("")}</div>${body}`;
+    if (m.link) {
+      app.insertAdjacentHTML("beforeend", `<div class="sec">Чат матча</div>
+        <div id="matchchat" style="background:#0a0a0a;border:1px solid #1e1e1e;border-radius:12px;padding:10px;max-height:26vh;overflow-y:auto;margin-top:6px"><p style="font-size:12px;color:var(--mut)">Загрузка…</p></div>
+        <div style="display:flex;gap:6px;margin-top:8px">
+          <input type="text" id="chatinp" placeholder="Сообщение…" style="flex:1;margin:0;font-size:14px;letter-spacing:0;text-transform:none;text-align:left;padding:10px">
+          <button class="btn" id="chatsend" style="width:auto;margin:0;padding:10px 16px">→</button>
+        </div>`);
+    }
     if (q("sendlk")) q("sendlk").onclick = async () => {
       const url = extractLobbyLink(q("lk").value);
       const errEl = q("lkerr");
@@ -668,6 +678,44 @@ function renderMatches() {
           hap("success"); toast("Результат отправлен"); await poll(); renderMatches();
         } catch (e) { toastE(eText(e)); renderMatches(); }
       };
+    }
+    if (q("skipshot")) q("skipshot").onclick = () => askOk("Выйти из лобби? Ставка вернётся на баланс.", async () => {
+      try { await rpcTo("lobby_skip_shot", "call", { id: m.id }); toast("Вышел из лобби"); await poll(); renderMatches(); }
+      catch (e) { toastE(eText(e)); }
+    });
+    if (q("matchchat")) {
+      let chatLast = 0, chatTimer = null;
+      const loadChat = async () => {
+        try {
+          const d = await rpcTo("match_msg_list", "call", { lobby: m.id, since: chatLast });
+          const box = q("matchchat"); if (!box) { clearInterval(chatTimer); return; }
+          if (d.messages && d.messages.length) {
+            if (box.querySelector("p")) box.innerHTML = "";
+            d.messages.forEach(msg => {
+              chatLast = Math.max(chatLast, Number(msg.id) || 0);
+              const el = document.createElement("div");
+              el.className = "chatmsg";
+              el.innerHTML = `<b>${escH(msg.name || "Игрок")}</b>${escH(msg.text)}`;
+              box.appendChild(el);
+            });
+            box.scrollTop = box.scrollHeight;
+          }
+        } catch (e) { clearInterval(chatTimer); }
+      };
+      loadChat();
+      chatTimer = setInterval(() => {
+        if (curTab !== "matches" || !snap || !snap.mine || (snap.mine.status !== "live" && snap.mine.status !== "review")) {
+          clearInterval(chatTimer); return;
+        }
+        loadChat();
+      }, 3000);
+      q("chatsend").onclick = async () => {
+        const t = q("chatinp").value.trim(); if (!t) return;
+        q("chatinp").value = "";
+        try { await rpcTo("match_msg_send", "call", { lobby: m.id, text: t }); await loadChat(); }
+        catch (e) { toastE(eText(e)); }
+      };
+      q("chatinp").addEventListener("keydown", e => { if (e.key === "Enter") q("chatsend").click(); });
     }
     return;
   }
@@ -1086,9 +1134,15 @@ async function openGame(id) {
   app.innerHTML = `<h1>Игра #${g.id}</h1><p>${modeName(g.mode)} · ${escH(g.map)} · ${money(g.stake)}</p>${auBox}${ps}
   <div class="sec">${sd ? "Выбери призёров (" + need + ")" : "Кто победил?"}</div>
   ${sd ? '<button class="btn" id="done" disabled>Подтвердить</button>' : g.players.map(p => `<button class="btn" data-w="${p.tg_id}">Победил ${escH(p.name)}</button>`).join("")}
+  <button class="btn ghost" id="cancelgame" style="color:#ff6b6b;border-color:#ff6b6b66">🚫 Отменить игру</button>
   <button class="btn ghost" id="back">← Назад</button>`;
   app.querySelectorAll("[data-v]").forEach(i => i.onclick = () => viewImg(i.src));
   q("back").onclick = () => { app.dataset.adm = "0"; renderAdmin(); };
+  if (q("cancelgame")) q("cancelgame").onclick = () => askOk("Отменить игру и вернуть ставки всем игрокам?", async () => {
+    try { await rpcTo("admin_cancel_lobby", "call", { id }); hap("success"); toast("Игра отменена"); }
+    catch (e) { toastE(eText(e)); }
+    adminGameId = null; app.dataset.adm = "0"; renderAdmin();
+  });
   if (q("aubtn")) q("aubtn").onclick = () => askOk("Применить результат из журнала Brawl Stars и выдать призы?", async () => {
     try { await rpcTo("tg_auto", "apply", { id }); hap("success"); toast("Матч засчитан"); } catch (e) { toastE(eText(e)); }
     adminGameId = null; app.dataset.adm = "0"; renderAdmin();
@@ -1371,7 +1425,7 @@ function renderFt() {
     const ava = (m.players || []).map(p => `<div class="av ${p.me ? "ok" : ""}">${p.photo ? `<img src="${escH(p.photo)}" alt="">` : USER_SVG}</div>`).join("");
     let body;
     if (m.status === "open") body = `<p>Ждём игроков: <b style="color:var(--tx)">${m.count}/${m.capacity}</b>. Турнир начнётся, когда наберётся ${m.capacity}.</p><button class="btn ghost" id="ftleave">Выйти из турнира</button>`;
-    else if (!m.link && m.creator) body = `<div class="note"><b>Ты создаёшь лобби.</b> Создай лобби в Brawl Stars на карте «${escH(m.map)}», скопируй ссылку и вставь сюда (можно вместе с текстом).</div><input type="text" id="ftlk" placeholder="привет, зайди в лобби https://link.brawlstars.com/…" style="font-size:14px;letter-spacing:0;text-transform:none"><button class="btn" id="ftsend">Отправить ссылку</button>`;
+    else if (!m.link && m.creator) body = `<div class="note"><b>Ты создаёшь лобби.</b> Создай лобби в Brawl Stars на карте «${escH(m.map)}», скопируй ссылку и вставь сюда (можно вместе с текстом).</div><input type="text" id="ftlk" placeholder="https://link.brawlstars.com/invite/..." style="font-size:14px;letter-spacing:0;text-transform:none"><button class="btn" id="ftsend">Отправить ссылку</button>`;
     else if (!m.link) body = `<div class="note"><span class="pulse"></span><b>Ждём ссылку на лобби.</b> Создатель создаёт комнату на карте «${escH(m.map)}».</div>`;
     else body = `<div class="note"><b>Ссылка получена.</b><br>1. Зайди в комнату.<br>2. Сыграйте на карте «${escH(m.map)}».<br>3. После игры прикрепи скриншот.</div><button class="btn" id="ftopen">Открыть лобби в Brawl Stars</button>` + (m.submitted ? '<div class="note"><b>Скриншот отправлен ✓</b> Ждём решения администратора.</div>' : `<input type="file" id="ftshot" accept="image/*" class="hidden"><button class="drop" id="ftpick"><b>📷</b>Прикрепить результат<small>Скриншот экрана с итогом игры</small></button>`);
     html += `<div class="ftcard"><b>${m.status === "open" ? "Ты в турнире" : "Турнир идёт"} · ${escH(m.map)}</b><span>${prizeStr(m.prizes)}</span><div class="avs many">${ava}</div>${body}</div>`;
