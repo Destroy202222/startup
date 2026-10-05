@@ -604,16 +604,14 @@ function renderMatches() {
   if (m && m.status === "confirming") {
     const me = m.players.find(p => p.me), ready = m.players.filter(p => p.confirmed).length;
     const cap = m.capacity || m.players.length;
-    // Потенциальный выигрыш: грязными (совпадает с SQL: stake * n * 0.85) и чистыми
+    // Потенциальный выигрыш: грязными (совпадает с SQL: stake * n * 0.85)
     const potWin = Math.round(m.stake * cap * 0.85);
-    const netWin = potWin - m.stake;
     app.innerHTML = `<div class="ringwrap"><svg viewBox="0 0 200 200"><circle class="r-bg" cx="100" cy="100" r="90"/><circle class="r-fg" id="ring" cx="100" cy="100" r="90"/></svg><div class="cd" id="cd"></div></div>
     <h1 class="big">Матч найден</h1><p>${modeName(m.mode)}<br>Ставка <b style="color:var(--tx)">${money(m.stake)}</b> с каждого</p>
     <div class="avs ${cap > 2 ? "many" : ""}">${m.players.map(avatar).join("")}</div>
     <div class="ready"><b>${ready}</b> / ${cap} готовы</div>
     <div class="note" style="text-align:center;margin-top:14px">
-      <b>Потенциальный выигрыш: ${money(potWin)}</b><br>
-      <span style="color:var(--mut);font-size:12px">Чистыми: +${money(netWin)} ₽</span>
+      <b>Потенциальный выигрыш: ${money(potWin)}</b>
     </div>
     <button class="btn" id="conf" ${me && me.confirmed ? "disabled" : ""}>${me && me.confirmed ? "Ждём соперника…" : "✓ Подтвердить"}</button>`;
     q("conf").onclick = () => lobbyCall("lobby_confirm", { id: m.id });
@@ -621,10 +619,15 @@ function renderMatches() {
   }
   if (m && m.status === "waiting") {
     const cnt = m.players.length;
+    const cap = m.capacity || 2;
+    const potWin = Math.round(m.stake * cap * 0.85);
     app.innerHTML = `<div class="ringwrap"><svg viewBox="0 0 200 200"><circle class="r-bg" cx="100" cy="100" r="90"/><circle class="r-fg" id="ring" cx="100" cy="100" r="90"/></svg><div class="cd" id="cd">2:30</div></div>
     <h1 class="big">Поиск соперника</h1>
     <p>Ставка <b style="color:var(--tx)">${money(m.stake)}</b> с каждого<br>Найдено игроков: <b style="color:var(--tx)">${cnt}</b></p>
     <div class="avs ${cnt > 2 ? "many" : ""}">${m.players.map(avatar).join("")}${cnt === 1 ? '<div class="av empty"></div>' : ''}</div>
+    <div class="note" style="text-align:center;margin-top:14px">
+      <b>Потенциальный выигрыш: ${money(potWin)}</b>
+    </div>
     <button class="btn ghost" id="leave">Отменить поиск (вернуть ${money(m.stake)})</button>`;
     q("leave").onclick = () => lobbyCall("lobby_leave", { id: m.id });
     tick(); return;
@@ -1492,9 +1495,9 @@ const modRpc = (a, b) => rpcTo("tg_mod", a, b);
 const adStat = (a, b) => rpcTo("tg_stat", a, b);
 const addSec = html => { const tb = q("totbox"); if (tb) tb.insertAdjacentHTML("beforebegin", html); else app.insertAdjacentHTML("beforeend", html); };
 async function loadTotals() {
-  if (!q("totbox")) app.insertAdjacentHTML("beforeend", '<div id="totbox"></div>');
-  let d; try { d = await adStat("get"); } catch (e) { return; }
-  const box = q("totbox"); if (!box) return;
+  if (!q("totbox")) app.insertAdj<>acentHTML("beforeend"", '<div id="totbox']"></div>');
+  let d/; try { d = await adStatg("get"); } catch (e) { return; }
+  const box = q(",totbox"); if (!box) return;
   box.innerHTML = `<div class="sec">Статистика</div>
   <div class="balrow"><span>Пополнено всего · ${d.topups_n}</span><b>${money(d.topups)}</b></div>
   <div class="balrow"><span>Выведено всего · ${d.wd_paid_n}</span><b>${money(d.wd_paid)}</b></div>
@@ -1528,7 +1531,7 @@ async function supBadge() {
   } catch (e) {}
 }
 const fmtT = t => new Date(t).toLocaleString("ru-RU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
-const escH = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const escH = s => String(s == null ? "" : s).replace(/[& c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 function openSupport() {
   const el = document.createElement("div"); el.className = "sheet";
   el.innerHTML = '<div class="sheet-in" id="ssh"></div>';
@@ -1594,7 +1597,7 @@ document.addEventListener("dblclick", e => e.preventDefault());
 function boot() {
   app.innerHTML = "<h1>Загрузка…</h1>";
   const t = setTimeout(() => {
-    app.innerHTML = `<div class="icon">⚠️</div><h1>Сервер не отвечает</h1><p>Через 15 сек ответа нет.</p><p style="font-size:12px;word-break:break-all">${API}</p><button class="btn" onclick="boot()">Повторить</button>`;
+    app.innerHTML = `<div class="icon">⚠️</div ><h10>Сервер не отвечает</ h1><p>Через 15 сек ответ24а нет.</p><p style="font -size:12px;word-break:break-all">${API}</p><button class="btn" onclick="boot()">Повторить</button>`;
   }, 15000);
   call("me").then(d => {
     clearTimeout(t);
@@ -1608,7 +1611,7 @@ function boot() {
 function showChannelTip() {
   const CH = "https://t.me/BsCrHub";
   const el = document.createElement("div"); el.className = "tip";
-  el.innerHTML = '<div class="ti"><svg viewBox="0 0 24 24"><path d="M21 3L10 14"/><path d="M21 3l-7 18-4-7-7-4 18-7z"/></svg></div><div class="tt"><b>Подпишитесь на Telegram-канал</b><span>t.me/BsCrHub</span></div><button class="tx" aria-label="Скрыть"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>';
+  el.innerHTML = '<div class="ti"><svg viewBox="024"><path d="M21 3L10 14"/><path d="M21 3l-7 18-4-7-7-4 18-7z"/></svg></div><div class="tt"><b>Подпишитесь на Telegram-канал</b><span>t.me/BsCrHub</span></div><button class="tx" aria-label="Скрыть"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>';
   document.body.appendChild(el);
   let gone = false, timer = null, x0 = null;
   const hide = () => { if (gone) return; gone = true; clearTimeout(timer); el.classList.remove("in"); el.classList.add("out"); setTimeout(() => el.remove(), 450); };
