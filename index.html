@@ -322,7 +322,6 @@ async function rpcTo(fn, action, args = {}) {
   } finally { clearTimeout(tm); }
 }
 
-// ==== Крипто-пополнение через clever-action ====
 async function cryptoTopup(amountCrypto, currency) {
   const ac = new AbortController(), tm = setTimeout(() => ac.abort(), 20000);
   try {
@@ -351,6 +350,14 @@ const ICONS = {
   matches: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>',
   top: '<svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4"/><path d="M12 13v4M10 17h4M8 21h8"/></svg>'
 };
+
+// ===== Извлечение ссылки на лобби Brawl Stars из текста =====
+function extractLobbyLink(text) {
+  if (!text) return null;
+  const m = String(text).match(/https?:\/\/link\.brawlstars\.com\/[^\s<>"'`]+/i);
+  if (!m) return null;
+  return m[0].replace(/[.,;:!?)\]]+$/, "");
+}
 
 function toast(t) {
   const el = document.createElement("div"); el.className = "toast"; el.textContent = t;
@@ -596,10 +603,18 @@ function renderMatches() {
   const m = snap.mine, bal = snap.balance;
   if (m && m.status === "confirming") {
     const me = m.players.find(p => p.me), ready = m.players.filter(p => p.confirmed).length;
+    const cap = m.capacity || m.players.length;
+    // Потенциальный выигрыш: грязными (совпадает с SQL: stake * n * 0.85) и чистыми
+    const potWin = Math.round(m.stake * cap * 0.85);
+    const netWin = potWin - m.stake;
     app.innerHTML = `<div class="ringwrap"><svg viewBox="0 0 200 200"><circle class="r-bg" cx="100" cy="100" r="90"/><circle class="r-fg" id="ring" cx="100" cy="100" r="90"/></svg><div class="cd" id="cd"></div></div>
     <h1 class="big">Матч найден</h1><p>${modeName(m.mode)}<br>Ставка <b style="color:var(--tx)">${money(m.stake)}</b> с каждого</p>
-    <div class="avs ${(m.capacity || m.players.length) > 2 ? "many" : ""}">${m.players.map(avatar).join("")}</div>
-    <div class="ready"><b>${ready}</b> / ${m.capacity || m.players.length} готовы</div>
+    <div class="avs ${cap > 2 ? "many" : ""}">${m.players.map(avatar).join("")}</div>
+    <div class="ready"><b>${ready}</b> / ${cap} готовы</div>
+    <div class="note" style="text-align:center;margin-top:14px">
+      <b>Потенциальный выигрыш: ${money(potWin)}</b><br>
+      <span style="color:var(--mut);font-size:12px">Чистыми: +${money(netWin)} ₽</span>
+    </div>
     <button class="btn" id="conf" ${me && me.confirmed ? "disabled" : ""}>${me && me.confirmed ? "Ждём соперника…" : "✓ Подтвердить"}</button>`;
     q("conf").onclick = () => lobbyCall("lobby_confirm", { id: m.id });
     tick(); return;
@@ -617,22 +632,27 @@ function renderMatches() {
   if (m && (m.status === "live" || m.status === "review")) {
     let body;
     if (!m.link && m.creator) {
-      body = `<div class="note"><b>Ты создатель лобби.</b> Создай лобби в Brawl Stars на карте «${m.map}», скопируй ссылку и вставь сюда.</div>
-      <input type="text" id="lk" placeholder="https://link.brawlstars.com/…" style="font-size:15px;letter-spacing:0">
+      body = `<div class="note"><b>Ты создатель лобби.</b> Создай лобби в Brawl Stars на карте «${escH(m.map)}», скопируй ссылку и вставь сюда (можно вместе с текстом).</div>
+      <input type="text" id="lk" placeholder="привет, зайди в лобби https://link.brawlstars.com/…" style="font-size:14px;letter-spacing:0;text-transform:none">
+      <p id="lkerr" class="err hidden" style="font-size:12px"></p>
       <button class="btn" id="sendlk">Отправить ссылку</button>`;
     } else if (!m.link) {
-      body = `<div class="note"><span class="pulse"></span><b>Ждём ссылку на лобби.</b> Создатель сейчас создаёт комнату на карте «${m.map}».</div>`;
+      body = `<div class="note"><span class="pulse"></span><b>Ждём ссылку на лобби.</b> Создатель сейчас создаёт комнату на карте «${escH(m.map)}».</div>`;
     } else {
-      body = `<div class="note"><b>Ссылка на лобби получена.</b><br>1. Зайди в комнату.<br>2. Сыграйте матч на карте «${m.map}».<br>3. После игры прикрепи скриншот.</div>
+      body = `<div class="note"><b>Ссылка на лобби получена.</b><br>1. Зайди в комнату.<br>2. Сыграйте матч на карте «${escH(m.map)}».<br>3. После игры прикрепи скриншот.</div>
       <button class="btn" id="openlk">Открыть лобби в Brawl Stars</button>
       <input type="file" id="shot" accept="image/*" class="hidden">
       <button class="drop" id="pickshot"><b>📷</b>Прикрепить результат матча<small>Скриншот экрана с итогом игры</small></button>`;
     }
-    app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Матч создан</h1><p>${modeName(m.mode)} · ${m.map} · ${money(m.stake)}</p>
+    app.innerHTML = `<div class="icon ico">${ICONS.matches}</div><h1>Матч создан</h1><p>${modeName(m.mode)} · ${escH(m.map)} · ${money(m.stake)}</p>
     <div class="avs ${(m.capacity || m.players.length) > 2 ? "many" : ""}">${m.players.map(avatar).join("")}</div>${body}`;
     if (q("sendlk")) q("sendlk").onclick = async () => {
+      const url = extractLobbyLink(q("lk").value);
+      const errEl = q("lkerr");
+      if (!url) { errEl.textContent = "Не нашёл ссылку link.brawlstars.com"; errEl.classList.remove("hidden"); return; }
+      errEl.classList.add("hidden");
       q("sendlk").disabled = true;
-      try { await rpc("set_link", { id: m.id, link: q("lk").value }); await poll(); }
+      try { await rpc("set_link", { id: m.id, link: url }); await poll(); }
       catch (e) { toastE(eText(e)); q("sendlk").disabled = false; }
     };
     if (q("openlk")) q("openlk").onclick = () => tg.openLink(m.link);
@@ -650,7 +670,6 @@ function renderMatches() {
     }
     return;
   }
-  // ===== Ставки берутся из БД (админ задаёт в админке) =====
   const stakes = (snap.stakes && snap.stakes.length) ? snap.stakes : [50, 100, 200];
   if (!stakes.includes(pickStake)) pickStake = stakes[0];
   const pend = (snap.pending || []).map(x => `<div class="lrow"><div class="li"><b>На проверке</b><span>${modeName(x.mode)}</span></div><div class="st">${money(x.stake)}</div></div>`).join("");
@@ -714,9 +733,13 @@ async function loadProfileHistory() {
   hl.innerHTML = d.matches.length ? d.matches.slice().reverse().slice(0, 20).map(m => {
     const w = m.result === "win";
     const dt = new Date(m.created_at).toLocaleString("ru-RU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+    const gross = w ? (Number(m.stake) + Number(m.profit)) : Number(m.profit);
     return `<div class="mrow"><div class="mres ${w ? "win" : "loss"}">${w ? "Победа" : "Поражение"}</div>
-      <div class="minfo"><b>${modeName(m.mode)} · ${m.map || ""}</b><span>${m.mode === "sd" ? (m.place ? m.place + " место" : "вне призов") : "vs " + (m.opponent || "—")} · ${dt}</span></div>
-      <div class="mdelta ${m.profit >= 0 ? "up" : "down"}">${sgn(m.profit)} ₽</div></div>`;
+      <div class="minfo"><b>${modeName(m.mode)} · ${escH(m.map || "")}</b><span>${m.mode === "sd" ? (m.place ? m.place + " место" : "вне призов") : "vs " + escH(m.opponent || "—")} · ${dt}</span></div>
+      <div class="mdelta ${m.profit >= 0 ? "up" : "down"}">
+        ${w ? "+" + gross + " ₽" : sgn(m.profit) + " ₽"}
+        ${w ? `<small>чистыми +${m.profit} ₽</small>` : ""}
+      </div></div>`;
   }).join("") : "<p>Матчей пока нет.</p>";
 }
 function drawChart(box, msArr) {
@@ -1059,12 +1082,12 @@ async function openGame(id) {
   const sd = g.mode === "sd", picks = [], need = sd ? (g.players.length <= 4 ? 2 : 3) : 1;
   let au = null; try { au = (await rpcTo("tg_auto", "get", { id })).r; } catch (e) {}
   const auBox = au && !au.applied ? `<div class="note"><b>Результат из журнала Brawl Stars</b><br>${au.winners.map((w, k) => `${k + 1} место: ${escH(w.name)}`).join("<br>")}<button class="btn sm" id="aubtn">Применить результат</button></div>` : "";
-  const ps = g.players.map(p => `<div class="sec" style="margin-top:14px">${p.name} · ${p.tag}</div>
+  const ps = g.players.map(p => `<div class="sec" style="margin-top:14px">${escH(p.name)} · ${escH(p.tag)}</div>
     ${p.img ? `<img class="shot" src="${p.img}" data-v="1" alt="">` : "<p>Скриншот не прикреплён</p>"}
     ${sd ? `<div class="pk">${Array.from({ length: need }, (_, k) => `<button class="btn sm" data-p="${k + 1}" data-id="${p.tg_id}">${k + 1} место</button>`).join("")}</div>` : ""}`).join("");
-  app.innerHTML = `<h1>Игра #${g.id}</h1><p>${modeName(g.mode)} · ${g.map} · ${money(g.stake)}</p>${auBox}${ps}
+  app.innerHTML = `<h1>Игра #${g.id}</h1><p>${modeName(g.mode)} · ${escH(g.map)} · ${money(g.stake)}</p>${auBox}${ps}
   <div class="sec">${sd ? "Выбери призёров (" + need + ")" : "Кто победил?"}</div>
-  ${sd ? '<button class="btn" id="done" disabled>Подтвердить</button>' : g.players.map(p => `<button class="btn" data-w="${p.tg_id}">Победил ${p.name}</button>`).join("")}
+  ${sd ? '<button class="btn" id="done" disabled>Подтвердить</button>' : g.players.map(p => `<button class="btn" data-w="${p.tg_id}">Победил ${escH(p.name)}</button>`).join("")}
   <button class="btn ghost" id="back">← Назад</button>`;
   app.querySelectorAll("[data-v]").forEach(i => i.onclick = () => viewImg(i.src));
   q("back").onclick = () => { app.dataset.adm = "0"; renderAdmin(); };
@@ -1174,7 +1197,6 @@ function openTopup() {
         message: "Выбери валюту",
         buttons: [{ id: "USDT", type: "default", text: "USDT" }]
       }, (id) => res(id)))) || "USDT";
-      // 1 USDT = 100 RUB — меняй на свой курс
       const rates = { USDT: 100 };
       const amountCrypto = +(amount / rates[cur]).toFixed(4);
       tst.className = ""; tst.textContent = "Создаём счёт…";
@@ -1317,7 +1339,7 @@ async function cryptoCheck() {
     const d = await r.json();
     if (d.credited > 0) { hap("success"); toast("Баланс пополнен через xRocket"); }
     cryptoWait = d.pending > 0 ? (cryptoWait || Date.now() + 40 * 60 * 1000) : 0;
-  } catch (e) { /* повторим позже */ }
+  } catch (e) {}
   cryptoBusy = false;
 }
 document.addEventListener("visibilitychange", () => { if (!document.hidden && cur) cryptoCheck(); });
@@ -1337,7 +1359,7 @@ async function ftLoad(force) {
     if (prev === "open" && d.mine && d.mine.status === "live") { hap("warning"); toast("Турнир начался! Открой «Матчи»"); }
     const key = JSON.stringify(d);
     if (key !== ftKey) { ftKey = key; renderFt(); }
-  } catch (e) { /* повторим позже */ }
+  } catch (e) {}
   ftBusy = false;
 }
 const ftAct = async (a, args, msg) => {
@@ -1354,7 +1376,7 @@ function renderFt() {
     const ava = (m.players || []).map(p => `<div class="av ${p.me ? "ok" : ""}">${p.photo ? `<img src="${escH(p.photo)}" alt="">` : USER_SVG}</div>`).join("");
     let body;
     if (m.status === "open") body = `<p>Ждём игроков: <b style="color:var(--tx)">${m.count}/${m.capacity}</b>. Турнир начнётся, когда наберётся ${m.capacity}.</p><button class="btn ghost" id="ftleave">Выйти из турнира</button>`;
-    else if (!m.link && m.creator) body = `<div class="note"><b>Ты создаёшь лобби.</b> Создай лобби в Brawl Stars на карте «${escH(m.map)}», скопируй ссылку и вставь сюда.</div><input type="text" id="ftlk" placeholder="https://link.brawlstars.com/…" style="font-size:15px;letter-spacing:0"><button class="btn" id="ftsend">Отправить ссылку</button>`;
+    else if (!m.link && m.creator) body = `<div class="note"><b>Ты создаёшь лобби.</b> Создай лобби в Brawl Stars на карте «${escH(m.map)}», скопируй ссылку и вставь сюда (можно вместе с текстом).</div><input type="text" id="ftlk" placeholder="привет, зайди в лобби https://link.brawlstars.com/…" style="font-size:14px;letter-spacing:0;text-transform:none"><button class="btn" id="ftsend">Отправить ссылку</button>`;
     else if (!m.link) body = `<div class="note"><span class="pulse"></span><b>Ждём ссылку на лобби.</b> Создатель создаёт комнату на карте «${escH(m.map)}».</div>`;
     else body = `<div class="note"><b>Ссылка получена.</b><br>1. Зайди в комнату.<br>2. Сыграйте на карте «${escH(m.map)}».<br>3. После игры прикрепи скриншот.</div><button class="btn" id="ftopen">Открыть лобби в Brawl Stars</button>` + (m.submitted ? '<div class="note"><b>Скриншот отправлен ✓</b> Ждём решения администратора.</div>' : `<input type="file" id="ftshot" accept="image/*" class="hidden"><button class="drop" id="ftpick"><b>📷</b>Прикрепить результат<small>Скриншот экрана с итогом игры</small></button>`);
     html += `<div class="ftcard"><b>${m.status === "open" ? "Ты в турнире" : "Турнир идёт"} · ${escH(m.map)}</b><span>${prizeStr(m.prizes)}</span><div class="avs many">${ava}</div>${body}</div>`;
@@ -1366,7 +1388,12 @@ function renderFt() {
   box.querySelectorAll("[data-fj]").forEach(b => b.onclick = () => { b.disabled = true; ftAct("join", { id: +b.dataset.fj }); });
   if (q("ftleave")) q("ftleave").onclick = () => ftAct("leave", { id: m.id });
   if (q("ftlk")) { q("ftlk").value = ftDraft; q("ftlk").oninput = e => { ftDraft = e.target.value; }; }
-  if (q("ftsend")) q("ftsend").onclick = () => { q("ftsend").disabled = true; ftAct("set_link", { id: m.id, link: q("ftlk").value }, "Ссылка отправлена"); };
+  if (q("ftsend")) q("ftsend").onclick = () => {
+    const url = extractLobbyLink(q("ftlk").value);
+    if (!url) { toast("Не нашёл ссылку link.brawlstars.com"); return; }
+    q("ftsend").disabled = true;
+    ftAct("set_link", { id: m.id, link: url }, "Ссылка отправлена");
+  };
   if (q("ftopen")) q("ftopen").onclick = () => tg.openLink(m.link);
   if (q("ftpick")) {
     q("ftpick").onclick = () => q("ftshot").click();
@@ -1378,7 +1405,6 @@ function renderFt() {
     };
   }
 }
-// ----- админка турниров -----
 async function renderFtAdmin() {
   let d; try { d = await ft("a_list"); } catch (e) { toastE(eText(e)); return; }
   if (curTab !== "admin" || adminSec !== "ft") return;
@@ -1580,7 +1606,6 @@ function boot() {
     app.innerHTML = `<div class="icon">⚠️</div><h1>Ошибка загрузки</h1><p class="err">${errText(e)}</p><p style="font-size:12px;word-break:break-all">${JSON.stringify(e)}</p><button class="btn" onclick="boot()">Повторить</button>`;
   });
 }
-// ===== Подсказка про канал =====
 function showChannelTip() {
   const CH = "https://t.me/BsCrHub";
   const el = document.createElement("div"); el.className = "tip";
