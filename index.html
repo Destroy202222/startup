@@ -687,7 +687,7 @@ function renderMatches() {
         } catch (e) { toastE(eText(e)); renderMatches(); }
       };
     }
-    if (q("skipshot")) q("skipshot").onclick = () => askOk("Выйти без скрина? Ставка сгорит, матч засчитается как поражение.", async () => {
+    if (q("skipshot")) q("skipshot").onclick = () => askOk("Выйти без скрина?", async () => {
       try { await rpcTo("lobby_skip_shot", "call", { id: m.id }); toast("Вышел из лобби"); await poll(); renderMatches(); }
       catch (e) { toastE(eText(e)); }
     });
