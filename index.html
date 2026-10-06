@@ -158,6 +158,7 @@ input{-webkit-user-select:text;user-select:text}
 .sta{width:100%;background:#0c0c0c;border:1px solid #2e2e2e;color:var(--tx);border-radius:12px;padding:12px;margin-top:12px;font-size:15px;font-family:inherit;outline:0;resize:none;-webkit-user-select:text;user-select:text}
 .sta:focus{border-color:var(--or)}
 .sheet-in .lrow .li span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* ===== Визуальное обновление ===== */
 :root{--panel:#131315;--panel2:#0e0e10;--line:rgba(255,255,255,.07)}
 *{-webkit-tap-highlight-color:transparent}
 html{scrollbar-width:none}
@@ -247,6 +248,12 @@ input[type=text]:focus,.sta:focus{border-color:var(--or);box-shadow:0 0 0 4px rg
 .bc{margin:12px 0 6px;text-align:left}.bc .sec{margin:0 2px 8px}.bc .sta{margin-top:0}.bc .btn{margin-top:8px}
 .chatmsg{background:#141414;border:1px solid #222;border-radius:10px;padding:6px 10px;margin:4px 0;font-size:13px;word-break:break-word}
 .chatmsg b{color:var(--or2);font-size:11px;display:block}
+.online-row{display:flex;justify-content:space-between;align-items:center;background:#0d0d0d;border:1px solid #262626;border-radius:14px;padding:10px 14px;margin-top:8px;font-size:14px}
+.online-row .lbl{color:var(--mut);font-weight:700}
+.online-row .num{font-weight:800;font-size:18px;color:var(--tx)}
+.online-row.green .num{color:#4cd964}
+.online-row.blue .num{color:var(--or2)}
+.online-row.orange .num{color:var(--or)}
 </style>
 </head>
 <body>
@@ -488,6 +495,7 @@ let curTab = "profile", cur = null;
 let isAdmin = false, isMain = false, adminSec = "games", adminGameId = null, adminKey = "";
 let snap = null, off = 0, pollT = null, cdT = null, lastKey = "", busy = false, pickStake = 100;
 let pollN = 0, admTop = 0, topupPending = null, admWd = 0, wdPending = [], adminStats = null;
+let onlineStats = null;
 function profile(p) {
   cur = p; showTab(curTab); startPoll(); supBadge(); cryptoCheck();
   rpc("whoami").then(d => { isAdmin = !!d.admin; isMain = !!d.main; document.getElementById("navadmin").classList.toggle("hidden", !isAdmin); }).catch(() => {});
@@ -679,7 +687,7 @@ function renderMatches() {
         } catch (e) { toastE(eText(e)); renderMatches(); }
       };
     }
-    if (q("skipshot")) q("skipshot").onclick = () => askOk("Выйти из лобби без прикрепленного скриншота?", async () => {
+    if (q("skipshot")) q("skipshot").onclick = () => askOk("Выйти без скрина? Ставка сгорит, матч засчитается как поражение.", async () => {
       try { await rpcTo("lobby_skip_shot", "call", { id: m.id }); toast("Вышел из лобби"); await poll(); renderMatches(); }
       catch (e) { toastE(eText(e)); }
     });
@@ -883,6 +891,7 @@ async function renderTop() {
 }
 const adminSeg = () => `<div class="balrow" style="margin-top:10px"><span>Зарегистрировано</span><b id="astatv">${adminStats ? adminStats.verified : "…"}</b></div>
   <p id="astatt" style="font-size:12px;margin:6px 0 10px">${adminStats ? `За сутки +${adminStats.today} · всего открывали: ${adminStats.total}` : ""}</p>
+  <div id="onlineBox"></div>
   <div class="bc"><div class="sec">Рассылка в бота</div><textarea class="sta" id="bctxt" rows="2" maxlength="1000" placeholder="Текст сообщения для всех игроков…"></textarea><button class="btn sm" id="bcsend">Отправить рассылку</button></div>
   <div class="seg adm">
   <button data-sec="games" class="${adminSec === "games" ? "on" : ""}">Игры</button>
@@ -897,6 +906,7 @@ const bindSeg = () => {
   app.querySelectorAll("[data-sec]").forEach(b => b.onclick = () => { adminSec = b.dataset.sec; app.dataset.adm = "0"; adminKey = ""; renderAdmin(); });
   bindBc();
   loadTotals();
+  loadOnlineStats();
 };
 const askOk = (msg, go) => tg.showConfirm ? tg.showConfirm(msg, ok => ok && go()) : (confirm(msg) && go());
 async function loadAdminStats() {
@@ -905,6 +915,21 @@ async function loadAdminStats() {
     const v = document.getElementById("astatv"), t = document.getElementById("astatt");
     if (v) v.textContent = adminStats.verified;
     if (t) t.textContent = `За сутки +${adminStats.today} · всего открывали: ${adminStats.total}`;
+  } catch (e) {}
+}
+async function loadOnlineStats() {
+  try {
+    onlineStats = await rpcTo("admin_online_stats", "get", {});
+    const box = document.getElementById("onlineBox");
+    if (!box || !onlineStats) return;
+    const o = Number(onlineStats.online) || 0;
+    const s = Number(onlineStats.searching) || 0;
+    const m = Number(onlineStats.in_match) || 0;
+    box.innerHTML = `
+      <div class="sec">Активность</div>
+      <div class="online-row green"><span class="lbl">🟢 В сети сейчас</span><span class="num">${o}</span></div>
+      <div class="online-row blue"><span class="lbl">🔍 В поиске матча</span><span class="num">${s}</span></div>
+      <div class="online-row orange"><span class="lbl">⚔️ В матче</span><span class="num">${m}</span></div>`;
   } catch (e) {}
 }
 async function renderAdmin() {
@@ -1208,6 +1233,7 @@ async function extraPoll() {
   if (cryptoWait > Date.now()) cryptoCheck();
   if (isAdmin) {
     loadAdminStats();
+    if (curTab === "admin") loadOnlineStats();
     try {
       const c = await pay("admin_counts"), w = await wd("admin_count");
       const n = Number(c.topups) + Number(c.games) + Number(w.withdrawals);
@@ -1655,7 +1681,7 @@ function boot() {
 function showChannelTip() {
   const CH = "https://t.me/BsCrHub";
   const el = document.createElement("div"); el.className = "tip";
-  el.innerHTML = '<div class="ti"><svg viewBox="0 0 24 24"><path d="M21 3L10 14"/><path d="M21 3l-7 18-4-7-7-4 18-7z"/></svg></div><div class="tt"><b>Подпишитесь на Telegram-канал</b><span></span></div><button class="tx" aria-label="Скрыть"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>';
+  el.innerHTML = '<div class="ti"><svg viewBox="0 0 24 24"><path d="M21 3L10 14"/><path d="M21 3l-7 18-4-7-7-4 18-7z"/></svg></div><div class="tt"><b>Подпишитесь на Telegram-канал</b><span>t.me/BsCrHub</span></div><button class="tx" aria-label="Скрыть"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>';
   document.body.appendChild(el);
   let gone = false, timer = null, x0 = null;
   const hide = () => { if (gone) return; gone = true; clearTimeout(timer); el.classList.remove("in"); el.classList.add("out"); setTimeout(() => el.remove(), 450); };
