@@ -158,7 +158,6 @@ input{-webkit-user-select:text;user-select:text}
 .sta{width:100%;background:#0c0c0c;border:1px solid #2e2e2e;color:var(--tx);border-radius:12px;padding:12px;margin-top:12px;font-size:15px;font-family:inherit;outline:0;resize:none;-webkit-user-select:text;user-select:text}
 .sta:focus{border-color:var(--or)}
 .sheet-in .lrow .li span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-/* ===== Визуальное обновление ===== */
 :root{--panel:#131315;--panel2:#0e0e10;--line:rgba(255,255,255,.07)}
 *{-webkit-tap-highlight-color:transparent}
 html{scrollbar-width:none}
@@ -254,7 +253,6 @@ input[type=text]:focus,.sta:focus{border-color:var(--or);box-shadow:0 0 0 4px rg
 .online-row.green .num{color:#4cd964}
 .online-row.blue .num{color:var(--or2)}
 .online-row.orange .num{color:var(--or)}
-/* ===== Запрет бойцов ===== */
 .banstage{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:80;display:flex;flex-direction:column;padding:16px 12px;overflow-y:auto}
 .bantop{position:sticky;top:0;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:2;padding-bottom:8px}
 .bantop h2{font-size:18px;font-weight:800;text-align:center;letter-spacing:-.3px}
@@ -535,8 +533,7 @@ let isAdmin = false, isMain = false, adminSec = "games", adminGameId = null, adm
 let snap = null, off = 0, pollT = null, cdT = null, lastKey = "", busy = false, pickStake = 100;
 let pollN = 0, admTop = 0, topupPending = null, admWd = 0, wdPending = [], adminStats = null;
 let onlineStats = null;
-/* Баны */
-let bans = null, bansT = null, banBusy = false, banLastTurn = null;
+let bansDone = false, bansT = null, banBusy = false;
 let BRAWLERS = [];
 
 function profile(p) {
@@ -658,7 +655,6 @@ function tick() {
     if (left <= 0 && !tick.f) { tick.f = true; setTimeout(() => { tick.f = false; poll(); }, 700); }
   }
 }
-
 function renderMatches() {
   if (curTab !== "matches") return;
   if (!snap) { app.innerHTML = '<h1>Матчи</h1><p>Загрузка…</p>'; return; }
@@ -690,7 +686,6 @@ function renderMatches() {
     tick(); return;
   }
   if (m && (m.status === "live" || m.status === "review")) {
-    // Проверяем, надо ли показать бан-модалку
     if (!m.link && !bansDone) { showBanModal(m); return; }
     let body;
     if (!m.link && m.creator) {
@@ -707,7 +702,6 @@ function renderMatches() {
       <button class="drop" id="pickshot"><b>📷</b>Прикрепить результат матча<small>Скриншот экрана с итогом игры</small></button>
       <button class="btn ghost" id="skipshot" style="margin-top:10px;opacity:.65">Я не сделал скриншот</button>`;
     }
-    // Запрещённые бойцы
     const bannedHTML = (m.bans && m.bans.length) ? `
       <div class="sec">Запрещённые бойцы</div>
       <div class="banned-inline">${m.bans.map(b => `<div class="bp ${b.me ? "by-me" : ""}" title="${escH(b.name)}"><img src="${escH(b.img)}" alt=""></div>`).join("")}</div>` : "";
@@ -748,7 +742,7 @@ function renderMatches() {
         } catch (e) { toastE(eText(e)); renderMatches(); }
       };
     }
-    if (q("skipshot")) q("skipshot").onclick = () => askOk("Выйти без скрина?", async () => {
+    if (q("skipshot")) q("skipshot").onclick = () => askOk("Выйти без скрина? Ставка не вернётся.", async () => {
       try { await rpcTo("lobby_skip_shot", "call", { id: m.id }); toast("Вышел из лобби"); await poll(); renderMatches(); }
       catch (e) { toastE(eText(e)); }
     });
@@ -792,7 +786,6 @@ function renderMatches() {
     }
     return;
   }
-  // экран поиска матча
   const stakes = (snap.stakes && snap.stakes.length) ? snap.stakes : [50, 100, 200];
   if (!stakes.includes(pickStake)) pickStake = stakes[0];
   const pend = (snap.pending || []).map(x => `<div class="lrow"><div class="li"><b>На проверке</b><span>${modeName(x.mode)}</span></div><div class="st">${money(x.stake)}</div></div>`).join("");
@@ -829,19 +822,15 @@ function renderMatches() {
   };
 }
 
-/* ===== Модалка запрета бойцов ===== */
-let bansDone = false;
 function showBanModal(m) {
   if (q("banstage")) return;
   const el = document.createElement("div"); el.id = "banstage"; el.className = "banstage";
   document.body.appendChild(el);
   bansDone = false;
-  banLastTurn = null;
 
   const render = (st) => {
     if (!st) { el.innerHTML = `<div class="bans-wait">Загрузка…</div>`; return; }
     const turn = st.turn, deadline = st.deadline ? new Date(st.deadline).getTime() : 0;
-    const me = st.players && st.players.find(p => p.me);
     const turnPlayer = st.players && st.players.find(p => p.tg === turn);
     const isMe = turn === tgUser.id;
 
@@ -861,8 +850,7 @@ function showBanModal(m) {
       <div class="bangrid">
         ${BRAWLERS.map(b => {
           const banned = (st.bans || []).find(x => x.brawler === b.id);
-          const canTap = !st.done && isMe && !banned;
-          return `<div class="bcard ${banned ? "dis" : ""} ${canTap ? "" : ""}" data-id="${b.id}" data-name="${escH(b.name)}" data-img="${escH(b.img)}">
+          return `<div class="bcard ${banned ? "dis" : ""}" data-id="${b.id}" data-name="${escH(b.name)}" data-img="${escH(b.img)}">
             <img src="${escH(b.img)}" alt="${escH(b.name)}" loading="lazy">
             <small>${escH(b.name)}</small>
           </div>`;
@@ -908,16 +896,13 @@ function showBanModal(m) {
   window.banPull = async () => {
     try {
       const st = await rpcTo("tg_bans", "get", { id: m.id });
-      if (st.error) { return; }
+      if (st.error) return;
       render(st);
     } catch (e) {}
   };
   window.banPull();
 }
 
-function stopBanPoll() { clearInterval(bansT); clearTimeout(bansT); bansT = null; if (q("banstage")) q("banstage").remove(); }
-
-/* ===== Прочие экраны ===== */
 async function shrink(file) {
   const img = await createImageBitmap(file);
   const k = Math.min(1, 1100 / Math.max(img.width, img.height));
@@ -1113,8 +1098,7 @@ async function renderStakes() {
     <div class="sec">Доступные ставки</div>
     <p>Введи суммы через запятую. Игроки увидят только их.</p>
     <input type="text" id="samounts" value="${current}" placeholder="50,100,200" style="text-transform:none">
-    <button class="btn" id="ssave">Сохранить</button>
-    <p style="font-size:12px;color:var(--mut);margin-top:8px;text-align:left">Пример: <b style="color:var(--or2)">50</b> — одна игра на 50₽. <b style="color:var(--or2)">50,250</b> — две игры. <b style="color:var(--or2)">50,100,200,500</b> — четыре.</p>`;
+    <button class="btn" id="ssave">Сохранить</button>`;
   bindSeg();
   q("ssave").onclick = async () => {
     const raw = q("samounts").value.replace(/\s/g, "");
@@ -1122,11 +1106,8 @@ async function renderStakes() {
     const arr = raw.split(",").map(x => parseInt(x, 10)).filter(x => x > 0);
     if (!arr.length) { toast("Некорректные суммы"); return; }
     q("ssave").disabled = true;
-    try {
-      await rpc("admin_stakes_set", { stakes: arr.join(",") });
-      toast("Ставки сохранены: " + arr.join(", "));
-      renderStakes();
-    } catch (e) { toastE(eText(e)); q("ssave").disabled = false; }
+    try { await rpc("admin_stakes_set", { stakes: arr.join(",") }); toast("Ставки сохранены: " + arr.join(", ")); renderStakes(); }
+    catch (e) { toastE(eText(e)); q("ssave").disabled = false; }
   };
 }
 async function renderTopups() {
@@ -1288,8 +1269,8 @@ async function loadCrypto() {
   if (curTab !== "admin" || adminSec !== "topups") return;
   const old = q("crsec"); if (old) old.remove();
   const rows = d.items.map(c => `<div class="lrow" style="flex-wrap:wrap"><div class="li"><b>${escH(c.name || "Игрок")} · ${escH(c.tag || "")}</b><span>Счёт ${escH(c.id)} · ${fmtT(c.created_at)}</span></div><div class="st">${money(c.amount)}</div><div style="width:100%;margin-top:8px"><button class="btn sm" style="margin:0" data-cr="${escH(c.id)}" data-n="${c.amount}">Зачислить</button></div></div>`).join("");
-  addSec(`<div id="crsec"><div class="sec">Крипто-счета xRocket без зачисления</div><p style="font-size:12px">Зачисляй только если оплата видна в чате xRocket.</p><div class="mlist">${rows || "<p>Неоплаченных счетов нет.</p>"}</div></div>`);
-  app.querySelectorAll("[data-cr]").forEach(b => b.onclick = () => askOk(`Счёт ${b.dataset.cr}: зачислить ${money(+b.dataset.n)}? Сначала проверь оплату в xRocket.`, async () => {
+  addSec(`<div id="crsec"><div class="sec">Крипто-счета xRocket без зачисления</div><div class="mlist">${rows || "<p>Неоплаченных счетов нет.</p>"}</div></div>`);
+  app.querySelectorAll("[data-cr]").forEach(b => b.onclick = () => askOk(`Счёт ${b.dataset.cr}: зачислить ${money(+b.dataset.n)}?`, async () => {
     try { const r = await cry("credit", { id: b.dataset.cr }); hap("success"); toast(r.credited ? "Зачислено" : "Уже зачислено"); } catch (e) { toastE(eText(e)); }
     loadCrypto();
   }));
@@ -1310,12 +1291,11 @@ async function openGame(id) {
   <button class="btn ghost" id="back">← Назад</button>`;
   app.querySelectorAll("[data-v]").forEach(i => i.onclick = () => viewImg(i.src));
   q("back").onclick = () => { app.dataset.adm = "0"; renderAdmin(); };
-  if (q("cancelgame")) q("cancelgame").onclick = () => askOk("Отменить игру и вернуть ставки всем игрокам?", async () => {
-    try { await rpcTo("admin_cancel_lobby", "call", { id }); hap("success"); toast("Игра отменена"); }
-    catch (e) { toastE(eText(e)); }
+  if (q("cancelgame")) q("cancelgame").onclick = () => askOk("Отменить игру и вернуть ставки?", async () => {
+    try { await rpcTo("admin_cancel_lobby", "call", { id }); hap("success"); toast("Игра отменена"); } catch (e) { toastE(eText(e)); }
     adminGameId = null; app.dataset.adm = "0"; renderAdmin();
   });
-  if (q("aubtn")) q("aubtn").onclick = () => askOk("Применить результат из журнала Brawl Stars и выдать призы?", async () => {
+  if (q("aubtn")) q("aubtn").onclick = () => askOk("Применить результат?", async () => {
     try { await rpcTo("tg_auto", "apply", { id }); hap("success"); toast("Матч засчитан"); } catch (e) { toastE(eText(e)); }
     adminGameId = null; app.dataset.adm = "0"; renderAdmin();
   });
@@ -1347,7 +1327,7 @@ async function openGame(id) {
 function renderTopupBox() {
   const box = document.getElementById("tpbox"); if (!box) return;
   if (!topupPending) { box.innerHTML = ""; return; }
-  box.innerHTML = `<div class="note"><span class="pulse"></span><b>Ожидание оплаты</b> · ${money(topupPending.amount)}<br>Администратор проверит перевод.</div><button class="link" id="tpc">Отменить заявку</button>`;
+  box.innerHTML = `<div class="note"><span class="pulse"></span><b>Ожидание оплаты</b> · ${money(topupPending.amount)}</div><button class="link" id="tpc">Отменить заявку</button>`;
   q("tpc").onclick = async () => { try { await pay("cancel"); topupPending = null; renderTopupBox(); toast("Отменено"); } catch (e) { toastE(eText(e)); } };
 }
 function applyTopupState(st) {
@@ -1406,16 +1386,12 @@ function openTopup() {
     sh.querySelector("#paycrypto").onclick = async () => {
       const amount = parseInt(inp.value.replace(/\D/g, ""), 10);
       if (!amount || amount < 50 || amount > 50000) { tst.textContent = "Сумма от 50 до 50 000 ₽"; tst.className = "err"; return; }
-      const cur = (tg.showPopup && await new Promise(res => tg.showPopup({ title: "Валюта оплаты", message: "Выбери валюту", buttons: [{ id: "USDT", type: "default", text: "USDT" }] }, (id) => res(id)))) || "USDT";
+      const cur = (tg.showPopup && await new Promise(res => tg.showPopup({ title: "Валюта", message: "USDT", buttons: [{ id: "USDT", type: "default", text: "USDT" }] }, (id) => res(id)))) || "USDT";
       const rates = { USDT: 100 };
       const amountCrypto = +(amount / rates[cur]).toFixed(4);
       tst.className = ""; tst.textContent = "Создаём счёт…";
-      try {
-        const url = await cryptoTopup(amountCrypto, cur);
-        tg.openLink(url);
-        cryptoWait = Date.now() + 40 * 60 * 1000;
-        el.remove(); toast("Открой оплату в xRocket. Баланс пополнится автоматически после подтверждения");
-      } catch (e) { tst.textContent = e.error === "timeout" ? "Сервер не ответил за 20 секунд. Попробуй ещё раз." : "Ошибка: " + (e.error || "unknown"); tst.className = "err"; }
+      try { const url = await cryptoTopup(amountCrypto, cur); tg.openLink(url); cryptoWait = Date.now() + 40 * 60 * 1000; el.remove(); toast("Открой оплату в xRocket"); }
+      catch (e) { tst.textContent = "Ошибка: " + (e.error || "unknown"); tst.className = "err"; }
     };
     sh.querySelector("#pay").onclick = () => {
       const amount = parseInt(inp.value.replace(/\D/g, ""), 10);
@@ -1425,9 +1401,9 @@ function openTopup() {
   };
   const stepQr = amount => {
     const ref = String(1000 + Math.floor(Math.random() * 9000));
-    sh.innerHTML = `<h1>Переведи ${money(amount)}</h1><p>Отсканируй QR и переведи ровно <b style="color:var(--tx)">${money(amount)}</b></p>
-    ${QR_IMG ? `<img class="qr" src="${QR_IMG}" alt="QR">` : `<div class="note" style="text-align:center"><b>QR не настроен.</b></div>`}
-    <p style="margin-top:12px">Оставь в комментарии к переводу код:</p><div class="refcode">${ref}</div><p id="tst"></p>
+    sh.innerHTML = `<h1>Переведи ${money(amount)}</h1><p>Переведи ровно <b style="color:var(--tx)">${money(amount)}</b></p>
+    ${QR_IMG ? `<img class="qr" src="${QR_IMG}" alt="QR">` : ""}
+    <p style="margin-top:12px">Оставь в комментарии код:</p><div class="refcode">${ref}</div><p id="tst"></p>
     <button class="btn" id="ok">Подтвердить перевод</button><button class="link" id="back">← Изменить сумму</button>`;
     sh.querySelector("#back").onclick = () => stepAmount(amount);
     sh.querySelector("#ok").onclick = async () => {
@@ -1453,7 +1429,7 @@ function openWithdraw() {
     <input type="text" id="wamt" inputmode="numeric" placeholder="Сумма, ₽">
     <div id="wbk"><input type="text" id="wph" inputmode="tel" placeholder="Телефон" value="+7"><input type="text" id="wbank" placeholder="Банк"></div>
     <div id="wcr" class="hidden"><div class="chips" style="grid-template-columns:repeat(4,1fr)">${["TON","TRC20","BEP20","xRocket"].map((n,i)=>`<button class="chip${i?"":" on"}" data-net="${n}">${n}</button>`).join("")}</div>
-      <input type="text" id="waddr" placeholder="Адрес кошелька или @username в xRocket" style="font-size:14px;letter-spacing:0;text-transform:none"><p id="wusdt" style="font-size:12px"></p></div>
+      <input type="text" id="waddr" placeholder="Адрес или @username" style="font-size:14px;letter-spacing:0;text-transform:none"><p id="wusdt" style="font-size:12px"></p></div>
     <p id="tst" style="font-size:12px">Сумма спишется сразу. Если отменят — вернётся.</p>
     <button class="btn" id="ok">Подтвердить вывод</button><button class="link" id="cls">Отмена</button></div>`;
   document.body.appendChild(el);
@@ -1464,7 +1440,7 @@ function openWithdraw() {
   el.querySelector("#cls").onclick = () => el.remove();
   el.querySelectorAll("[data-m]").forEach(b => b.onclick = () => { mode = b.dataset.m; el.querySelectorAll("[data-m]").forEach(x => x.classList.toggle("on", x === b)); el.querySelector("#wbk").classList.toggle("hidden", mode !== "bank"); el.querySelector("#wcr").classList.toggle("hidden", mode !== "crypto"); });
   el.querySelectorAll("[data-net]").forEach(b => b.onclick = () => { net = b.dataset.net; el.querySelectorAll("[data-net]").forEach(x => x.classList.toggle("on", x === b)); });
-  amtEl.oninput = () => { const a = parseInt(amtEl.value.replace(/\D/g, ""), 10) || 0; el.querySelector("#wusdt").textContent = a ? "≈ " + (a/100).toFixed(2) + " USDT (курс 1 USDT = 100 ₽)" : ""; };
+  amtEl.oninput = () => { const a = parseInt(amtEl.value.replace(/\D/g, ""), 10) || 0; el.querySelector("#wusdt").textContent = a ? "≈ " + (a/100).toFixed(2) + " USDT" : ""; };
   ok.onclick = async () => {
     const amount = parseInt(amtEl.value.replace(/\D/g, ""), 10);
     if (!amount || amount < 300) return bad("Минимум 300 ₽");
@@ -1476,7 +1452,7 @@ function openWithdraw() {
       doReq = () => wd("request", { amount, phone, bank }); label = bank;
     } else {
       const address = el.querySelector("#waddr").value.trim();
-      if (address.length < 3) return bad("Укажи адрес кошелька");
+      if (address.length < 3) return bad("Укажи адрес");
       doReq = () => rpcTo("tg_wdc", "request", { amount, address, network: net }); label = "USDT " + net;
     }
     ok.disabled = true; tst.className = ""; tst.textContent = "Создаём…";
@@ -1490,11 +1466,10 @@ function openWithdraw() {
   };
 }
 
-/* ===== Вибрация, чат, поддержка, бот ===== */
 const hap = k => { try { const h = tg.HapticFeedback; if (!h) return; if (k === "success" || k === "error" || k === "warning") h.notificationOccurred(k); else if (k === "select") h.selectionChanged(); else h.impactOccurred(k || "light"); } catch (_) {} };
 const toastE = t => { hap("error"); toast(t); };
 document.addEventListener("click", e => {
-  const t = e.target.closest && e.target.closest(".btn,.chip,.seg button,#nav button,.sup,.lrow[data-g],.lrow[data-u],.lrow[data-pl],.bcard");
+  const t = e.target.closest && e.target.closest(".btn,.chip,.seg button,#nav button,.sup,.lrow[data-g],.lrow[data-pl],.bcard");
   if (t && !t.disabled) hap(t.matches("#nav button,.seg button,.chip,.bcard") ? "select" : "light");
 });
 function fillBonus(g) {
@@ -1503,7 +1478,7 @@ function fillBonus(g) {
   const h = document.getElementById("bgh"); if (!h) return;
   if (g >= 50) { h.textContent = "Условие выполнено: бонусный баланс автоматически перейдёт в основной."; return; }
   const n = 50 - g, one = n % 10 === 1 && n % 100 !== 11, few = [2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100);
-  h.textContent = (one ? "Осталась " : "Осталось ") + n + " " + (one ? "игра" : few ? "игры" : "игр") + " до того, как бонусный баланс перейдёт в основной. Игра засчитывается после проверки матча.";
+  h.textContent = (one ? "Осталась " : "Осталось ") + n + " " + (one ? "игра" : few ? "игры" : "игр") + " до того, как бонусный баланс перейдёт в основной.";
 }
 
 let cryptoWait = 0, cryptoBusy = false;
@@ -1512,8 +1487,7 @@ async function cryptoCheck() {
   cryptoBusy = true;
   try {
     const r = await fetch("https://wlhzcocwgmzcrtzhefic.supabase.co/functions/v1/clever-action", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", apikey: ANON, Authorization: "Bearer " + ANON },
+      method: "POST", headers: { "Content-Type": "application/json", apikey: ANON, Authorization: "Bearer " + ANON },
       body: JSON.stringify({ initData: tg.initData, action: "check" })
     });
     const d = await r.json();
@@ -1535,7 +1509,7 @@ async function ftLoad(force) {
     const d = await ft("list");
     const prev = ftSt && ftSt.mine ? ftSt.mine.status : null;
     ftSt = d;
-    if (prev === "open" && d.mine && d.mine.status === "live") { hap("warning"); toast("Турнир начался! Открой «Матчи»"); }
+    if (prev === "open" && d.mine && d.mine.status === "live") { hap("warning"); toast("Турнир начался!"); }
     const key = JSON.stringify(d);
     if (key !== ftKey) { ftKey = key; renderFt(); }
   } catch (e) {}
@@ -1551,7 +1525,7 @@ function renderFt() {
   if (m) {
     const ava = (m.players || []).map(p => `<div class="av ${p.me ? "ok" : ""}">${p.photo ? `<img src="${escH(p.photo)}" alt="">` : USER_SVG}</div>`).join("");
     let body;
-    if (m.status === "open") body = `<p>Ждём игроков: <b style="color:var(--tx)">${m.count}/${m.capacity}</b>.</p><button class="btn ghost" id="ftleave">Выйти из турнира</button>`;
+    if (m.status === "open") body = `<p>Ждём игроков: <b>${m.count}/${m.capacity}</b>.</p><button class="btn ghost" id="ftleave">Выйти из турнира</button>`;
     else if (!m.link && m.creator) body = `<div class="note"><b>Ты создаёшь лобби.</b> Вставь ссылку.</div><input type="text" id="ftlk" placeholder="https://link.brawlstars.com/invite/..." style="font-size:14px;letter-spacing:0;text-transform:none"><button class="btn" id="ftsend">Отправить ссылку</button>`;
     else if (!m.link) body = `<div class="note"><span class="pulse"></span><b>Ждём ссылку на лобби.</b></div>`;
     else body = `<div class="note"><b>Ссылка получена.</b><br>1. Зайди в комнату.<br>2. Сыграйте.<br>3. Прикрепи скриншот.</div><button class="btn" id="ftopen">Открыть лобби</button>` + (m.submitted ? '<div class="note"><b>Скриншот отправлен ✓</b></div>' : `<input type="file" id="ftshot" accept="image/*" class="hidden"><button class="drop" id="ftpick"><b>📷</b>Прикрепить результат</button>`);
@@ -1564,7 +1538,7 @@ function renderFt() {
   box.querySelectorAll("[data-fj]").forEach(b => b.onclick = () => { b.disabled = true; ftAct("join", { id: +b.dataset.fj }); });
   if (q("ftleave")) q("ftleave").onclick = () => ftAct("leave", { id: m.id });
   if (q("ftlk")) { q("ftlk").value = ftDraft; q("ftlk").oninput = e => { ftDraft = e.target.value; }; }
-  if (q("ftsend")) q("ftsend").onclick = () => { const url = extractLobbyLink(q("ftlk").value); if (!url) { toast("Не нашёл ссылку link.brawlstars.com"); return; } q("ftsend").disabled = true; ftAct("set_link", { id: m.id, link: url }, "Ссылка отправлена"); };
+  if (q("ftsend")) q("ftsend").onclick = () => { const url = extractLobbyLink(q("ftlk").value); if (!url) { toast("Не нашёл ссылку"); return; } q("ftsend").disabled = true; ftAct("set_link", { id: m.id, link: url }, "Ссылка отправлена"); };
   if (q("ftopen")) q("ftopen").onclick = () => tg.openLink(m.link);
   if (q("ftpick")) {
     q("ftpick").onclick = () => q("ftshot").click();
@@ -1587,7 +1561,7 @@ async function renderFtAdmin() {
     const map = q("ftmap").value.trim();
     const prizes = [...document.querySelectorAll("#ftpz [data-pz]")].map(i => parseInt(i.value.replace(/\D/g, ""), 10));
     if (!map) { toast("Укажи карту"); return; }
-    if (prizes.some(x => !x || x <= 0)) { toast("Укажи приз для каждого места"); return; }
+    if (prizes.some(x => !x || x <= 0)) { toast("Укажи приз"); return; }
     q("ftmk").disabled = true;
     try { await ft("a_create", { map, prizes }); hap("success"); toast("Турнир создан"); renderFtAdmin(); } catch (e) { toastE(eText(e)); q("ftmk").disabled = false; }
   };
@@ -1603,29 +1577,27 @@ async function openFtAdmin(id) {
   q("ftcancel").onclick = () => askOk("Отменить турнир?", async () => { try { await ft("a_cancel", { id }); toast("Турнир отменён"); } catch (e) { toastE(eText(e)); } renderFtAdmin(); });
   if (live) {
     app.querySelectorAll("[data-p]").forEach(b => b.onclick = () => { const place = +b.dataset.p - 1, pid = +b.dataset.id; for (let k = 0; k < need; k++) if (picks[k] === pid) picks[k] = undefined; picks[place] = pid; app.querySelectorAll("[data-p]").forEach(x => x.classList.toggle("on", picks[+x.dataset.p - 1] === +x.dataset.id)); q("ftdone").disabled = !Array.from({ length: need }, (_, k) => picks[k]).every(Boolean); });
-    q("ftdone").onclick = () => { const nm = tg2 => (pl.find(p => p.tg === tg2) || {}).name || "Игрок"; const w = picks.slice(0, need); askOk(w.map((x, k) => `${k + 1} место: ${nm(x)} (+${money(t.prizes[k])})`).join("\n") + "\nВыдать призы?", async () => { try { await ft("a_settle", { id, winners: w }); hap("success"); toast("Призы выданы"); } catch (e) { toastE(eText(e)); } renderFtAdmin(); }); };
+    q("ftdone").onclick = () => { const nm = tg2 => (pl.find(p => p.tg === tg2) || {}).name || "Игрок"; const w = picks.slice(0, need); askOk(w.map((x, k) => `${k + 1} место: ${nm(x)} (+${money(t.prizes[k])})`).join("\n"), async () => { try { await ft("a_settle", { id, winners: w }); hap("success"); toast("Призы выданы"); } catch (e) { toastE(eText(e)); } renderFtAdmin(); }); };
   }
 }
 
-/* === Чат, поддержка (сокращённо — как в исходнике) === */
 const bc = (a, b) => rpcTo("tg_bc", a, b);
 let bcDraft = "";
-function bindBc() { const t = q("bctxt"), b = q("bcsend"); if (!t || !b) return; t.value = bcDraft; t.oninput = () => { bcDraft = t.value; }; b.onclick = () => { const text = t.value.trim(); if (!text) { toast("Напиши текст рассылки"); return; } askOk("Отправить всем игрокам?", async () => { b.disabled = true; try { const r = await bc("send", { text }); bcDraft = ""; t.value = ""; hap("success"); toast("Рассылка: " + r.n + " получателей"); } catch (e) { toastE(eText(e)); } b.disabled = false; }); }; }
+function bindBc() { const t = q("bctxt"), b = q("bcsend"); if (!t || !b) return; t.value = bcDraft; t.oninput = () => { bcDraft = t.value; }; b.onclick = () => { const text = t.value.trim(); if (!text) { toast("Напиши текст"); return; } askOk("Отправить всем?", async () => { b.disabled = true; try { const r = await bc("send", { text }); bcDraft = ""; t.value = ""; hap("success"); toast("Рассылка: " + r.n); } catch (e) { toastE(eText(e)); } b.disabled = false; }); }; }
 const modRpc = (a, b) => rpcTo("tg_mod", a, b);
 const adStat = (a, b) => rpcTo("tg_stat", a, b);
 const addSec = html => { const tb = q("totbox"); if (tb) tb.insertAdjacentHTML("beforebegin", html); else app.insertAdjacentHTML("beforeend", html); };
-async function loadTotals() { if (!q("totbox")) app.insertAdjacentHTML("beforeend", '<div id="totbox"></div>'); let d; try { d = await adStat("get"); } catch (e) { return; } const box = q("totbox"); if (!box) return; box.innerHTML = `<div class="sec">Статистика</div><div class="balrow"><span>Пополнено всего · ${d.topups_n}</span><b>${money(d.topups)}</b></div><div class="balrow"><span>Выведено всего · ${d.wd_paid_n}</span><b>${money(d.wd_paid)}</b></div><div class="balrow"><span>Ждут вывода</span><b>${money(d.wd_wait)}</b></div>`; }
-async function renderMod(tg) { const box = q("modbox"); if (!box) return; let s; try { s = await modRpc("get", { tg }); } catch (e) { box.innerHTML = `<p class="err">${eText(e)}</p>`; return; } const until = s.mute_until ? new Date(s.mute_until) : null; const forever = until && until.getFullYear() >= 2900; box.innerHTML = `<div class="balrow"><span>Статус</span><b style="font-size:15px">${s.banned ? "⛔ Забанен" : until ? "🔇 Мут " + (forever ? "навсегда" : "до " + fmtT(s.mute_until)) : "Без ограничений"}</b></div><button class="btn sm ${s.banned ? "" : "ghost"}" id="mdban">${s.banned ? "Разбанить" : "Забанить"}</button><div class="sec">Мут: нельзя начать поиск матча</div><div class="chips" style="grid-template-columns:repeat(4,1fr)">${[[1,"1 ч"],[24,"24 ч"],[168,"7 д"],[0,"Навсегда"]].map(x => `<button class="chip" data-mh="${x[0]}">${x[1]}</button>`).join("")}</div>${until ? '<button class="btn sm ghost" id="mdun">Снять мут</button>' : ""}`; const run = async (a, args, msg) => { try { await modRpc(a, { tg, ...args }); hap("success"); toast(msg); } catch (e) { toastE(eText(e)); } renderMod(tg); }; q("mdban").onclick = () => askOk(s.banned ? "Разбанить?" : "Забанить?", () => run("ban", { on: !s.banned }, s.banned ? "Разбанен" : "Забанен")); box.querySelectorAll("[data-mh]").forEach(b => b.onclick = () => run("mute", { hours: +b.dataset.mh || null }, "Мут выдан")); if (q("mdun")) q("mdun").onclick = () => run("mute", { off: true }, "Мут снят"); }
+async function loadTotals() { if (!q("totbox")) app.insertAdjacentHTML("beforeend", '<div id="totbox"></div>'); let d; try { d = await adStat("get"); } catch (e) { return; } const box = q("totbox"); if (!box) return; box.innerHTML = `<div class="sec">Статистика</div><div class="balrow"><span>Пополнено · ${d.topups_n}</span><b>${money(d.topups)}</b></div><div class="balrow"><span>Выведено · ${d.wd_paid_n}</span><b>${money(d.wd_paid)}</b></div><div class="balrow"><span>Ждут вывода</span><b>${money(d.wd_wait)}</b></div>`; }
+async function renderMod(tg) { const box = q("modbox"); if (!box) return; let s; try { s = await modRpc("get", { tg }); } catch (e) { box.innerHTML = `<p class="err">${eText(e)}</p>`; return; } const until = s.mute_until ? new Date(s.mute_until) : null; const forever = until && until.getFullYear() >= 2900; box.innerHTML = `<div class="balrow"><span>Статус</span><b style="font-size:15px">${s.banned ? "⛔ Забанен" : until ? "🔇 Мут " + (forever ? "навсегда" : "до " + fmtT(s.mute_until)) : "Без ограничений"}</b></div><button class="btn sm ${s.banned ? "" : "ghost"}" id="mdban">${s.banned ? "Разбанить" : "Забанить"}</button><div class="sec">Мут</div><div class="chips" style="grid-template-columns:repeat(4,1fr)">${[[1,"1 ч"],[24,"24 ч"],[168,"7 д"],[0,"Навсегда"]].map(x => `<button class="chip" data-mh="${x[0]}">${x[1]}</button>`).join("")}</div>${until ? '<button class="btn sm ghost" id="mdun">Снять мут</button>' : ""}`; const run = async (a, args, msg) => { try { await modRpc(a, { tg, ...args }); hap("success"); toast(msg); } catch (e) { toastE(eText(e)); } renderMod(tg); }; q("mdban").onclick = () => askOk(s.banned ? "Разбанить?" : "Забанить?", () => run("ban", { on: !s.banned }, s.banned ? "Разбанен" : "Забанен")); box.querySelectorAll("[data-mh]").forEach(b => b.onclick = () => run("mute", { hours: +b.dataset.mh || null }, "Мут выдан")); if (q("mdun")) q("mdun").onclick = () => run("mute", { off: true }, "Мут снят"); }
 const sup = (a, b) => rpcTo("tg_support", a, b);
 let supN = -1;
 function setSupBadge(n) { const b = q("supbdg"); if (!b) return; b.textContent = n; b.classList.toggle("hidden", !n); }
-async function supBadge() { try { const d = await sup("badge"), n = Number(d.n) || 0; if (supN >= 0 && n > supN) toast(d.admin ? "Новое обращение в поддержку" : "Ответ от поддержки"); supN = n; setSupBadge(n); } catch (e) {} }
+async function supBadge() { try { const d = await sup("badge"), n = Number(d.n) || 0; if (supN >= 0 && n > supN) toast(d.admin ? "Новое обращение" : "Ответ от поддержки"); supN = n; setSupBadge(n); } catch (e) {} }
 const fmtT = t => new Date(t).toLocaleString("ru-RU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 const escH = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-function openSupport() { /* сохранён как в исходнике */ }
+function openSupport() { const el = document.createElement("div"); el.className = "sheet"; el.innerHTML = '<div class="sheet-in" id="ssh"></div>'; document.body.appendChild(el); el.onclick = e => { if (e.target === el) el.remove(); }; const sh = el.querySelector("#ssh"); let timer = null, peer = null; const stop = () => { if (timer) { clearInterval(timer); timer = null; } }; const bubbles = ms => ms.length ? ms.map(m => `<div class="sb ${m.admin === isAdmin ? "me" : "them"}">${escH(m.text)}<small>${fmtT(m.at)}</small></div>`).join("") : "<p>Сообщений пока нет.</p>"; const loadThread = async force => { const d = peer ? await sup("user_thread", { tg: peer.tg }) : await sup("thread"); const box = sh.querySelector("#smsgs"); if (!box) return; const atEnd = force || box.scrollHeight - box.scrollTop - box.clientHeight < 40; box.innerHTML = bubbles(d.messages); if (atEnd) box.scrollTop = box.scrollHeight; supBadge(); }; const threadView = () => { sh.innerHTML = `<h1>${peer ? escH(peer.name) : "Поддержка"}</h1><p>${peer ? escH(peer.tag || "") : "Опиши проблему"}</p><div class="smsgs" id="smsgs"><p>Загрузка…</p></div><textarea class="sta" id="stxt" rows="2" maxlength="1000" placeholder="Сообщение…"></textarea><button class="btn" id="ssend">Отправить</button>${peer ? '<button class="link" id="sback">← К обращениям</button>' : '<button class="link" id="scls">Закрыть</button>'}`; if (peer) sh.querySelector("#sback").onclick = () => { stop(); inboxView(); }; else sh.querySelector("#scls").onclick = () => { stop(); el.remove(); }; sh.querySelector("#ssend").onclick = async () => { const t = sh.querySelector("#stxt").value.trim(); if (!t) return; const b = sh.querySelector("#ssend"); b.disabled = true; try { if (peer) await sup("reply", { tg: peer.tg, text: t }); else await sup("send", { text: t }); sh.querySelector("#stxt").value = ""; await loadThread(true); } catch (e) { toastE(eText(e)); } b.disabled = false; }; loadThread(true).catch(e => toastE(eText(e))); stop(); timer = setInterval(() => { if (!document.body.contains(el)) { stop(); return; } if (sh.querySelector("#smsgs")) loadThread(false).catch(() => {}); }, 4000); }; const inboxView = async () => { peer = null; stop(); sh.innerHTML = "<h1>Поддержка</h1><p>Загрузка…</p>"; let d; try { d = await sup("inbox"); } catch (e) { toastE(eText(e)); el.remove(); return; } const byTg = {}; d.items.forEach(x => byTg[x.tg] = x); const rows = d.items.map(x => `<div class="lrow" data-u="${x.tg}" style="cursor:pointer"><div class="li"><b>${escH(x.name)}</b><span>${escH(x.last || "")}</span></div>${x.unread ? `<div class="st">${x.unread}</div>` : ""}</div>`).join(""); sh.innerHTML = `<h1>Поддержка</h1><p>Обращения</p><div class="smsgs">${rows || "<p>Обращений пока нет.</p>"}</div><button class="link" id="scls">Закрыть</button>`; sh.querySelector("#scls").onclick = () => el.remove(); sh.querySelectorAll("[data-u]").forEach(r => r.onclick = () => { peer = byTg[r.dataset.u]; threadView(); }); }; if (isAdmin) inboxView(); else threadView(); }
 q("sup").onclick = openSupport;
 
-/* ===== Чат ===== */
 const chat = (a, b) => rpcTo("tg_chat", a, b);
 Object.assign(LERR, { chat_link: "Ссылки запрещены", chat_spam: "Не флуди", chat_slow: "Не так быстро", chat_dup: "Уже отправлено", chat_muted: "Ты в муте" });
 let chatT = null, chatLast = 0, chatSeen = 0, chatMsgs = [], chatMute = null, chatBusy = false, chatSending = false, chatForce = false;
@@ -1633,7 +1605,7 @@ const hm = t => new Date(t).toLocaleTimeString("ru-RU", { hour: "2-digit", minut
 const nearEnd = b => b.scrollHeight - b.scrollTop - b.clientHeight < 60;
 function chatBad(t) { const n = t.toLowerCase().replace(/\s*(\.|\(dot\)|\[dot\]|точка)\s*/g, "."); if (/(https?:|www\.|t\.me|tg:|@[a-z0-9_]{3,}|[a-zа-я0-9]\.(ru|com|net|org|me|io|gg|xyz|su|ly|cc|tk|рф|site|online|click|top|club|info|co|tv|app|pro|shop|store|link|bio)(?![a-zа-я]))/i.test(n) || /\d[\d ()+-]{8,}\d/.test(t)) return LERR.chat_link; if (/(.)\1{6,}/.test(t)) return LERR.chat_spam; return null; }
 function renderChat() { clearInterval(chatT); chatLast = 0; chatMsgs = []; chatBusy = false; chatForce = true; const b = q("chatbdg"); if (b) b.classList.add("hidden"); app.innerHTML = `<div class="chat"><div class="chat-h"><h1>Чат</h1><small></small></div><div class="cmsgs" id="cmsgs"><p style="text-align:center;margin-top:40px">Загрузка…</p></div><button class="cnew hidden" id="cnew">↓ Новые</button><div id="cfoot"></div></div>`; const box = q("cmsgs"); box.onscroll = () => { if (nearEnd(box)) q("cnew").classList.add("hidden"); }; q("cnew").onclick = () => { box.scrollTo({ top: box.scrollHeight, behavior: "smooth" }); q("cnew").classList.add("hidden"); }; drawFoot(); chatPull(true); chatT = setInterval(() => { if (curTab !== "chat") { clearInterval(chatT); return; } if (!document.hidden) chatPull(false); }, 2000); }
-function drawMsgs() { const box = q("cmsgs"); if (!box) return; if (!chatMsgs.length) { box.innerHTML = '<p style="text-align:center;margin-top:40px">Пока тихо. Напиши первым 👋</p>'; return; } let prev = null; box.innerHTML = chatMsgs.map(m => { const me = m.tg === tgUser.id; const cont = prev && prev.tg === m.tg && (new Date(m.at) - new Date(prev.at) < 120000); prev = m; return `<div class="cm${me ? " me" : ""}${cont ? " cont" : ""}"><div class="av">${m.photo ? `<img src="${escH(m.photo)}" alt="">` : USER_SVG}</div><div class="cb">${!me && !cont ? `<div class="cn">${escH(m.name || "Игрок")}${m.admin ? '<span class="ca">ADMIN</span>' : ""}</div>` : ""}${escH(m.text)}<time>${hm(m.at)}</time></div></div>`; }).join(""); }
+function drawMsgs() { const box = q("cmsgs"); if (!box) return; if (!chatMsgs.length) { box.innerHTML = '<p style="text-align:center;margin-top:40px">Пока тихо.</p>'; return; } let prev = null; box.innerHTML = chatMsgs.map(m => { const me = m.tg === tgUser.id; const cont = prev && prev.tg === m.tg && (new Date(m.at) - new Date(prev.at) < 120000); prev = m; return `<div class="cm${me ? " me" : ""}${cont ? " cont" : ""}"><div class="av">${m.photo ? `<img src="${escH(m.photo)}" alt="">` : USER_SVG}</div><div class="cb">${!me && !cont ? `<div class="cn">${escH(m.name || "Игрок")}${m.admin ? '<span class="ca">ADMIN</span>' : ""}</div>` : ""}${escH(m.text)}<time>${hm(m.at)}</time></div></div>`; }).join(""); }
 async function chatPull(first) { if (chatBusy) return; chatBusy = true; try { const d = await chat("list", { since: chatLast }); const box = q("cmsgs"); if (curTab !== "chat" || !box) return; chatMute = d.mute_until && new Date(d.mute_until) > new Date() ? d.mute_until : null; drawFoot(); const gone = new Set(d.gone || []), fresh = d.messages || []; const hadGone = chatMsgs.some(m => gone.has(m.id)); if (!fresh.length && !hadGone && !first) return; const stick = first || chatForce || nearEnd(box); chatMsgs = chatMsgs.filter(m => !gone.has(m.id)).concat(fresh).slice(-150); if (fresh.length) chatSeen = chatLast = fresh[fresh.length - 1].id; drawMsgs(); chatForce = false; if (stick) box.scrollTop = box.scrollHeight; } catch (e) {} finally { chatBusy = false; } }
 function drawFoot() { const f = q("cfoot"); if (!f) return; const key = chatMute || ""; if (f.dataset.k === key && f.firstChild) return; f.dataset.k = key; if (chatMute) { f.innerHTML = `<div class="cmuted">🔇 Ты в муте ${new Date(chatMute).getFullYear() >= 2900 ? "навсегда" : "до " + fmtT(chatMute)}</div>`; return; } f.innerHTML = `<div class="cbar"><input type="text" id="cin" placeholder="Сообщение…" maxlength="200" autocomplete="off"><button class="csend" id="csend"><svg viewBox="0 0 24 24"><path d="M21 3L10 14"/><path d="M21 3l-7 18-4-7-7-4 18-7z"/></svg></button></div><div class="ccount" id="ccnt"></div>`; q("cin").oninput = () => { const n = q("cin").value.length; q("ccnt").textContent = n > 150 ? n + "/200" : ""; }; q("cin").addEventListener("keydown", e => { if (e.key === "Enter") chatSend(); }); q("csend").onclick = chatSend; }
 async function chatSend() { const i = q("cin"); if (!i || chatSending) return; const t = i.value.replace(/\s+/g, " ").trim(); if (!t) return; const bad = chatBad(t); if (bad) { toastE(bad); return; } chatSending = true; q("csend").disabled = true; try { const d = await chat("send", { text: t }); if (d.error) { if (d.error === "chat_muted" && d.until) { chatMute = d.until; drawFoot(); } toastE(LERR[d.error] || d.error); } else { i.value = ""; q("ccnt").textContent = ""; chatForce = true; hap("light"); } } catch (e) { toastE(eText(e)); } chatPull(false); setTimeout(() => { chatSending = false; const b = q("csend"); if (b) b.disabled = false; }, 1200); }
@@ -1644,8 +1616,21 @@ function boot() {
   const t = setTimeout(() => { app.innerHTML = `<div class="icon">⚠️</div><h1>Сервер не отвечает</h1><p>Через 15 сек ответа нет.</p><button class="btn" onclick="boot()">Повторить</button>`; }, 15000);
   call("me").then(d => { clearTimeout(t); render(d.player); ms("ref_touch").catch(() => {}); }).catch(e => { clearTimeout(t); app.innerHTML = `<div class="icon">⚠️</div><h1>Ошибка загрузки</h1><p class="err">${errText(e)}</p><button class="btn" onclick="boot()">Повторить</button>`; });
 }
+function showChannelTip() {
+  const CH = "https://t.me/BsCrHub";
+  const el = document.createElement("div"); el.className = "tip";
+  el.innerHTML = '<div class="ti"><svg viewBox="0 0 24 24"><path d="M21 3L10 14"/><path d="M21 3l-7 18-4-7-7-4 18-7z"/></svg></div><div class="tt"><b>Подпишитесь на Telegram-канал</b><span>t.me/BsCrHub</span></div><button class="tx" aria-label="Скрыть"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>';
+  document.body.appendChild(el);
+  let gone = false, timer = null, x0 = null;
+  const hide = () => { if (gone) return; gone = true; clearTimeout(timer); el.classList.remove("in"); el.classList.add("out"); setTimeout(() => el.remove(), 450); };
+  el.onclick = () => { try { tg.openTelegramLink(CH); } catch (_) { tg.openLink(CH); } };
+  el.querySelector(".tx").onclick = e => { e.stopPropagation(); hide(); };
+  el.addEventListener("touchstart", e => { x0 = e.touches[0].clientX; }, { passive: true });
+  el.addEventListener("touchend", e => { if (x0 !== null && e.changedTouches[0].clientX - x0 > 40) hide(); x0 = null; }, { passive: true });
+  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add("in")));
+  timer = setTimeout(hide, 12000);
+}
 setTimeout(showChannelTip, 900);
-
 boot();
 </script>
 </body>
