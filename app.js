@@ -331,7 +331,7 @@ function tick() {
   }
 }
 
-function renderMatches() {
+async function renderMatches() {
   if (curTab !== "matches") return;
   if (!snap) { app.innerHTML = '<h1>Матчи</h1><p>Загрузка…</p>'; return; }
   const m = snap.mine, bal = snap.balance;
@@ -377,7 +377,23 @@ function renderMatches() {
       <button class="drop" id="pickshot"><b>📷</b>Прикрепить результат матча<small>Скриншот экрана с итогом игры</small></button>
       <button class="btn ghost" id="skipshot" style="margin-top:10px;opacity:.65">Я не сделал скриншот</button>`;
     }
-    const bannedHTML = (m.bans && m.bans.length) ? `<div class="sec">Запрещённые бойцы</div><div class="banned-inline">${m.bans.map(b => `<div class="bp ${b.me ? "by-me" : ""}" title="${escH(b.name)}"><img src="${escH(b.img)}" alt=""></div>`).join("")}</div>` : "";
+    if (!m.bans || !m.bans.length) {
+      try {
+        const bd = await rpcTo("tg_bans", "get", { id: m.id });
+        if (bd && bd.bans) m.bans = bd.bans.map(b => ({ ...b, me: b.tg === tgUser.id }));
+      } catch (_) {}
+    }
+    const bannedHTML = (m.bans && m.bans.length) ? `
+      <div class="sec">Этих персонажей нельзя брать</div>
+      <div class="banned-inline">
+        ${m.bans.map(b => b.brawler ? `
+          <div class="bp ${b.me ? "by-me" : ""}" title="${escH(b.name)} · запретил ${escH(b.who || "—")}">
+            <img src="${escH(b.img)}" alt="">
+          </div>` : "").join("")}
+      </div>
+      <div style="font-size:11.5px;color:var(--mut);text-align:center;margin-top:6px">
+        ${m.bans.filter(b => b.brawler).map(b => `<b style="color:var(--or2)">${escH(b.name)}</b> — ${escH(b.who || "—")}`).join(" · ")}
+      </div>` : "";
     app.innerHTML = `<div class="lobby-hero"><div class="num">МАТЧ #${m.id}</div><div class="map">${escH(m.map || "—")}</div><div class="mode">${modeName(m.mode)} · Ставка ${money(m.stake)}</div></div>
       <div class="lobby-players">${(m.players || []).map(p => `<div class="lp ${p.me ? "me" : ""}"><div class="av ${p.confirmed ? "ok" : ""}">${p.photo ? `<img src="${escH(p.photo)}" alt="">` : USER_SVG}</div><b>${escH(p.name || "Игрок")}</b>${p.me ? '<span class="me-tag">ТЫ</span>' : ""}</div>`).join("")}</div>
       ${bannedHTML}${body}`;
