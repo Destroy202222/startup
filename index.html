@@ -1717,7 +1717,7 @@ function renderChat() {
   clearInterval(chatT); chatLast = 0; chatMsgs = []; chatBusy = false; chatForce = true;
   const b = q("chatbdg"); if (b) b.classList.add("hidden");
   app.innerHTML = `<div class="chat">
-    <div class="chat-h"><h1>Чат</h1><small>🚫 ссылки и спам запрещены</small></div>
+    <div class="chat-h"><h1>Чат</h1><small></small></div>
     <div class="cmsgs" id="cmsgs"><p style="text-align:center;margin-top:40px">Загрузка…</p></div>
     <button class="cnew hidden" id="cnew">↓ Новые сообщения</button>
     <div id="cfoot"></div></div>`;
