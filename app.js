@@ -250,7 +250,7 @@ function showTab(t) {
   const bal = Number(cur.balance || 0).toLocaleString("ru-RU");
   app.innerHTML = `<img class="ava" src="${ava || cur.tg_photo_url || ""}" alt="">
   <div class="nick">${cur.bs_name}</div>
-  <p class="tag">${cur.bs_tag}</p>
+  <p class="tag">${cur.bs_tag}</p>${leagueHTML(w)}
   <div class="stats"><div class="stat w"><b>${w}</b><span>Победы</span></div><div class="stat l"><b>${l}</b><span>Поражения</span></div><div class="stat r"><b>${wr}</b><span>Винрейт</span></div></div>
   <div class="wallet"><div style="width:100%">
     <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span>Основной</span><b id="wb" style="font-size:20px">${bal} ₽</b></div>
@@ -274,7 +274,7 @@ function showTab(t) {
     try {
       const d = await rpc("promo_redeem", { code });
       if (d.error) toast(LERR[d.error] || d.error);
-      else { cur.bonus_balance = d.bonus_balance; const wbb = q("wbb"); if (wbb) wbb.textContent = money(d.bonus_balance); q("pc").value = ""; hap("success"); toast("Промокод активирован: +" + money(d.amount) + " на бонусный баланс"); }
+      else { cur.bonus_balance = d.bonus_balance; const wbb = q("wbb"); if (wbb) wbb.textContent = money(d.bonus_balance); q("pc").value = ""; hap("success"); confetti(); toast("Промокод активирован: +" + money(d.amount) + " на бонусный баланс"); }
     } catch (e) { toastE(eText(e)); }
     q("pb").disabled = false;
   };
@@ -290,7 +290,7 @@ function applySnap(sn) {
   if (cur) { cur.balance = sn.balance; cur.bonus_balance = sn.bonus_balance; cur.bonus_games = sn.bonus_games; }
   const wbb = document.getElementById("wbb"); if (wbb) wbb.textContent = money(sn.bonus_balance);
   fillBonus(sn.bonus_games || 0);
-  const wbe = document.getElementById("wb"); if (wbe) wbe.textContent = money(sn.balance);
+  const wbe = document.getElementById("wb"); if (wbe) { const bt = money(sn.balance); if (wbe.textContent !== bt) { wbe.textContent = bt; popEl(wbe); } }
   const key = JSON.stringify([sn.mine, sn.open, sn.balance]);
   if (key !== lastKey) { lastKey = key; if (curTab === "matches") renderMatches(); }
   if (sn.mine && (sn.mine.status === "confirming" || sn.mine.status === "live") && curTab !== "matches") showTab("matches");
@@ -533,6 +533,9 @@ async function loadProfileHistory() {
   if (!box || curTab !== "profile") return;
   if (!d) { box.innerHTML = "<p>История недоступна.</p>"; return; }
   cur.wins = d.wins; cur.losses = d.losses; fillStats();
+  { let s = 0; for (let i = d.matches.length - 1; i >= 0 && d.matches[i].result === "win"; i--) s++;
+    const lg = document.querySelector(".league");
+    if (lg && s >= 2 && !document.querySelector(".streak")) lg.insertAdjacentHTML("afterend", streakHTML(s)); }
   drawChart(box, d.matches);
   hl.innerHTML = d.matches.length ? d.matches.slice().reverse().slice(0, 20).map(m => {
     const w = m.result === "win";
@@ -574,7 +577,7 @@ async function renderMissions() {
   const r = d.ref;
   app.innerHTML = `<div class="icon ico"><svg viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9L12 3z"/></svg></div><h1>Миссии</h1><p>Выполняй задания и получай ₽ на бонусный баланс</p><div class="sec">Задания</div>${cards}
   <div class="sec">Пригласи друзей</div><div class="mis"><div class="mh"><span>За каждого нового игрока</span><span class="rw">+${money(1.5)}</span></div><p style="font-size:13px">Друг заходит по твоей ссылке и подтверждает аккаунт Brawl Stars.</p><div class="pg"><span>Приглашено: ${r.invited}</span><span>Ждут: ${r.waiting}</span></div><div class="pg" style="margin-top:4px"><span>Заработано: ${money(r.invited * 1.5)}</span></div>${r.link ? `<div class="refbox">${r.link}</div><div class="row2"><button class="btn sm" id="rcopy">Копировать</button><button class="btn sm" id="rshare">Поделиться</button></div>` : '<p class="err" style="font-size:12px">Ссылка ещё не настроена.</p>'}</div>`;
-  app.querySelectorAll("[data-claim]").forEach(b => b.onclick = async () => { b.disabled = true; try { const x = await ms("claim", { id: b.dataset.claim }); cur.bonus_balance = x.bonus_balance; hap("success"); toast("Награда получена: +" + money(x.reward) + " на бонусный баланс"); renderMissions(); } catch (e) { toastE(eText(e)); b.disabled = false; } });
+  app.querySelectorAll("[data-claim]").forEach(b => b.onclick = async () => { b.disabled = true; try { const x = await ms("claim", { id: b.dataset.claim }); cur.bonus_balance = x.bonus_balance; hap("success"); confetti(); toast("Награда получена: +" + money(x.reward) + " на бонусный баланс"); renderMissions(); } catch (e) { toastE(eText(e)); b.disabled = false; } });
   if (q("rcopy")) { q("rcopy").onclick = () => { try { navigator.clipboard.writeText(r.link); toast("Скопировано"); } catch (_) {} }; q("rshare").onclick = () => tg.openTelegramLink("https://t.me/share/url?url=" + encodeURIComponent(r.link) + "&text=" + encodeURIComponent("Играй со мной!")); }
 }
 
@@ -946,6 +949,36 @@ async function chatPeek() { if (curTab === "chat" || !cur) return; try { const d
 
 /* ===== Кнопки навигации (обязательно!) ===== */
 document.querySelectorAll("#nav button").forEach(b => b.onclick = () => { if (cur) showTab(b.dataset.t); });
+
+/* ===== PREMIUM: лиги, серия, конфетти ===== */
+const LEAGUES = [
+  { n: "Бронза", cls: "", min: 0 }, { n: "Серебро", cls: "silver", min: 10 },
+  { n: "Золото", cls: "gold", min: 30 }, { n: "Алмаз", cls: "diamond", min: 75 },
+  { n: "Мифик", cls: "mythic", min: 150 }
+];
+function leagueHTML(wins) {
+  let i = 0; LEAGUES.forEach((l, k) => { if (wins >= l.min) i = k; });
+  const cu = LEAGUES[i], nx = LEAGUES[i + 1];
+  const pct = nx ? Math.round((wins - cu.min) / (nx.min - cu.min) * 100) : 100;
+  return `<div class="league ${cu.cls}"><i></i>${cu.n}</div><div class="lg-prog"><div class="bar"><i style="width:${pct}%"></i></div><small><span>${wins} побед</span><span>${nx ? "до " + nx.n + ": " + (nx.min - wins) : "макс. лига"}</span></small></div>`;
+}
+const streakHTML = n => n >= 2 ? `<span class="streak"><i></i>${n} подряд</span>` : "";
+function confetti(n = 60) {
+  const w = document.createElement("div"); w.className = "confetti";
+  const cols = ["#ff7a00", "#ffa040", "#ffd54a", "#ff4d00", "#fff"];
+  for (let i = 0; i < n; i++) {
+    const p = document.createElement("i");
+    p.style.left = Math.random() * 100 + "%"; p.style.background = cols[i % cols.length];
+    p.style.setProperty("--x", (Math.random() * 160 - 80) + "px");
+    p.style.setProperty("--r", (Math.random() * 900 - 300) + "deg");
+    p.style.setProperty("--t", (1.8 + Math.random() * 1.4) + "s");
+    p.style.animationDelay = Math.random() * .35 + "s";
+    w.appendChild(p);
+  }
+  document.body.appendChild(w); setTimeout(() => w.remove(), 3800);
+}
+function popEl(el) { el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop"); }
+/* ===== /PREMIUM ===== */
 
 function boot() {
   app.innerHTML = "<h1>Загрузка…</h1>";
