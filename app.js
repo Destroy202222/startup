@@ -818,7 +818,7 @@ function openWithdraw() {
   amtEl.oninput = () => { const a = parseInt(amtEl.value.replace(/\D/g, ""), 10) || 0; el.querySelector("#wusdt").textContent = a ? "≈ " + (a/100).toFixed(2) + " USDT" : ""; };
   ok.onclick = async () => {
     const amount = parseInt(amtEl.value.replace(/\D/g, ""), 10);
-    if (!amount || amount < 300) return bad("Минимум 300 ₽");
+    if (!amount || amount < 1000) return bad("Минимум 1000 ₽");
     if (amount > bal) return bad("Недостаточно средств");
     let doReq, label;
     if (mode === "bank") { const phone = normPhone(el.querySelector("#wph").value); const bank = el.querySelector("#wbank").value.trim(); if (!phone) return bad("Введи номер +7 900 000-00-00"); if (bank.length < 2) return bad("Укажи банк"); doReq = () => wd("request", { amount, phone, bank }); label = bank; }
