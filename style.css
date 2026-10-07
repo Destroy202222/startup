@@ -531,3 +531,5 @@ h1{font-size:21px;font-weight:700;letter-spacing:-.6px}
 @media (prefers-reduced-motion:reduce){
   .card,.ava,.wallet::after,.pod-i.p1,.bar i::after,.sk::after,.streak i{animation:none!important}
 }
+html, body { overflow-x: hidden; max-width: 100%; overscroll-behavior-x: none; touch-action: pan-y; }
+.card { overflow: visible; max-width: 100%; }
