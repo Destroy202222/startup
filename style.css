@@ -311,3 +311,24 @@ input[type=text]:focus,.sta:focus{border-color:var(--or);box-shadow:0 0 0 4px rg
 .csend svg{width:20px;height:20px;fill:none;stroke:#160b00;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .ccount{text-align:right;font-size:11px;color:var(--mut);height:12px;margin:3px 8px 0}
 .cmuted{margin-top:10px;padding:14px;border-radius:16px;text-align:center;font-size:14px;font-weight:700;color:#ff8a8a;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.3)}
+/* ===== Фон с персонажами и свечение ===== */
+.bgc{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.bgc img{position:absolute;width:min(64vw,320px);opacity:.26;
+  filter:drop-shadow(0 0 34px rgba(255,122,0,.55)) saturate(.85) contrast(1.05);
+  animation:float 7s ease-in-out infinite;will-change:transform}
+.bgc-l{left:-14%;bottom:6%;rotate:-8deg}
+.bgc-r{right:-16%;top:3%;rotate:7deg;scale:-1 1;animation-delay:-3.5s;opacity:.18}
+@keyframes float{50%{translate:0 -16px}}
+.bgc::after{content:"";position:absolute;inset:0;
+  background:radial-gradient(60% 55% at 50% 48%,rgba(10,10,10,.85),rgba(10,10,10,.35) 70%,transparent)}
+body::after{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:radial-gradient(55% 35% at 8% 105%,rgba(255,77,0,.18),transparent 70%)}
+html::before{content:"";position:fixed;inset:0;z-index:-3;pointer-events:none;opacity:.6;
+  background-image:radial-gradient(rgba(255,170,80,.35) 1px,transparent 1.5px),
+                   radial-gradient(rgba(255,255,255,.12) 1px,transparent 1.5px);
+  background-size:140px 160px,220px 190px;background-position:20px 40px,90px 10px}
+/* карточка: стекло + ореол */
+.card{position:relative;background:linear-gradient(180deg,rgba(25,25,27,.92),rgba(14,14,16,.96));
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.card::after{content:"";position:absolute;inset:-40px;z-index:-1;border-radius:60px;pointer-events:none;
+  background:radial-gradient(50% 40% at 50% 0%,rgba(255,122,0,.22),transparent 70%);filter:blur(10px)}
