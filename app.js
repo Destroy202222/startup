@@ -211,6 +211,8 @@ function pending(p) {
 }
 function render(p) {
   const v = p.status === "verified";
+  if (!v && p.status !== "pending") return enterGuest();
+  guest = false;
   document.body.classList.toggle("shell", v);
   document.getElementById("nav").classList.toggle("hidden", !v);
   document.getElementById("sup").classList.toggle("hidden", !v);
@@ -237,9 +239,10 @@ async function loadBrawlers() {
 }
 function showTab(t) {
   curTab = t; app.dataset.adm = "0";
-  app.classList.toggle("chatmode", t === "chat");
-  document.getElementById("sup").classList.toggle("hidden", t === "chat");
+  app.classList.toggle("chatmode", t === "chat" && !guest);
+  document.getElementById("sup").classList.toggle("hidden", t === "chat" || guest);
   document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("on", b.dataset.t === t));
+  if (guest) { if (t === "matches") return guestMatches(); if (t !== "top") return guestGate(t); }
   if (t === "matches") { renderMatches(); return; }
   if (t === "missions") { renderMissions(); return; }
   if (t === "admin") { renderAdmin(); return; }
@@ -948,7 +951,58 @@ async function chatSend() { const i = q("cin"); if (!i || chatSending) return; c
 async function chatPeek() { if (curTab === "chat" || !cur) return; try { const d = await chat("peek", { since: chatSeen }); if (!chatSeen) { chatSeen = d.last || 0; return; } const b = q("chatbdg"); if (!b) return; b.textContent = d.n > 99 ? "99+" : d.n; b.classList.toggle("hidden", !d.n); } catch (e) {} }
 
 /* ===== Кнопки навигации (обязательно!) ===== */
-document.querySelectorAll("#nav button").forEach(b => b.onclick = () => { if (cur) showTab(b.dataset.t); });
+document.querySelectorAll("#nav button").forEach(b => b.onclick = () => { if (cur || guest) showTab(b.dataset.t); });
+
+/* ===== ГОСТЕВОЙ РЕЖИМ ===== */
+let guest = false;
+const GATE = {
+  profile: ["🔑", "Зарегистрируйся", "Привяжи аккаунт Brawl Stars — откроются профиль, статистика, баланс и история матчей."],
+  missions: ["⭐", "Зарегистрируйся", "Привяжи аккаунт Brawl Stars, чтобы выполнять миссии, получать награды и приглашать друзей."],
+  chat: ["💬", "Зарегистрируйся", "Общий чат доступен после привязки аккаунта Brawl Stars."]
+};
+function enterGuest() {
+  guest = true; cur = null; curTab = "profile";
+  document.body.classList.add("shell");
+  document.getElementById("nav").classList.remove("hidden");
+  document.getElementById("sup").classList.add("hidden");
+  showTab("profile");
+}
+function startReg() {
+  document.querySelectorAll(".sheet").forEach(x => x.remove());
+  curTab = "profile";
+  document.body.classList.remove("shell");
+  document.getElementById("nav").classList.add("hidden");
+  document.getElementById("sup").classList.add("hidden");
+  upload();
+  app.insertAdjacentHTML("beforeend", '<p><a href="#" id="gback" style="color:var(--mut)">← Посмотреть приложение</a></p>');
+  q("gback").onclick = e => { e.preventDefault(); enterGuest(); };
+}
+function guestGate(t) {
+  const g = GATE[t] || GATE.profile;
+  const preview = t === "profile" ? `<div class="stats" style="opacity:.55"><div class="stat w"><b>—</b><span>Победы</span></div><div class="stat l"><b>—</b><span>Поражения</span></div><div class="stat r"><b>—</b><span>Винрейт</span></div></div>` : "";
+  app.innerHTML = `<div class="icon">${g[0]}</div><h1>${g[1]}</h1><p>${g[2]}</p>${preview}<button class="btn" id="greg">Зарегистрироваться</button>`;
+  q("greg").onclick = startReg;
+}
+function askRegister() {
+  const el = document.createElement("div"); el.className = "sheet";
+  el.innerHTML = '<div class="sheet-in"><div class="icon">🔒</div><h1>Нужна регистрация</h1><p>Чтобы играть, привяжи аккаунт Brawl Stars. Это займёт минуту.</p><button class="btn" id="rg">Зарегистрироваться</button><button class="link" id="rl">Позже</button></div>';
+  document.body.appendChild(el);
+  el.onclick = e => { if (e.target === el) el.remove(); };
+  el.querySelector("#rl").onclick = () => el.remove();
+  el.querySelector("#rg").onclick = startReg;
+}
+function guestMatches() {
+  const stakes = [50, 100, 200];
+  if (!stakes.includes(pickStake)) pickStake = 100;
+  app.innerHTML = `<h1>Матчи</h1><p>Нажми «Поиск» — подберём соперника автоматически</p>
+  <div class="balrow dual"><div><span>Бонусный</span><b>0 ₽</b></div><i></i><div><span>Основной</span><b>0 ₽</b></div></div>
+  <div class="sec">Найти матч</div>
+  <div class="chips" style="grid-template-columns:repeat(3,1fr)">${stakes.map(x => `<button class="chip${x === pickStake ? " on" : ""}" data-s="${x}">${x} ₽</button>`).join("")}</div>
+  <button class="btn" id="mk">🔍 Поиск · ${money(pickStake)}</button>`;
+  app.querySelectorAll(".chip").forEach(c => c.onclick = () => { pickStake = +c.dataset.s; guestMatches(); });
+  q("mk").onclick = askRegister;
+}
+/* ===== /ГОСТЕВОЙ РЕЖИМ ===== */
 
 /* ===== PREMIUM: лиги, серия, конфетти ===== */
 const LEAGUES = [
