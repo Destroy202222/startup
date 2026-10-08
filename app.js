@@ -455,8 +455,9 @@ async function renderMatches() {
   <div class="sec">Найти матч</div>
   <div class="chips" style="grid-template-columns:repeat(${cols},1fr)">${stakes.map(x => `<button class="chip${x === pickStake ? " on" : ""}" data-s="${x}">${x} ₽</button>`).join("")}</div>
   <button class="btn" id="mk" ${(bal + (snap.bonus_balance || 0)) < pickStake ? "disabled" : ""}>${(bal + (snap.bonus_balance || 0)) < pickStake ? "Не хватает баланса" : "🔍 Поиск · " + money(pickStake)}</button>
+  <div id="pubbox">${pubHTML()}</div>
   ${pend ? `<div class="sec">Ждут решения</div>${pend}` : ""}<div id="ftbox"></div>`;
-  renderFt(); ftLoad();
+  renderFt(); ftLoad(); loadPub();
   app.querySelectorAll(".chip").forEach(c => c.onclick = () => { pickStake = +c.dataset.s; renderMatches(); });
   q("mk").onclick = async () => {
     q("mk").disabled = true;
@@ -779,6 +780,7 @@ function renderWdBox() { const box = document.getElementById("wdbox"); if (!box)
 function applyWdState(st) { const prev = wdPending; wdPending = st.pending || []; prev.filter(p => !wdPending.some(n => n.id === p.id)).forEach(p => { const r = (st.recent || []).find(x => x.id === p.id); if (r) toast(r.status === "paid" ? "Вывод " + money(r.amount) + " выполнен" : "Вывод отменён, " + money(r.amount) + " вернулись"); }); renderWdBox(); }
 async function extraPoll() {
   supBadge(); chatPeek(); ftLoad();
+  if (curTab === "matches") loadPub();
   if (cryptoWait > Date.now()) cryptoCheck();
   if (isAdmin) {
     loadAdminStats();
@@ -953,6 +955,34 @@ async function chatPeek() { if (curTab === "chat" || !cur) return; try { const d
 /* ===== Кнопки навигации (обязательно!) ===== */
 document.querySelectorAll("#nav button").forEach(b => b.onclick = () => { if (cur || guest) showTab(b.dataset.t); });
 
+/* ===== ЖИВАЯ СТАТИСТИКА ПЛАТФОРМЫ ===== */
+let pubSt = null, pubBusy = false;
+const fmtN = n => (n == null ? "—" : Number(n).toLocaleString("ru-RU"));
+function pubHTML() {
+  const v = pubSt || {};
+  const cell = (k, label, cls) => `<div class="pb-c ${cls}"><b data-k="${k}" data-v="${Number(v[k]) || 0}">${fmtN(v[k])}</b><span>${label}</span></div>`;
+  return `<div class="pubboard"><div class="pb-h"><i class="live"></i>Сейчас на платформе</div>
+  <div class="pb-g">${cell("searching", "В поиске", "s")}${cell("in_match", "В матче", "m")}</div>
+  <div class="pb-t"><span>Игр засчитано на проекте</span><b data-k="games" data-v="${Number(v.games) || 0}">${fmtN(v.games)}</b></div></div>`;
+}
+function countTo(el, to) {
+  const from = Number(el.dataset.v) || 0; el.dataset.v = to;
+  if (from === to) { el.textContent = fmtN(to); return; }
+  const t0 = performance.now(), dur = 650;
+  const step = t => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3); el.textContent = fmtN(Math.round(from + (to - from) * e)); if (k < 1 && el.isConnected) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+async function loadPub() {
+  if (pubBusy) return; pubBusy = true;
+  try {
+    const d = await rpcTo("tg_public_stats", "get", {});
+    if (d && !d.error) { pubSt = d; const box = q("pubbox"); if (box) { if (!box.querySelector(".pubboard")) box.innerHTML = pubHTML(); box.querySelectorAll("[data-k]").forEach(el => countTo(el, Number(pubSt[el.dataset.k]) || 0)); } }
+  } catch (e) { const box = q("pubbox"); if (box && !pubSt) box.innerHTML = ""; }
+  pubBusy = false;
+}
+setInterval(() => { if (guest && curTab === "matches") loadPub(); }, 5000);
+/* ===== /ЖИВАЯ СТАТИСТИКА ===== */
+
 /* ===== ГОСТЕВОЙ РЕЖИМ ===== */
 let guest = false;
 const GATE = {
@@ -998,7 +1028,9 @@ function guestMatches() {
   <div class="balrow dual"><div><span>Бонусный</span><b>0 ₽</b></div><i></i><div><span>Основной</span><b>0 ₽</b></div></div>
   <div class="sec">Найти матч</div>
   <div class="chips" style="grid-template-columns:repeat(3,1fr)">${stakes.map(x => `<button class="chip${x === pickStake ? " on" : ""}" data-s="${x}">${x} ₽</button>`).join("")}</div>
-  <button class="btn" id="mk">🔍 Поиск · ${money(pickStake)}</button>`;
+  <button class="btn" id="mk">🔍 Поиск · ${money(pickStake)}</button>
+  <div id="pubbox">${pubHTML()}</div>`;
+  loadPub();
   app.querySelectorAll(".chip").forEach(c => c.onclick = () => { pickStake = +c.dataset.s; guestMatches(); });
   q("mk").onclick = askRegister;
 }
@@ -1042,7 +1074,7 @@ function boot() {
 function showChannelTip() {
   const CH = "https://t.me/BsCrHub";
   const el = document.createElement("div"); el.className = "tip";
-  el.innerHTML = '<div class="ti"><svg viewBox="0 0 24 24"><path d="M21 3L10 14"/><path d="M21 3l-7 18-4-7-7-4 18-7z"/></svg></div><div class="tt"><b>Подпишитесь на Telegram-канал</b><span></span></div><button class="tx" aria-label="Скрыть"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>';
+  el.innerHTML = '<div class="ti"><svg viewBox="0 0 24 24"><path d="M21 3L10 14"/><path d="M21 3l-7 18-4-7-7-4 18-7z"/></svg></div><div class="tt"><b>Подпишитесь на Telegram-канал</b><span>t.me/BsCrHub</span></div><button class="tx" aria-label="Скрыть"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>';
   document.body.appendChild(el);
   let gone = false, timer = null, x0 = null;
   const hide = () => { if (gone) return; gone = true; clearTimeout(timer); el.classList.remove("in"); el.classList.add("out"); setTimeout(() => el.remove(), 450); };
