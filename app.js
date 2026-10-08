@@ -958,12 +958,15 @@ document.querySelectorAll("#nav button").forEach(b => b.onclick = () => { if (cu
 /* ===== ЖИВАЯ СТАТИСТИКА ПЛАТФОРМЫ ===== */
 let pubSt = null, pubBusy = false;
 const fmtN = n => (n == null ? "—" : Number(n).toLocaleString("ru-RU"));
+const pubLive = () => !!(pubSt && pubSt.searching != null && pubSt.in_match != null);
 function pubHTML() {
-  const v = pubSt || {};
+  if (!pubSt) return "";
+  const v = pubSt, live = pubLive();
+  const games = v.games;
   const cell = (k, label, cls) => `<div class="pb-c ${cls}"><b data-k="${k}" data-v="${Number(v[k]) || 0}">${fmtN(v[k])}</b><span>${label}</span></div>`;
   return `<div class="pubboard"><div class="pb-h"><i class="live"></i>Сейчас на платформе</div>
-  <div class="pb-g">${cell("searching", "В поиске", "s")}${cell("in_match", "В матче", "m")}</div>
-  <div class="pb-t"><span>Игр засчитано на проекте</span><b data-k="games" data-v="${Number(v.games) || 0}">${fmtN(v.games)}</b></div></div>`;
+  ${live ? `<div class="pb-g">${cell("searching", "В поиске", "s")}${cell("in_match", "В матче", "m")}</div>` : ""}
+  <div class="pb-t"><span>Игр засчитано на проекте</span><b data-k="games" data-v="${Number(games) || 0}">${fmtN(games)}</b></div></div>`;
 }
 function countTo(el, to) {
   const from = Number(el.dataset.v) || 0; el.dataset.v = to;
@@ -976,8 +979,15 @@ async function loadPub() {
   if (pubBusy) return; pubBusy = true;
   try {
     const d = await rpcTo("tg_public_stats", "get", {});
-    if (d && !d.error) { pubSt = d; const box = q("pubbox"); if (box) { if (!box.querySelector(".pubboard")) box.innerHTML = pubHTML(); box.querySelectorAll("[data-k]").forEach(el => countTo(el, Number(pubSt[el.dataset.k]) || 0)); } }
-  } catch (e) { const box = q("pubbox"); if (box && !pubSt) box.innerHTML = ""; }
+    if (d && !d.error) {
+      const wasLive = pubLive(); pubSt = d;
+      const box = q("pubbox");
+      if (box) {
+        if (!box.querySelector(".pubboard") || wasLive !== pubLive()) box.innerHTML = pubHTML();
+        box.querySelectorAll("[data-k]").forEach(el => { const v = pubSt[el.dataset.k]; countTo(el, Number(v) || 0); });
+      }
+    }
+  } catch (e) { /* пока нет данных от сервера — блок не показываем */ }
   pubBusy = false;
 }
 setInterval(() => { if (guest && curTab === "matches") loadPub(); }, 5000);
