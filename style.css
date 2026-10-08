@@ -533,3 +533,24 @@ h1{font-size:21px;font-weight:700;letter-spacing:-.6px}
 }
 html, body { overflow-x: hidden; max-width: 100%; overscroll-behavior-x: none; touch-action: pan-y; }
 .card { overflow: visible; max-width: 100%; }
+/* ===== Блок «Сейчас на платформе» — вставь в конец style.css ===== */
+.pubboard{margin-top:18px;padding:16px;border-radius:22px;text-align:left;position:relative;overflow:hidden;
+  background:radial-gradient(120% 120% at 0% 0%,rgba(255,122,0,.16),transparent 60%),var(--panel2);
+  border:1px solid rgba(255,122,0,.3);box-shadow:0 14px 34px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.05)}
+.pb-h{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:var(--tx)}
+.pb-h .live{width:9px;height:9px;border-radius:50%;background:#4cd964;box-shadow:0 0 0 0 rgba(76,217,100,.7);animation:livepulse 1.8s infinite}
+@keyframes livepulse{70%{box-shadow:0 0 0 9px rgba(76,217,100,0)}100%{box-shadow:0 0 0 0 rgba(76,217,100,0)}}
+.pb-g{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.pb-c{border-radius:16px;padding:14px 10px;text-align:center;background:rgba(255,255,255,.03);border:1px solid var(--line)}
+.pb-c b{display:block;font-family:var(--fd);font-size:30px;font-weight:800;letter-spacing:-1px;line-height:1.1}
+.pb-c span{display:block;margin-top:6px;font-size:12px;font-weight:700;color:var(--mut)}
+.pb-c.s b{color:var(--or);text-shadow:0 0 22px rgba(255,122,0,.55)}
+.pb-c.s{box-shadow:inset 0 -2px 0 rgba(255,122,0,.55)}
+.pb-c.m b{color:#6ee787;text-shadow:0 0 22px rgba(110,231,135,.45)}
+.pb-c.m{box-shadow:inset 0 -2px 0 rgba(110,231,135,.5)}
+.pb-t{position:relative;overflow:hidden;margin-top:8px;border-radius:16px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:linear-gradient(135deg,rgba(255,213,74,.16),rgba(255,213,74,.03));border:1px solid rgba(255,213,74,.4)}
+.pb-t::after{content:"";position:absolute;top:-60%;bottom:-60%;width:30%;left:-50%;background:linear-gradient(100deg,transparent,rgba(255,235,160,.25),transparent);transform:skewX(-18deg);animation:sheen 6s ease-in-out infinite}
+.pb-t span{font-size:13px;font-weight:700;color:#e9dca8;max-width:55%}
+.pb-t b{font-family:var(--fd);font-size:30px;font-weight:800;color:var(--gold);text-shadow:0 0 24px rgba(255,213,74,.5)}
+@media (prefers-reduced-motion:reduce){.pb-h .live,.pb-t::after{animation:none!important}}
